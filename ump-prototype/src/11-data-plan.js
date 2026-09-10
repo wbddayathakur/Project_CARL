@@ -200,6 +200,21 @@ const PORTFOLIO = [
    each one does, and each one shows its reasoning.
 --------------------------------------------------------------------------------*/
 const AGENTS = [
+  /* Added from the Flow Architecture note (6 Sep 2026). The orchestrator is
+     first because everything else runs inside the state machine it holds. */
+  { id:"A0", name:"Orchestrator", phase:"All", role:"Holds the state machine, knows every evaluation point inside it, and scores the intermediate status at each one. Below par it loops the phase or surfaces for strategic input.",
+    inputs:["Phase state","Every evaluation point and its weight","Justification scores"], outputs:["Gate score","Blocking points and their remedies","Handoff to the next phase"],
+    guard:"Its only power is to refuse a handoff. It cannot advance the plan, edit an artifact, or overrule the planner, and no point it raises can be waived silently.", learns:"Which blocking points planners routinely argue past — a point argued past every time is a badly written point." },
+  { id:"A0b", name:"Justification Eval", phase:"All", role:"Scores the argument behind a change, never the change itself. A reason that would not survive being read by someone outside the room goes back to its author with the specific thing it is missing.",
+    inputs:["The planner's or approver's written reason","What is being changed"], outputs:["Argument score","What the argument is missing","Pass, thin, or sent back"],
+    guard:"Judges form, not conclusion. It has no view on whether the change is right — a planner can argue anything, but not weakly.", learns:"Reasons that passed and were later vindicated or overturned at approval." },
+  { id:"A0c", name:"Evidence Eval", phase:"Intake", role:"Scores the strengths and weaknesses of every record on the RFP graph and writes the probability back onto it. Re-scores the graph whenever a human resolves something on it.",
+    inputs:["Every record on the RFP graph","Adjudications and corrections"], outputs:["Per-record confidence","What would strengthen the weak ones"],
+    guard:"Every point of a confidence score is attributable to source directness, citation, corroboration, contest and age. Nothing is a model output that cannot be argued with.", learns:"Which weak records turned out to matter, and which strong ones were wrong." },
+  { id:"A0d", name:"Product Knowledge", phase:"Discovery", role:"Answers questions about products, customisations, exclusions and price in the planner's own words, over one index built from the FreeWheel and Operative configs and the pricing documents.",
+    inputs:["Targeting templates, ad product configs, inventory packages (FreeWheel, Operative)","Reference pricing, product KPIs (spreadsheets, docs)"], outputs:["Answers with the configs they came from"],
+    guard:"Every answer names its sources so a number can be checked rather than trusted. It retrieves; it does not recommend.", learns:"The questions planners ask that it answers badly." },
+
   { id:"A1", name:"Intake", phase:"Intake", role:"Reads the RFP and the Salesforce opportunity, writes evidence records, never conclusions.",
     inputs:["Salesforce opportunity","RFP PDF + attachments","AE call notes"], outputs:["Evidence records (stated)"],
     guard:"Cannot infer. Anything not literally in the source is left to the Context agent.", learns:"Field-extraction corrections by the planner." },

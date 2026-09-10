@@ -105,6 +105,7 @@ const Discovery = ({S}) => {
   const [drawer, setDrawer] = useState(null);      // {row, mode}
   const [ask, setAsk] = useState(null);            // pending justification
   const selected = ranking.filter(r=>r.on);
+  const gate = useMemo(() => evaluateGate("discovery", st, {ranking}), [st, ranking]);
 
   const hints = Object.values(st.rankJust).filter(Boolean);
 
@@ -175,7 +176,7 @@ const Discovery = ({S}) => {
     <div className="split">
       <div className="col" style={{gap:14}}>
         <div className="tabs">
-          {[["list","Ranked list", selected.length],["grid","Grid"],["excluded","Excluded", EXCLUDED.length],["brief","Strategy brief"]].map(([k,l,n])=>
+          {[["list","Ranked list", selected.length],["grid","Grid"],["ask","Ask the catalogue"],["excluded","Excluded", EXCLUDED.length],["brief","Strategy brief"]].map(([k,l,n])=>
             <button key={k} className={tab===k?"on":""} onClick={()=>setTab(k)}>{l}{n!=null && <span className="ct">{n}</span>}</button>)}
         </div>
 
@@ -198,6 +199,17 @@ const Discovery = ({S}) => {
               onRowClick={r=>setDrawer({row:r, mode:"why"})}
               sub="Click any row to open its reasoning"/>
           </Card>
+        )}
+
+        {tab==="ask" && (
+          <div className="col" style={{gap:12}}>
+            <div className="banner b"><span className="bi">Why this exists</span>
+              <div>The catalogue is 22 products with a few hundred targeting templates behind them, and the question a
+                planner actually has is never “show me the list”. It is “what meets this KPI”, “what can I change on
+                this”, “what does excluding that cost me”. Asking is faster than knowing where to look, and the answer
+                carries the config it came from so you can check it.</div></div>
+            <ProductRAG ctx={{top: selected[0]}}/>
+          </div>
         )}
 
         {tab==="excluded" && (
@@ -325,12 +337,17 @@ const Discovery = ({S}) => {
                 Accept the ranked list and its targeting
               </Btn>
               <div className="tiny dim" style={{marginTop:7}}>
-                [OPEN] Whether acceptance is an explicit act — as here — or is implied by running the optimiser is
-                undecided. The two produce different audit trails on re-entry.
+                Accepting is what the gate below scores. It does not open the next phase on its own.
               </div>
             </>
           )}
         </Card>
+
+        <Gate gate={gate} verb="Hand off to Strategize"
+          onGo={()=>{ up({phase:"strategize"});
+            log("sys", `Discovery orchestrator handed off to Strategize at gate score ${gate.score}.`);
+            toast("Handoff accepted — Strategize orchestrator has the list"); }}
+          note="[OPEN] Whether acceptance is an explicit act — as above — or is implied by clearing the gate is undecided. The two produce different audit trails on re-entry."/>
 
         <Card title="Constraints in force" tight>
           <div style={{padding:"10px 13px"}}>
@@ -386,7 +403,7 @@ const Discovery = ({S}) => {
           what:<>Customising <b>{drawer.row.p.name}</b>. The customisation, its inventory consequence and its pricing
             consequence are recorded together, so the trade-off is visible downstream rather than only its result.</>})}/>}
 
-      {ask && <Justify title={ask.title} what={ask.what} hints={hints}
+      {ask && <JustifyG title={ask.title} what={ask.what} hints={hints}
         onCancel={()=>setAsk(null)} onConfirm={confirm}/>}
     </div>
   );

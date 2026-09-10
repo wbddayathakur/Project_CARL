@@ -12,6 +12,7 @@ const Analyze = ({S}) => {
   const [commit, setCommit] = useState(null);
   const v = st.versions;
   const cur = sel ? v.find(x=>x.id===sel) : v[v.length-1];
+  const gate = useMemo(() => evaluateGate("analyze", st, {}), [st]);
 
   useEffect(()=>{ if (v.length && !sel) setSel(v[v.length-1].id); }, [v.length]);
   if (!v.length) return (
@@ -238,6 +239,11 @@ const Analyze = ({S}) => {
           </div>
         </Card>
 
+        <Gate gate={gate} verb="Hand off to Approval"
+          onGo={()=>{ up({phase:"approval"});
+            log("sys", `Analyze orchestrator handed off to Approval at gate score ${gate.score}.`);
+            toast("Handoff accepted — P&I has " + st.committed); }}/>
+
         <Assist title="On this version">
           {cur && v.length > 1 && (() => {
             const other = v.filter(x => x.id !== cur.id)
@@ -269,13 +275,13 @@ const Analyze = ({S}) => {
         </Assist>
       </div>
 
-      {commit && <Justify title={"Commit " + commit.id} min={20}
+      {commit && <JustifyG title={"Commit " + commit.id}
         what={<>Approval binds to <b>{commit.id}</b>, not to the plan. P&amp;I receives the allocation, the intake
           brief, the product ranking and customisations, the optimiser's original recommendation, and every one of your
           changes with its explanation.</>}
         verb="Commit and share"
         onCancel={()=>setCommit(null)}
-        onConfirm={(r)=>{ up({committed:commit.id, sentToPI:true, phase:"approval"});
+        onConfirm={(r)=>{ up({committed:commit.id, sentToPI:true, commitNote:r, phase:"approval"});
           log("ok", `${commit.id} committed and shared for P&I approval.`, r);
           setCommit(null); toast(commit.id + " shared with P&I"); }}/>}
     </div>

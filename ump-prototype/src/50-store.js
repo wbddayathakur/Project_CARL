@@ -55,6 +55,7 @@ function usePlanStore(){
     /* analyze */
     versions: [],
     committed: null,
+    commitNote: null,              // why this version, read first by P&I
     /* approval */
     decisions: {},                 // pid -> { d, reason, at }
     sentToPI: false,
@@ -89,7 +90,7 @@ function usePlanStore(){
     ...s, gapDecisions:{}, contraDecisions:{}, corrections:[], decisions:{}, versions:[], committed:null,
     overrides:{}, justifications:{}, customMap:{}, rankJust:{}, order:SYSTEM_ORDER.slice(), on:{...DEFAULT_ON},
     briefVersion:3, strategyVersion:1, researchRun:false, intakeApproved:null, strategyAccepted:null,
-    lastRun:null, sentToPI:false, timeline:BASE_TIMELINE.slice(),
+    lastRun:null, sentToPI:false, commitNote:null, timeline:BASE_TIMELINE.slice(),
   }, phase), phase })), []);
 
   return { st, up, log, correct, learn, seed, setSt };
@@ -199,9 +200,10 @@ function seedState(base, phase){
   if (order <= 3) return s;
 
   /* Analyze — one version committed */
+  s.commitNote = "The two versions score within half a point of each other, so the rubric is not choosing for me. PV-B misses the 20% 3+ reach goal by 2.3 points and costs $1.30 more on blended CPM, and I am committing it anyway: the weight sits on HBO Max premium CTV, where this client has twice said in call notes they want to be seen before the pack change. I am trading measured reach for context and I will defend that trade.";
   s.committed = "PV-B"; s.sentToPI = true;
   s.timeline = [...s.timeline, { at, kind:"ok", who:"You", text:"PV-B committed and shared for P&I approval.",
-    reason:"The two versions score within half a point of each other, so the rubric is not choosing for me. PV-B is the one I can put in front of this client, because the weight sits where they have twice said they want to be seen. Committing the version whose argument I can make out loud." }];
+    reason:s.commitNote }];
 
   /* Approval — P&I has decided some but not all lines */
   const v = s.versions[1];

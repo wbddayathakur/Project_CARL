@@ -2096,7 +2096,46 @@ const PORTFOLIO = [{
    Deliberately not branded as AI in the UI copy (T8); named for the desk job
    each one does, and each one shows its reasoning.
 --------------------------------------------------------------------------------*/
-const AGENTS = [{
+const AGENTS = [
+/* Added from the Flow Architecture note (6 Sep 2026). The orchestrator is
+   first because everything else runs inside the state machine it holds. */
+{
+  id: "A0",
+  name: "Orchestrator",
+  phase: "All",
+  role: "Holds the state machine, knows every evaluation point inside it, and scores the intermediate status at each one. Below par it loops the phase or surfaces for strategic input.",
+  inputs: ["Phase state", "Every evaluation point and its weight", "Justification scores"],
+  outputs: ["Gate score", "Blocking points and their remedies", "Handoff to the next phase"],
+  guard: "Its only power is to refuse a handoff. It cannot advance the plan, edit an artifact, or overrule the planner, and no point it raises can be waived silently.",
+  learns: "Which blocking points planners routinely argue past — a point argued past every time is a badly written point."
+}, {
+  id: "A0b",
+  name: "Justification Eval",
+  phase: "All",
+  role: "Scores the argument behind a change, never the change itself. A reason that would not survive being read by someone outside the room goes back to its author with the specific thing it is missing.",
+  inputs: ["The planner's or approver's written reason", "What is being changed"],
+  outputs: ["Argument score", "What the argument is missing", "Pass, thin, or sent back"],
+  guard: "Judges form, not conclusion. It has no view on whether the change is right — a planner can argue anything, but not weakly.",
+  learns: "Reasons that passed and were later vindicated or overturned at approval."
+}, {
+  id: "A0c",
+  name: "Evidence Eval",
+  phase: "Intake",
+  role: "Scores the strengths and weaknesses of every record on the RFP graph and writes the probability back onto it. Re-scores the graph whenever a human resolves something on it.",
+  inputs: ["Every record on the RFP graph", "Adjudications and corrections"],
+  outputs: ["Per-record confidence", "What would strengthen the weak ones"],
+  guard: "Every point of a confidence score is attributable to source directness, citation, corroboration, contest and age. Nothing is a model output that cannot be argued with.",
+  learns: "Which weak records turned out to matter, and which strong ones were wrong."
+}, {
+  id: "A0d",
+  name: "Product Knowledge",
+  phase: "Discovery",
+  role: "Answers questions about products, customisations, exclusions and price in the planner's own words, over one index built from the FreeWheel and Operative configs and the pricing documents.",
+  inputs: ["Targeting templates, ad product configs, inventory packages (FreeWheel, Operative)", "Reference pricing, product KPIs (spreadsheets, docs)"],
+  outputs: ["Answers with the configs they came from"],
+  guard: "Every answer names its sources so a number can be checked rather than trusted. It retrieves; it does not recommend.",
+  learns: "The questions planners ask that it answers badly."
+}, {
   id: "A1",
   name: "Intake",
   phase: "Intake",
@@ -2941,6 +2980,923 @@ function positionsFor(pid) {
 }
 </script>
 
+<!-- ================= 25-gates.js ================= -->
+<script>
+/* =============================================================================
+   25-gates.js — the Orchestrator.
+
+   From the Flow Architecture note (6 Sep 2026):
+     · knows the full state machine, the evaluation points, and the current
+       score at each point
+     · understands and scores the intermediate status
+     · if scores are below par, re-runs the loop or surfaces for strategic
+       analysis and input
+
+   Two things live here. The phase gate, which scores whether a handoff is
+   allowed to open at all, and the justification evaluator, which is the
+   `Eval Justifications` box in the Discovery flow — the one whose NO edge
+   loops back to the human instead of forward to the next step.
+
+   Both are deterministic and both show their working. Neither one decides
+   anything: the gate says what is not yet defensible, the evaluator says what
+   an argument is missing. A human still moves the plan (T7, T8).
+   ============================================================================= */
+
+const GATE_PAR = 80; // below par, the handoff does not open
+
+/* -----------------------------------------------------------------------------
+   EVAL JUSTIFICATIONS
+
+   Scores what an argument *contains*, never what it concludes. A planner can
+   argue anything they like; they cannot argue it in a way a reader outside the
+   room could not act on.
+
+   The four tests are the ones a P&I approver actually applies when a line
+   arrives with a reason attached: is there enough of it, does it cite something
+   checkable, is it anchored in the evidence rather than in taste, and does it
+   own what it costs.
+-------------------------------------------------------------------------------*/
+
+const JUST_ANCHORS = ["rfp", "brief", "client", "stated", "clarifi", "position", "p&i", "pi ", "history", "cohort", "kpi", "reach", "frequency", "floor", "ceiling", "cap", "constraint", "avail", "sellout", "sell-out", "yield", "composition", "demo", "viewab", "cpm", "benchmark", "cards", "push list", "do-not-air", "call notes", "evidence", "last year", "q3", "q4", "flight", "pack change", "launch", "competitive"];
+const JUST_CONSEQUENCE = ["cost", "costs", "trade", "instead", "rather than", "at the expense", "gives up", "give up", "worth it", "hit", "sacrific", "in exchange", "pay for", "comes out of", "loses", "lose", "goes backwards", "accept", "tolerat", "downside", "risk", "expensive", "efficiency", "even though", "despite", "knowing"];
+const JUST_PREFERENCE = ["i think", "i prefer", "i feel", "feels", "seems", "looks better", "better", "best", "makes sense", "should be", "want to", "i like", "obviously", "clearly", "just ", "fine", "good idea", "trust me"];
+function evalJustification(text, opts) {
+  const o = Object.assign({
+    kind: "change"
+  }, opts || {});
+  const t = String(text || "").trim();
+  const low = t.toLowerCase();
+  const words = t.split(/\s+/).filter(Boolean).length;
+  const hasAny = list => list.some(k => low.includes(k));
+  const tests = [{
+    id: "substance",
+    label: "Enough of an argument to read",
+    ok: t.length >= 55 && words >= 11,
+    ask: "Two sentences at least. What the system got wrong, and what you know that it does not."
+  }, {
+    id: "specific",
+    label: "Cites something checkable",
+    ok: /\d/.test(t) || /[$%]/.test(t),
+    ask: "Name the number you are arguing about — the CPM, the share, the reach point, the date."
+  }, {
+    id: "grounded",
+    label: "Anchored in the evidence, not in taste",
+    ok: hasAny(JUST_ANCHORS),
+    ask: "Point at the record: the RFP, a clarification, the P&I position, the advertiser's history, the KPI."
+  }, {
+    id: "consequence",
+    label: "Owns what the change costs",
+    ok: hasAny(JUST_CONSEQUENCE),
+    ask: "Say what this gives up. An argument that costs nothing reads as one that was not weighed."
+  }];
+  const passed = tests.filter(x => x.ok);
+  let score = Math.round(passed.length / tests.length * 100);
+
+  /* Preference language on its own is the failure mode this box exists to
+     catch: it reads like a reason and carries none. */
+  const prefOnly = hasAny(JUST_PREFERENCE) && !tests[1].ok && !tests[2].ok;
+  if (prefOnly) score = Math.min(score, 25);
+  return {
+    score,
+    tests,
+    missing: tests.filter(x => !x.ok),
+    prefOnly,
+    verdict: score >= 75 ? "pass" : score >= 50 ? "thin" : "revise",
+    /* The feedback edge in the flow: what the orchestrator sends back. */
+    feedback: prefOnly ? "This reads as a preference rather than an argument. Nothing in it can be checked or contested, so P&I has nothing to approve against." : score >= 75 ? "This is defensible on its own. It goes forward as written." : score >= 50 ? "This will travel, but a reader outside the room would have to ask you a question to act on it." : "Not yet defensible. Sent back rather than forward."
+  };
+}
+
+/* Justifications already on the plan, scored in bulk — used by the gates. */
+function scoreJustifications(map) {
+  const out = Object.entries(map || {}).filter(([, v]) => String(v || "").trim().length > 0).map(([k, v]) => ({
+    key: k,
+    ...evalJustification(v)
+  }));
+  return {
+    all: out,
+    weak: out.filter(x => x.verdict === "revise"),
+    thin: out.filter(x => x.verdict === "thin"),
+    mean: out.length ? Math.round(out.reduce((s, x) => s + x.score, 0) / out.length) : 100
+  };
+}
+
+/* -----------------------------------------------------------------------------
+   THE PHASE GATE
+
+   One evaluation set per handoff. Each point carries its weight, its current
+   score, and — when it is not met — the specific thing that would meet it.
+   The note's rule: "what constitutes the trigger handoff to the Discovery
+   orchestrator — a sound, defensible intake brief is built."
+-------------------------------------------------------------------------------*/
+
+const GATE_META = {
+  intake: {
+    to: "Discovery",
+    from: "Intake orchestrator",
+    asks: "Is a sound, defensible intake brief built?"
+  },
+  discovery: {
+    to: "Strategize",
+    from: "Discovery orchestrator",
+    asks: "Is this ranked list one the planner would defend, product by product?"
+  },
+  strategize: {
+    to: "Analyze",
+    from: "Strategize orchestrator",
+    asks: "Is there a saved allocation whose every deviation is argued?"
+  },
+  analyze: {
+    to: "Approval",
+    from: "Analyze orchestrator",
+    asks: "Is one version chosen, and is the choice legible?"
+  },
+  approval: {
+    to: "Close",
+    from: "Approval orchestrator",
+    asks: "Does every line carry a decision and a reason?"
+  }
+};
+function evaluateGate(phase, st, ctx) {
+  const c = ctx || {};
+  const pt = [];
+  const add = (id, label, w, ok, detail, fix) => pt.push({
+    id,
+    label,
+    w,
+    bar: 100,
+    ok: !!ok,
+    score: ok ? 100 : 0,
+    detail,
+    fix
+  });
+  /* Points that measure the *quality* of an argument are met at a bar, not at a
+     perfect score — a mean of 100 across several reasons is not a real target. */
+  const addP = (id, label, w, score, detail, fix, bar) => {
+    const b = bar == null ? 100 : bar;
+    pt.push({
+      id,
+      label,
+      w,
+      bar: b,
+      ok: score >= b,
+      score: Math.round(score),
+      detail,
+      fix
+    });
+  };
+  if (phase === "intake") {
+    const material = GAPS.filter(g => g.material);
+    const openGaps = material.filter(g => !st.gapDecisions[g.id]);
+    const matContra = CONTRADICTIONS.filter(x => x.material);
+    const openContra = matContra.filter(x => !st.contraDecisions[x.id]);
+    const jm = scoreJustifications(Object.fromEntries(Object.entries(st.gapDecisions).map(([k, v]) => [k, v && v.reason])));
+    addP("G1", "Every material requirement received or inferred, and accepted", 26, material.length ? (material.length - openGaps.length) / material.length * 100 : 100, `${material.length - openGaps.length} of ${material.length} material gaps adjudicated.`, openGaps.length ? `Resolve ${openGaps.map(g => g.id).join(", ")}.` : null);
+    addP("G2", "No contradiction left standing on a material attribute", 22, matContra.length ? (matContra.length - openContra.length) / matContra.length * 100 : 100, `${matContra.length - openContra.length} of ${matContra.length} material contradictions adjudicated.`, openContra.length ? `Adjudicate ${openContra.map(x => x.id).join(", ")}.` : null);
+
+    /* Scored by the Evidence Eval Agent on the RFP graph, not asserted here. */
+    const eg = c.evGraph || evalEvidenceGraph(EVIDENCE, st);
+    addP("G3", "The graph is strong enough to plan an allocation on", 14, eg.plannable, `${eg.plannable}% of ${eg.scored.length} records clear the 60 confidence bar; mean ${eg.mean}.${eg.weak.length ? ` ${eg.weak.length} below it (weakest ${eg.weak[0].id} at ${eg.weak[0].conf}).` : ""}`, eg.weak.length ? `Strengthen ${eg.weak.slice(0, 3).map(w => w.id).join(", ")} — the evidence tab says how.` : null, 75);
+    add("G4", "The brief is approved on the version now current", 24, st.intakeApproved && st.intakeApproved.version === st.briefVersion, st.intakeApproved ? st.intakeApproved.version === st.briefVersion ? `Approved on v${st.intakeApproved.version}.` : `Approved on v${st.intakeApproved.version} but the brief has re-derived to v${st.briefVersion} — the approval lapsed (T9).` : `Brief v${st.briefVersion} is not approved.`, st.intakeApproved ? "Re-approve the current version." : "Approve the brief once the gaps are closed.");
+    addP("G5", "Adjudications carry reasons a reader could act on", 14, jm.all.length ? jm.mean : 0, jm.all.length ? `${jm.all.length} recorded, mean argument score ${jm.mean}.${jm.weak.length ? ` ${jm.weak.length} too thin to travel.` : ""}` : "No adjudication reasons recorded yet.", jm.weak.length ? "Strengthen the reasons flagged on the gaps tab." : null, 70);
+  }
+  if (phase === "discovery") {
+    const ranking = c.ranking || [];
+    const on = ranking.filter(r => r.on);
+    const emptyRegions = FRAME.regions.filter(rg => (FRAME.regionSplit[rg] || 0) > 0 && !on.some(r => r.p.region === rg));
+    const breached = on.filter(r => (r.breaches || []).some(b => b.id === "H2" || b.id === "H6"));
+    const jm = scoreJustifications(st.rankJust);
+    add("D1", "Every region carrying budget has a product in the list", 26, emptyRegions.length === 0, emptyRegions.length ? `${emptyRegions.join(", ")} has an envelope and nothing to spend it on — the solver will report it unallocated.` : "All four regional envelopes have somewhere to go.", emptyRegions.length ? `Add a product in ${emptyRegions.join(", ")}.` : null);
+    add("D2", "No product in the list carries an unresolved hard breach", 24, breached.length === 0, breached.length ? `${breached.map(r => r.p.name.split(" — ")[0]).join(", ")} would be held out of the solve rather than shorten the list quietly.` : "Every product in the list clears its hard constraints.", breached.length ? "Re-target to clear the breach, or take the product out." : null);
+    addP("D3", "Every change to the system's order survives evaluation", 26, jm.all.length ? jm.mean : 100, jm.all.length ? `${jm.all.length} planner change${jm.all.length > 1 ? "s" : ""}, mean argument score ${jm.mean}.${jm.weak.length ? ` ${jm.weak.length} sent back.` : ""}` : "No changes to the system's order — nothing to defend.", jm.weak.length ? `Rewrite the reason on ${jm.weak.map(w => w.key).join(", ")}.` : null, 70);
+    add("D4", "The ranked list and its targeting are accepted", 24, !!st.strategyAccepted, st.strategyAccepted ? `Strategy brief v${st.strategyVersion} accepted.` : "The list has not been accepted yet.", "Accept the list to open the solve.");
+  }
+  if (phase === "strategize") {
+    const res = c.res || {
+      unallocated: [],
+      dropped: []
+    };
+    const cons = c.cons || [];
+    const jm = scoreJustifications(st.justifications);
+    const ovr = Object.keys(st.overrides || {});
+    const unjust = ovr.filter(k => !(st.justifications || {})[k]);
+    const hardFail = cons.filter(x => x.kind === "hard" && !x.ok);
+    add("S1", "The optimiser has solved from the accepted list", 18, !!st.lastRun || c.res && c.res.lines && c.res.lines.length, st.lastRun ? `Last solved ${st.lastRun}.` : "Not run yet.", "Run the solve.");
+    addP("S2", "Every override is argued, and the argument holds", 28, ovr.length === 0 ? 100 : unjust.length ? 0 : jm.mean, ovr.length === 0 ? "No overrides — the optimiser's own answer stands." : unjust.length ? `${unjust.length} override${unjust.length > 1 ? "s" : ""} carrying no reason at all.` : `${ovr.length} override${ovr.length > 1 ? "s" : ""}, mean argument score ${jm.mean}.${jm.weak.length ? ` ${jm.weak.length} sent back.` : ""}`, unjust.length ? "Attach a reason to every override." : jm.weak.length ? "Rewrite the reasons that were sent back." : null, 70);
+    add("S3", "No regional envelope left unallocated", 20, (res.unallocated || []).length === 0, (res.unallocated || []).length ? `${res.unallocated.map(u => `${u.region} ${money1(u.amount)}`).join(", ")} has nowhere to go.` : "Every envelope is spent where it was budgeted.", (res.unallocated || []).length ? "Go back to Discovery and add a product in that region." : null);
+    add("S4", "No hard constraint breached in the solve", 16, hardFail.length === 0, hardFail.length ? `${hardFail.map(x => x.id).join(", ")} breached.` : "All hard constraints clear.", hardFail.length ? "Re-target or re-order until the breach clears." : null);
+    add("S5", "At least one version saved", 18, (st.versions || []).length > 0, `${(st.versions || []).length} saved.`, "Save a version you would defend.");
+  }
+  if (phase === "analyze") {
+    const vs = st.versions || [];
+    const cur = vs.find(v => v.id === st.committed);
+    const best = cur || vs[vs.length - 1];
+    const jm = best ? scoreJustifications(best.justifications) : {
+      mean: 100,
+      weak: [],
+      all: []
+    };
+    const missKpi = best && best.roll.reach3 < FRAME.reachGoal3;
+    add("A1", "More than one version to choose between", 16, vs.length >= 2, `${vs.length} version${vs.length === 1 ? "" : "s"} saved.`, "Save a second version so the choice is a real one.");
+    add("A2", "One version is committed", 30, !!st.committed, st.committed ? `${st.committed} committed.` : "Nothing committed.", "Commit the version you would put in front of the client.");
+    addP("A3", "The committed version scores against the rubric", 20, best ? Math.min(best.rubric.total / 85 * 100, 100) : 0, best ? `Rubric ${Math.round(best.rubric.total)} against an 85 bar.` : "No version to score.", "A version below the bar needs a reason it still goes forward.", 90);
+    addP("A4", "Every override in it carries an argument that held", 20, jm.all.length ? jm.mean : 100, jm.all.length ? `${jm.all.length} override${jm.all.length > 1 ? "s" : ""}, mean score ${jm.mean}.` : "No overrides to defend.", jm.weak.length ? "Strengthen the argument before P&I reads it." : null, 70);
+
+    /* Only assessable once a version is committed — the explanation lives in the
+       commit note, which is the thing P&I reads first. */
+    const noteEv = st.commitNote ? evalJustification(st.commitNote) : null;
+    addP("A5", "A missed KPI is explained, not left to be found", 14, !st.committed ? 0 : !missKpi ? 100 : noteEv ? noteEv.score : 0, !st.committed ? missKpi && best ? `3+ reach is ${pct(best.roll.reach3, 1)} against a ${pct(FRAME.reachGoal3, 0)} goal — the commit note has to carry why.` : "Assessed at commit." : !missKpi ? "The stated KPI is met." : noteEv ? `Commit note scored ${noteEv.score}.` : "No commit note recorded.", !st.committed ? "Say why this version still goes forward when you commit it." : null, 70);
+  }
+  if (phase === "approval") {
+    const v = (st.versions || []).find(x => x.id === st.committed);
+    const lines = v ? v.lines : [];
+    const dec = st.decisions || {};
+    const decided = lines.filter(l => dec[l.pid]);
+    const noReason = decided.filter(l => !(dec[l.pid].reason || "").trim());
+    const jm = scoreJustifications(Object.fromEntries(decided.map(l => [l.pid, dec[l.pid].reason])));
+    addP("P1", "Every line has a decision", 50, lines.length ? decided.length / lines.length * 100 : 0, `${decided.length} of ${lines.length} decided.`, decided.length < lines.length ? `${lines.length - decided.length} line${lines.length - decided.length === 1 ? "" : "s"} still open.` : null);
+    add("P2", "Every decision carries a reason", 24, noReason.length === 0, noReason.length ? `${noReason.length} decision${noReason.length > 1 ? "s" : ""} with no reason recorded.` : "Each decision states its grounds.", "A decision without a reason is not an instruction the planner can act on.");
+    addP("P3", "Disapprovals are actionable, not verdicts", 26, jm.all.length ? jm.mean : 0, jm.all.length ? `Mean reason score ${jm.mean} across ${jm.all.length} decision${jm.all.length > 1 ? "s" : ""}.` : "No reasons yet.", jm.weak.length ? "Say what would make the line approvable." : null, 70);
+  }
+  const wsum = pt.reduce((s, x) => s + x.w, 0) || 1;
+  const score = Math.round(pt.reduce((s, x) => s + x.score * x.w, 0) / wsum);
+  const blockers = pt.filter(x => !x.ok);
+  return {
+    phase,
+    score,
+    par: GATE_PAR,
+    open: score >= GATE_PAR && blockers.length === 0,
+    points: pt,
+    blockers,
+    meta: GATE_META[phase] || {},
+    /* What the orchestrator does with the score, in its own words. */
+    verdict: blockers.length === 0 ? "handoff" : score >= GATE_PAR ? "surface" : "loop"
+  };
+}
+</script>
+
+<!-- ================= 26-evidence.js ================= -->
+<script>
+/* =============================================================================
+   26-evidence.js — the RFP graph and the Evidence Eval Agent.
+
+   From the Flow Architecture note: intake does not assemble a brief directly.
+   Every agent writes into one shared structure — `BUILD RFP GRAPH` — and reads
+   back out of it. Sitting on that graph is an `Evidence Eval Agent` that
+   evaluates the *strengths and weaknesses of each record* and updates its
+   probability score. The brief is then built from the graph, not from the
+   sources.
+
+   The consequence worth having in the UI: two records can say the same thing
+   and not be worth the same. A number read off page 2 of the RFP and a number
+   inferred from four comparable advertisers are both evidence; only one of them
+   is worth planning a $18.5M allocation on without asking.
+
+   The score is deterministic and every point of it is attributable — no record
+   carries a confidence it cannot explain.
+   ============================================================================= */
+
+const EV_TODAY = "2026-09-09";
+
+/* Directness of the source. A stated number outranks an inferred one, and a
+   planner correction outranks both because a human put their name on it. */
+const EV_BASE = {
+  stated: 78,
+  clarified: 74,
+  planner: 80,
+  seller: 70,
+  hist: 52,
+  cohort: 42,
+  gap: 12
+};
+function evDays(ts) {
+  const a = new Date(String(ts || "").slice(0, 10)),
+    b = new Date(EV_TODAY);
+  const d = Math.round((b - a) / 86400000);
+  return isNaN(d) ? null : d;
+}
+function scoreEvidence(r, all, adj) {
+  const a = adj || {
+    contra: {},
+    attrs: {}
+  };
+  const strengths = [],
+    weaknesses = [];
+  let s = EV_BASE[r.cls] != null ? EV_BASE[r.cls] : 50;
+
+  /* The planner has adjudicated this attribute and put their name on the
+     value. That is the strongest thing that can happen to an inference: it
+     stops being a guess the system is carrying alone. */
+  const owned = !!a.attrs[r.attr];
+  strengths.push({
+    t: PROV[r.cls] ? PROV[r.cls].label : r.cls,
+    v: EV_BASE[r.cls] || 50
+  });
+
+  /* Cited to a place a reader can go and check. */
+  const cited = r.loc && r.loc !== "—" && r.loc !== "";
+  if (cited) {
+    s += 9;
+    strengths.push({
+      t: `Cited to ${r.loc}`,
+      v: +9
+    });
+  } else weaknesses.push({
+    t: "No location in the source — cannot be re-checked without asking",
+    v: -9,
+    fix: "Ask the AE where this came from."
+  });
+  if (!cited) s -= 9;
+
+  /* Corroboration: another record on the same attribute saying the same thing. */
+  const same = (all || []).filter(x => x.id !== r.id && x.attr === r.attr);
+  const agree = same.filter(x => String(x.value).trim() === String(r.value).trim());
+  if (agree.length) {
+    s += 8;
+    strengths.push({
+      t: `Corroborated by ${agree.map(x => x.id).join(", ")}`,
+      v: +8
+    });
+  }
+
+  /* Contested: another record on this attribute disagrees. Adjudicating the
+     contradiction is what clears it — the losing record is superseded, never
+     deleted, and the surviving one stops carrying the doubt. */
+  const contested = CONTRADICTIONS.filter(c => c.a.ev === r.id || c.b.ev === r.id || c.attr === r.attr);
+  const openContest = contested.filter(c => !a.contra[c.id]);
+  if (openContest.length) {
+    s -= 22;
+    weaknesses.push({
+      t: `Contested by ${openContest.map(c => c.id).join(", ")} — another record on this attribute disagrees`,
+      v: -22,
+      fix: "Adjudicate the contradiction; the losing record is superseded, not deleted."
+    });
+  } else if (contested.length) {
+    s += 6;
+    strengths.push({
+      t: `Contradiction ${contested.map(c => c.id).join(", ")} adjudicated`,
+      v: +6
+    });
+  }
+  if (owned) {
+    s += 22;
+    strengths.push({
+      t: "Planner adjudicated this attribute and owns the value",
+      v: +22
+    });
+  }
+
+  /* Age. An inference drawn months ago is weaker than one drawn this week; a
+     stated fact does not rot the same way, and neither does one a human has
+     just re-affirmed. */
+  const age = evDays(r.ts);
+  if (age != null && age > 90 && (r.cls === "hist" || r.cls === "cohort") && !owned) {
+    s -= 10;
+    weaknesses.push({
+      t: `Inferred ${age} days ago, before the flight was priced`,
+      v: -10,
+      fix: "Adjudicate the attribute, or re-run the inference against the current cohort."
+    });
+  } else if (age != null && age <= 30) {
+    s += 4;
+    strengths.push({
+      t: `Arrived ${age} day${age === 1 ? "" : "s"} ago`,
+      v: +4
+    });
+  }
+
+  /* An inference that does not name what it was drawn from is not an
+     inference, it is an assertion. */
+  if ((r.cls === "hist" || r.cls === "cohort") && !owned && !/\d/.test(String(r.src))) {
+    weaknesses.push({
+      t: "Basis is named but not counted — no deal or cohort size given",
+      v: -6,
+      fix: "Show n. An inference from four deals reads differently from one from forty."
+    });
+    s -= 6;
+  }
+  s = clamp(Math.round(s), 5, 99);
+  return {
+    id: r.id,
+    conf: s,
+    strengths,
+    weaknesses,
+    band: s >= 80 ? "high" : s >= 60 ? "workable" : s >= 40 ? "thin" : "weak",
+    /* What the agent writes back onto the graph. */
+    note: s >= 80 ? "Plan on it." : s >= 60 ? "Plan on it, and say in the brief that you did." : s >= 40 ? "Usable as a starting position, not as a commitment." : "Do not carry this into an allocation without asking."
+  };
+}
+
+/* The whole graph, scored against what the planner has adjudicated so far.
+   This is the `Update probabilities / score` edge in the note: the agent
+   re-scores the graph every time a human resolves something on it. */
+function evalEvidenceGraph(records, st) {
+  const all = records || EVIDENCE;
+  const s = st || {};
+  const adj = {
+    contra: s.contraDecisions || {},
+    attrs: Object.fromEntries(Object.keys(s.gapDecisions || {}).map(gid => [(GAPS.find(g => g.id === gid) || {}).attr, true]).filter(([k]) => k).concat(Object.keys(s.contraDecisions || {}).map(cid => [(CONTRADICTIONS.find(c => c.id === cid) || {}).attr, true]).filter(([k]) => k)))
+  };
+  const scored = all.map(r => scoreEvidence(r, all, adj));
+  const by = Object.fromEntries(scored.map(x => [x.id, x]));
+  const mean = scored.length ? Math.round(scored.reduce((s, x) => s + x.conf, 0) / scored.length) : 0;
+  return {
+    scored,
+    by,
+    mean,
+    weak: scored.filter(x => x.conf < 60).sort((a, b) => a.conf - b.conf),
+    high: scored.filter(x => x.conf >= 80).length,
+    /* Share of the graph the brief can be planned on without a question. */
+    plannable: scored.length ? Math.round(scored.filter(x => x.conf >= 60).length / scored.length * 100) : 0
+  };
+}
+
+/* --------------------------------------------------------------- the surface */
+const ConfBar = ({
+  v
+}) => /*#__PURE__*/React.createElement("div", {
+  className: "row",
+  style: {
+    gap: 7,
+    alignItems: "center"
+  }
+}, /*#__PURE__*/React.createElement("div", {
+  className: "bar " + (v >= 80 ? "g" : v >= 60 ? "" : "a"),
+  style: {
+    width: 52,
+    flexShrink: 0
+  }
+}, /*#__PURE__*/React.createElement("i", {
+  style: {
+    width: v + "%"
+  }
+})), /*#__PURE__*/React.createElement("span", {
+  className: "mono tiny",
+  style: {
+    width: 20
+  }
+}, v));
+
+/* The Evidence Eval Agent's own panel: not a list of records, a list of the
+   ones that would not survive a question. */
+const EvidenceEval = ({
+  graph,
+  onFix
+}) => /*#__PURE__*/React.createElement(Card, {
+  title: "Evidence eval agent",
+  sub: "Scores the strengths and weaknesses of each record on the RFP graph, and writes the probability back onto it.",
+  right: /*#__PURE__*/React.createElement(Chip, {
+    c: graph.plannable >= 80 ? "g" : graph.plannable >= 60 ? "a" : "r"
+  }, graph.plannable, "% PLANNABLE")
+}, /*#__PURE__*/React.createElement("div", {
+  className: "statgrid",
+  style: {
+    gridTemplateColumns: "1fr 1fr 1fr",
+    marginBottom: 13
+  }
+}, /*#__PURE__*/React.createElement(Stat, {
+  label: "Records on the graph",
+  value: graph.scored.length
+}), /*#__PURE__*/React.createElement(Stat, {
+  label: "Mean confidence",
+  value: graph.mean
+}), /*#__PURE__*/React.createElement(Stat, {
+  label: "Below the 60 bar",
+  value: graph.weak.length,
+  tone: graph.weak.length ? "bad" : "good"
+})), graph.weak.length === 0 ? /*#__PURE__*/React.createElement("div", {
+  className: "banner g"
+}, /*#__PURE__*/React.createElement("span", {
+  className: "bi"
+}, "Sound"), /*#__PURE__*/React.createElement("div", null, "Every record on the graph clears the 60 bar. The brief can be planned on without a question back to the AE.")) : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+  className: "lbl"
+}, "Weakest records, and what would strengthen them"), /*#__PURE__*/React.createElement("div", {
+  className: "col",
+  style: {
+    gap: 10
+  }
+}, graph.weak.slice(0, 5).map(x => {
+  const rec = EVIDENCE.find(r => r.id === x.id) || {};
+  return /*#__PURE__*/React.createElement("div", {
+    key: x.id,
+    style: {
+      borderLeft: "2px solid var(--line)",
+      paddingLeft: 10
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "row",
+    style: {
+      gap: 8,
+      alignItems: "center"
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "mono tiny"
+  }, x.id), /*#__PURE__*/React.createElement(ProvChip, {
+    cls: rec.cls,
+    small: true
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "grow tiny"
+  }, rec.attr), /*#__PURE__*/React.createElement(ConfBar, {
+    v: x.conf
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "mini muted",
+    style: {
+      marginTop: 3
+    }
+  }, x.note), x.weaknesses.map((w, i) => /*#__PURE__*/React.createElement("div", {
+    key: i,
+    className: "mini",
+    style: {
+      marginTop: 3
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: "var(--bad)"
+    }
+  }, "\u2212", Math.abs(w.v)), " ", /*#__PURE__*/React.createElement("span", {
+    className: "muted"
+  }, w.t), w.fix && /*#__PURE__*/React.createElement("div", {
+    className: "mini",
+    style: {
+      color: "var(--accent)",
+      marginLeft: 0
+    }
+  }, "\u2192 ", w.fix))));
+}))), /*#__PURE__*/React.createElement("div", {
+  className: "tiny dim",
+  style: {
+    marginTop: 12,
+    lineHeight: 1.6
+  }
+}, "Confidence is not a model output \u2014 every point of it is attributable to the directness of the source, whether it is cited to a place you could go and check, whether anything corroborates or contests it, and how old it is. A record can be argued with on any one of those."));
+</script>
+
+<!-- ================= 27-rag.js ================= -->
+<script>
+/* =============================================================================
+   27-rag.js — the Products / Packaging system.
+
+   From the Flow Architecture note: the product catalogue is not a table the
+   planner browses. Targeting templates, ad product configs and content
+   inventory packages come out of FreeWheel and Operative; reference pricing
+   and product KPIs live in spreadsheets and documents. All of it is vectorised
+   into one product RAG, and Discovery asks it questions in the planner's own
+   words:
+
+     1. What product meets these KPIs
+     2. What customisations are available on this product
+     3. I want to exclude Mature content off this product targeting
+
+   The retrieval here is deterministic rather than embedded — the point of the
+   surface is the shape of the interaction and the provenance of the answer,
+   which is what has to be right before anyone builds the real index. Every
+   answer names the configs and documents it was drawn from, so a planner can
+   go and check a number rather than trusting it.
+   ============================================================================= */
+
+/* The corpus, and where each part of it actually comes from. */
+const RAG_SOURCES = [{
+  id: "FW-TT",
+  name: "Targeting templates",
+  sys: "FreeWheel",
+  kind: "config",
+  n: 214,
+  desc: "Every targeting dimension sellable against a product, and which combinations are legal."
+}, {
+  id: "OP-APC",
+  name: "Ad product configs",
+  sys: "Operative",
+  kind: "config",
+  n: 186,
+  desc: "Product definitions, formats, pod rules, guarantee types."
+}, {
+  id: "FW-CIP",
+  name: "Content inventory packages",
+  sys: "FreeWheel",
+  kind: "config",
+  n: 97,
+  desc: "Which titles and dayparts sit inside each package, and the exclusion lists."
+}, {
+  id: "DOC-RP",
+  name: "Reference pricing",
+  sys: "Spreadsheet",
+  kind: "doc",
+  n: 1,
+  desc: "Rate card, floors, and the regional CPM benchmarks. Owned by P&I, refreshed quarterly."
+}, {
+  id: "DOC-KPI",
+  name: "Product KPIs",
+  sys: "Doc",
+  kind: "doc",
+  n: 1,
+  desc: "Measured delivery by product: viewability, VCR, attention, in-demo composition."
+}];
+
+/* The exclusion vocabulary FreeWheel actually carries, so "exclude mature
+   content" resolves to a real config rather than a free-text wish. */
+/* An exclusion only means something on inventory that carries the thing being
+   excluded. Saying "supported on all 22 products" would be a lie the planner
+   would catch the first time they checked. */
+const RAG_EXCLUSIONS = [{
+  k: "mature",
+  label: "Mature / TV-MA content",
+  cfg: "FW-CIP · rating_exclude=[TV-MA,R]",
+  availX: 0.78,
+  cpmX: 1.06,
+  note: "Removes Adult Swim entirely and roughly a fifth of HBO Max originals inventory.",
+  applies: p => /HBO Max|Adult Swim|TNT/.test(p.brand)
+}, {
+  k: "ugc",
+  label: "UGC-adjacent placements",
+  cfg: "FW-CIP · ugc_adjacent=false",
+  availX: 0.78,
+  cpmX: 1.05,
+  note: "The lever that clears the 80% viewability floor on Bleacher Report.",
+  applies: p => p.medium === "Digital"
+}, {
+  k: "news",
+  label: "Hard-news adjacency",
+  cfg: "FW-TT · vertical_exclude=[news]",
+  availX: 0.94,
+  cpmX: 1.02,
+  note: "Already applied at eligibility for this brief — CNN products are out.",
+  applies: p => /CNN/.test(p.brand)
+}, {
+  k: "sport",
+  label: "Live sport",
+  cfg: "FW-CIP · package_exclude=[live_sport]",
+  availX: 0.71,
+  cpmX: 0.94,
+  note: "Takes out the held Bleacher Report and TNT sport packages.",
+  applies: p => /Bleacher|TNT Sports|Eurosport|TNT/.test(p.brand)
+}];
+function ragMoney(n) {
+  return "$" + Number(n).toFixed(2);
+}
+
+/* -----------------------------------------------------------------------------
+   Query resolution. Intent is matched on the words a planner would actually
+   use; each intent returns rows plus the sources it drew on.
+-------------------------------------------------------------------------------*/
+function ragQuery(q, ctx) {
+  const s = String(q || "").toLowerCase().trim();
+  const c = ctx || {};
+  if (!s) return null;
+  const has = (...w) => w.some(x => s.includes(x));
+  const region = FRAME.regions.find(r => s.includes(r.toLowerCase()));
+  const named = PRODUCTS.find(p => s.includes(p.brand.toLowerCase()) || s.includes(p.name.toLowerCase().split(" — ")[0]));
+  const budget = (s.match(/\$?\s?(\d+(?:\.\d+)?)\s?(?:cpm|dollars?)?/) || [])[1];
+
+  /* 3 — exclusions */
+  const exc = RAG_EXCLUSIONS.find(e => s.includes(e.k)) || (has("exclude", "without", "off", "remove", "block") ? RAG_EXCLUSIONS[0] : null);
+  if (exc && has("exclude", "without", "off", "remove", "block", "mature", "ugc")) {
+    const scope = PRODUCTS.filter(p => (!region || p.region === region) && exc.applies(p));
+    const pool = named ? exc.applies(named) ? [named] : [] : scope;
+    if (!pool.length) return {
+      intent: "exclusion",
+      headline: `${exc.label} — nothing in scope carries it`,
+      body: /*#__PURE__*/React.createElement(React.Fragment, null, "The exclusion is a real config (", /*#__PURE__*/React.createElement("span", {
+        className: "mono"
+      }, exc.cfg), ") but none of the products", named ? /*#__PURE__*/React.createElement(React.Fragment, null, " on ", named.name) : region ? /*#__PURE__*/React.createElement(React.Fragment, null, " in ", region) : null, " carry this content in the first place. Applying it would cost avails and change nothing."),
+      rows: [],
+      sources: ["FW-CIP"],
+      caveat: "An exclusion with no effect is worth knowing about — it is a line of negotiation you can give away free."
+    };
+    return {
+      intent: "exclusion",
+      headline: `${exc.label} — applies to ${pool.length} product${pool.length === 1 ? "" : "s"}, at a cost`,
+      body: /*#__PURE__*/React.createElement(React.Fragment, null, "The exclusion resolves to ", /*#__PURE__*/React.createElement("span", {
+        className: "mono"
+      }, exc.cfg), ", which is a real targeting dimension rather than a note on the insertion order. ", exc.note),
+      rows: pool.slice(0, 6).map(p => ({
+        k: p.id,
+        a: p.name,
+        b: `avails ${imps(Math.round(p.availK * exc.availX))} (was ${imps(p.availK)})`,
+        c: `${ragMoney(p.openCpm * exc.cpmX)} (was ${ragMoney(p.openCpm)})`,
+        d: `${Math.round((1 - exc.availX) * 100)}% of inventory removed`
+      })),
+      sources: ["FW-CIP", "FW-TT", "DOC-RP"],
+      caveat: "Applying it here sets it on the product for this plan only. It does not change the package."
+    };
+  }
+
+  /* 2 — customisations available on a product */
+  if (has("customis", "customiz", "options", "levers", "can i", "available on")) {
+    const p = named || c.top && c.top.p;
+    const opts = CUSTOM_OPTIONS.filter(o => o.medium === "both" || !p || o.medium.toLowerCase() === p.medium.toLowerCase());
+    return {
+      intent: "customisation",
+      headline: p ? `${opts.length} customisations available on ${p.name}` : `${opts.length} customisations in the catalogue`,
+      body: /*#__PURE__*/React.createElement(React.Fragment, null, "Each one is a template that already exists in the ad server, so the avails and price consequence is known before you commit to it \u2014 not estimated afterwards."),
+      rows: opts.map(o => ({
+        k: o.id,
+        a: o.label,
+        b: o.desc,
+        c: o.cpmX !== 1 ? `CPM ×${o.cpmX.toFixed(2)}` : "no price change",
+        d: o.availX !== 1 ? `avails ×${o.availX.toFixed(2)}` : "no avails change"
+      })),
+      sources: ["FW-TT", "OP-APC", "DOC-RP"],
+      caveat: "Setting one re-scores the product and can move it in the ranking. That is the point of setting it in Discovery rather than at trafficking."
+    };
+  }
+
+  /* price */
+  if (has("cpm", "price", "cheap", "under", "below", "budget", "expensive") && budget) {
+    const cap = parseFloat(budget);
+    const pool = PRODUCTS.filter(p => (!region || p.region === region) && p.openCpm <= cap).sort((a, b) => b.kpiFit - a.kpiFit);
+    return {
+      intent: "price",
+      headline: `${pool.length} products clear ${ragMoney(cap)}${region ? ` in ${region}` : ""}`,
+      body: /*#__PURE__*/React.createElement(React.Fragment, null, "Open CPM, not card. The floor is what P&I will not go below and is a different number \u2014 both are shown, because a product that clears your ceiling but sits on its floor has no negotiating room."),
+      rows: pool.slice(0, 8).map(p => ({
+        k: p.id,
+        a: p.name,
+        b: `${p.region} · ${p.medium}`,
+        c: `open ${ragMoney(p.openCpm)} · floor ${ragMoney(p.floorCpm)}`,
+        d: `KPI fit ${p.kpiFit}`
+      })),
+      sources: ["DOC-RP", "OP-APC"],
+      caveat: "Reference pricing is refreshed quarterly. A number older than the quarter is a starting position, not a rate."
+    };
+  }
+
+  /* 1 — which product meets these KPIs (the default, and the most common ask) */
+  const wantsReach = has("reach", "3+", "frequency", "incremental", "light");
+  const pool = PRODUCTS.filter(p => !region || p.region === region).map(p => ({
+    p,
+    fit: p.kpiFit + (wantsReach ? p.reachK / 1000 : 0)
+  })).sort((a, b) => b.fit - a.fit);
+  return {
+    intent: "kpi",
+    headline: region ? `Best fit against the brief's KPIs in ${region}` : "Best fit against the brief's KPIs, across all four regions",
+    body: /*#__PURE__*/React.createElement(React.Fragment, null, "Matched on the KPIs in the intake brief \u2014 ", pct(FRAME.reachGoal3, 0), " 3+ reach against ", FRAME.demo, ", digital blended CPM under ", cpmf(FRAME.cpmCeiling), ", viewability at or above ", pct(FRAME.viewFloor, 0), ". This is the same measured delivery the ranking scores on, so the two cannot disagree."),
+    rows: pool.slice(0, 7).map(({
+      p
+    }) => ({
+      k: p.id,
+      a: p.name,
+      b: `${p.region} · ${p.medium} · ${p.format}`,
+      c: `KPI fit ${p.kpiFit} · reach ${imps(p.reachK)}`,
+      d: `${pct(p.demoComp, 0)} in demo${p.viewability ? ` · ${pct(p.viewability, 0)} viewable` : ""}`
+    })),
+    sources: ["DOC-KPI", "OP-APC", "FW-CIP"],
+    caveat: "KPI fit is measured delivery from the last four quarters, not a promise. It is one of five ranking criteria, not the ranking."
+  };
+}
+
+/* --------------------------------------------------------------- the surface */
+const RAG_EXAMPLES = ["What product meets these KPIs?", "What customisations are available on HBO Max?", "I want to exclude Mature content off this product targeting", "What clears $30 CPM in EMEA?"];
+const ProductRAG = ({
+  ctx
+}) => {
+  const [q, setQ] = useState("");
+  const [asked, setAsked] = useState(null);
+  const res = useMemo(() => asked ? ragQuery(asked, ctx) : null, [asked, ctx]);
+  const go = text => {
+    setQ(text);
+    setAsked(text);
+  };
+  return /*#__PURE__*/React.createElement(Card, {
+    title: "Product knowledge",
+    sub: "Targeting templates, product configs and inventory packages out of FreeWheel and Operative; pricing and KPIs out of the spreadsheets. Asked in your words.",
+    right: /*#__PURE__*/React.createElement(Chip, {
+      c: "n"
+    }, RAG_SOURCES.reduce((s, x) => s + x.n, 0), " configs indexed")
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "row",
+    style: {
+      gap: 8
+    }
+  }, /*#__PURE__*/React.createElement("input", {
+    className: "inp",
+    style: {
+      flex: 1
+    },
+    value: q,
+    placeholder: "Ask about products, KPIs, customisations, exclusions, price\u2026",
+    onChange: e => setQ(e.target.value),
+    onKeyDown: e => {
+      if (e.key === "Enter") go(q);
+    }
+  }), /*#__PURE__*/React.createElement(Btn, {
+    c: "pri",
+    onClick: () => go(q),
+    disabled: !q.trim()
+  }, "Ask")), /*#__PURE__*/React.createElement("div", {
+    className: "row wrap",
+    style: {
+      gap: 6,
+      marginTop: 9
+    }
+  }, RAG_EXAMPLES.map((x, i) => /*#__PURE__*/React.createElement("button", {
+    key: i,
+    className: "chip o",
+    style: {
+      cursor: "pointer"
+    },
+    onClick: () => go(x)
+  }, x))), res && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "hr"
+  }), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 13,
+      fontWeight: 600,
+      marginBottom: 4
+    }
+  }, res.headline), /*#__PURE__*/React.createElement("div", {
+    className: "tiny muted",
+    style: {
+      lineHeight: 1.6,
+      marginBottom: 11
+    }
+  }, res.body), /*#__PURE__*/React.createElement("div", {
+    className: "col",
+    style: {
+      gap: 0
+    }
+  }, res.rows.length === 0 && /*#__PURE__*/React.createElement("div", {
+    className: "tiny dim"
+  }, "No rows \u2014 see the note above."), res.rows.map((r, i) => /*#__PURE__*/React.createElement("div", {
+    key: r.k,
+    className: "row",
+    style: {
+      gap: 10,
+      padding: "7px 0",
+      borderTop: i ? "1px solid var(--line)" : "none",
+      alignItems: "baseline"
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "mono tiny",
+    style: {
+      width: 34,
+      flexShrink: 0
+    }
+  }, r.k), /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: "1 1 200px",
+      minWidth: 0
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12
+    }
+  }, r.a), /*#__PURE__*/React.createElement("div", {
+    className: "mini dim"
+  }, r.b)), /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: "0 1 190px",
+      minWidth: 0,
+      textAlign: "right"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "tiny"
+  }, r.c), /*#__PURE__*/React.createElement("div", {
+    className: "mini dim"
+  }, r.d))))), /*#__PURE__*/React.createElement("div", {
+    className: "hr"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "lbl"
+  }, "Drawn from"), /*#__PURE__*/React.createElement("div", {
+    className: "col",
+    style: {
+      gap: 5
+    }
+  }, res.sources.map(id => {
+    const s = RAG_SOURCES.find(x => x.id === id);
+    if (!s) return null;
+    return /*#__PURE__*/React.createElement("div", {
+      key: id,
+      className: "row",
+      style: {
+        gap: 8,
+        alignItems: "baseline"
+      }
+    }, /*#__PURE__*/React.createElement(Chip, {
+      c: s.kind === "config" ? "b" : "a"
+    }, s.sys), /*#__PURE__*/React.createElement("div", {
+      style: {
+        minWidth: 0
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "tiny"
+    }, s.name), " ", /*#__PURE__*/React.createElement("span", {
+      className: "mini dim"
+    }, "\xB7 ", s.n > 1 ? `${s.n} configs` : "1 document", " \xB7 ", s.desc)));
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "tiny dim",
+    style: {
+      marginTop: 9
+    }
+  }, res.caveat)), !res && /*#__PURE__*/React.createElement("div", {
+    className: "tiny dim",
+    style: {
+      marginTop: 11,
+      lineHeight: 1.6
+    }
+  }, "[OPEN] The real index is vectorised over the configs themselves, so a product that changes in Operative changes here without anyone re-typing it. What is not settled is refresh \u2014 a planner reading a stale avails number is worse than one who knows to go and look."));
+};
+</script>
+
 <!-- ================= 30-kit.js ================= -->
 <script>
 /* =============================================================================
@@ -3141,72 +4097,8 @@ const Drawer = ({
   className: "modal-f"
 }, foot)));
 
-/* -------------------------------------------------------- justify-to-change */
-/* T6: justify, then override. A change without a stated reason is not accepted.
-   The reason travels forward into the plan brief and the approval package. */
-const Justify = ({
-  title,
-  what,
-  min = 25,
-  onCancel,
-  onConfirm,
-  verb = "Record change",
-  hints = []
-}) => {
-  const [t, setT] = useState("");
-  const ok = t.trim().length >= min;
-  return /*#__PURE__*/React.createElement(Modal, {
-    title: title,
-    sub: "Every deviation from the system proposal carries a justification that travels forward (T6).",
-    onClose: onCancel,
-    footer: /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
-      className: "tiny dim"
-    }, ok ? "This reason will be attached to the strategy brief and the approval package." : `${min - t.trim().length} more characters. A reason P&I can read on its own.`), /*#__PURE__*/React.createElement("div", {
-      style: {
-        flex: 1
-      }
-    }), /*#__PURE__*/React.createElement(Btn, {
-      onClick: onCancel
-    }, "Cancel"), /*#__PURE__*/React.createElement(Btn, {
-      c: "pri",
-      disabled: !ok,
-      onClick: () => onConfirm(t.trim())
-    }, verb))
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "banner b",
-    style: {
-      marginBottom: 14
-    }
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "bi"
-  }, "Change"), /*#__PURE__*/React.createElement("div", null, what)), /*#__PURE__*/React.createElement("label", {
-    className: "lbl"
-  }, "Why"), /*#__PURE__*/React.createElement("textarea", {
-    className: "inp",
-    autoFocus: true,
-    value: t,
-    onChange: e => setT(e.target.value),
-    placeholder: "State what the system got wrong and why your change is right. This is what P&I will read."
-  }), hints.length > 0 && /*#__PURE__*/React.createElement("div", {
-    style: {
-      marginTop: 10
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "lbl"
-  }, "Reasons used on this deal before"), /*#__PURE__*/React.createElement("div", {
-    className: "row wrap",
-    style: {
-      gap: 6
-    }
-  }, hints.map((h, i) => /*#__PURE__*/React.createElement("button", {
-    key: i,
-    className: "chip o",
-    style: {
-      cursor: "pointer"
-    },
-    onClick: () => setT(h)
-  }, h.slice(0, 64), "\u2026")))));
-};
+/* Justify-to-change lives in 35-gate.js as `JustifyG`, because a justification
+   is now evaluated before it is accepted rather than merely required. */
 
 /* ------------------------------------------------------------- toast system */
 const ToastCtx = React.createContext(() => {});
@@ -3516,6 +4408,348 @@ const FlightStrip = ({
       background: dark.includes(i + 1) ? "repeating-linear-gradient(45deg,#e2e6ea,#e2e6ea 3px,#fff 3px,#fff 6px)" : i < half ? "var(--accent)" : "#9dbef2"
     }
   })));
+};
+</script>
+
+<!-- ================= 35-gate.js ================= -->
+<script>
+/* =============================================================================
+   35-gate.js — the Orchestrator's two surfaces.
+
+   `Gate`     — the handoff panel. Score, evaluation points, and the button that
+                stays shut until the phase is defensible.
+   `JustifyG` — Justify, with `Eval Justifications` wired in. The planner writes
+                an argument, the orchestrator scores it live, and a weak one is
+                sent back with the specific thing it is missing rather than
+                accepted and quietly passed downstream.
+
+   Neither surface decides. The gate says what is not yet sound; the evaluator
+   says what an argument lacks. A human still moves the plan (T7).
+   ============================================================================= */
+
+const GATE_TONE = (score, par) => score >= par ? "var(--good)" : score >= par - 20 ? "#d99400" : "var(--bad)";
+const GateRing = ({
+  score,
+  par
+}) => {
+  const R = 26,
+    C = 2 * Math.PI * R;
+  return /*#__PURE__*/React.createElement("svg", {
+    width: "66",
+    height: "66",
+    viewBox: "0 0 66 66",
+    style: {
+      flexShrink: 0
+    }
+  }, /*#__PURE__*/React.createElement("circle", {
+    cx: "33",
+    cy: "33",
+    r: R,
+    fill: "none",
+    stroke: "var(--line)",
+    strokeWidth: "6"
+  }), /*#__PURE__*/React.createElement("circle", {
+    cx: "33",
+    cy: "33",
+    r: R,
+    fill: "none",
+    stroke: GATE_TONE(score, par),
+    strokeWidth: "6",
+    strokeLinecap: "round",
+    strokeDasharray: `${C * score / 100} ${C}`,
+    transform: "rotate(-90 33 33)"
+  }), /*#__PURE__*/React.createElement("text", {
+    x: "33",
+    y: "34",
+    textAnchor: "middle",
+    style: {
+      fontSize: 16,
+      fontWeight: 600,
+      fill: "var(--ink)"
+    }
+  }, score), /*#__PURE__*/React.createElement("text", {
+    x: "33",
+    y: "45",
+    textAnchor: "middle",
+    style: {
+      fontSize: 7.5,
+      fill: "#8a95a0",
+      letterSpacing: ".06em"
+    }
+  }, "OF 100"));
+};
+const Gate = ({
+  gate,
+  verb,
+  onGo,
+  note
+}) => {
+  const [open, setOpen] = useState(false);
+  const g = gate;
+  const cls = g.verdict === "handoff" ? "ok" : g.verdict === "surface" ? "warn" : "bad";
+  return /*#__PURE__*/React.createElement(Card, {
+    title: "Handoff gate",
+    sub: `${g.meta.from} · ${g.meta.asks}`,
+    right: /*#__PURE__*/React.createElement(Chip, {
+      c: cls === "ok" ? "g" : cls === "warn" ? "a" : "r"
+    }, g.verdict === "handoff" ? "READY" : g.verdict === "surface" ? "SURFACED" : "BELOW PAR")
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "row",
+    style: {
+      gap: 13,
+      alignItems: "center",
+      marginBottom: 12
+    }
+  }, /*#__PURE__*/React.createElement(GateRing, {
+    score: g.score,
+    par: g.par
+  }), /*#__PURE__*/React.createElement("div", {
+    style: {
+      minWidth: 0
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12.5,
+      lineHeight: 1.5
+    }
+  }, g.verdict === "handoff" ? /*#__PURE__*/React.createElement(React.Fragment, null, "Every evaluation point is met. The handoff to ", /*#__PURE__*/React.createElement("b", null, g.meta.to), " is open.") : g.verdict === "surface" ? /*#__PURE__*/React.createElement(React.Fragment, null, "Above par at ", /*#__PURE__*/React.createElement("b", null, g.score), ", but ", g.blockers.length, " point", g.blockers.length > 1 ? "s" : "", " ", g.blockers.length > 1 ? "are" : "is", " unmet. Surfaced for your judgement rather than run again.") : /*#__PURE__*/React.createElement(React.Fragment, null, "Below par at ", /*#__PURE__*/React.createElement("b", null, g.score), " against ", g.par, ". The orchestrator holds the handoff and loops back rather than passing this to ", /*#__PURE__*/React.createElement("b", null, g.meta.to), ".")))), /*#__PURE__*/React.createElement("div", {
+    className: "col",
+    style: {
+      gap: 7
+    }
+  }, g.points.map(p => /*#__PURE__*/React.createElement("div", {
+    key: p.id,
+    className: "row",
+    style: {
+      gap: 8,
+      alignItems: "flex-start"
+    }
+  }, /*#__PURE__*/React.createElement(Chip, {
+    c: p.ok ? "g" : p.score >= 60 ? "a" : "r"
+  }, p.ok ? "✓" : p.score), /*#__PURE__*/React.createElement("div", {
+    style: {
+      minWidth: 0,
+      flex: 1
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12
+    }
+  }, p.label, " ", /*#__PURE__*/React.createElement("span", {
+    className: "tiny dim"
+  }, "\xB7 weight ", p.w, "%", p.bar < 100 ? ` · bar ${p.bar}` : "")), /*#__PURE__*/React.createElement("div", {
+    className: "tiny muted"
+  }, p.detail), !p.ok && p.fix && /*#__PURE__*/React.createElement("div", {
+    className: "tiny",
+    style: {
+      color: "var(--accent)",
+      marginTop: 2
+    }
+  }, "\u2192 ", p.fix))))), note && /*#__PURE__*/React.createElement("div", {
+    className: "tiny muted",
+    style: {
+      marginTop: 11
+    }
+  }, note), onGo && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "hr"
+  }), /*#__PURE__*/React.createElement(Btn, {
+    c: "pri",
+    style: {
+      width: "100%"
+    },
+    disabled: !g.open,
+    onClick: onGo
+  }, g.open ? verb : `${verb} — held at ${g.score}`), !g.open && /*#__PURE__*/React.createElement("div", {
+    className: "tiny dim",
+    style: {
+      marginTop: 6
+    }
+  }, "The button opens when every point is met. Nothing here can be waived \u2014 the gate is what makes the next phase's inputs trustworthy.")), !onGo && /*#__PURE__*/React.createElement("div", {
+    className: "tiny dim",
+    style: {
+      marginTop: 10
+    }
+  }, "Read-only: this phase is not the current one."), /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginTop: 10
+    }
+  }, /*#__PURE__*/React.createElement(Btn, {
+    c: "xs gho",
+    onClick: () => setOpen(o => !o)
+  }, open ? "Hide" : "What is this?"), open && /*#__PURE__*/React.createElement("div", {
+    className: "tiny muted",
+    style: {
+      marginTop: 8,
+      lineHeight: 1.6
+    }
+  }, "The orchestrator knows the whole state machine and the evaluation points inside it, and it scores the intermediate status at each one. Below par it loops the phase again or surfaces for your input; it never advances the plan on its own and never overrules you. Its one power is to refuse a handoff.")));
+};
+
+/* ------------------------------------------------------- justify + challenge */
+/* `Eval Justifications` from the Discovery flow: NO loops back to the human
+   with feedback, YES lets the change through. */
+const JustifyG = ({
+  title,
+  what,
+  onCancel,
+  onConfirm,
+  verb = "Record change",
+  hints = [],
+  kind = "change"
+}) => {
+  const [t, setT] = useState("");
+  const [tries, setTries] = useState(0);
+  const [sent, setSent] = useState(null); // the evaluation that came back
+  const ev = useMemo(() => evalJustification(t, {
+    kind
+  }), [t, kind]);
+  const canSubmit = t.trim().length >= 20;
+  const submit = () => {
+    const e = evalJustification(t, {
+      kind
+    });
+    if (e.verdict === "revise") {
+      setSent(e);
+      setTries(n => n + 1);
+      return;
+    }
+    onConfirm(t.trim(), e);
+  };
+  const tone = ev.verdict === "pass" ? "g" : ev.verdict === "thin" ? "a" : "r";
+  return /*#__PURE__*/React.createElement(Modal, {
+    title: title,
+    sub: "The reason is evaluated before the change is accepted. A weak argument comes back to you rather than going forward (Flow architecture \u2014 Eval Justifications).",
+    onClose: onCancel,
+    footer: /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+      className: "tiny dim"
+    }, ev.verdict === "pass" ? "Defensible. This travels into the brief and the approval package." : ev.verdict === "thin" ? "This will travel, but a reader would have to ask you a question." : "Not yet defensible."), /*#__PURE__*/React.createElement("div", {
+      style: {
+        flex: 1
+      }
+    }), /*#__PURE__*/React.createElement(Btn, {
+      onClick: onCancel
+    }, "Cancel"), tries >= 2 && ev.verdict === "revise" && /*#__PURE__*/React.createElement(Btn, {
+      onClick: () => onConfirm(t.trim(), ev),
+      title: "Recorded as a weak argument and flagged wherever it is read"
+    }, "Record as weak"), /*#__PURE__*/React.createElement(Btn, {
+      c: "pri",
+      disabled: !canSubmit,
+      onClick: submit
+    }, verb))
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "banner b",
+    style: {
+      marginBottom: 14
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "bi"
+  }, "Change"), /*#__PURE__*/React.createElement("div", null, what)), /*#__PURE__*/React.createElement("label", {
+    className: "lbl"
+  }, "Why"), /*#__PURE__*/React.createElement("textarea", {
+    className: "inp",
+    autoFocus: true,
+    value: t,
+    onChange: e => {
+      setT(e.target.value);
+      setSent(null);
+    },
+    placeholder: "State what the system got wrong, what you know that it does not, and what your change costs. This is what P&I will read."
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "row",
+    style: {
+      gap: 10,
+      alignItems: "center",
+      marginTop: 12
+    }
+  }, /*#__PURE__*/React.createElement(Chip, {
+    c: tone
+  }, "ARGUMENT ", ev.score), /*#__PURE__*/React.createElement("div", {
+    className: "bar " + tone,
+    style: {
+      flex: 1
+    }
+  }, /*#__PURE__*/React.createElement("i", {
+    style: {
+      width: ev.score + "%"
+    }
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "col",
+    style: {
+      gap: 5,
+      marginTop: 9
+    }
+  }, ev.tests.map(x => /*#__PURE__*/React.createElement("div", {
+    key: x.id,
+    className: "row",
+    style: {
+      gap: 7,
+      alignItems: "flex-start"
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: x.ok ? "var(--good)" : "#8a95a0",
+      fontSize: 12,
+      lineHeight: 1.5,
+      flexShrink: 0
+    }
+  }, x.ok ? "✓" : "○"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      minWidth: 0
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 11.5,
+      color: x.ok ? "var(--ink)" : "var(--ink-2)"
+    }
+  }, x.label), !x.ok && t.trim().length > 0 && /*#__PURE__*/React.createElement("div", {
+    className: "tiny dim",
+    style: {
+      marginTop: 1
+    }
+  }, x.ask))))), sent && /*#__PURE__*/React.createElement("div", {
+    className: "banner r",
+    style: {
+      marginTop: 13
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "bi"
+  }, "Sent back"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("b", null, "The orchestrator did not accept this reason."), " ", sent.feedback, sent.missing.length > 0 && /*#__PURE__*/React.createElement("ul", {
+    style: {
+      margin: "7px 0 0 16px",
+      padding: 0
+    }
+  }, sent.missing.map(m => /*#__PURE__*/React.createElement("li", {
+    key: m.id,
+    style: {
+      marginBottom: 3
+    }
+  }, m.ask))), tries >= 2 && /*#__PURE__*/React.createElement("div", {
+    className: "tiny",
+    style: {
+      marginTop: 7
+    }
+  }, "You can record it as a weak argument instead. It goes forward flagged, and P&I sees that it was flagged \u2014 the change is not blocked, only its quality is on the record."))), hints.length > 0 && /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginTop: 12
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "lbl"
+  }, "Reasons used on this deal before"), /*#__PURE__*/React.createElement("div", {
+    className: "row wrap",
+    style: {
+      gap: 6
+    }
+  }, hints.map((h, i) => /*#__PURE__*/React.createElement("button", {
+    key: i,
+    className: "chip o",
+    style: {
+      cursor: "pointer"
+    },
+    onClick: () => {
+      setT(h);
+      setSent(null);
+    }
+  }, h.slice(0, 64), "\u2026")))));
 };
 </script>
 
@@ -4271,7 +5505,7 @@ const LearnLoopSvg = () => /*#__PURE__*/React.createElement("svg", {
 }, "HOW THE DESK GETS BETTER WITH USE"));
 
 /* ------------------------------------------------------------------ screen */
-const BP_TABS = [["phases", "Phase flow"], ["personas", "Persona swimlane"], ["agents", "Agent map"], ["lineage", "Artifact lineage"], ["learn", "Learning loop"], ["open", "Open questions"]];
+const BP_TABS = [["phases", "Phase flow"], ["flow", "Flow architecture"], ["personas", "Persona swimlane"], ["agents", "Agent map"], ["lineage", "Artifact lineage"], ["learn", "Learning loop"], ["open", "Open questions"]];
 const Blueprint = ({
   initialTab
 }) => {
@@ -4304,7 +5538,7 @@ const Blueprint = ({
     key: k,
     className: tab === k ? "on" : "",
     onClick: () => setTab(k)
-  }, l))), tab === "phases" && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(Card, {
+  }, l))), tab === "flow" && /*#__PURE__*/React.createElement(FlowArchTab, null), tab === "phases" && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(Card, {
     title: "Planning phases",
     sub: "Read the loop in the middle: Discovery \u2192 Strategize \u2192 Analyze runs as many times as it takes."
   }, /*#__PURE__*/React.createElement(PhaseLoopSvg, null)), /*#__PURE__*/React.createElement("div", {
@@ -4385,7 +5619,7 @@ const Blueprint = ({
     }
   }, /*#__PURE__*/React.createElement("span", {
     className: "bi"
-  }, "Note"), /*#__PURE__*/React.createElement("div", null, "Twelve agents, named for the desk job each does rather than for the technique. None of them decides anything \u2014 each produces evidence, a proposal or a consequence, and a human adjudicates. Click one to read its contract.")), ["Intake", "Discovery", "Strategize", "Analyze", "Approval", "All"].map(ph => {
+  }, "Note"), /*#__PURE__*/React.createElement("div", null, AGENTS.length, " agents, named for the desk job each does rather than for the technique. None of them decides anything \u2014 each produces evidence, a proposal or a consequence, and a human adjudicates. The orchestrator is the only one that can stop the plan moving, and even it can only refuse a handoff. Click one to read its contract.")), ["Intake", "Discovery", "Strategize", "Analyze", "Approval", "All"].map(ph => {
     const list = AGENTS.filter(a => a.phase === ph);
     if (!list.length) return null;
     return /*#__PURE__*/React.createElement("div", {
@@ -4580,6 +5814,688 @@ const Blueprint = ({
 };
 </script>
 
+<!-- ================= 41-flowarch.js ================= -->
+<script>
+/* =============================================================================
+   41-flowarch.js — the Flow Architecture, drawn.
+
+   A direct transcription of the handwritten flow architecture note (6 Sep
+   2026) into the same SVG vocabulary as the other blueprints, so the three
+   flows in it can be read beside the phase loop they refine.
+
+   Three drawings:
+     1. Intake — every agent writes into one RFP graph, none of them writes
+        the brief. Numbered as the note numbers them.
+     2. Products / packaging — configs and documents vectorised into one index
+        that Discovery asks questions of.
+     3. Discovery — the ranking loop, with `Eval Justifications` sitting on the
+        path between the planner's change and the next step, routing NO back to
+        the human and YES forward.
+
+   Red is the note's own colour for the human-in-the-loop edges.
+   ============================================================================= */
+
+const HITL = "#b3261e";
+const GRAPHC = "#0b57d0";
+
+/* --------------------------------------------------- 1. intake / RFP graph */
+const IntakeGraphSvg = () => /*#__PURE__*/React.createElement("svg", {
+  viewBox: "0 0 1180 520",
+  style: {
+    width: "100%",
+    height: "auto"
+  }
+}, /*#__PURE__*/React.createElement(Defs, null), /*#__PURE__*/React.createElement("text", {
+  x: "14",
+  y: "26",
+  className: "flx-t"
+}, "TRIGGER"), /*#__PURE__*/React.createElement(SvgBox, {
+  x: 12,
+  y: 34,
+  w: 132,
+  h: 44,
+  title: "Plan trigger",
+  chars: 22,
+  tone: "#8a95a0",
+  body: "RFP lands on the desk"
+}), /*#__PURE__*/React.createElement(Arrow, {
+  d: "M78,78 L78,108"
+}), /*#__PURE__*/React.createElement(SvgBox, {
+  x: 12,
+  y: 110,
+  w: 132,
+  h: 52,
+  title: "Intake",
+  body: "orchestrator",
+  chars: 22,
+  tone: GRAPHC
+}), /*#__PURE__*/React.createElement("text", {
+  x: "228",
+  y: "26",
+  className: "flx-t"
+}, "1 \xB7 COLLECT IN PARALLEL"), /*#__PURE__*/React.createElement(SvgBox, {
+  x: 226,
+  y: 34,
+  w: 230,
+  h: 44,
+  chars: 40,
+  title: "RFP requirements parser",
+  body: "Attributes copied, with their location"
+}), /*#__PURE__*/React.createElement(SvgBox, {
+  x: 226,
+  y: 86,
+  w: 230,
+  h: 44,
+  chars: 40,
+  title: "Advertiser history",
+  body: "12-month lookback on this advertiser"
+}), /*#__PURE__*/React.createElement(SvgBox, {
+  x: 226,
+  y: 138,
+  w: 230,
+  h: 44,
+  chars: 40,
+  title: "Competitive intelligence",
+  body: "Category pressure in the flight"
+}), /*#__PURE__*/React.createElement(SvgBox, {
+  x: 226,
+  y: 190,
+  w: 230,
+  h: 44,
+  chars: 40,
+  title: "Build seller context",
+  body: "P&I position, posture, push list"
+}), /*#__PURE__*/React.createElement(SvgBox, {
+  x: 486,
+  y: 86,
+  w: 122,
+  h: 44,
+  chars: 20,
+  title: "Rank by",
+  body: "relevance"
+}), /*#__PURE__*/React.createElement(SvgBox, {
+  x: 486,
+  y: 138,
+  w: 122,
+  h: 44,
+  chars: 20,
+  title: "Rank by",
+  body: "relevance"
+}), /*#__PURE__*/React.createElement(Arrow, {
+  d: "M456,108 L482,108"
+}), /*#__PURE__*/React.createElement(Arrow, {
+  d: "M456,160 L482,160"
+}), /*#__PURE__*/React.createElement(SvgBox, {
+  x: 486,
+  y: 10,
+  w: 122,
+  h: 40,
+  chars: 20,
+  title: "Client",
+  body: "negotiations",
+  dash: true,
+  titleColor: HITL,
+  stroke: HITL
+}), /*#__PURE__*/React.createElement(SvgBox, {
+  x: 772,
+  y: 16,
+  w: 180,
+  h: 218,
+  fill: "#f2f7ff",
+  stroke: GRAPHC,
+  chars: 28,
+  title: "RFP graph",
+  titleColor: GRAPHC,
+  body: "One structure. Every agent writes records into it. Nothing here is a conclusion \u2014 records carry a value, a source, a location and a confidence."
+}), /*#__PURE__*/React.createElement(Arrow, {
+  d: "M456,56 L636,56 L636,68 L768,68",
+  color: GRAPHC
+}), /*#__PURE__*/React.createElement(Arrow, {
+  d: "M608,30 L768,30",
+  color: HITL,
+  chip: true,
+  label: "1\u2033 arrives late, re-derives the brief",
+  lx: 688,
+  ly: 30,
+  lw: 20
+}), /*#__PURE__*/React.createElement(Arrow, {
+  d: "M608,108 L690,108 L690,86 L768,86",
+  color: GRAPHC
+}), /*#__PURE__*/React.createElement(Arrow, {
+  d: "M608,160 L700,160 L700,120 L768,120",
+  color: GRAPHC
+}), /*#__PURE__*/React.createElement(Arrow, {
+  d: "M456,212 L710,212 L710,160 L768,160",
+  color: GRAPHC
+}), /*#__PURE__*/React.createElement("text", {
+  x: "228",
+  y: "278",
+  className: "flx-t"
+}, "2 \xB7 SCORE WHAT IS ON IT"), /*#__PURE__*/React.createElement(SvgBox, {
+  x: 226,
+  y: 286,
+  w: 230,
+  h: 52,
+  chars: 40,
+  tone: GRAPHC,
+  title: "Evidence eval agent",
+  body: "Strengths and weaknesses of each record"
+}), /*#__PURE__*/React.createElement(Arrow, {
+  d: "M78,162 L78,312 L222,312",
+  color: GRAPHC
+}), /*#__PURE__*/React.createElement(SvgBox, {
+  x: 486,
+  y: 286,
+  w: 200,
+  h: 52,
+  chars: 34,
+  title: "Update probability",
+  body: "Written back onto the record"
+}), /*#__PURE__*/React.createElement(Arrow, {
+  d: "M456,312 L482,312"
+}), /*#__PURE__*/React.createElement(Arrow, {
+  d: "M686,312 L730,312 L730,246 L862,246 L862,238",
+  color: GRAPHC,
+  chip: true,
+  label: "update score",
+  lx: 796,
+  ly: 246,
+  lw: 18
+}), /*#__PURE__*/React.createElement(Arrow, {
+  d: "M900,238 L900,266 L470,266 L470,282",
+  color: GRAPHC,
+  dash: true,
+  chip: true,
+  label: "read evidence",
+  lx: 700,
+  ly: 266,
+  lw: 18
+}), /*#__PURE__*/React.createElement("text", {
+  x: "228",
+  y: "382",
+  className: "flx-t"
+}, "3 \xB7 DERIVE, DO NOT ASSEMBLE"), /*#__PURE__*/React.createElement(SvgBox, {
+  x: 226,
+  y: 390,
+  w: 230,
+  h: 52,
+  chars: 40,
+  tone: GRAPHC,
+  title: "Build intake brief",
+  body: "Derived from the graph, never typed"
+}), /*#__PURE__*/React.createElement(Arrow, {
+  d: "M78,312 L78,416 L222,416",
+  color: GRAPHC
+}), /*#__PURE__*/React.createElement(Arrow, {
+  d: "M940,238 L940,416 L462,416",
+  color: GRAPHC,
+  dash: true,
+  chip: true,
+  label: "read evidence",
+  lx: 700,
+  ly: 416,
+  lw: 18
+}), /*#__PURE__*/React.createElement(SvgBox, {
+  x: 512,
+  y: 454,
+  w: 250,
+  h: 52,
+  chars: 42,
+  stroke: HITL,
+  titleColor: HITL,
+  title: "Surface analysis with reccos \u2014 HITL",
+  body: "The planner adjudicates; nothing auto-accepts"
+}), /*#__PURE__*/React.createElement(Arrow, {
+  d: "M341,442 L341,480 L508,480",
+  color: HITL
+}), /*#__PURE__*/React.createElement(Arrow, {
+  d: "M762,480 L980,480 L980,238",
+  color: HITL,
+  chip: true,
+  label: "update evidence",
+  lx: 880,
+  ly: 480,
+  lw: 20
+}), /*#__PURE__*/React.createElement(SvgBox, {
+  x: 12,
+  y: 390,
+  w: 132,
+  h: 52,
+  title: "Intake brief",
+  chars: 22,
+  tone: "#1e8e3e",
+  body: "The handoff artifact"
+}), /*#__PURE__*/React.createElement(Arrow, {
+  d: "M226,416 L150,416",
+  color: "#8a95a0"
+}));
+
+/* ------------------------------------------ 2. products / packaging system */
+const PackagingSvg = () => /*#__PURE__*/React.createElement("svg", {
+  viewBox: "0 0 1180 320",
+  style: {
+    width: "100%",
+    height: "auto"
+  }
+}, /*#__PURE__*/React.createElement(Defs, null), /*#__PURE__*/React.createElement("text", {
+  x: "14",
+  y: "26",
+  className: "flx-t"
+}, "FREEWHEEL / OPERATIVE CONFIG"), /*#__PURE__*/React.createElement(SvgBox, {
+  x: 12,
+  y: 34,
+  w: 196,
+  h: 40,
+  chars: 34,
+  title: "Targeting templates",
+  body: "214 configs"
+}), /*#__PURE__*/React.createElement(SvgBox, {
+  x: 12,
+  y: 80,
+  w: 196,
+  h: 40,
+  chars: 34,
+  title: "Ad product configs",
+  body: "186 configs"
+}), /*#__PURE__*/React.createElement(SvgBox, {
+  x: 12,
+  y: 126,
+  w: 196,
+  h: 40,
+  chars: 34,
+  title: "Content inventory packages",
+  body: "97 packages"
+}), /*#__PURE__*/React.createElement("text", {
+  x: "14",
+  y: "196",
+  className: "flx-t"
+}, "SPREADSHEETS, DOCS"), /*#__PURE__*/React.createElement(SvgBox, {
+  x: 12,
+  y: 204,
+  w: 196,
+  h: 40,
+  chars: 34,
+  title: "Reference pricing",
+  body: "Rate card, floors, benchmarks"
+}), /*#__PURE__*/React.createElement(SvgBox, {
+  x: 12,
+  y: 250,
+  w: 196,
+  h: 40,
+  chars: 34,
+  title: "Product KPIs",
+  body: "Measured delivery by product"
+}), /*#__PURE__*/React.createElement(Arrow, {
+  d: "M208,54 L280,54 L280,150 L324,150",
+  color: GRAPHC
+}), /*#__PURE__*/React.createElement(Arrow, {
+  d: "M208,100 L280,100 L280,150 L324,150",
+  color: GRAPHC,
+  head: false
+}), /*#__PURE__*/React.createElement(Arrow, {
+  d: "M208,146 L280,146 L280,150 L324,150",
+  color: GRAPHC,
+  head: false
+}), /*#__PURE__*/React.createElement(Arrow, {
+  d: "M208,224 L280,224 L280,150 L324,150",
+  color: GRAPHC,
+  head: false
+}), /*#__PURE__*/React.createElement(Arrow, {
+  d: "M208,270 L280,270 L280,150 L324,150",
+  color: GRAPHC,
+  head: false
+}), /*#__PURE__*/React.createElement(SvgBox, {
+  x: 328,
+  y: 106,
+  w: 168,
+  h: 90,
+  fill: "#f2f7ff",
+  stroke: GRAPHC,
+  chars: 24,
+  title: "Vectorised product RAG",
+  titleColor: GRAPHC,
+  body: "One index over the configs themselves, not a copy of them"
+}), /*#__PURE__*/React.createElement(Arrow, {
+  d: "M496,150 L560,150",
+  color: GRAPHC
+}), /*#__PURE__*/React.createElement(SvgBox, {
+  x: 564,
+  y: 112,
+  w: 150,
+  h: 76,
+  chars: 24,
+  tone: GRAPHC,
+  title: "LLM queries",
+  body: "Asked in the planner's own words, in Discovery"
+}), /*#__PURE__*/React.createElement("text", {
+  x: "762",
+  y: "26",
+  className: "flx-t"
+}, "WHAT A PLANNER ACTUALLY ASKS"), /*#__PURE__*/React.createElement(SvgBox, {
+  x: 760,
+  y: 34,
+  w: 400,
+  h: 40,
+  chars: 72,
+  title: "1. What product meets these KPIs?"
+}), /*#__PURE__*/React.createElement(SvgBox, {
+  x: 760,
+  y: 80,
+  w: 400,
+  h: 40,
+  chars: 72,
+  title: "2. What customisations are available on this product?"
+}), /*#__PURE__*/React.createElement(SvgBox, {
+  x: 760,
+  y: 126,
+  w: 400,
+  h: 56,
+  chars: 68,
+  title: "3. Exclude mature content off this product targeting",
+  body: "Resolves to a real config, with its avails and price consequence"
+}), /*#__PURE__*/React.createElement(Arrow, {
+  d: "M714,150 L756,150"
+}), /*#__PURE__*/React.createElement(SvgBox, {
+  x: 760,
+  y: 198,
+  w: 400,
+  h: 56,
+  chars: 70,
+  fill: "#fafbfc",
+  stroke: "var(--line)",
+  dash: true,
+  title: "Every answer names where it came from",
+  body: "A planner can go and check a number rather than trusting it \u2014 which is the difference between a search box and a source."
+}));
+
+/* --------------------------------------------------- 3. the discovery loop */
+const EvalLoopSvg = () => /*#__PURE__*/React.createElement("svg", {
+  viewBox: "0 0 1180 470",
+  style: {
+    width: "100%",
+    height: "auto"
+  }
+}, /*#__PURE__*/React.createElement(Defs, null), /*#__PURE__*/React.createElement(SvgBox, {
+  x: 12,
+  y: 20,
+  w: 128,
+  h: 44,
+  title: "I/P trigger",
+  chars: 21,
+  tone: "#8a95a0",
+  body: "Handoff accepted"
+}), /*#__PURE__*/React.createElement(Arrow, {
+  d: "M76,64 L76,96"
+}), /*#__PURE__*/React.createElement(SvgBox, {
+  x: 12,
+  y: 98,
+  w: 128,
+  h: 54,
+  title: "Discovery",
+  body: "orchestrator",
+  chars: 21,
+  tone: GRAPHC
+}), /*#__PURE__*/React.createElement(SvgBox, {
+  x: 186,
+  y: 20,
+  w: 210,
+  h: 58,
+  chars: 36,
+  title: "Brief parser + evidence store validation",
+  body: "Is the upstream artifact sound?"
+}), /*#__PURE__*/React.createElement(SvgBox, {
+  x: 438,
+  y: 20,
+  w: 196,
+  h: 58,
+  chars: 32,
+  title: "Prep queries",
+  body: "What would suit this brief, asked of the product RAG"
+}), /*#__PURE__*/React.createElement(Arrow, {
+  d: "M140,42 L182,42",
+  color: GRAPHC
+}), /*#__PURE__*/React.createElement(Arrow, {
+  d: "M396,49 L434,49"
+}), /*#__PURE__*/React.createElement(SvgBox, {
+  x: 676,
+  y: 20,
+  w: 178,
+  h: 58,
+  chars: 30,
+  fill: "#fafbfc",
+  title: "Products / packaging",
+  body: "The vectorised index"
+}), /*#__PURE__*/React.createElement(Arrow, {
+  d: "M634,49 L672,49"
+}), /*#__PURE__*/React.createElement(SvgBox, {
+  x: 438,
+  y: 114,
+  w: 196,
+  h: 52,
+  chars: 32,
+  stroke: GRAPHC,
+  titleColor: GRAPHC,
+  title: "Rank products",
+  body: "Five criteria, each scored"
+}), /*#__PURE__*/React.createElement(Arrow, {
+  d: "M291,78 L291,140 L434,140",
+  color: GRAPHC
+}), /*#__PURE__*/React.createElement(Arrow, {
+  d: "M765,78 L765,140 L638,140"
+}), /*#__PURE__*/React.createElement(SvgBox, {
+  x: 186,
+  y: 114,
+  w: 196,
+  h: 52,
+  chars: 32,
+  stroke: HITL,
+  titleColor: HITL,
+  title: "Surface for HITL",
+  body: "The planner reads the order and its reasons"
+}), /*#__PURE__*/React.createElement(Arrow, {
+  d: "M434,140 L386,140",
+  color: HITL
+}), /*#__PURE__*/React.createElement(SvgBox, {
+  x: 186,
+  y: 206,
+  w: 196,
+  h: 66,
+  chars: 32,
+  stroke: HITL,
+  titleColor: HITL,
+  title: "Allow ranking changes",
+  body: "Move, add, remove \u2014 each one carrying a justification"
+}), /*#__PURE__*/React.createElement(Arrow, {
+  d: "M284,166 L284,202",
+  color: HITL
+}), /*#__PURE__*/React.createElement(SvgBox, {
+  x: 472,
+  y: 206,
+  w: 180,
+  h: 66,
+  chars: 30,
+  tone: HITL,
+  title: "Eval justifications",
+  body: "Scores the argument, not the change"
+}), /*#__PURE__*/React.createElement(Arrow, {
+  d: "M382,239 L468,239"
+}), /*#__PURE__*/React.createElement(Arrow, {
+  d: "M562,206 L562,178 L340,178 L340,170",
+  color: HITL,
+  chip: true,
+  label: "NO \u2014 sent back with what it is missing",
+  lx: 451,
+  ly: 178,
+  lw: 44
+}), /*#__PURE__*/React.createElement(SvgBox, {
+  x: 472,
+  y: 318,
+  w: 180,
+  h: 52,
+  chars: 30,
+  title: "Allow customisations",
+  body: "Targeting templates on the product"
+}), /*#__PURE__*/React.createElement(Arrow, {
+  d: "M562,272 L562,314",
+  chip: true,
+  label: "YES",
+  lx: 578,
+  ly: 296,
+  lw: 6
+}), /*#__PURE__*/React.createElement(SvgBox, {
+  x: 730,
+  y: 296,
+  w: 168,
+  h: 46,
+  chars: 28,
+  title: "Check inventory availability"
+}), /*#__PURE__*/React.createElement(SvgBox, {
+  x: 730,
+  y: 352,
+  w: 168,
+  h: 46,
+  chars: 28,
+  title: "Compute price"
+}), /*#__PURE__*/React.createElement(Arrow, {
+  d: "M652,336 L700,336 L700,319 L726,319"
+}), /*#__PURE__*/React.createElement(Arrow, {
+  d: "M652,348 L700,348 L700,375 L726,375"
+}), /*#__PURE__*/React.createElement(SvgBox, {
+  x: 472,
+  y: 402,
+  w: 180,
+  h: 52,
+  chars: 30,
+  stroke: HITL,
+  titleColor: HITL,
+  title: "Surface for HITL",
+  body: "Avails and price, before committing to the change"
+}), /*#__PURE__*/React.createElement(Arrow, {
+  d: "M898,319 L950,319 L950,428 L656,428",
+  color: "#8a95a0"
+}), /*#__PURE__*/React.createElement(Arrow, {
+  d: "M898,375 L930,375 L930,414 L656,414",
+  color: "#8a95a0"
+}), /*#__PURE__*/React.createElement(Arrow, {
+  d: "M472,428 L430,428 L430,344 L468,344",
+  color: HITL,
+  chip: true,
+  label: "additional customisations",
+  lx: 430,
+  ly: 392,
+  lw: 16
+}), /*#__PURE__*/React.createElement(Arrow, {
+  d: "M186,239 L76,239 L76,152",
+  color: GRAPHC,
+  chip: true,
+  label: "DONE",
+  lx: 110,
+  ly: 200,
+  lw: 6
+}), /*#__PURE__*/React.createElement("text", {
+  x: "12",
+  y: "300",
+  className: "flx-t"
+}, "THE POINT OF THE LOOP"), /*#__PURE__*/React.createElement(SvgBox, {
+  x: 12,
+  y: 310,
+  w: 160,
+  h: 144,
+  chars: 26,
+  fill: "#fafbfc",
+  dash: true,
+  body: "The planner can change anything. What they cannot do is change it without an argument that survives being read by someone who was not in the room. A weak one comes back here rather than travelling downstream inside the plan."
+}));
+
+/* ------------------------------------------------------------------ screen */
+const FlowArchTab = () => /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+  className: "banner b",
+  style: {
+    marginBottom: 14
+  }
+}, /*#__PURE__*/React.createElement("span", {
+  className: "bi"
+}, "Source"), /*#__PURE__*/React.createElement("div", null, "Drawn from the ", /*#__PURE__*/React.createElement("b", null, "UMP Flow Architecture"), " note, 6 September 2026. It refines the five-phase loop rather than replacing it: same phases, same owners, but it says how the agents inside a phase are wired to each other, and it introduces the thing that decides whether a phase is allowed to end.")), /*#__PURE__*/React.createElement(Card, {
+  title: "The orchestrator",
+  sub: "The note defines it in three lines. Everything else on this tab is a consequence of them."
+}, /*#__PURE__*/React.createElement("div", {
+  className: "g3"
+}, [["Knows the state machine", "Not just the current phase — every evaluation point inside every phase, and what each one is worth."], ["Scores the intermediate status", "A phase is not done or not-done. It has a score, and the score is made of named points a human can argue with."], ["Below par, loops or surfaces", "It re-runs the phase, or it stops and asks for strategic input. It does not advance the plan and it does not overrule the planner."]].map(([t, b], i) => /*#__PURE__*/React.createElement("div", {
+  key: i,
+  style: {
+    borderLeft: "2px solid var(--accent)",
+    paddingLeft: 11
+  }
+}, /*#__PURE__*/React.createElement("div", {
+  style: {
+    fontSize: 12.5,
+    fontWeight: 600
+  }
+}, t), /*#__PURE__*/React.createElement("div", {
+  className: "tiny muted",
+  style: {
+    marginTop: 3,
+    lineHeight: 1.55
+  }
+}, b)))), /*#__PURE__*/React.createElement("div", {
+  className: "hr"
+}), /*#__PURE__*/React.createElement("div", {
+  className: "tiny muted",
+  style: {
+    lineHeight: 1.6
+  }
+}, "The one power it has is to refuse a handoff. That is a smaller claim than \u201Can AI that plans\u201D, and a much more useful one: it means the inputs to every phase are trustworthy without anyone having to check them, because the phase before it could not have ended otherwise. Live on every phase screen as the ", /*#__PURE__*/React.createElement("b", null, "handoff gate"), ".")), /*#__PURE__*/React.createElement(Card, {
+  title: "1 \xB7 Intake \u2014 agents write to a graph, not to a brief",
+  style: {
+    marginTop: 14
+  },
+  sub: "Numbered as the note numbers them. 1 collects, 2 scores what was collected, 3 derives the brief from the result."
+}, /*#__PURE__*/React.createElement(IntakeGraphSvg, null), /*#__PURE__*/React.createElement("div", {
+  className: "hr"
+}), /*#__PURE__*/React.createElement("div", {
+  className: "g2"
+}, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+  className: "lbl"
+}, "What this changes"), /*#__PURE__*/React.createElement("div", {
+  className: "tiny muted",
+  style: {
+    lineHeight: 1.6
+  }
+}, "No agent writes the brief. They write records, the eval agent scores them, and the brief is derived from the graph in one step at the end. That is why correcting something re-derives the brief instead of editing it \u2014 and why a late clarification can arrive at step 1\u2033 and ripple through without anyone re-typing anything.")), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+  className: "lbl"
+}, "The note's three rules for the brief"), /*#__PURE__*/React.createElement("div", {
+  className: "col tiny",
+  style: {
+    gap: 6
+  }
+}, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("b", null, "A."), " ", /*#__PURE__*/React.createElement("span", {
+  className: "muted"
+}, "An RFP is comprehensively defined by its attributes.")), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("b", null, "B."), " ", /*#__PURE__*/React.createElement("span", {
+  className: "muted"
+}, "Every attribute is either copied from, inferred from, or operator-added by \u2014 the provenance ladder, and it is never blank.")), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("b", null, "C."), " ", /*#__PURE__*/React.createElement("span", {
+  className: "muted"
+}, "The intake brief is validated by the operator, meaning the planner. Not by the system, and not by the AE.")))))), /*#__PURE__*/React.createElement(Card, {
+  title: "2 \xB7 Products and packaging \u2014 one index, asked in words",
+  style: {
+    marginTop: 14
+  },
+  sub: "Live in Discovery under 'Ask the catalogue'."
+}, /*#__PURE__*/React.createElement(PackagingSvg, null)), /*#__PURE__*/React.createElement(Card, {
+  title: "3 \xB7 Discovery \u2014 the loop that Eval Justifications sits in",
+  style: {
+    marginTop: 14
+  },
+  sub: "This is the flow that gives the challenger its shape: NO goes back to the human, YES goes on to customisation, pricing and avails."
+}, /*#__PURE__*/React.createElement(EvalLoopSvg, null), /*#__PURE__*/React.createElement("div", {
+  className: "hr"
+}), /*#__PURE__*/React.createElement("div", {
+  className: "tiny muted",
+  style: {
+    lineHeight: 1.6
+  }
+}, "Read the two red loops. The upper one is the argument loop: change the ranking, defend it, and either the defence holds or it comes back. The lower one is the consequence loop: every customisation re-checks avails and re-computes price before the planner commits to it, so nobody discovers at trafficking that the targeting they promised costs a fifth of the inventory. Only when both are quiet does ", /*#__PURE__*/React.createElement("b", null, "DONE"), " return to the orchestrator.")));
+</script>
+
 <!-- ================= 50-store.js ================= -->
 <script>
 /* =============================================================================
@@ -4686,6 +6602,8 @@ function usePlanStore() {
     /* analyze */
     versions: [],
     committed: null,
+    commitNote: null,
+    // why this version, read first by P&I
     /* approval */
     decisions: {},
     // pid -> { d, reason, at }
@@ -4770,6 +6688,7 @@ function usePlanStore() {
       strategyAccepted: null,
       lastRun: null,
       sentToPI: false,
+      commitNote: null,
       timeline: BASE_TIMELINE.slice()
     }, phase),
     phase
@@ -4992,6 +6911,7 @@ function seedState(base, phase) {
   if (order <= 3) return s;
 
   /* Analyze — one version committed */
+  s.commitNote = "The two versions score within half a point of each other, so the rubric is not choosing for me. PV-B misses the 20% 3+ reach goal by 2.3 points and costs $1.30 more on blended CPM, and I am committing it anyway: the weight sits on HBO Max premium CTV, where this client has twice said in call notes they want to be seen before the pack change. I am trading measured reach for context and I will defend that trade.";
   s.committed = "PV-B";
   s.sentToPI = true;
   s.timeline = [...s.timeline, {
@@ -4999,7 +6919,7 @@ function seedState(base, phase) {
     kind: "ok",
     who: "You",
     text: "PV-B committed and shared for P&I approval.",
-    reason: "The two versions score within half a point of each other, so the rubric is not choosing for me. PV-B is the one I can put in front of this client, because the weight sits where they have twice said they want to be seen. Committing the version whose argument I can make out loud."
+    reason: s.commitNote
   }];
 
   /* Approval — P&I has decided some but not all lines */
@@ -6008,6 +7928,20 @@ const Intake = ({
   const materialContras = CONTRADICTIONS.filter(c => c.material);
   const openContras = materialContras.filter(c => !st.contraDecisions[c.id]);
   const gateOk = openGaps.length === 0 && openContras.length === 0;
+  const evRows = useMemo(() => [...EVIDENCE, ...st.corrections.map(c => ({
+    id: c.id,
+    attr: c.attr,
+    value: c.value,
+    cls: "planner",
+    src: "Planner correction",
+    loc: "—",
+    ts: c.at,
+    by: "You"
+  }))], [st.corrections]);
+  const evGraph = useMemo(() => evalEvidenceGraph(evRows, st), [evRows, st.gapDecisions, st.contraDecisions]);
+  const gate = useMemo(() => evaluateGate("intake", st, {
+    evGraph
+  }), [st, evGraph]);
   const decideGap = (g, kind, value, reason) => {
     up(s => ({
       gapDecisions: {
@@ -6200,7 +8134,18 @@ const Intake = ({
     className: "banner a"
   }, /*#__PURE__*/React.createElement("span", {
     className: "bi"
-  }, "[OPEN] OQ-2"), /*#__PURE__*/React.createElement("div", null, "The shape is settled, the content is not. For this brief the proposed set is: cover every stated requirement, land 3+ reach at or above ", pct(FRAME.reachGoal3, 1), " of the in-market universe, hold digital blended CPM under ", cpmf(FRAME.cpmCeiling), ", respect every P&I floor and cap, and carry a reason for every deviation. The Analyze phase scores against exactly this."))), tab === "evidence" && /*#__PURE__*/React.createElement(Card, {
+  }, "[OPEN] OQ-2"), /*#__PURE__*/React.createElement("div", null, "The shape is settled, the content is not. For this brief the proposed set is: cover every stated requirement, land 3+ reach at or above ", pct(FRAME.reachGoal3, 1), " of the in-market universe, hold digital blended CPM under ", cpmf(FRAME.cpmCeiling), ", respect every P&I floor and cap, and carry a reason for every deviation. The Analyze phase scores against exactly this."))), tab === "evidence" && /*#__PURE__*/React.createElement("div", {
+    className: "col",
+    style: {
+      gap: 12
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "banner b"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "bi"
+  }, "Graph"), /*#__PURE__*/React.createElement("div", null, "This is the ", /*#__PURE__*/React.createElement("b", null, "RFP graph"), ". Every intake agent writes records into it and reads back out of it \u2014 none of them writes the brief. The brief is derived from the graph once, at the end, which is why correcting a record re-derives the brief rather than editing it.")), /*#__PURE__*/React.createElement(EvidenceEval, {
+    graph: evGraph
+  }), /*#__PURE__*/React.createElement(Card, {
     title: "Evidence store",
     tight: true,
     sub: "Records, not summaries. Superseded, never edited or deleted \u2014 the brief can be rebuilt from this at any version."
@@ -6254,6 +8199,20 @@ const Intake = ({
         small: true
       })
     }, {
+      key: "conf",
+      label: "Confidence",
+      w: 96,
+      get: r => evGraph.by[r.id] ? evGraph.by[r.id].conf : scoreEvidence(r, EVIDENCE).conf,
+      raw: r => evGraph.by[r.id] ? evGraph.by[r.id].conf : scoreEvidence(r, EVIDENCE).conf,
+      cell: r => {
+        const x = evGraph.by[r.id] || scoreEvidence(r, EVIDENCE);
+        return /*#__PURE__*/React.createElement("span", {
+          title: [...x.strengths.map(s => `+ ${s.t}`), ...x.weaknesses.map(w => `− ${w.t}`)].join("\n")
+        }, /*#__PURE__*/React.createElement(ConfBar, {
+          v: x.conf
+        }));
+      }
+    }, {
       key: "src",
       label: "Source",
       w: 200,
@@ -6274,7 +8233,7 @@ const Intake = ({
       w: 130,
       get: r => r.by
     }]
-  })), tab === "gaps" && /*#__PURE__*/React.createElement("div", {
+  }))), tab === "gaps" && /*#__PURE__*/React.createElement("div", {
     className: "col",
     style: {
       gap: 12
@@ -6591,34 +8550,9 @@ const Intake = ({
       gap: 14
     }
   }, /*#__PURE__*/React.createElement(Card, {
-    title: "Sufficiency gate",
-    sub: "The gate asks whether planning would be invalidated by what is missing \u2014 not whether everything is present."
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "col",
-    style: {
-      gap: 9
-    }
-  }, [["Every material requirement received or inferred, and both accepted", openGaps.length === 0, `${materialGaps.length - openGaps.length} of ${materialGaps.length} material gaps resolved`], ["Every inference names the evidence behind it", true, "12 inferences, each naming its deals or its cohort"], ["No contradiction on a material field left unadjudicated", openContras.length === 0, `${materialContras.length - openContras.length} of ${materialContras.length} adjudicated`], ["Hard and soft constraints separated, each soft one carrying its origin", true, "5 hard, 5 soft"], ["Legible to the AE and P&I without you in the room", true, "One artifact, no per-role variants"]].map(([t, ok, d], i) => /*#__PURE__*/React.createElement("div", {
-    key: i,
-    className: "row",
-    style: {
-      alignItems: "flex-start",
-      gap: 8
-    }
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "chip",
-    style: {
-      background: ok ? "var(--good-soft)" : "var(--bad-soft)",
-      color: ok ? "var(--good)" : "var(--bad)",
-      marginTop: 1
-    }
-  }, ok ? "✓" : "—"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
-    className: "tiny"
-  }, t), /*#__PURE__*/React.createElement("div", {
-    className: "mini dim"
-  }, d))))), /*#__PURE__*/React.createElement("div", {
-    className: "hr"
-  }), st.intakeApproved ? /*#__PURE__*/React.createElement("div", {
+    title: "Approve the brief",
+    sub: "The planner is the only approver. The AE and P&I are voices in the evidence, not approval steps."
+  }, st.intakeApproved ? /*#__PURE__*/React.createElement("div", {
     className: "banner g"
   }, /*#__PURE__*/React.createElement("span", {
     className: "bi"
@@ -6634,11 +8568,10 @@ const Intake = ({
         intakeApproved: {
           version: st.briefVersion,
           at: NOW()
-        },
-        phase: "discovery"
+        }
       });
       log("ok", `Intake brief v${st.briefVersion} approved. Approval binds to this version, not to the plan.`);
-      toast("Intake approved — Discovery opens on brief v" + st.briefVersion);
+      toast("Brief v" + st.briefVersion + " approved");
     }
   }, "Approve intake brief v", st.briefVersion), !gateOk && /*#__PURE__*/React.createElement("div", {
     className: "tiny dim",
@@ -6650,7 +8583,18 @@ const Intake = ({
     style: {
       marginTop: 8
     }
-  }, "One human judgement over a fully evidenced brief. There is no separate machine gate, and the planner is the only approver \u2014 the AE and P&I are voices in the evidence, not approval steps.")), /*#__PURE__*/React.createElement(Assist, {
+  }, "Approving is one of the five things the gate below scores. Approval alone does not open Discovery.")), /*#__PURE__*/React.createElement(Gate, {
+    gate: gate,
+    verb: "Hand off to Discovery",
+    onGo: () => {
+      up({
+        phase: "discovery"
+      });
+      log("sys", `Intake orchestrator handed off to the Discovery orchestrator at gate score ${gate.score}. A sound, defensible intake brief is built.`);
+      toast("Handoff accepted — Discovery orchestrator has the brief");
+    },
+    note: "The gate asks whether planning would be invalidated by what is missing \u2014 not whether everything is present."
+  }), /*#__PURE__*/React.createElement(Assist, {
     title: "What I would look at first"
   }, openGaps.length > 0 ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("b", null, openGaps[0].attr), " is the one that blocks the solve. ", openGaps[0].why, " The recommendation is drawn from ", openGaps[0].cohortSet.length ? `${openGaps[0].cohortSet.length} comparable advertisers` : "this advertiser's own record", ", and it would enter as ", /*#__PURE__*/React.createElement(ProvChip, {
     cls: openGaps[0].wouldCarry,
@@ -6694,7 +8638,7 @@ const Intake = ({
     style: {
       marginTop: 8
     }
-  }, "Nine of these values are inferred rather than stated. They are proposals until you accept them, and they stay marked as inferred afterwards.")))), gap && /*#__PURE__*/React.createElement(Justify, {
+  }, "Nine of these values are inferred rather than stated. They are proposals until you accept them, and they stay marked as inferred afterwards.")))), gap && /*#__PURE__*/React.createElement(JustifyG, {
     title: {
       accepted: "Accept the recommendation",
       edited: "Accept with an edit",
@@ -6708,15 +8652,14 @@ const Intake = ({
     }[gap.kind],
     onCancel: () => setGap(null),
     onConfirm: r => decideGap(gap.g, gap.kind, gap.kind === "edited" ? r : gap.g.rec, r)
-  }), contra && /*#__PURE__*/React.createElement(Justify, {
+  }), contra && /*#__PURE__*/React.createElement(JustifyG, {
     title: "Adjudicate the contradiction",
     what: /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("b", null, contra.c.attr), " \u2014 recording \u201C", contra.choice, "\u201D. Both records stay in the store; neither is deleted."),
     verb: "Adjudicate",
     onCancel: () => setContra(null),
     onConfirm: r => decideContra(contra.c, contra.choice, r)
-  }), fix && /*#__PURE__*/React.createElement(Justify, {
+  }), fix && /*#__PURE__*/React.createElement(JustifyG, {
     title: "Correct the system",
-    min: 20,
     what: /*#__PURE__*/React.createElement(React.Fragment, null, "You are not editing the brief \u2014 briefs are read-only. State what is wrong about ", /*#__PURE__*/React.createElement("b", null, fix.k), " and what it should be. Your statement enters the evidence store as a record, and the brief re-derives to a new version. The prior approval lapses."),
     verb: "Record correction",
     onCancel: () => setFix(null),
@@ -6939,6 +8882,9 @@ const Discovery = ({
   const [drawer, setDrawer] = useState(null); // {row, mode}
   const [ask, setAsk] = useState(null); // pending justification
   const selected = ranking.filter(r => r.on);
+  const gate = useMemo(() => evaluateGate("discovery", st, {
+    ranking
+  }), [st, ranking]);
   const hints = Object.values(st.rankJust).filter(Boolean);
   const move = (row, dir) => {
     const i = st.order.indexOf(row.pid),
@@ -7113,7 +9059,7 @@ const Discovery = ({
     }
   }, /*#__PURE__*/React.createElement("div", {
     className: "tabs"
-  }, [["list", "Ranked list", selected.length], ["grid", "Grid"], ["excluded", "Excluded", EXCLUDED.length], ["brief", "Strategy brief"]].map(([k, l, n]) => /*#__PURE__*/React.createElement("button", {
+  }, [["list", "Ranked list", selected.length], ["grid", "Grid"], ["ask", "Ask the catalogue"], ["excluded", "Excluded", EXCLUDED.length], ["brief", "Strategy brief"]].map(([k, l, n]) => /*#__PURE__*/React.createElement("button", {
     key: k,
     className: tab === k ? "on" : "",
     onClick: () => setTab(k)
@@ -7148,6 +9094,19 @@ const Discovery = ({
       mode: "why"
     }),
     sub: "Click any row to open its reasoning"
+  })), tab === "ask" && /*#__PURE__*/React.createElement("div", {
+    className: "col",
+    style: {
+      gap: 12
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "banner b"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "bi"
+  }, "Why this exists"), /*#__PURE__*/React.createElement("div", null, "The catalogue is 22 products with a few hundred targeting templates behind them, and the question a planner actually has is never \u201Cshow me the list\u201D. It is \u201Cwhat meets this KPI\u201D, \u201Cwhat can I change on this\u201D, \u201Cwhat does excluding that cost me\u201D. Asking is faster than knowing where to look, and the answer carries the config it came from so you can check it.")), /*#__PURE__*/React.createElement(ProductRAG, {
+    ctx: {
+      top: selected[0]
+    }
   })), tab === "excluded" && /*#__PURE__*/React.createElement("div", {
     className: "col",
     style: {
@@ -7371,7 +9330,18 @@ const Discovery = ({
     style: {
       marginTop: 7
     }
-  }, "[OPEN] Whether acceptance is an explicit act \u2014 as here \u2014 or is implied by running the optimiser is undecided. The two produce different audit trails on re-entry."))), /*#__PURE__*/React.createElement(Card, {
+  }, "Accepting is what the gate below scores. It does not open the next phase on its own."))), /*#__PURE__*/React.createElement(Gate, {
+    gate: gate,
+    verb: "Hand off to Strategize",
+    onGo: () => {
+      up({
+        phase: "strategize"
+      });
+      log("sys", `Discovery orchestrator handed off to Strategize at gate score ${gate.score}.`);
+      toast("Handoff accepted — Strategize orchestrator has the list");
+    },
+    note: "[OPEN] Whether acceptance is an explicit act \u2014 as above \u2014 or is implied by clearing the gate is undecided. The two produce different audit trails on re-entry."
+  }), /*#__PURE__*/React.createElement(Card, {
     title: "Constraints in force",
     tight: true
   }, /*#__PURE__*/React.createElement("div", {
@@ -7446,7 +9416,7 @@ const Discovery = ({
       title: "Record the targeting change",
       what: /*#__PURE__*/React.createElement(React.Fragment, null, "Customising ", /*#__PURE__*/React.createElement("b", null, drawer.row.p.name), ". The customisation, its inventory consequence and its pricing consequence are recorded together, so the trade-off is visible downstream rather than only its result.")
     })
-  }), ask && /*#__PURE__*/React.createElement(Justify, {
+  }), ask && /*#__PURE__*/React.createElement(JustifyG, {
     title: ask.title,
     what: ask.what,
     hints: hints,
@@ -7711,6 +9681,11 @@ const Strategize = ({
   const cons = useMemo(() => checkConstraints(res, ranking), [res, ranking]);
   const rub = useMemo(() => scorePlan(res, ranking, st.overrides, st.justifications, cons), [res, ranking, st, cons]);
   const unjustified = Object.keys(st.overrides).filter(k => (st.justifications[k] || "").trim().length < 25);
+  const gate = useMemo(() => evaluateGate("strategize", st, {
+    res,
+    cons,
+    ranking
+  }), [st, res, cons, ranking]);
   const run = () => {
     setRunning(true);
     setTimeout(() => {
@@ -8487,7 +10462,17 @@ const Strategize = ({
     style: {
       marginTop: 7
     }
-  }, "Immutable once saved. A further allocation produces another version rather than replacing this one.")), /*#__PURE__*/React.createElement(Assist, {
+  }, "Immutable once saved. A further allocation produces another version rather than replacing this one.")), /*#__PURE__*/React.createElement(Gate, {
+    gate: gate,
+    verb: "Hand off to Analyze",
+    onGo: () => {
+      up({
+        phase: "analyze"
+      });
+      log("sys", `Strategize orchestrator handed off to Analyze at gate score ${gate.score}.`);
+      toast("Handoff accepted — " + st.versions.length + " version(s) to compare");
+    }
+  }), /*#__PURE__*/React.createElement(Assist, {
     title: "Reading this solve"
   }, res.unallocated.length > 0 ? /*#__PURE__*/React.createElement(React.Fragment, null, money(res.unallocated[0].amount), " of the ", res.unallocated[0].region, " envelope has nowhere to go.", " ", res.unallocated[0].why, " That is a Discovery problem, not an optimiser problem \u2014 the solver will not move it to another region on its own, because the regional split is a recorded decision (G01).") : res.reach3 < FRAME.reachGoal3 ? /*#__PURE__*/React.createElement(React.Fragment, null, "3+ reach lands at ", pct(res.reach3, 1), " against a ", pct(FRAME.reachGoal3, 1), " goal. Average frequency is", " ", res.avgFreq.toFixed(1), ", so the gap is reach breadth rather than weight \u2014 more distinct products, not more money on the ones already in.") : /*#__PURE__*/React.createElement(React.Fragment, null, "The solve clears the KPI at ", pct(res.reach3, 1), " against ", pct(FRAME.reachGoal3, 1), ". The argument to check before you save: ", res.lines[0].p.name.split(" — ")[0], " carries ", pct(res.lines[0].spend / res.spend, 0), " of the plan on its own, and it is at ", pct(res.lines[0].availUse, 0), " of sellable avails.")), /*#__PURE__*/React.createElement(Card, {
     title: "Versions saved",
@@ -8535,16 +10520,31 @@ const OverrideModal = ({
 }) => {
   const [v, setV] = useState(value);
   const [r, setR] = useState("");
-  const ok = r.trim().length >= 25 && v > 0;
+  const [sent, setSent] = useState(null);
+  const [tries, setTries] = useState(0);
+  const ok = r.trim().length >= 20 && v > 0;
   const impsK = v / line.cpm;
   const availUse = impsK / line.availK;
+
+  /* Overriding the optimiser is the largest single deviation a planner can
+     make, so the argument for it is held to the same bar as everything else. */
+  const ev = evalJustification(r);
+  const tone = ev.verdict === "pass" ? "g" : ev.verdict === "thin" ? "a" : "r";
+  const submit = () => {
+    if (ev.verdict === "revise" && tries < 2) {
+      setSent(ev);
+      setTries(n => n + 1);
+      return;
+    }
+    onConfirm(line, v, r.trim());
+  };
   return /*#__PURE__*/React.createElement(Modal, {
     title: "Override this allocation",
-    sub: "Justify, then override (T6). The optimiser re-solves from the overridden value; it does not negotiate.",
+    sub: "Justify, then override (T6). The reason is evaluated before the override is accepted; the optimiser re-solves from the overridden value and does not negotiate.",
     onClose: onCancel,
     footer: /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
       className: "tiny dim"
-    }, ok ? "The rest of the " + line.region + " envelope will redistribute around this." : "A reason of at least 25 characters is required."), /*#__PURE__*/React.createElement("div", {
+    }, ev.verdict === "pass" ? "The rest of the " + line.region + " envelope will redistribute around this." : ev.verdict === "thin" ? "This will travel, but P&I would have to ask you a question to act on it." : "Not yet defensible."), /*#__PURE__*/React.createElement("div", {
       style: {
         flex: 1
       }
@@ -8553,7 +10553,7 @@ const OverrideModal = ({
     }, "Cancel"), /*#__PURE__*/React.createElement(Btn, {
       c: "pri",
       disabled: !ok,
-      onClick: () => onConfirm(line, v, r.trim())
+      onClick: submit
     }, "Override and re-solve"))
   }, /*#__PURE__*/React.createElement("div", {
     className: "row",
@@ -8603,9 +10603,86 @@ const OverrideModal = ({
     className: "inp",
     autoFocus: true,
     value: r,
-    onChange: e => setR(e.target.value),
-    placeholder: "What does the optimiser not know? This travels into the plan brief and P&I reads it at approval."
-  }));
+    onChange: e => {
+      setR(e.target.value);
+      setSent(null);
+    },
+    placeholder: "What does the optimiser not know? Name the number you are moving and what the move costs. This travels into the plan brief and P&I reads it at approval."
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "row",
+    style: {
+      gap: 10,
+      alignItems: "center",
+      marginTop: 11
+    }
+  }, /*#__PURE__*/React.createElement(Chip, {
+    c: tone
+  }, "ARGUMENT ", ev.score), /*#__PURE__*/React.createElement("div", {
+    className: "bar " + tone,
+    style: {
+      flex: 1
+    }
+  }, /*#__PURE__*/React.createElement("i", {
+    style: {
+      width: ev.score + "%"
+    }
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "col",
+    style: {
+      gap: 4,
+      marginTop: 8
+    }
+  }, ev.tests.map(x => /*#__PURE__*/React.createElement("div", {
+    key: x.id,
+    className: "row",
+    style: {
+      gap: 7,
+      alignItems: "flex-start"
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: x.ok ? "var(--good)" : "#8a95a0",
+      fontSize: 12,
+      lineHeight: 1.5,
+      flexShrink: 0
+    }
+  }, x.ok ? "✓" : "○"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      minWidth: 0
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 11.5,
+      color: x.ok ? "var(--ink)" : "var(--ink-2)"
+    }
+  }, x.label), !x.ok && r.trim().length > 0 && /*#__PURE__*/React.createElement("div", {
+    className: "tiny dim",
+    style: {
+      marginTop: 1
+    }
+  }, x.ask))))), sent && /*#__PURE__*/React.createElement("div", {
+    className: "banner r",
+    style: {
+      marginTop: 12
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "bi"
+  }, "Sent back"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("b", null, "The orchestrator did not accept this reason."), " ", sent.feedback, /*#__PURE__*/React.createElement("ul", {
+    style: {
+      margin: "7px 0 0 16px",
+      padding: 0
+    }
+  }, sent.missing.map(m => /*#__PURE__*/React.createElement("li", {
+    key: m.id,
+    style: {
+      marginBottom: 3
+    }
+  }, m.ask))), tries >= 2 && /*#__PURE__*/React.createElement("div", {
+    className: "tiny",
+    style: {
+      marginTop: 7
+    }
+  }, "Submitting again records it as a weak argument. The override goes through and the weakness is on the record wherever it is read."))));
 };
 const SaveVersion = ({
   n,
@@ -8692,6 +10769,7 @@ const Analyze = ({
   const [commit, setCommit] = useState(null);
   const v = st.versions;
   const cur = sel ? v.find(x => x.id === sel) : v[v.length - 1];
+  const gate = useMemo(() => evaluateGate("analyze", st, {}), [st]);
   useEffect(() => {
     if (v.length && !sel) setSel(v[v.length - 1].id);
   }, [v.length]);
@@ -9179,7 +11257,17 @@ const Analyze = ({
     className: "muted"
   }, "Back to Discovery, re-order and re-target, re-run.")), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("b", null, "Commit and share."), " ", /*#__PURE__*/React.createElement("span", {
     className: "muted"
-  }, "P&I gets the allocation and everything upstream of it.")))), /*#__PURE__*/React.createElement(Assist, {
+  }, "P&I gets the allocation and everything upstream of it.")))), /*#__PURE__*/React.createElement(Gate, {
+    gate: gate,
+    verb: "Hand off to Approval",
+    onGo: () => {
+      up({
+        phase: "approval"
+      });
+      log("sys", `Analyze orchestrator handed off to Approval at gate score ${gate.score}.`);
+      toast("Handoff accepted — P&I has " + st.committed);
+    }
+  }), /*#__PURE__*/React.createElement(Assist, {
     title: "On this version"
   }, cur && v.length > 1 && (() => {
     const other = v.filter(x => x.id !== cur.id).sort((a, b) => Math.abs(a.rubric.total - cur.rubric.total) - Math.abs(b.rubric.total - cur.rubric.total))[0];
@@ -9192,9 +11280,8 @@ const Analyze = ({
         marginBottom: 8
       }
     }, cur.id, " and ", other.id, " score within ", gap.toFixed(1), " of each other, so the rubric is not choosing for you. What separates them is shape: ", cur.id, " is ", d3 >= 0 ? "+" : "", d3.toFixed(1), " points of modelled 3+ reach and ", dc >= 0 ? "+" : "−", cpmf(Math.abs(dc)), " of blended CPM against ", other.id, ". Commit the one whose argument you can make out loud, and the other one stays saved as the alternative you rejected.");
-  })(), cur && (cur.roll.reach3 < FRAME.reachGoal3 ? /*#__PURE__*/React.createElement(React.Fragment, null, cur.id, " misses the stated KPI by ", pctn((FRAME.reachGoal3 - cur.roll.reach3) * 100, 1), " points. Before you commit it, it is worth saving a second version that trades some of the ", pct(cur.roll.linearPct, 0), " linear share for distinct digital products \u2014 the gap is breadth, not weight.") : Object.keys(cur.overrides).length === 0 ? /*#__PURE__*/React.createElement(React.Fragment, null, cur.id, " is the optimiser's own answer with nothing overridden, which makes it the cleanest version to defend and the least interesting to argue with. If you believe something about this advertiser the ranking does not know, this is the moment it should show up.") : /*#__PURE__*/React.createElement(React.Fragment, null, cur.id, " carries ", Object.keys(cur.overrides).length, " override", Object.keys(cur.overrides).length > 1 ? "s" : "", ". P&I will read each one against a position they already stated, so the justification is doing as much work as the number.")))), commit && /*#__PURE__*/React.createElement(Justify, {
+  })(), cur && (cur.roll.reach3 < FRAME.reachGoal3 ? /*#__PURE__*/React.createElement(React.Fragment, null, cur.id, " misses the stated KPI by ", pctn((FRAME.reachGoal3 - cur.roll.reach3) * 100, 1), " points. Before you commit it, it is worth saving a second version that trades some of the ", pct(cur.roll.linearPct, 0), " linear share for distinct digital products \u2014 the gap is breadth, not weight.") : Object.keys(cur.overrides).length === 0 ? /*#__PURE__*/React.createElement(React.Fragment, null, cur.id, " is the optimiser's own answer with nothing overridden, which makes it the cleanest version to defend and the least interesting to argue with. If you believe something about this advertiser the ranking does not know, this is the moment it should show up.") : /*#__PURE__*/React.createElement(React.Fragment, null, cur.id, " carries ", Object.keys(cur.overrides).length, " override", Object.keys(cur.overrides).length > 1 ? "s" : "", ". P&I will read each one against a position they already stated, so the justification is doing as much work as the number.")))), commit && /*#__PURE__*/React.createElement(JustifyG, {
     title: "Commit " + commit.id,
-    min: 20,
     what: /*#__PURE__*/React.createElement(React.Fragment, null, "Approval binds to ", /*#__PURE__*/React.createElement("b", null, commit.id), ", not to the plan. P&I receives the allocation, the intake brief, the product ranking and customisations, the optimiser's original recommendation, and every one of your changes with its explanation."),
     verb: "Commit and share",
     onCancel: () => setCommit(null),
@@ -9202,6 +11289,7 @@ const Analyze = ({
       up({
         committed: commit.id,
         sentToPI: true,
+        commitNote: r,
         phase: "approval"
       });
       log("ok", `${commit.id} committed and shared for P&I approval.`, r);
@@ -9255,6 +11343,7 @@ const Approval = ({
   const disapproved = ver.lines.filter(l => st.decisions[l.pid]?.d === "disapprove");
   const conditional = ver.lines.filter(l => st.decisions[l.pid]?.d === "condition");
   const allDecided = decided.length === ver.lines.length;
+  const gate = useMemo(() => evaluateGate("approval", st, {}), [st]);
   const apSpend = approved.reduce((s, l) => s + l.spend, 0);
   const dpSpend = disapproved.reduce((s, l) => s + l.spend, 0);
   const decide = (line, d, reason, weight) => {
@@ -9720,7 +11809,10 @@ const Approval = ({
     className: "bi"
   }, "Fully approved"), /*#__PURE__*/React.createElement("div", null, "Every line in ", ver.id, " is approved. Approval binds to this version \u2014 a late clarification would produce a new brief version and this approval would lapse.")) : /*#__PURE__*/React.createElement("div", {
     className: "tiny dim"
-  }, "Decide the remaining ", ver.lines.length - decided.length, " line", ver.lines.length - decided.length === 1 ? "" : "s", " to close the phase.")), /*#__PURE__*/React.createElement(Assist, {
+  }, "Decide the remaining ", ver.lines.length - decided.length, " line", ver.lines.length - decided.length === 1 ? "" : "s", " to close the phase.")), /*#__PURE__*/React.createElement(Gate, {
+    gate: gate,
+    note: "P&I's own handoff. The orchestrator scores the approval package the same way it scored the planner's work \u2014 a disapproval that does not say what would make the line approvable is not a decision the planner can act on."
+  }), /*#__PURE__*/React.createElement(Assist, {
     title: "What I would look at"
   }, (() => {
     const thin = ver.lines.map(l => ({
@@ -9760,6 +11852,8 @@ const PiDecision = ({
 }) => {
   const [r, setR] = useState("");
   const [weight, setWeight] = useState(false);
+  const [sent, setSent] = useState(null);
+  const [tries, setTries] = useState(0);
   const ok = d === "approve" ? r.trim().length >= 10 : r.trim().length >= 30;
   const title = {
     approve: "Approve this line",
@@ -9770,6 +11864,20 @@ const PiDecision = ({
     ...line,
     p: PRODUCTS.find(p => p.id === line.pid)
   });
+
+  /* A disapproval is an instruction, not a verdict, so it is held to the same
+     standard as the planner's own arguments. An approval needs less. */
+  const graded = d !== "approve";
+  const ev = evalJustification(r);
+  const tone = ev.verdict === "pass" ? "g" : ev.verdict === "thin" ? "a" : "r";
+  const submit = () => {
+    if (graded && ev.verdict === "revise" && tries < 2) {
+      setSent(ev);
+      setTries(n => n + 1);
+      return;
+    }
+    onConfirm(line, d, r.trim(), weight);
+  };
   return /*#__PURE__*/React.createElement(Modal, {
     title: title,
     sub: line.name,
@@ -9785,7 +11893,7 @@ const PiDecision = ({
     }, "Cancel"), /*#__PURE__*/React.createElement(Btn, {
       c: d === "disapprove" ? "dgr" : "pri",
       disabled: !ok,
-      onClick: () => onConfirm(line, d, r.trim(), weight)
+      onClick: submit
     }, d === "disapprove" ? "Disapprove" : "Approve"))
   }, /*#__PURE__*/React.createElement("div", {
     className: "statgrid",
@@ -9811,9 +11919,57 @@ const PiDecision = ({
     className: "inp",
     autoFocus: true,
     value: r,
-    onChange: e => setR(e.target.value),
+    onChange: e => {
+      setR(e.target.value);
+      setSent(null);
+    },
     placeholder: d === "disapprove" ? "Be specific about which products should have been in the plan and at what weight — that is what the planner acts on." : d === "condition" ? "What has to be true for this to stand." : "One line is enough."
-  }), d !== "approve" && /*#__PURE__*/React.createElement("div", {
+  }), graded && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "row",
+    style: {
+      gap: 10,
+      alignItems: "center",
+      marginTop: 11
+    }
+  }, /*#__PURE__*/React.createElement(Chip, {
+    c: tone
+  }, "INSTRUCTION ", ev.score), /*#__PURE__*/React.createElement("div", {
+    className: "bar " + tone,
+    style: {
+      flex: 1
+    }
+  }, /*#__PURE__*/React.createElement("i", {
+    style: {
+      width: ev.score + "%"
+    }
+  }))), ev.missing.length > 0 && r.trim().length > 0 && /*#__PURE__*/React.createElement("div", {
+    className: "tiny dim",
+    style: {
+      marginTop: 6
+    }
+  }, ev.missing[0].ask), sent && /*#__PURE__*/React.createElement("div", {
+    className: "banner r",
+    style: {
+      marginTop: 11
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "bi"
+  }, "Sent back"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("b", null, "Not yet an instruction the planner can act on."), " ", sent.feedback, /*#__PURE__*/React.createElement("ul", {
+    style: {
+      margin: "7px 0 0 16px",
+      padding: 0
+    }
+  }, sent.missing.map(m => /*#__PURE__*/React.createElement("li", {
+    key: m.id,
+    style: {
+      marginBottom: 3
+    }
+  }, m.ask))), tries >= 2 && /*#__PURE__*/React.createElement("div", {
+    className: "tiny",
+    style: {
+      marginTop: 7
+    }
+  }, "Recording it anyway from here. The planner sees that it was flagged.")))), d !== "approve" && /*#__PURE__*/React.createElement("div", {
     className: "row",
     style: {
       marginTop: 12,

@@ -25,6 +25,7 @@ const Approval = ({S}) => {
   const disapproved = ver.lines.filter(l=>st.decisions[l.pid]?.d==="disapprove");
   const conditional = ver.lines.filter(l=>st.decisions[l.pid]?.d==="condition");
   const allDecided = decided.length === ver.lines.length;
+  const gate = useMemo(() => evaluateGate("approval", st, {}), [st]);
   const apSpend = approved.reduce((s,l)=>s+l.spend,0);
   const dpSpend = disapproved.reduce((s,l)=>s+l.spend,0);
 
@@ -276,6 +277,9 @@ const Approval = ({S}) => {
           )}
         </Card>
 
+        <Gate gate={gate}
+          note="P&I's own handoff. The orchestrator scores the approval package the same way it scored the planner's work — a disapproval that does not say what would make the line approvable is not a decision the planner can act on."/>
+
         <Assist title="What I would look at">
           {(() => {
             const thin = ver.lines.map(l=>({l, inv:inventoryImpact({...l, p:PRODUCTS.find(p=>p.id===l.pid)})}))
@@ -318,16 +322,29 @@ const Approval = ({S}) => {
 const PiDecision = ({line, d, onCancel, onConfirm}) => {
   const [r, setR] = useState("");
   const [weight, setWeight] = useState(false);
+  const [sent, setSent] = useState(null);
+  const [tries, setTries] = useState(0);
   const ok = d === "approve" ? r.trim().length >= 10 : r.trim().length >= 30;
   const title = { approve:"Approve this line", condition:"Approve with a condition", disapprove:"Disapprove this line" }[d];
   const inv = inventoryImpact({...line, p:PRODUCTS.find(p=>p.id===line.pid)});
+
+  /* A disapproval is an instruction, not a verdict, so it is held to the same
+     standard as the planner's own arguments. An approval needs less. */
+  const graded = d !== "approve";
+  const ev = evalJustification(r);
+  const tone = ev.verdict === "pass" ? "g" : ev.verdict === "thin" ? "a" : "r";
+  const submit = () => {
+    if (graded && ev.verdict === "revise" && tries < 2){ setSent(ev); setTries(n=>n+1); return; }
+    onConfirm(line, d, r.trim(), weight);
+  };
+
   return (
     <Modal title={title} sub={line.name} onClose={onCancel}
       footer={<><div className="tiny dim">{d==="disapprove"
         ? "Disapproval returns to Discovery, where product selection and ranking happen. Your reason travels with it and becomes a soft constraint on the next pass."
         : "Approved lines become hard constraints for any re-solve."}</div>
         <div style={{flex:1}}/><Btn onClick={onCancel}>Cancel</Btn>
-        <Btn c={d==="disapprove"?"dgr":"pri"} disabled={!ok} onClick={()=>onConfirm(line, d, r.trim(), weight)}>
+        <Btn c={d==="disapprove"?"dgr":"pri"} disabled={!ok} onClick={submit}>
           {d==="disapprove"?"Disapprove":"Approve"}</Btn></>}>
       <div className="statgrid" style={{marginBottom:14}}>
         <Stat label="Net spend" value={money(line.spend)}/>
@@ -336,10 +353,29 @@ const PiDecision = ({line, d, onCancel, onConfirm}) => {
         <Stat label="Sellout after" value={pctn(inv.selloutAfter,0)}/>
       </div>
       <label className="lbl">{d==="disapprove" ? "Why, and what should change" : "Reason"}</label>
-      <textarea className="inp" autoFocus value={r} onChange={e=>setR(e.target.value)}
+      <textarea className="inp" autoFocus value={r} onChange={e=>{setR(e.target.value); setSent(null);}}
         placeholder={d==="disapprove"
           ? "Be specific about which products should have been in the plan and at what weight — that is what the planner acts on."
           : d==="condition" ? "What has to be true for this to stand." : "One line is enough."}/>
+
+      {graded && <>
+        <div className="row" style={{gap:10, alignItems:"center", marginTop:11}}>
+          <Chip c={tone}>INSTRUCTION {ev.score}</Chip>
+          <div className={"bar " + tone} style={{flex:1}}><i style={{width:ev.score+"%"}}/></div>
+        </div>
+        {ev.missing.length > 0 && r.trim().length > 0 &&
+          <div className="tiny dim" style={{marginTop:6}}>{ev.missing[0].ask}</div>}
+        {sent && <div className="banner r" style={{marginTop:11}}>
+          <span className="bi">Sent back</span>
+          <div><b>Not yet an instruction the planner can act on.</b> {sent.feedback}
+            <ul style={{margin:"7px 0 0 16px", padding:0}}>
+              {sent.missing.map(m => <li key={m.id} style={{marginBottom:3}}>{m.ask}</li>)}
+            </ul>
+            {tries >= 2 && <div className="tiny" style={{marginTop:7}}>
+              Recording it anyway from here. The planner sees that it was flagged.</div>}
+          </div>
+        </div>}
+      </>}
       {d !== "approve" && (
         <div className="row" style={{marginTop:12, gap:9}}>
           <Switch on={weight} onChange={setWeight}/>

@@ -29,6 +29,7 @@ const Strategize = ({S}) => {
   const rub  = useMemo(() => scorePlan(res, ranking, st.overrides, st.justifications, cons), [res, ranking, st, cons]);
 
   const unjustified = Object.keys(st.overrides).filter(k => (st.justifications[k]||"").trim().length < 25);
+  const gate = useMemo(() => evaluateGate("strategize", st, {res, cons, ranking}), [st, res, cons, ranking]);
 
   const run = () => {
     setRunning(true);
@@ -387,6 +388,11 @@ const Strategize = ({S}) => {
           </div>
         </Card>
 
+        <Gate gate={gate} verb="Hand off to Analyze"
+          onGo={()=>{ up({phase:"analyze"});
+            log("sys", `Strategize orchestrator handed off to Analyze at gate score ${gate.score}.`);
+            toast("Handoff accepted — " + st.versions.length + " version(s) to compare"); }}/>
+
         <Assist title="Reading this solve">
           {res.unallocated.length > 0 ? <>
             {money(res.unallocated[0].amount)} of the {res.unallocated[0].region} envelope has nowhere to go.
@@ -428,16 +434,30 @@ const Strategize = ({S}) => {
 const OverrideModal = ({line, value, res, onCancel, onConfirm}) => {
   const [v, setV] = useState(value);
   const [r, setR] = useState("");
-  const ok = r.trim().length >= 25 && v > 0;
+  const [sent, setSent] = useState(null);
+  const [tries, setTries] = useState(0);
+  const ok = r.trim().length >= 20 && v > 0;
   const impsK = v / line.cpm;
   const availUse = impsK / line.availK;
+
+  /* Overriding the optimiser is the largest single deviation a planner can
+     make, so the argument for it is held to the same bar as everything else. */
+  const ev = evalJustification(r);
+  const tone = ev.verdict === "pass" ? "g" : ev.verdict === "thin" ? "a" : "r";
+  const submit = () => {
+    if (ev.verdict === "revise" && tries < 2){ setSent(ev); setTries(n=>n+1); return; }
+    onConfirm(line, v, r.trim());
+  };
+
   return (
-    <Modal title="Override this allocation" sub="Justify, then override (T6). The optimiser re-solves from the overridden value; it does not negotiate."
+    <Modal title="Override this allocation" sub="Justify, then override (T6). The reason is evaluated before the override is accepted; the optimiser re-solves from the overridden value and does not negotiate."
       onClose={onCancel}
-      footer={<><div className="tiny dim">{ok ? "The rest of the " + line.region + " envelope will redistribute around this."
-        : "A reason of at least 25 characters is required."}</div><div style={{flex:1}}/>
+      footer={<><div className="tiny dim">{ev.verdict === "pass"
+        ? "The rest of the " + line.region + " envelope will redistribute around this."
+        : ev.verdict === "thin" ? "This will travel, but P&I would have to ask you a question to act on it."
+        : "Not yet defensible."}</div><div style={{flex:1}}/>
         <Btn onClick={onCancel}>Cancel</Btn>
-        <Btn c="pri" disabled={!ok} onClick={()=>onConfirm(line, v, r.trim())}>Override and re-solve</Btn></>}>
+        <Btn c="pri" disabled={!ok} onClick={submit}>Override and re-solve</Btn></>}>
       <div className="row" style={{gap:10, marginBottom:14}}>
         <span className="dot" style={{background:BRAND_COLOR[line.p.brand]}}/>
         <b>{line.p.name}</b><Chip>{line.region}</Chip><Chip c={line.p.medium==="Digital"?"b":"a"}>{line.p.medium}</Chip>
@@ -459,8 +479,37 @@ const OverrideModal = ({line, value, res, onCancel, onConfirm}) => {
         </div>
       </div>
       <label className="lbl">Why</label>
-      <textarea className="inp" autoFocus value={r} onChange={e=>setR(e.target.value)}
-        placeholder="What does the optimiser not know? This travels into the plan brief and P&I reads it at approval."/>
+      <textarea className="inp" autoFocus value={r} onChange={e=>{setR(e.target.value); setSent(null);}}
+        placeholder="What does the optimiser not know? Name the number you are moving and what the move costs. This travels into the plan brief and P&I reads it at approval."/>
+
+      <div className="row" style={{gap:10, alignItems:"center", marginTop:11}}>
+        <Chip c={tone}>ARGUMENT {ev.score}</Chip>
+        <div className={"bar " + tone} style={{flex:1}}><i style={{width:ev.score+"%"}}/></div>
+      </div>
+      <div className="col" style={{gap:4, marginTop:8}}>
+        {ev.tests.map(x => (
+          <div key={x.id} className="row" style={{gap:7, alignItems:"flex-start"}}>
+            <span style={{color:x.ok?"var(--good)":"#8a95a0", fontSize:12, lineHeight:1.5, flexShrink:0}}>
+              {x.ok?"✓":"○"}</span>
+            <div style={{minWidth:0}}>
+              <span style={{fontSize:11.5, color:x.ok?"var(--ink)":"var(--ink-2)"}}>{x.label}</span>
+              {!x.ok && r.trim().length > 0 && <div className="tiny dim" style={{marginTop:1}}>{x.ask}</div>}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {sent && <div className="banner r" style={{marginTop:12}}>
+        <span className="bi">Sent back</span>
+        <div><b>The orchestrator did not accept this reason.</b> {sent.feedback}
+          <ul style={{margin:"7px 0 0 16px", padding:0}}>
+            {sent.missing.map(m => <li key={m.id} style={{marginBottom:3}}>{m.ask}</li>)}
+          </ul>
+          {tries >= 2 && <div className="tiny" style={{marginTop:7}}>
+            Submitting again records it as a weak argument. The override goes through and the weakness is on the
+            record wherever it is read.</div>}
+        </div>
+      </div>}
     </Modal>
   );
 };

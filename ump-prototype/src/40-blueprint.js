@@ -304,8 +304,8 @@ const LearnLoopSvg = () => (
 );
 
 /* ------------------------------------------------------------------ screen */
-const BP_TABS = [["phases","Phase flow"],["personas","Persona swimlane"],["agents","Agent map"],
-  ["lineage","Artifact lineage"],["learn","Learning loop"],["open","Open questions"]];
+const BP_TABS = [["phases","Phase flow"],["flow","Flow architecture"],["personas","Persona swimlane"],
+  ["agents","Agent map"],["lineage","Artifact lineage"],["learn","Learning loop"],["open","Open questions"]];
 
 const Blueprint = ({initialTab}) => {
   const [tab, setTab] = useState(
@@ -328,6 +328,8 @@ const Blueprint = ({initialTab}) => {
         {BP_TABS.map(([k,l])=>
           <button key={k} className={tab===k?"on":""} onClick={()=>setTab(k)}>{l}</button>)}
       </div>
+
+      {tab==="flow" && <FlowArchTab/>}
 
       {tab==="phases" && <>
         <Card title="Planning phases" sub="Read the loop in the middle: Discovery → Strategize → Analyze runs as many times as it takes.">
@@ -395,9 +397,10 @@ const Blueprint = ({initialTab}) => {
       {tab==="agents" && <>
         <div className="banner b" style={{marginBottom:14}}>
           <span className="bi">Note</span>
-          <div>Twelve agents, named for the desk job each does rather than for the technique. None of them decides
-            anything — each produces evidence, a proposal or a consequence, and a human adjudicates. Click one to read
-            its contract.</div>
+          <div>{AGENTS.length} agents, named for the desk job each does rather than for the technique. None of them
+            decides anything — each produces evidence, a proposal or a consequence, and a human adjudicates. The
+            orchestrator is the only one that can stop the plan moving, and even it can only refuse a handoff. Click
+            one to read its contract.</div>
         </div>
         {["Intake","Discovery","Strategize","Analyze","Approval","All"].map(ph => {
           const list = AGENTS.filter(a => a.phase === ph);

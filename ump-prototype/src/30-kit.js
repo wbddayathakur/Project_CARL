@@ -77,34 +77,8 @@ const Drawer = ({title, sub, onClose, children, foot}) => (
   </>
 );
 
-/* -------------------------------------------------------- justify-to-change */
-/* T6: justify, then override. A change without a stated reason is not accepted.
-   The reason travels forward into the plan brief and the approval package. */
-const Justify = ({title, what, min=25, onCancel, onConfirm, verb="Record change", hints=[]}) => {
-  const [t, setT] = useState("");
-  const ok = t.trim().length >= min;
-  return (
-    <Modal title={title} sub="Every deviation from the system proposal carries a justification that travels forward (T6)." onClose={onCancel}
-      footer={<>
-        <div className="tiny dim">{ok ? "This reason will be attached to the strategy brief and the approval package."
-          : `${min - t.trim().length} more characters. A reason P&I can read on its own.`}</div>
-        <div style={{flex:1}}/>
-        <Btn onClick={onCancel}>Cancel</Btn>
-        <Btn c="pri" disabled={!ok} onClick={()=>onConfirm(t.trim())}>{verb}</Btn>
-      </>}>
-      <div className="banner b" style={{marginBottom:14}}><span className="bi">Change</span><div>{what}</div></div>
-      <label className="lbl">Why</label>
-      <textarea className="inp" autoFocus value={t} onChange={e=>setT(e.target.value)}
-        placeholder="State what the system got wrong and why your change is right. This is what P&I will read." />
-      {hints.length > 0 && <div style={{marginTop:10}}>
-        <div className="lbl">Reasons used on this deal before</div>
-        <div className="row wrap" style={{gap:6}}>
-          {hints.map((h,i)=><button key={i} className="chip o" style={{cursor:"pointer"}} onClick={()=>setT(h)}>{h.slice(0,64)}…</button>)}
-        </div>
-      </div>}
-    </Modal>
-  );
-};
+/* Justify-to-change lives in 35-gate.js as `JustifyG`, because a justification
+   is now evaluated before it is accepted rather than merely required. */
 
 /* ------------------------------------------------------------- toast system */
 const ToastCtx = React.createContext(()=>{});

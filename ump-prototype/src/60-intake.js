@@ -104,6 +104,13 @@ const Intake = ({S}) => {
   const materialContras = CONTRADICTIONS.filter(c => c.material);
   const openContras = materialContras.filter(c => !st.contraDecisions[c.id]);
   const gateOk = openGaps.length === 0 && openContras.length === 0;
+  const evRows = useMemo(() => [
+    ...EVIDENCE,
+    ...st.corrections.map(c=>({ id:c.id, attr:c.attr, value:c.value, cls:"planner",
+      src:"Planner correction", loc:"—", ts:c.at, by:"You" })),
+  ], [st.corrections]);
+  const evGraph = useMemo(() => evalEvidenceGraph(evRows, st), [evRows, st.gapDecisions, st.contraDecisions]);
+  const gate = useMemo(() => evaluateGate("intake", st, {evGraph}), [st, evGraph]);
 
   const decideGap = (g, kind, value, reason) => {
     up(s => ({ gapDecisions: { ...s.gapDecisions,
@@ -231,6 +238,14 @@ const Intake = ({S}) => {
         )}
 
         {tab==="evidence" && (
+          <div className="col" style={{gap:12}}>
+          <div className="banner b"><span className="bi">Graph</span>
+            <div>This is the <b>RFP graph</b>. Every intake agent writes records into it and reads back out of it —
+              none of them writes the brief. The brief is derived from the graph once, at the end, which is why
+              correcting a record re-derives the brief rather than editing it.</div></div>
+
+          <EvidenceEval graph={evGraph}/>
+
           <Card title="Evidence store" tight
             sub="Records, not summaries. Superseded, never edited or deleted — the brief can be rebuilt from this at any version.">
             <XL name="evidence_store" height={500} rows={[
@@ -245,12 +260,19 @@ const Intake = ({S}) => {
               { key:"value", label:"Value", w:400, get:r=>r.value },
               { key:"cls", label:"Provenance", w:130, get:r=>PROV[r.cls]?.label || r.cls,
                 cell:r=><ProvChip cls={r.cls} small/> },
+              { key:"conf", label:"Confidence", w:96,
+                get:r=>(evGraph.by[r.id] ? evGraph.by[r.id].conf : scoreEvidence(r, EVIDENCE).conf),
+                raw:r=>(evGraph.by[r.id] ? evGraph.by[r.id].conf : scoreEvidence(r, EVIDENCE).conf),
+                cell:r=>{ const x = evGraph.by[r.id] || scoreEvidence(r, EVIDENCE);
+                  return <span title={[...x.strengths.map(s=>`+ ${s.t}`), ...x.weaknesses.map(w=>`− ${w.t}`)].join("\n")}>
+                    <ConfBar v={x.conf}/></span>; } },
               { key:"src", label:"Source", w:200, get:r=>r.src },
               { key:"loc", label:"Where in the source", w:190, get:r=>r.loc },
               { key:"ts", label:"Arrived", w:118, get:r=>r.ts },
               { key:"by", label:"By", w:130, get:r=>r.by },
             ]}/>
           </Card>
+          </div>
         )}
 
         {tab==="gaps" && (
@@ -385,23 +407,7 @@ const Intake = ({S}) => {
 
       {/* ------------------------------------------------------------- side */}
       <div className="col sticky" style={{gap:14}}>
-        <Card title="Sufficiency gate" sub="The gate asks whether planning would be invalidated by what is missing — not whether everything is present.">
-          <div className="col" style={{gap:9}}>
-            {[
-              ["Every material requirement received or inferred, and both accepted", openGaps.length===0, `${materialGaps.length - openGaps.length} of ${materialGaps.length} material gaps resolved`],
-              ["Every inference names the evidence behind it", true, "12 inferences, each naming its deals or its cohort"],
-              ["No contradiction on a material field left unadjudicated", openContras.length===0, `${materialContras.length - openContras.length} of ${materialContras.length} adjudicated`],
-              ["Hard and soft constraints separated, each soft one carrying its origin", true, "5 hard, 5 soft"],
-              ["Legible to the AE and P&I without you in the room", true, "One artifact, no per-role variants"],
-            ].map(([t,ok,d],i)=>(
-              <div key={i} className="row" style={{alignItems:"flex-start", gap:8}}>
-                <span className="chip" style={{background: ok?"var(--good-soft)":"var(--bad-soft)",
-                  color: ok?"var(--good)":"var(--bad)", marginTop:1}}>{ok?"✓":"—"}</span>
-                <div><div className="tiny">{t}</div><div className="mini dim">{d}</div></div>
-              </div>
-            ))}
-          </div>
-          <div className="hr"/>
+        <Card title="Approve the brief" sub="The planner is the only approver. The AE and P&I are voices in the evidence, not approval steps.">
           {st.intakeApproved ? (
             <div className="banner g"><span className="bi">Approved</span>
               <div>Brief v{st.intakeApproved.version}, {st.intakeApproved.at}. Discovery opens on this version with
@@ -409,9 +415,9 @@ const Intake = ({S}) => {
           ) : (
             <>
               <Btn c="pri" style={{width:"100%", justifyContent:"center"}} disabled={!gateOk}
-                onClick={()=>{ up({intakeApproved:{version:st.briefVersion, at:NOW()}, phase:"discovery"});
+                onClick={()=>{ up({intakeApproved:{version:st.briefVersion, at:NOW()}});
                   log("ok", `Intake brief v${st.briefVersion} approved. Approval binds to this version, not to the plan.`);
-                  toast("Intake approved — Discovery opens on brief v" + st.briefVersion); }}>
+                  toast("Brief v" + st.briefVersion + " approved"); }}>
                 Approve intake brief v{st.briefVersion}
               </Btn>
               {!gateOk && <div className="tiny dim" style={{marginTop:7}}>
@@ -421,10 +427,15 @@ const Intake = ({S}) => {
             </>
           )}
           <div className="tiny dim" style={{marginTop:8}}>
-            One human judgement over a fully evidenced brief. There is no separate machine gate, and the planner is the
-            only approver — the AE and P&amp;I are voices in the evidence, not approval steps.
+            Approving is one of the five things the gate below scores. Approval alone does not open Discovery.
           </div>
         </Card>
+
+        <Gate gate={gate} verb="Hand off to Discovery"
+          onGo={()=>{ up({phase:"discovery"});
+            log("sys", `Intake orchestrator handed off to the Discovery orchestrator at gate score ${gate.score}. A sound, defensible intake brief is built.`);
+            toast("Handoff accepted — Discovery orchestrator has the brief"); }}
+          note="The gate asks whether planning would be invalidated by what is missing — not whether everything is present."/>
 
         <Assist title="What I would look at first">
           {openGaps.length > 0 ? <>
@@ -460,7 +471,7 @@ const Intake = ({S}) => {
         </Card>
       </div>
 
-      {gap && <Justify
+      {gap && <JustifyG
         title={{accepted:"Accept the recommendation", edited:"Accept with an edit", rejected:"Reject the recommendation"}[gap.kind]}
         what={<><b>{gap.g.attr}</b> — {gap.kind==="rejected" ? "rejecting " : "recording "}
           “{gap.g.rec}”. {gap.kind==="edited" && "Enter your value in the reason, and it will be recorded as a planner value rather than an inference."}
@@ -469,12 +480,12 @@ const Intake = ({S}) => {
         onCancel={()=>setGap(null)}
         onConfirm={(r)=>decideGap(gap.g, gap.kind, gap.kind==="edited" ? r : gap.g.rec, r)}/>}
 
-      {contra && <Justify title="Adjudicate the contradiction"
+      {contra && <JustifyG title="Adjudicate the contradiction"
         what={<><b>{contra.c.attr}</b> — recording “{contra.choice}”. Both records stay in the store; neither is deleted.</>}
         verb="Adjudicate" onCancel={()=>setContra(null)}
         onConfirm={(r)=>decideContra(contra.c, contra.choice, r)}/>}
 
-      {fix && <Justify title="Correct the system" min={20}
+      {fix && <JustifyG title="Correct the system"
         what={<>You are not editing the brief — briefs are read-only. State what is wrong about <b>{fix.k}</b> and what
           it should be. Your statement enters the evidence store as a record, and the brief re-derives to a new version.
           The prior approval lapses.</>}
