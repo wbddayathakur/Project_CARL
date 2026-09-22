@@ -92,6 +92,7 @@ h1,h2,h3,h4{margin:0;font-weight:600;letter-spacing:-.01em}
 .dim{color:var(--ink-3)}
 .tiny{font-size:11px}
 .mini{font-size:10.5px}
+.key{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:4px;vertical-align:baseline}
 .row{display:flex;align-items:center;gap:8px}
 .col{display:flex;flex-direction:column}
 .wrap{flex-wrap:wrap}
@@ -2103,19 +2104,19 @@ const AGENTS = [
   id: "A0",
   name: "Orchestrator",
   phase: "All",
-  role: "Holds the state machine, knows every evaluation point inside it, and scores the intermediate status at each one. Below par it loops the phase or surfaces for strategic input.",
+  role: "Holds the state machine, knows every evaluation point inside it, and scores the intermediate status at each one. It separates what is missing from what is merely weak, and only the first of those holds a handoff.",
   inputs: ["Phase state", "Every evaluation point and its weight", "Justification scores"],
-  outputs: ["Gate score", "Blocking points and their remedies", "Handoff to the next phase"],
-  guard: "Its only power is to refuse a handoff. It cannot advance the plan, edit an artifact, or overrule the planner, and no point it raises can be waived silently.",
-  learns: "Which blocking points planners routinely argue past — a point argued past every time is a badly written point."
+  outputs: ["Gate score", "What is absent, and its remedy", "What is weak, scored and carried forward"],
+  guard: "It can hold a handoff only for absence — something the next phase would have to guess at. It has no power over quality: a weak argument goes forward carrying its score, to be read by P&I at the only gate that can stop a plan (OQ-17, OQ-22).",
+  learns: "Which binding points planners routinely find ways around — a point worked around every time is a badly written point."
 }, {
   id: "A0b",
   name: "Justification Eval",
   phase: "All",
-  role: "Scores the argument behind a change, never the change itself. A reason that would not survive being read by someone outside the room goes back to its author with the specific thing it is missing.",
+  role: "Scores the argument behind a change, never the change itself, and names what a stronger argument would say.",
   inputs: ["The planner's or approver's written reason", "What is being changed"],
-  outputs: ["Argument score", "What the argument is missing", "Pass, thin, or sent back"],
-  guard: "Judges form, not conclusion. It has no view on whether the change is right — a planner can argue anything, but not weakly.",
+  outputs: ["Argument score", "What the argument is missing", "Pass, thin, or flagged thin"],
+  guard: "Judges form, not conclusion, and refuses nothing. It has no view on whether the change is right, and no power to stop a weak one — the score travels with the change into the approval package instead.",
   learns: "Reasons that passed and were later vindicated or overturned at approval."
 }, {
   id: "A0c",
@@ -2551,7 +2552,10 @@ function scoreProduct(p, live, signals) {
   };
 }
 function buildRanking(customMap, signals) {
-  const rows = PRODUCTS.map(p => {
+  /* Discovery ranks on the Indicative pre-screen. A product with no Indicative
+     inventory across the flight is not eligible in fact, only in principle, and
+     never reaches the list at all (Forecast §1). */
+  const rows = PRODUCTS.filter(p => indicativeFor(p).eligible).map(p => {
     const ids = customMap[p.id] || [];
     const live = applyCustom(p, ids);
     const s = scoreProduct(p, live, signals);
@@ -2560,6 +2564,8 @@ function buildRanking(customMap, signals) {
       p,
       custom: ids,
       breaches: breachesFor(p, live),
+      /* Direction of travel, not a figure — see 28-forecast.js. */
+      availSignal: customisationSignal(p, ids, live),
       ...s
     };
   });
@@ -2656,6 +2662,18 @@ function optimise(ranked, opts) {
     }
     return true;
   });
+
+  /* Sending the accepted list to the optimiser is what triggers the Constrained
+     run. Until this moment every avails figure on the deal is the Indicative
+     pre-screen; from here each line has its own waterfall derivation, its own
+     UMP placement ID, and a run date that travels with it as provenance.
+     The solve allocates against Constrained avails, not against the pre-screen. */
+  const runAt = NOW();
+  const fc = {};
+  selected.forEach(r => {
+    fc[r.pid] = constrainedFor(r.p, r.custom, runAt);
+  });
+  const conK = r => fc[r.pid] ? fc[r.pid].availK : r.live.availK;
   FRAME.regions.forEach(region => {
     const envelope = DEAL.netBudget * FRAME.regionSplit[region];
     const all = selected.filter(r => r.p.region === region);
@@ -2688,9 +2706,10 @@ function optimise(ranked, opts) {
         impsK,
         custom: r.custom,
         comp: r.live.comp,
-        availK: r.live.availK,
+        availK: conK(r),
         view: r.live.view,
-        availUse: impsK / r.live.availK,
+        availUse: impsK / conK(r),
+        ...forecastOn(fc[r.pid], r.p),
         overridden: o.overrides[r.pid] != null,
         locked: o.locked[r.pid] != null,
         systemSpend: (o.systemSpend || {})[r.pid]
@@ -2713,14 +2732,14 @@ function optimise(ranked, opts) {
     let remaining = Math.max(0, envelope - fixedSpend);
     const alloc = pool.map(() => 0);
     for (let pass = 0; pass < 4 && remaining > 1000; pass++) {
-      const active = pool.map((r, i) => alloc[i] < r.live.availK * r.live.cpm * o.buyCap);
+      const active = pool.map((r, i) => alloc[i] < conK(r) * r.live.cpm * o.buyCap);
       const aw = weights.map((w, i) => active[i] ? w : 0);
       const asum = aw.reduce((a, b) => a + b, 0);
       if (asum <= 0) break;
       let spent = 0;
       pool.forEach((r, i) => {
         if (!active[i]) return;
-        const cap = r.live.availK * r.live.cpm * o.buyCap - alloc[i]; // never buy past 80% of sellable avails
+        const cap = conK(r) * r.live.cpm * o.buyCap - alloc[i]; // never buy past 80% of constrained avails
         const want = remaining * (aw[i] / asum);
         const take = Math.max(0, Math.min(cap, want));
         alloc[i] += take;
@@ -2732,7 +2751,7 @@ function optimise(ranked, opts) {
     if (remaining > 5000) unallocated.push({
       region,
       amount: remaining,
-      why: `Every accepted ${region} product hit its avails ceiling at ${pct(o.buyCap, 0)} of sellable inventory. More budget needs more products, not more weight.`
+      why: `Every accepted ${region} product hit its avails ceiling at ${pct(o.buyCap, 0)} of constrained inventory. More budget needs more products, not more weight.`
     });
     pool.forEach((r, i) => {
       const spend = alloc[i];
@@ -2748,9 +2767,10 @@ function optimise(ranked, opts) {
         impsK,
         custom: r.custom,
         comp: r.live.comp,
-        availK: r.live.availK,
+        availK: conK(r),
         view: r.live.view,
-        availUse: impsK / r.live.availK,
+        availUse: impsK / conK(r),
+        ...forecastOn(fc[r.pid], r.p),
         overridden: false,
         locked: false,
         systemSpend: (o.systemSpend || {})[r.pid] != null ? o.systemSpend[r.pid] : spend
@@ -2863,36 +2883,56 @@ function checkConstraints(res, ranked) {
 /* ------------------------------------------------------- the good-plan rubric */
 /* [PROPOSED] — OQ-2 is open. The shape is settled, the content is not.
    Scored in isolation, never ranked against other versions (Analyze §9). */
+/* The definition of a good plan has two layers (OQ-2).
+
+   The standing layer is WBD's, agreed once rather than per deal: these are the
+   dimensions a plan is judged on at all. The per-RFP layer is the weights and
+   thresholds below, instantiated for this brief.
+
+   The dimensions are scored separately and deliberately not collapsed into one
+   number, so the trade-off between them stays visible. A version that buys
+   objective delivery by abandoning yield alignment should look different from
+   one that is merely average everywhere, and a single total hides exactly that.
+
+   [OPEN] The dimensions here are candidates. Whether they are the right ones,
+   how each is measured, and who sets the per-RFP weights are all with the
+   business. */
 const RUBRIC = [{
   k: "coverage",
   label: "Requirement coverage",
   w: 0.20,
+  bar: 80,
   help: "Stated requirements this version satisfies."
 }, {
   k: "objective",
-  label: "Objective delivery",
+  label: "KPI service",
   w: 0.22,
+  bar: 85,
   help: "1+ and 3+ reach against the goal the brief set."
 }, {
   k: "price",
-  label: "Price discipline",
+  label: "Efficiency",
   w: 0.15,
+  bar: 70,
   help: "Blended CPM against the ceiling and the advertiser's paid benchmark."
 }, {
   k: "yield",
-  label: "Yield alignment",
+  label: "Seller alignment",
   w: 0.16,
+  bar: 75,
   help: "Agreement with P&I's stated position, floors and caps."
 }, {
   k: "argument",
-  label: "Quality of argument",
+  label: "Argument quality",
   w: 0.15,
+  bar: 70,
   help: "Every deviation from the system proposal carries a reason that would survive a question."
 }, {
   k: "realism",
-  label: "Inventory realism",
+  label: "Deliverability",
   w: 0.12,
-  help: "Deliverability against sellable avails and concentration risk."
+  bar: 75,
+  help: "Deliverability against constrained avails and concentration risk."
 }];
 function scorePlan(res, ranked, overrides, justifications, constraints) {
   const coverageItems = [{
@@ -2946,9 +2986,21 @@ function scorePlan(res, ranked, overrides, justifications, constraints) {
     argument,
     realism
   };
+
+  /* The profile, not a verdict. Which dimensions clear the threshold this RFP
+     set, and which do not — that is the readable answer. `total` is retained
+     only as a weak sort key for the version list; nothing decides on it. */
+  const below = RUBRIC.filter(r => parts[r.k] < r.bar).map(r => ({
+    ...r,
+    score: +parts[r.k].toFixed(1),
+    short: +(r.bar - parts[r.k]).toFixed(1)
+  })).sort((a, b) => b.short - a.short);
   const total = RUBRIC.reduce((s, r) => s + parts[r.k] * r.w, 0);
   return {
     parts,
+    below,
+    clear: RUBRIC.length - below.length,
+    of: RUBRIC.length,
     total: +total.toFixed(1),
     coverageItems,
     devs: devs.length,
@@ -3112,7 +3164,7 @@ const GATE_META = {
     asks: "Is one version chosen, and is the choice legible?"
   },
   approval: {
-    to: "Close",
+    to: "the client proposal",
     from: "Approval orchestrator",
     asks: "Does every line carry a decision and a reason?"
   }
@@ -3120,25 +3172,34 @@ const GATE_META = {
 function evaluateGate(phase, st, ctx) {
   const c = ctx || {};
   const pt = [];
+  /* Binding points hold the handoff. They test for the *absence* of something
+     the next phase cannot work without — an unadjudicated gap, an override with
+     no reason at all, a line still resting on an Indicative forecast. */
   const add = (id, label, w, ok, detail, fix) => pt.push({
     id,
     label,
     w,
     bar: 100,
+    kind: "binding",
     ok: !!ok,
     score: ok ? 100 : 0,
     detail,
     fix
   });
-  /* Points that measure the *quality* of an argument are met at a bar, not at a
-     perfect score — a mean of 100 across several reasons is not a real target. */
-  const addP = (id, label, w, score, detail, fix, bar) => {
-    const b = bar == null ? 100 : bar;
+
+  /* Advisory points never hold the handoff. They measure *quality* — how good an
+     argument is, how strong the evidence is — and quality is not the system's to
+     veto (OQ-22: the system never blocks a weak strategy, it proposes a better
+     one and records the departure). The score travels into the rubric and into
+     the approval package, where P&I reads it and it carries consequence. */
+  const addA = (id, label, w, score, detail, fix, bar) => {
+    const b = bar == null ? 70 : bar;
     pt.push({
       id,
       label,
       w,
       bar: b,
+      kind: "advisory",
       ok: score >= b,
       score: Math.round(score),
       detail,
@@ -3151,14 +3212,14 @@ function evaluateGate(phase, st, ctx) {
     const matContra = CONTRADICTIONS.filter(x => x.material);
     const openContra = matContra.filter(x => !st.contraDecisions[x.id]);
     const jm = scoreJustifications(Object.fromEntries(Object.entries(st.gapDecisions).map(([k, v]) => [k, v && v.reason])));
-    addP("G1", "Every material requirement received or inferred, and accepted", 26, material.length ? (material.length - openGaps.length) / material.length * 100 : 100, `${material.length - openGaps.length} of ${material.length} material gaps adjudicated.`, openGaps.length ? `Resolve ${openGaps.map(g => g.id).join(", ")}.` : null);
-    addP("G2", "No contradiction left standing on a material attribute", 22, matContra.length ? (matContra.length - openContra.length) / matContra.length * 100 : 100, `${matContra.length - openContra.length} of ${matContra.length} material contradictions adjudicated.`, openContra.length ? `Adjudicate ${openContra.map(x => x.id).join(", ")}.` : null);
+    add("G1", "Every material requirement received or inferred, and accepted", 26, openGaps.length === 0, `${material.length - openGaps.length} of ${material.length} material gaps adjudicated.`, openGaps.length ? `Resolve ${openGaps.map(g => g.id).join(", ")}.` : null);
+    add("G2", "No contradiction left standing on a material attribute", 22, openContra.length === 0, `${matContra.length - openContra.length} of ${matContra.length} material contradictions adjudicated.`, openContra.length ? `Adjudicate ${openContra.map(x => x.id).join(", ")}.` : null);
 
     /* Scored by the Evidence Eval Agent on the RFP graph, not asserted here. */
     const eg = c.evGraph || evalEvidenceGraph(EVIDENCE, st);
-    addP("G3", "The graph is strong enough to plan an allocation on", 14, eg.plannable, `${eg.plannable}% of ${eg.scored.length} records clear the 60 confidence bar; mean ${eg.mean}.${eg.weak.length ? ` ${eg.weak.length} below it (weakest ${eg.weak[0].id} at ${eg.weak[0].conf}).` : ""}`, eg.weak.length ? `Strengthen ${eg.weak.slice(0, 3).map(w => w.id).join(", ")} — the evidence tab says how.` : null, 75);
+    addA("G3", "The graph is strong enough to plan an allocation on", 14, eg.plannable, `${eg.plannable}% of ${eg.scored.length} records clear the 60 confidence bar; mean ${eg.mean}.${eg.weak.length ? ` ${eg.weak.length} below it (weakest ${eg.weak[0].id} at ${eg.weak[0].conf}).` : ""}`, eg.weak.length ? `Strengthen ${eg.weak.slice(0, 3).map(w => w.id).join(", ")} — the evidence tab says how.` : null, 75);
     add("G4", "The brief is approved on the version now current", 24, st.intakeApproved && st.intakeApproved.version === st.briefVersion, st.intakeApproved ? st.intakeApproved.version === st.briefVersion ? `Approved on v${st.intakeApproved.version}.` : `Approved on v${st.intakeApproved.version} but the brief has re-derived to v${st.briefVersion} — the approval lapsed (T9).` : `Brief v${st.briefVersion} is not approved.`, st.intakeApproved ? "Re-approve the current version." : "Approve the brief once the gaps are closed.");
-    addP("G5", "Adjudications carry reasons a reader could act on", 14, jm.all.length ? jm.mean : 0, jm.all.length ? `${jm.all.length} recorded, mean argument score ${jm.mean}.${jm.weak.length ? ` ${jm.weak.length} too thin to travel.` : ""}` : "No adjudication reasons recorded yet.", jm.weak.length ? "Strengthen the reasons flagged on the gaps tab." : null, 70);
+    addA("G5", "Adjudications carry reasons a reader could act on", 14, jm.all.length ? jm.mean : 0, jm.all.length ? `${jm.all.length} recorded, mean argument score ${jm.mean}.${jm.weak.length ? ` ${jm.weak.length} would read thin to P&I.` : ""}` : "No adjudication reasons recorded yet.", jm.weak.length ? "Strengthen the reasons flagged on the gaps tab — or carry them as they are and P&I will read them." : null, 70);
   }
   if (phase === "discovery") {
     const ranking = c.ranking || [];
@@ -3166,10 +3227,15 @@ function evaluateGate(phase, st, ctx) {
     const emptyRegions = FRAME.regions.filter(rg => (FRAME.regionSplit[rg] || 0) > 0 && !on.some(r => r.p.region === rg));
     const breached = on.filter(r => (r.breaches || []).some(b => b.id === "H2" || b.id === "H6"));
     const jm = scoreJustifications(st.rankJust);
-    add("D1", "Every region carrying budget has a product in the list", 26, emptyRegions.length === 0, emptyRegions.length ? `${emptyRegions.join(", ")} has an envelope and nothing to spend it on — the solver will report it unallocated.` : "All four regional envelopes have somewhere to go.", emptyRegions.length ? `Add a product in ${emptyRegions.join(", ")}.` : null);
+    addA("D1", "Every region carrying budget has a product in the list", 22, emptyRegions.length === 0 ? 100 : 0, emptyRegions.length ? `${emptyRegions.join(", ")} has an envelope and nothing to spend it on — the solver will report it unallocated rather than move the money.` : "All four regional envelopes have somewhere to go.", emptyRegions.length ? `Add a product in ${emptyRegions.join(", ")}, or proceed and let the solve report it.` : null, 100);
     add("D2", "No product in the list carries an unresolved hard breach", 24, breached.length === 0, breached.length ? `${breached.map(r => r.p.name.split(" — ")[0]).join(", ")} would be held out of the solve rather than shorten the list quietly.` : "Every product in the list clears its hard constraints.", breached.length ? "Re-target to clear the breach, or take the product out." : null);
-    addP("D3", "Every change to the system's order survives evaluation", 26, jm.all.length ? jm.mean : 100, jm.all.length ? `${jm.all.length} planner change${jm.all.length > 1 ? "s" : ""}, mean argument score ${jm.mean}.${jm.weak.length ? ` ${jm.weak.length} sent back.` : ""}` : "No changes to the system's order — nothing to defend.", jm.weak.length ? `Rewrite the reason on ${jm.weak.map(w => w.key).join(", ")}.` : null, 70);
-    add("D4", "The ranked list and its targeting are accepted", 24, !!st.strategyAccepted, st.strategyAccepted ? `Strategy brief v${st.strategyVersion} accepted.` : "The list has not been accepted yet.", "Accept the list to open the solve.");
+
+    /* Presence of a reason binds; the strength of it does not. */
+    const changed = Object.keys(st.rankJust || {});
+    const unreasoned = changed.filter(k => !String(st.rankJust[k] || "").trim());
+    add("D3", "Every change to the system's order carries a reason", 14, unreasoned.length === 0, unreasoned.length ? `${unreasoned.length} change${unreasoned.length > 1 ? "s" : ""} with no reason recorded.` : changed.length ? `${changed.length} change${changed.length > 1 ? "s" : ""}, each with a reason.` : "No changes to the system's order.", "A change with no reason cannot be read by P&I at all.");
+    addA("D3q", "Those reasons hold up to being read cold", 18, jm.all.length ? jm.mean : 100, jm.all.length ? `Mean argument score ${jm.mean} across ${jm.all.length} change${jm.all.length > 1 ? "s" : ""}.${jm.weak.length ? ` ${jm.weak.length} would read thin.` : ""}` : "No changes to the system's order — nothing to defend.", jm.weak.length ? `${jm.weak.map(w => w.key).join(", ")} would benefit from a rewrite. This does not hold the handoff.` : null, 70);
+    add("D4", "The ranked list and its targeting are accepted", 24, !!st.strategyAccepted, st.strategyAccepted ? `Strategy brief v${st.strategyVersion} accepted.` : "The list has not been accepted yet.", "Accept the list to open the solve. Acceptance is explicit, not implied by running the solve (D-5).");
   }
   if (phase === "strategize") {
     const res = c.res || {
@@ -3182,10 +3248,14 @@ function evaluateGate(phase, st, ctx) {
     const unjust = ovr.filter(k => !(st.justifications || {})[k]);
     const hardFail = cons.filter(x => x.kind === "hard" && !x.ok);
     add("S1", "The optimiser has solved from the accepted list", 18, !!st.lastRun || c.res && c.res.lines && c.res.lines.length, st.lastRun ? `Last solved ${st.lastRun}.` : "Not run yet.", "Run the solve.");
-    addP("S2", "Every override is argued, and the argument holds", 28, ovr.length === 0 ? 100 : unjust.length ? 0 : jm.mean, ovr.length === 0 ? "No overrides — the optimiser's own answer stands." : unjust.length ? `${unjust.length} override${unjust.length > 1 ? "s" : ""} carrying no reason at all.` : `${ovr.length} override${ovr.length > 1 ? "s" : ""}, mean argument score ${jm.mean}.${jm.weak.length ? ` ${jm.weak.length} sent back.` : ""}`, unjust.length ? "Attach a reason to every override." : jm.weak.length ? "Rewrite the reasons that were sent back." : null, 70);
-    add("S3", "No regional envelope left unallocated", 20, (res.unallocated || []).length === 0, (res.unallocated || []).length ? `${res.unallocated.map(u => `${u.region} ${money1(u.amount)}`).join(", ")} has nowhere to go.` : "Every envelope is spent where it was budgeted.", (res.unallocated || []).length ? "Go back to Discovery and add a product in that region." : null);
-    add("S4", "No hard constraint breached in the solve", 16, hardFail.length === 0, hardFail.length ? `${hardFail.map(x => x.id).join(", ")} breached.` : "All hard constraints clear.", hardFail.length ? "Re-target or re-order until the breach clears." : null);
-    add("S5", "At least one version saved", 18, (st.versions || []).length > 0, `${(st.versions || []).length} saved.`, "Save a version you would defend.");
+
+    /* Discovery §9: a version cannot be saved while an override is unjustified.
+       That is absence, and it binds. Strength is the advisory point below. */
+    add("S2", "Every override carries a reason", 20, unjust.length === 0, ovr.length === 0 ? "No overrides — the optimiser's own answer stands." : unjust.length ? `${unjust.length} override${unjust.length > 1 ? "s" : ""} carrying no reason at all.` : `${ovr.length} override${ovr.length > 1 ? "s" : ""}, each with a reason.`, unjust.length ? "Attach a reason to every override." : null);
+    addA("S2q", "Those reasons would survive P&I reading them", 16, jm.all.length ? jm.mean : 100, jm.all.length ? `Mean argument score ${jm.mean}.${jm.weak.length ? ` ${jm.weak.length} would read thin.` : ""}` : "No overrides to defend.", jm.weak.length ? "Worth a rewrite before P&I sees it. This does not hold the handoff." : null, 70);
+    addA("S3", "No regional envelope left unallocated", 16, (res.unallocated || []).length === 0 ? 100 : 0, (res.unallocated || []).length ? `${res.unallocated.map(u => `${u.region} ${money1(u.amount)}`).join(", ")} has nowhere to go.` : "Every envelope is spent where it was budgeted.", (res.unallocated || []).length ? "Go back to Discovery and add a product in that region, or carry it forward as a known shortfall." : null, 100);
+    add("S4", "No hard constraint breached in the solve", 16, hardFail.length === 0, hardFail.length ? `${hardFail.map(x => x.id).join(", ")} breached.` : "All hard constraints clear.", hardFail.length ? "A hard constraint is a limit, not a preference — it binds before the solve (OQ-14)." : null);
+    add("S5", "At least one version saved", 14, (st.versions || []).length > 0, `${(st.versions || []).length} saved.`, "Save a version you would defend.");
   }
   if (phase === "analyze") {
     const vs = st.versions || [];
@@ -3197,15 +3267,20 @@ function evaluateGate(phase, st, ctx) {
       all: []
     };
     const missKpi = best && best.roll.reach3 < FRAME.reachGoal3;
-    add("A1", "More than one version to choose between", 16, vs.length >= 2, `${vs.length} version${vs.length === 1 ? "" : "s"} saved.`, "Save a second version so the choice is a real one.");
-    add("A2", "One version is committed", 30, !!st.committed, st.committed ? `${st.committed} committed.` : "Nothing committed.", "Commit the version you would put in front of the client.");
-    addP("A3", "The committed version scores against the rubric", 20, best ? Math.min(best.rubric.total / 85 * 100, 100) : 0, best ? `Rubric ${Math.round(best.rubric.total)} against an 85 bar.` : "No version to score.", "A version below the bar needs a reason it still goes forward.", 90);
-    addP("A4", "Every override in it carries an argument that held", 20, jm.all.length ? jm.mean : 100, jm.all.length ? `${jm.all.length} override${jm.all.length > 1 ? "s" : ""}, mean score ${jm.mean}.` : "No overrides to defend.", jm.weak.length ? "Strengthen the argument before P&I reads it." : null, 70);
+    addA("A1", "More than one version to choose between", 10, vs.length >= 2 ? 100 : 0, `${vs.length} version${vs.length === 1 ? "" : "s"} saved.`, vs.length < 2 ? "A single version is a recommendation, not a choice. Not a blocker." : null, 100);
+    add("A2", "One version is committed", 26, !!st.committed, st.committed ? `${st.committed} committed.` : "Nothing committed.", "Commit the version you would put in front of the client.");
+
+    /* The binding forecast rule: Indicative is a pre-screen, not a number a plan
+       may rest on at approval. T5 applied to inventory rather than requirements. */
+    const fc = c.forecast || (best ? versionFidelity(best) : null);
+    add("A6", "Every line rests on a Constrained forecast, not an Indicative one", 24, !best ? false : fc && fc.indicativeLines.length === 0, !best ? "No version to check." : fc.indicativeLines.length ? `${fc.indicativeLines.length} of ${fc.total} line${fc.total === 1 ? "" : "s"} still on the daily Indicative pre-screen: ${fc.indicativeLines.slice(0, 3).join(", ")}${fc.indicativeLines.length > 3 ? "…" : ""}.` : `All ${fc.total} lines on Constrained avails, run ${fc.runAt}.`, "Re-run the solve to replace the pre-screen figures. Indicative is not admissible at approval.");
+    addA("A3", "Every rubric dimension clears the threshold this RFP set", 16, best ? best.rubric.clear / best.rubric.of * 100 : 0, best ? `${best.rubric.clear} of ${best.rubric.of} dimensions clear.${best.rubric.below.length ? ` Short: ${best.rubric.below.map(b => `${b.label} ${b.score} against ${b.bar}`).join(", ")}.` : ""}` : "No version to score.", best && best.rubric.below.length ? "A version can go forward short on a dimension. P&I reads which one, and by how much." : null, 100);
+    addA("A4", "Every override in it carries an argument that held", 14, jm.all.length ? jm.mean : 100, jm.all.length ? `${jm.all.length} override${jm.all.length > 1 ? "s" : ""}, mean score ${jm.mean}.` : "No overrides to defend.", jm.weak.length ? "Strengthen the argument before P&I reads it." : null, 70);
 
     /* Only assessable once a version is committed — the explanation lives in the
        commit note, which is the thing P&I reads first. */
     const noteEv = st.commitNote ? evalJustification(st.commitNote) : null;
-    addP("A5", "A missed KPI is explained, not left to be found", 14, !st.committed ? 0 : !missKpi ? 100 : noteEv ? noteEv.score : 0, !st.committed ? missKpi && best ? `3+ reach is ${pct(best.roll.reach3, 1)} against a ${pct(FRAME.reachGoal3, 0)} goal — the commit note has to carry why.` : "Assessed at commit." : !missKpi ? "The stated KPI is met." : noteEv ? `Commit note scored ${noteEv.score}.` : "No commit note recorded.", !st.committed ? "Say why this version still goes forward when you commit it." : null, 70);
+    addA("A5", "A missed KPI is explained, not left to be found", 10, !st.committed ? 0 : !missKpi ? 100 : noteEv ? noteEv.score : 0, !st.committed ? missKpi && best ? `3+ reach is ${pct(best.roll.reach3, 1)} against a ${pct(FRAME.reachGoal3, 0)} goal — the commit note should carry why.` : "Assessed at commit." : !missKpi ? "The stated KPI is met." : noteEv ? `Commit note scored ${noteEv.score}.` : "No commit note recorded.", !st.committed ? "Say why this version still goes forward when you commit it." : null, 70);
   }
   if (phase === "approval") {
     const v = (st.versions || []).find(x => x.id === st.committed);
@@ -3214,23 +3289,35 @@ function evaluateGate(phase, st, ctx) {
     const decided = lines.filter(l => dec[l.pid]);
     const noReason = decided.filter(l => !(dec[l.pid].reason || "").trim());
     const jm = scoreJustifications(Object.fromEntries(decided.map(l => [l.pid, dec[l.pid].reason])));
-    addP("P1", "Every line has a decision", 50, lines.length ? decided.length / lines.length * 100 : 0, `${decided.length} of ${lines.length} decided.`, decided.length < lines.length ? `${lines.length - decided.length} line${lines.length - decided.length === 1 ? "" : "s"} still open.` : null);
-    add("P2", "Every decision carries a reason", 24, noReason.length === 0, noReason.length ? `${noReason.length} decision${noReason.length > 1 ? "s" : ""} with no reason recorded.` : "Each decision states its grounds.", "A decision without a reason is not an instruction the planner can act on.");
-    addP("P3", "Disapprovals are actionable, not verdicts", 26, jm.all.length ? jm.mean : 0, jm.all.length ? `Mean reason score ${jm.mean} across ${jm.all.length} decision${jm.all.length > 1 ? "s" : ""}.` : "No reasons yet.", jm.weak.length ? "Say what would make the line approvable." : null, 70);
+
+    /* The only real gate in the design (OQ-17). Every line must be decided —
+       not every line approved. */
+    add("P1", "Every line has a decision", 44, lines.length > 0 && decided.length === lines.length, `${decided.length} of ${lines.length} decided.`, decided.length < lines.length ? `${lines.length - decided.length} line${lines.length - decided.length === 1 ? "" : "s"} still open.` : null);
+    add("P2", "Every decision carries a reason", 24, noReason.length === 0, noReason.length ? `${noReason.length} decision${noReason.length > 1 ? "s" : ""} with no reason recorded.` : "Each decision states its grounds.", "A disapproval without a workable reason is not a decision, it is a rejection.");
+    addA("P3", "Disapprovals are actionable, not verdicts", 32, jm.all.length ? jm.mean : 0, jm.all.length ? `Mean reason score ${jm.mean} across ${jm.all.length} decision${jm.all.length > 1 ? "s" : ""}.` : "No reasons yet.", jm.weak.length ? "Say what would make the line approvable, and where the inventory should sit instead." : null, 70);
   }
   const wsum = pt.reduce((s, x) => s + x.w, 0) || 1;
   const score = Math.round(pt.reduce((s, x) => s + x.score * x.w, 0) / wsum);
-  const blockers = pt.filter(x => !x.ok);
+
+  /* Only binding points hold the handoff. Advisory shortfalls are surfaced,
+     travel into the rubric and the approval package, and are never a veto. */
+  const binding = pt.filter(x => x.kind === "binding");
+  const blockers = binding.filter(x => !x.ok);
+  const advisory = pt.filter(x => x.kind === "advisory" && !x.ok);
   return {
     phase,
     score,
     par: GATE_PAR,
-    open: score >= GATE_PAR && blockers.length === 0,
+    open: blockers.length === 0,
     points: pt,
     blockers,
+    advisory,
     meta: GATE_META[phase] || {},
-    /* What the orchestrator does with the score, in its own words. */
-    verdict: blockers.length === 0 ? "handoff" : score >= GATE_PAR ? "surface" : "loop"
+    /* What the orchestrator does, in its own words. It has three answers and
+       none of them is "no". */
+    verdict: blockers.length ? "incomplete" // something is missing, not weak
+    : advisory.length ? "open-with-notes" // passable, with things P&I will read
+    : "clean"
   };
 }
 </script>
@@ -3897,6 +3984,371 @@ const ProductRAG = ({
 };
 </script>
 
+<!-- ================= 28-forecast.js ================= -->
+<script>
+/* =============================================================================
+   28-forecast.js — the forecast boundary between UMP and the Allocation Engine.
+
+   Forecast data reaches planning in two fidelity classes. They are not high and
+   low quality versions of one number. They are different answers to different
+   questions, asked at different moments:
+
+     Indicative   Does enough inventory exist for this product across this
+                  flight to be worth putting in front of the planner at all?
+                  Product level, no targeting, pre-computed daily, read
+                  instantly. It powers the eligibility list and nothing else.
+
+     Constrained  What will this specific line, with this specific targeting,
+                  actually deliver? Line level, full waterfall, computed on
+                  demand when the optimiser runs. This is what the plan rests
+                  on and what the client eventually sees.
+
+   The binding rule that connects them: a plan version cannot be committed for
+   approval while any line still rests on an Indicative figure. That is T5
+   applied to inventory rather than to advertiser requirements — an inferred
+   value is a proposal and must be confirmed before approval. It is what lets
+   Discovery be fast and approximate without making the approval package
+   indefensible.
+
+   The consequence the UX has to carry: between those two moments, the planner
+   customises targeting and gets no number back. Precise availability at a
+   specific customisation does not exist until the solver runs (D-8). What they
+   get instead is a constraint flag and a direction of travel.
+   ============================================================================= */
+
+const FIDELITY = {
+  indicative: {
+    id: "indicative",
+    label: "Indicative",
+    short: "IND",
+    tone: "a",
+    what: "Product-level pre-screen. This RFP's targeting is not applied.",
+    granularity: "Product or package",
+    targeting: "None — standing pressure only",
+    computed: "Daily, pre-computed. Read immediately, no run required.",
+    carriedBy: "The strategy brief, as the inventory position per eligibility entry.",
+    admissible: "Eligibility and ranked order in Discovery only.",
+    notAdmissible: "Any plan version submitted for approval."
+  },
+  constrained: {
+    id: "constrained",
+    label: "Constrained",
+    short: "CON",
+    tone: "g",
+    what: "Line-level forecast against this RFP's actual targeting.",
+    granularity: "Line item, per UMP placement ID",
+    targeting: "Full waterfall — TMR, AMR, ABR, FCR",
+    computed: "On demand, asynchronously, when the accepted list goes to the optimiser.",
+    carriedBy: "The plan version brief.",
+    admissible: "Allocation, Analyze, and anything going to approval.",
+    notAdmissible: "Nothing — this is the defensible class."
+  }
+};
+
+/* The Indicative pre-screen is recomputed overnight; the read is instant but the
+   figure is as-at the last nightly pass, which is why it carries a date. */
+const INDICATIVE_RUN = "2026-09-22 03:15";
+
+/* Below this, a product has too little inventory across the flight to be worth
+   surfacing at all — it never reaches the eligibility list (Forecast §1). */
+const INDICATIVE_FLOOR_K = 40000;
+
+/* Maximum age of a Constrained run before P&I is advised to ask for a fresh one.
+   [OPEN] The real threshold is P&I's to set, against how fast inventory moves. */
+const STALE_HOURS = 24;
+
+/* -------------------------------------------------------- UMP placement IDs */
+/* UMP generates the line identifier and the Allocation Engine accepts it,
+   without an Operative One deal needing to exist first (dependency DDF-1251).
+   The ID carries product, flight and targeting, so two lines differing only in
+   customisation are two different forecast questions. */
+function umpPlacementId(p, customIds) {
+  const t = (customIds || []).slice().sort().join("+");
+  const h = t ? t.split("").reduce((a, c) => a * 31 + c.charCodeAt(0) >>> 0, 7).toString(36).slice(0, 3).toUpperCase() : "BSE";
+  return `UMP-${p.id}-${h}`;
+}
+
+/* --------------------------------------------------------- the ten-step waterfall */
+/* The Allocation Engine's own model, reused rather than duplicated. Every
+   Constrained figure is explained by it, and the run date travels with the
+   derivation as provenance — the same line reading 15% on one date and 10.7% on
+   another is not a contradiction, it is the system behaving correctly (§9). */
+const WATERFALL_STEPS = [{
+  k: "capacity",
+  label: "Total digital inventory capacity",
+  note: "Raw FreeWheel impressions for the site and period, before any constraint. Sourced from the VW_CAPACITY nightly pipeline."
+}, {
+  k: "pressure",
+  label: "Initial pressure cap",
+  note: "Less inventory not open to this sale — programmatic PMP reserved auction, non-AD direct, and PNG."
+}, {
+  k: "higherOv",
+  label: "HIGHER_OV_COMPETITION",
+  note: "Impressions lost to prior days and to higher-OV placements."
+}, {
+  k: "sameOv",
+  label: "SAME_OV_COMPETITION",
+  note: "Lost to placements at the same override value but higher combined priority index (CPI = OSI + LSI + TI)."
+}, {
+  k: "afterComp",
+  label: "After competition",
+  divider: true,
+  note: "What remains once both competition steps have been applied."
+}, {
+  k: "tmr",
+  label: "After_TMR — target match rate",
+  note: "The share of remaining inventory matching the line's content targeting. Gold MR pipeline, with brand and portfolio fallbacks."
+}, {
+  k: "amr",
+  label: "After_AMR — audience match rate",
+  note: "The share matching the audience segments, over the AND/OR combination tree against 14-day trailing tracked audience data."
+}, {
+  k: "abr",
+  label: "After_ABR — ad-break ratio",
+  note: "A structural 1/N limit on how many slots in one break a single line may take. Derived from 7–14 day trailing slot data. Non-relaxing."
+}, {
+  k: "fcr",
+  label: "After_FCR — frequency cap ratio",
+  note: "Reduces for the per-user exposure ceiling on the line."
+}, {
+  k: "net",
+  label: "Net constrained avails",
+  divider: true,
+  strong: true,
+  note: "The net available impressions returned to the requester."
+}];
+
+/* Deterministic per product and targeting set, so the same line always derives
+   the same way — a forecast the planner cannot reproduce is not evidence. */
+function seeded(str) {
+  let h = 2166136261;
+  for (let i = 0; i < str.length; i++) {
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return () => {
+    h = Math.imul(h ^ h >>> 15, 2246822507);
+    return (h >>> 0) % 1000 / 1000;
+  };
+}
+
+/* Run the waterfall for one line. `p` is the product, `customIds` the targeting
+   customisations the planner applied. Returns every step so the derivation can
+   be read, not just the answer. */
+function runWaterfall(p, customIds, runAt) {
+  const pid = umpPlacementId(p, customIds);
+  const rnd = seeded(pid);
+  const ids = customIds || [];
+
+  /* Indicative sits at product level with no targeting, so it is the closest
+     thing to raw capacity this model has. The waterfall starts above it. */
+  const capacity = Math.round(p.availK / 0.42);
+  const rows = [];
+  let v = capacity;
+  const step = (k, ratio) => {
+    const before = v;
+    v = Math.round(v * ratio);
+    rows.push({
+      ...WATERFALL_STEPS.find(s => s.k === k),
+      value: v,
+      lost: before - v,
+      ratio
+    });
+    return v;
+  };
+  rows.push({
+    ...WATERFALL_STEPS[0],
+    value: capacity,
+    lost: 0,
+    ratio: 1
+  });
+  step("pressure", 0.88 - rnd() * 0.06);
+  step("higherOv", 0.94 - rnd() * 0.07);
+  step("sameOv", 0.96 - rnd() * 0.05);
+  rows.push({
+    ...WATERFALL_STEPS[4],
+    value: v,
+    lost: 0,
+    ratio: 1
+  });
+
+  /* Targeting customisations bite here, which is exactly why a customised
+     figure cannot be known before this runs. */
+  const cs = ids.map(id => CUSTOM_OPTIONS.find(o => o.id === id)).filter(Boolean);
+  const tmrX = cs.filter(o => ["genre", "daypart", "ugc"].includes(o.id)).reduce((a, o) => a * o.availX, 0.86 - rnd() * 0.08);
+  const amrX = cs.filter(o => ["demoGuar"].includes(o.id)).reduce((a, o) => a * o.availX, 0.79 - rnd() * 0.10);
+  const fcrX = cs.filter(o => ["freq"].includes(o.id)).reduce((a, o) => a * o.availX, 0.93 - rnd() * 0.05);
+  step("tmr", clamp(tmrX, 0.05, 1));
+  step("amr", clamp(amrX, 0.05, 1));
+  step("abr", 0.91 - rnd() * 0.06);
+  step("fcr", clamp(fcrX, 0.05, 1));
+  rows.push({
+    ...WATERFALL_STEPS[9],
+    value: v,
+    lost: 0,
+    ratio: 1
+  });
+  return {
+    pid,
+    runAt: runAt || NOW(),
+    capacityK: capacity,
+    netK: v,
+    rows,
+    reductionPct: 1 - v / capacity
+  };
+}
+
+/* ------------------------------------------------------- the two read paths */
+/* Indicative: no run, no targeting, read straight off the nightly pass. */
+function indicativeFor(p) {
+  return {
+    fidelity: "indicative",
+    pid: null,
+    availK: p.availK,
+    runAt: INDICATIVE_RUN,
+    eligible: p.availK >= INDICATIVE_FLOOR_K
+  };
+}
+
+/* Constrained: the answer only the solver pass can give. */
+function constrainedFor(p, customIds, runAt) {
+  const w = runWaterfall(p, customIds, runAt);
+  return {
+    fidelity: "constrained",
+    pid: w.pid,
+    availK: w.netK,
+    runAt: w.runAt,
+    waterfall: w
+  };
+}
+
+/* What the planner gets at the moment of customisation: not a figure. A flag,
+   a direction, and the Indicative still visible as the reference point (§7).
+   Recording the direction alongside the pricing consequence is what makes the
+   trade-off readable downstream rather than only its result. */
+function customisationSignal(p, customIds, live) {
+  const ids = customIds || [];
+  if (!ids.length) return null;
+  const x = ids.reduce((a, id) => {
+    const o = CUSTOM_OPTIONS.find(c => c.id === id);
+    return o ? a * o.availX : a;
+  }, 1);
+  const dir = x < 0.97 ? "down" : x > 1.03 ? "up" : "flat";
+  const severity = x < 0.55 ? "sharp" : x < 0.8 ? "material" : "slight";
+  return {
+    direction: dir,
+    severity,
+    /* Deliberately not a number. The honest answer is that nobody knows yet. */
+    text: dir === "flat" ? "No material change to available inventory." : `Available inventory moves ${dir} ${severity === "sharp" ? "sharply" : severity === "material" ? "materially" : "slightly"} against the pre-screen.`,
+    reference: p.availK,
+    priced: live ? live.cpm : null,
+    why: "The size of the move is not knowable until the optimiser runs this line through the waterfall against your targeting."
+  };
+}
+
+/* The fidelity fields a solved line carries. They travel into the saved plan
+   version, which is how the Analyze gate can tell whether anything still rests
+   on the pre-screen, and how P&I can read the run date at approval. */
+function forecastOn(c, p) {
+  if (!c) return {
+    fidelity: "indicative",
+    umpPid: null,
+    forecastRunAt: null,
+    indicativeK: p.availK,
+    constrainedK: null,
+    waterfall: null
+  };
+  return {
+    fidelity: "constrained",
+    umpPid: c.pid,
+    forecastRunAt: c.runAt,
+    indicativeK: p.availK,
+    constrainedK: c.availK,
+    waterfall: c.waterfall
+  };
+}
+
+/* --------------------------------------------------- reserved and available */
+/* The Allocation Engine excludes reserved inventory before it returns anything,
+   and never breaks it out. Planners consequently never see a pressure figure.
+   P&I sees the combined reserved total at approval, and only there (§8).
+
+   Reserved is booked (signed IO, from COMS) plus COMS-pressured (deals past
+   advertiser approval at 80%+ sell-through). Plans still inside UMP contribute
+   nothing — they have not reached COMS. */
+function reservedFor(p) {
+  const rnd = seeded("res-" + p.id);
+  const capacity = Math.round(p.availK / 0.42);
+  const booked = Math.round(capacity * (0.34 + rnd() * 0.26));
+  const pressured = Math.round(capacity * (0.08 + rnd() * 0.12));
+  return {
+    capacityK: capacity,
+    bookedK: booked,
+    pressuredK: pressured,
+    reservedK: booked + pressured,
+    sellThrough: (booked + pressured) / capacity
+  };
+}
+
+/* Competing in-flight UMP demand against the same product. P&I asked for this
+   so they can see the whole picture before deciding, rather than this plan's
+   draw in isolation.
+   NOTE: not current functionality — the Allocation Engine does not identify
+   competing UMP plan demand today. Carried here as the stated requirement. */
+function competingUmpDemand(p) {
+  const rnd = seeded("comp-" + p.id);
+  const n = Math.floor(rnd() * 3); // 0–2 other plans
+  if (!n) return {
+    plans: [],
+    askK: 0,
+    modelled: true
+  };
+  const plans = Array.from({
+    length: n
+  }, (_, i) => ({
+    ref: `UMP-${String(2100 + Math.floor(rnd() * 880)).slice(0, 4)}`,
+    advertiser: ["Nestlé Purina", "Samsung Mobile", "Capital One", "Toyota NA", "Booking.com"][Math.floor(rnd() * 5)],
+    askK: Math.round(p.availK * (0.03 + rnd() * 0.09))
+  }));
+  return {
+    plans,
+    askK: plans.reduce((s, x) => s + x.askK, 0),
+    modelled: true
+  };
+}
+
+/* ------------------------------------------------------- staleness and lineage */
+function hoursSince(ts) {
+  if (!ts) return Infinity;
+  const t = Date.parse(String(ts).replace(" ", "T") + ":00");
+  return isNaN(t) ? 0 : Math.max(0, (Date.now() - t) / 36e5);
+}
+function staleness(runAt) {
+  const h = hoursSince(runAt);
+  return {
+    hours: h,
+    stale: h > STALE_HOURS,
+    threshold: STALE_HOURS,
+    label: h < 1 ? "just now" : h < 24 ? `${Math.round(h)}h ago` : `${Math.round(h / 24)}d ago`
+  };
+}
+
+/* Which class every line in a saved version rests on. The Analyze gate's one
+   binding forecast point reads this. */
+function versionFidelity(v) {
+  const lines = v && v.lines || [];
+  const ind = lines.filter(l => (l.fidelity || "indicative") !== "constrained");
+  const runs = lines.map(l => l.forecastRunAt).filter(Boolean).sort();
+  return {
+    total: lines.length,
+    indicativeLines: ind.map(l => l.pid || l.p && l.p.id || "line"),
+    constrainedLines: lines.length - ind.length,
+    runAt: runs[0] || null,
+    stale: runs.length ? staleness(runs[0]).stale : false
+  };
+}
+</script>
+
 <!-- ================= 30-kit.js ================= -->
 <script>
 /* =============================================================================
@@ -4416,15 +4868,21 @@ const FlightStrip = ({
 /* =============================================================================
    35-gate.js — the Orchestrator's two surfaces.
 
-   `Gate`     — the handoff panel. Score, evaluation points, and the button that
-                stays shut until the phase is defensible.
+   `Gate`     — the handoff panel. Score, evaluation points, and a button that
+                shuts only when something the next phase needs is absent.
    `JustifyG` — Justify, with `Eval Justifications` wired in. The planner writes
-                an argument, the orchestrator scores it live, and a weak one is
-                sent back with the specific thing it is missing rather than
-                accepted and quietly passed downstream.
+                an argument and the orchestrator scores it live, naming what a
+                stronger one would say.
 
-   Neither surface decides. The gate says what is not yet sound; the evaluator
-   says what an argument lacks. A human still moves the plan (T7).
+   Both surfaces separate absent from weak, and treat them differently. Absent
+   holds: a gap nobody adjudicated, an override with no reason, a line still on
+   an Indicative forecast — the next phase would have to guess. Weak does not
+   hold: it is scored, it travels into the rubric and the approval package, and
+   P&I reads it at the only gate in the design that can stop a plan (OQ-17).
+
+   The system never blocks a weak argument. It proposes a better one and records
+   the departure (OQ-22). A gate the desk could not get past under deadline is a
+   gate that gets worked around, which is worse than not having one.
    ============================================================================= */
 
 const GATE_TONE = (score, par) => score >= par ? "var(--good)" : score >= par - 20 ? "#d99400" : "var(--bad)";
@@ -4486,13 +4944,19 @@ const Gate = ({
 }) => {
   const [open, setOpen] = useState(false);
   const g = gate;
-  const cls = g.verdict === "handoff" ? "ok" : g.verdict === "surface" ? "warn" : "bad";
+  const tone = g.verdict === "clean" ? "g" : g.verdict === "open-with-notes" ? "a" : "r";
+  const nB = g.blockers.length,
+    nA = g.advisory.length;
+
+  /* Binding points first, then advisory — the order makes the distinction
+     legible without having to read the labels. */
+  const groups = [["What the next phase cannot work without", g.points.filter(p => p.kind === "binding")], ["What travels forward and will be read", g.points.filter(p => p.kind === "advisory")]];
   return /*#__PURE__*/React.createElement(Card, {
     title: "Handoff gate",
     sub: `${g.meta.from} · ${g.meta.asks}`,
     right: /*#__PURE__*/React.createElement(Chip, {
-      c: cls === "ok" ? "g" : cls === "warn" ? "a" : "r"
-    }, g.verdict === "handoff" ? "READY" : g.verdict === "surface" ? "SURFACED" : "BELOW PAR")
+      c: tone
+    }, g.verdict === "clean" ? "CLEAN" : g.verdict === "open-with-notes" ? "OPEN · NOTES" : "INCOMPLETE")
   }, /*#__PURE__*/React.createElement("div", {
     className: "row",
     style: {
@@ -4512,12 +4976,19 @@ const Gate = ({
       fontSize: 12.5,
       lineHeight: 1.5
     }
-  }, g.verdict === "handoff" ? /*#__PURE__*/React.createElement(React.Fragment, null, "Every evaluation point is met. The handoff to ", /*#__PURE__*/React.createElement("b", null, g.meta.to), " is open.") : g.verdict === "surface" ? /*#__PURE__*/React.createElement(React.Fragment, null, "Above par at ", /*#__PURE__*/React.createElement("b", null, g.score), ", but ", g.blockers.length, " point", g.blockers.length > 1 ? "s" : "", " ", g.blockers.length > 1 ? "are" : "is", " unmet. Surfaced for your judgement rather than run again.") : /*#__PURE__*/React.createElement(React.Fragment, null, "Below par at ", /*#__PURE__*/React.createElement("b", null, g.score), " against ", g.par, ". The orchestrator holds the handoff and loops back rather than passing this to ", /*#__PURE__*/React.createElement("b", null, g.meta.to), ".")))), /*#__PURE__*/React.createElement("div", {
+  }, g.verdict === "clean" ? /*#__PURE__*/React.createElement(React.Fragment, null, "Nothing missing and nothing thin. The handoff to ", /*#__PURE__*/React.createElement("b", null, g.meta.to), " is open.") : g.verdict === "open-with-notes" ? /*#__PURE__*/React.createElement(React.Fragment, null, "The handoff to ", /*#__PURE__*/React.createElement("b", null, g.meta.to), " is open. ", nA, " thing", nA > 1 ? "s" : "", " ", nA > 1 ? "are" : "is", " thinner than it could be \u2014 ", nA > 1 ? "they travel" : "it travels", " forward and P&I will read ", nA > 1 ? "them" : "it", ".") : /*#__PURE__*/React.createElement(React.Fragment, null, nB, " thing", nB > 1 ? "s" : "", " ", nB > 1 ? "are" : "is", " ", /*#__PURE__*/React.createElement("b", null, "missing"), ", not weak. ", nB > 1 ? "They" : "It", " cannot be inferred or argued around, so ", /*#__PURE__*/React.createElement("b", null, g.meta.to), " has nothing to work from until ", nB > 1 ? "they are" : "it is", " there.")))), groups.map(([heading, pts]) => pts.length === 0 ? null : /*#__PURE__*/React.createElement("div", {
+    key: heading,
+    style: {
+      marginBottom: 11
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "lbl"
+  }, heading), /*#__PURE__*/React.createElement("div", {
     className: "col",
     style: {
       gap: 7
     }
-  }, g.points.map(p => /*#__PURE__*/React.createElement("div", {
+  }, pts.map(p => /*#__PURE__*/React.createElement("div", {
     key: p.id,
     className: "row",
     style: {
@@ -4525,7 +4996,7 @@ const Gate = ({
       alignItems: "flex-start"
     }
   }, /*#__PURE__*/React.createElement(Chip, {
-    c: p.ok ? "g" : p.score >= 60 ? "a" : "r"
+    c: p.ok ? "g" : p.kind === "binding" ? "r" : "a"
   }, p.ok ? "✓" : p.score), /*#__PURE__*/React.createElement("div", {
     style: {
       minWidth: 0,
@@ -4537,7 +5008,7 @@ const Gate = ({
     }
   }, p.label, " ", /*#__PURE__*/React.createElement("span", {
     className: "tiny dim"
-  }, "\xB7 weight ", p.w, "%", p.bar < 100 ? ` · bar ${p.bar}` : "")), /*#__PURE__*/React.createElement("div", {
+  }, "\xB7 weight ", p.w, "%", p.kind === "advisory" ? ` · bar ${p.bar} · advisory` : "")), /*#__PURE__*/React.createElement("div", {
     className: "tiny muted"
   }, p.detail), !p.ok && p.fix && /*#__PURE__*/React.createElement("div", {
     className: "tiny",
@@ -4545,7 +5016,7 @@ const Gate = ({
       color: "var(--accent)",
       marginTop: 2
     }
-  }, "\u2192 ", p.fix))))), note && /*#__PURE__*/React.createElement("div", {
+  }, "\u2192 ", p.fix))))))), note && /*#__PURE__*/React.createElement("div", {
     className: "tiny muted",
     style: {
       marginTop: 11
@@ -4559,12 +5030,12 @@ const Gate = ({
     },
     disabled: !g.open,
     onClick: onGo
-  }, g.open ? verb : `${verb} — held at ${g.score}`), !g.open && /*#__PURE__*/React.createElement("div", {
+  }, g.open ? verb : `${verb} — ${nB} thing${nB > 1 ? "s" : ""} missing`), /*#__PURE__*/React.createElement("div", {
     className: "tiny dim",
     style: {
       marginTop: 6
     }
-  }, "The button opens when every point is met. Nothing here can be waived \u2014 the gate is what makes the next phase's inputs trustworthy.")), !onGo && /*#__PURE__*/React.createElement("div", {
+  }, g.open ? /*#__PURE__*/React.createElement(React.Fragment, null, "Advisory points never hold the handoff. A weak argument goes forward carrying its weakness, because a gate the desk could not get past under deadline would simply be worked around.") : /*#__PURE__*/React.createElement(React.Fragment, null, "Only the points above the line hold the handoff, and only because something is absent rather than weak. Nothing here is a judgement about whether you are right."))), !onGo && /*#__PURE__*/React.createElement("div", {
     className: "tiny dim",
     style: {
       marginTop: 10
@@ -4582,7 +5053,7 @@ const Gate = ({
       marginTop: 8,
       lineHeight: 1.6
     }
-  }, "The orchestrator knows the whole state machine and the evaluation points inside it, and it scores the intermediate status at each one. Below par it loops the phase again or surfaces for your input; it never advances the plan on its own and never overrules you. Its one power is to refuse a handoff.")));
+  }, "The orchestrator knows the whole state machine and scores the intermediate status at every evaluation point inside it. It distinguishes two things and treats them differently. Something ", /*#__PURE__*/React.createElement("b", null, "missing"), " stops the handoff, because the next phase would have to guess. Something ", /*#__PURE__*/React.createElement("b", null, "weak"), " does not: it is scored, it travels into the rubric and the approval package, and P&I reads it at the only gate that can actually stop a plan. The system never blocks a weak argument \u2014 it proposes a better one and records the departure.")));
 };
 
 /* ------------------------------------------------------- justify + challenge */
@@ -4598,44 +5069,33 @@ const JustifyG = ({
   kind = "change"
 }) => {
   const [t, setT] = useState("");
-  const [tries, setTries] = useState(0);
-  const [sent, setSent] = useState(null); // the evaluation that came back
   const ev = useMemo(() => evalJustification(t, {
     kind
   }), [t, kind]);
+
+  /* Absence blocks; weakness does not. A change with no reason at all cannot be
+     read by P&I, so it is not accepted. A weakly argued one goes forward
+     carrying its score — the system proposes a better argument and records the
+     departure, it does not refuse the change (OQ-22). */
   const canSubmit = t.trim().length >= 20;
-  const submit = () => {
-    const e = evalJustification(t, {
-      kind
-    });
-    if (e.verdict === "revise") {
-      setSent(e);
-      setTries(n => n + 1);
-      return;
-    }
-    onConfirm(t.trim(), e);
-  };
   const tone = ev.verdict === "pass" ? "g" : ev.verdict === "thin" ? "a" : "r";
   return /*#__PURE__*/React.createElement(Modal, {
     title: title,
-    sub: "The reason is evaluated before the change is accepted. A weak argument comes back to you rather than going forward (Flow architecture \u2014 Eval Justifications).",
+    sub: "The reason is scored as you write it, and the score travels with the change. A thin argument is not refused \u2014 it arrives at P&I visibly thin.",
     onClose: onCancel,
     footer: /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
       className: "tiny dim"
-    }, ev.verdict === "pass" ? "Defensible. This travels into the brief and the approval package." : ev.verdict === "thin" ? "This will travel, but a reader would have to ask you a question." : "Not yet defensible."), /*#__PURE__*/React.createElement("div", {
+    }, !canSubmit ? "A change with no reason cannot be read by P&I at all." : ev.verdict === "pass" ? "Defensible on its own. Travels into the brief and the approval package." : ev.verdict === "thin" ? "Goes forward, and a reader would have to ask you one question." : "Goes forward flagged. P&I sees the score alongside the change."), /*#__PURE__*/React.createElement("div", {
       style: {
         flex: 1
       }
     }), /*#__PURE__*/React.createElement(Btn, {
       onClick: onCancel
-    }, "Cancel"), tries >= 2 && ev.verdict === "revise" && /*#__PURE__*/React.createElement(Btn, {
-      onClick: () => onConfirm(t.trim(), ev),
-      title: "Recorded as a weak argument and flagged wherever it is read"
-    }, "Record as weak"), /*#__PURE__*/React.createElement(Btn, {
+    }, "Cancel"), /*#__PURE__*/React.createElement(Btn, {
       c: "pri",
       disabled: !canSubmit,
-      onClick: submit
-    }, verb))
+      onClick: () => onConfirm(t.trim(), ev)
+    }, ev.verdict === "revise" && canSubmit ? `${verb} — flagged thin` : verb))
   }, /*#__PURE__*/React.createElement("div", {
     className: "banner b",
     style: {
@@ -4649,10 +5109,7 @@ const JustifyG = ({
     className: "inp",
     autoFocus: true,
     value: t,
-    onChange: e => {
-      setT(e.target.value);
-      setSent(null);
-    },
+    onChange: e => setT(e.target.value),
     placeholder: "State what the system got wrong, what you know that it does not, and what your change costs. This is what P&I will read."
   }), /*#__PURE__*/React.createElement("div", {
     className: "row",
@@ -4706,29 +5163,29 @@ const JustifyG = ({
     style: {
       marginTop: 1
     }
-  }, x.ask))))), sent && /*#__PURE__*/React.createElement("div", {
-    className: "banner r",
+  }, x.ask))))), ev.verdict === "revise" && t.trim().length >= 20 && /*#__PURE__*/React.createElement("div", {
+    className: "banner a",
     style: {
       marginTop: 13
     }
   }, /*#__PURE__*/React.createElement("span", {
     className: "bi"
-  }, "Sent back"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("b", null, "The orchestrator did not accept this reason."), " ", sent.feedback, sent.missing.length > 0 && /*#__PURE__*/React.createElement("ul", {
+  }, "Thin"), /*#__PURE__*/React.createElement("div", null, ev.feedback, ev.missing.length > 0 && /*#__PURE__*/React.createElement("ul", {
     style: {
       margin: "7px 0 0 16px",
       padding: 0
     }
-  }, sent.missing.map(m => /*#__PURE__*/React.createElement("li", {
+  }, ev.missing.map(m => /*#__PURE__*/React.createElement("li", {
     key: m.id,
     style: {
       marginBottom: 3
     }
-  }, m.ask))), tries >= 2 && /*#__PURE__*/React.createElement("div", {
+  }, m.ask))), /*#__PURE__*/React.createElement("div", {
     className: "tiny",
     style: {
       marginTop: 7
     }
-  }, "You can record it as a weak argument instead. It goes forward flagged, and P&I sees that it was flagged \u2014 the change is not blocked, only its quality is on the record."))), hints.length > 0 && /*#__PURE__*/React.createElement("div", {
+  }, "Record it as it stands if that is the argument. It is not blocked \u2014 it arrives at P&I scored ", ev.score, ", and the score is part of what they decide on."))), hints.length > 0 && /*#__PURE__*/React.createElement("div", {
     style: {
       marginTop: 12
     }
@@ -4745,11 +5202,253 @@ const JustifyG = ({
     style: {
       cursor: "pointer"
     },
-    onClick: () => {
-      setT(h);
-      setSent(null);
-    }
+    onClick: () => setT(h)
   }, h.slice(0, 64), "\u2026")))));
+};
+</script>
+
+<!-- ================= 36-forecast-ui.js ================= -->
+<script>
+/* =============================================================================
+   36-forecast-ui.js — the surfaces for the forecast boundary.
+
+   `FidelityChip`  which class a figure belongs to, readable at a glance
+   `StaleBadge`    the run date, its age, and the re-run when it is too old
+   `WaterfallView` the ten-step derivation of one Constrained figure
+   `SellThrough`   what P&I sees: this line against the real inventory position
+
+   The waterfall is the Allocation Engine's own model, reused rather than
+   duplicated, because it is the route to the evidence behind every number the
+   plan rests on (T5). Displayed values are the model's values — no rounding and
+   no approximation, a rule V1.1 already established.
+   ============================================================================= */
+
+const FidelityChip = ({
+  f,
+  runAt
+}) => {
+  const d = FIDELITY[f || "indicative"];
+  return /*#__PURE__*/React.createElement(Chip, {
+    c: d.tone,
+    title: `${d.what}\n\nGranularity: ${d.granularity}\nTargeting: ${d.targeting}\nComputed: ${d.computed}\nAdmissible for: ${d.admissible}${runAt ? `\n\nRun ${runAt}` : ""}`
+  }, d.short);
+};
+const StaleBadge = ({
+  runAt,
+  onRerun
+}) => {
+  if (!runAt) return null;
+  const s = staleness(runAt);
+  return /*#__PURE__*/React.createElement("span", {
+    className: "row tiny",
+    style: {
+      gap: 6,
+      alignItems: "center",
+      display: "inline-flex"
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "dim"
+  }, "run ", runAt), /*#__PURE__*/React.createElement(Chip, {
+    c: s.stale ? "a" : "",
+    title: s.stale ? `Older than the ${s.threshold}h threshold. Inventory moves; a version committed against figures that have since changed may no longer be deliverable.` : "Within the freshness threshold."
+  }, s.label), s.stale && onRerun && /*#__PURE__*/React.createElement(Btn, {
+    c: "xs",
+    onClick: onRerun
+  }, "Request a fresh run"));
+};
+
+/* The derivation. Every Constrained figure has one, and it is the same object
+   the approval package carries, so P&I and the planner read the same thing. */
+const WaterfallView = ({
+  w,
+  compact
+}) => {
+  if (!w) return /*#__PURE__*/React.createElement("div", {
+    className: "tiny dim"
+  }, "No Constrained run for this line yet \u2014 it still rests on the Indicative pre-screen.");
+  const top = w.rows[0].value;
+  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "row tiny",
+    style: {
+      gap: 9,
+      marginBottom: 8,
+      alignItems: "center"
+    }
+  }, /*#__PURE__*/React.createElement(Chip, {
+    c: "n"
+  }, w.pid), /*#__PURE__*/React.createElement("span", {
+    className: "dim"
+  }, "run ", w.runAt), /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: 1
+    }
+  }), /*#__PURE__*/React.createElement("span", {
+    className: "dim"
+  }, pct(w.reductionPct, 1), " reduction, capacity to net")), /*#__PURE__*/React.createElement("div", {
+    className: "col",
+    style: {
+      gap: 0
+    }
+  }, w.rows.map((r, i) => /*#__PURE__*/React.createElement("div", {
+    key: r.k,
+    style: {
+      display: "grid",
+      gridTemplateColumns: "1fr 90px 74px",
+      gap: 8,
+      alignItems: "center",
+      padding: "5px 0",
+      borderTop: i ? "1px solid var(--line)" : "none",
+      background: r.strong ? "var(--accent-soft)" : r.divider ? "var(--line-2)" : null
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      minWidth: 0
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11.5,
+      fontWeight: r.strong ? 600 : 400
+    }
+  }, r.label), !compact && /*#__PURE__*/React.createElement("div", {
+    className: "mini dim",
+    style: {
+      lineHeight: 1.45
+    }
+  }, r.note)), /*#__PURE__*/React.createElement("div", {
+    style: {
+      textAlign: "right",
+      fontSize: 11.5,
+      fontWeight: r.strong ? 700 : 500
+    }
+  }, imps(r.value)), /*#__PURE__*/React.createElement("div", {
+    style: {
+      textAlign: "right"
+    }
+  }, r.lost > 0 ? /*#__PURE__*/React.createElement("span", {
+    className: "mini",
+    style: {
+      color: "var(--bad)"
+    }
+  }, "\u2212", imps(r.lost)) : /*#__PURE__*/React.createElement("span", {
+    className: "mini dim"
+  }, "\u2014"))))), /*#__PURE__*/React.createElement("div", {
+    className: "mini dim",
+    style: {
+      marginTop: 7,
+      lineHeight: 1.5
+    }
+  }, "The run date is part of the derivation. The same line reading a 15% reduction on one date and 10.7% on another is not a contradiction \u2014 it is the model behaving correctly, and the date is what makes that legible."));
+};
+
+/* What P&I sees at approval, per line. The plan under review projected onto the
+   real inventory position: everything already booked and pressured, everything
+   else in flight competing for the same pool, and what this line would take.
+   Line level, never aggregated — P&I decides one line at a time. */
+const SellThrough = ({
+  line
+}) => {
+  const p = line.p || PRODUCTS.find(x => x.id === line.pid);
+  if (!p) return null;
+  const res = reservedFor(p);
+  const comp = competingUmpDemand(p);
+  const askK = line.impsK;
+  const pctOf = k => k / res.capacityK;
+  const now = res.reservedK / res.capacityK;
+  const projected = (res.reservedK + askK) / res.capacityK;
+  const withComp = (res.reservedK + askK + comp.askK) / res.capacityK;
+  const toneVar = projected > 0.95 ? "var(--bad)" : projected > 0.85 ? "var(--warn)" : "var(--good)";
+  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "row",
+    style: {
+      height: 13,
+      borderRadius: 3,
+      overflow: "hidden",
+      background: "var(--line)",
+      marginBottom: 7
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      width: `${pctOf(res.bookedK) * 100}%`,
+      background: "#5b6770"
+    },
+    title: `Booked (signed IO) ${imps(res.bookedK)}`
+  }), /*#__PURE__*/React.createElement("div", {
+    style: {
+      width: `${pctOf(res.pressuredK) * 100}%`,
+      background: "#8a95a0"
+    },
+    title: `COMS-pressured ${imps(res.pressuredK)}`
+  }), /*#__PURE__*/React.createElement("div", {
+    style: {
+      width: `${pctOf(askK) * 100}%`,
+      background: "var(--accent)"
+    },
+    title: `This plan's ask ${imps(askK)}`
+  }), /*#__PURE__*/React.createElement("div", {
+    style: {
+      width: `${pctOf(comp.askK) * 100}%`,
+      background: "var(--violet)",
+      opacity: 0.55
+    },
+    title: `Competing UMP plans ${imps(comp.askK)}`
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "row wrap mini",
+    style: {
+      gap: 11,
+      marginBottom: 9
+    }
+  }, /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("i", {
+    className: "key",
+    style: {
+      background: "#5b6770"
+    }
+  }), "Booked ", imps(res.bookedK)), /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("i", {
+    className: "key",
+    style: {
+      background: "#8a95a0"
+    }
+  }), "COMS-pressured ", imps(res.pressuredK)), /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("i", {
+    className: "key",
+    style: {
+      background: "var(--accent)"
+    }
+  }), "This plan ", imps(askK)), comp.askK > 0 && /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("i", {
+    className: "key",
+    style: {
+      background: "var(--violet)",
+      opacity: 0.55
+    }
+  }), "Competing UMP ", imps(comp.askK))), /*#__PURE__*/React.createElement("dl", {
+    className: "kv tiny",
+    style: {
+      gridTemplateColumns: "132px 1fr"
+    }
+  }, /*#__PURE__*/React.createElement("dt", null, "Total capacity"), /*#__PURE__*/React.createElement("dd", null, imps(res.capacityK), " ", /*#__PURE__*/React.createElement("span", {
+    className: "dim"
+  }, "across the flight, before exclusions")), /*#__PURE__*/React.createElement("dt", null, "Already reserved"), /*#__PURE__*/React.createElement("dd", null, /*#__PURE__*/React.createElement("b", null, imps(res.reservedK)), " ", /*#__PURE__*/React.createElement("span", {
+    className: "dim"
+  }, "= ", pctn(now * 100, 1), " sold. Booked plus COMS-pressured, combined \u2014 the Allocation Engine excludes both before it returns anything, and never breaks them out to a planner.")), /*#__PURE__*/React.createElement("dt", null, "This plan's ask"), /*#__PURE__*/React.createElement("dd", null, /*#__PURE__*/React.createElement("b", null, imps(askK)), " ", /*#__PURE__*/React.createElement("span", {
+    className: "dim"
+  }, pct(line.availUse, 0), " of the net available this line was forecast against")), /*#__PURE__*/React.createElement("dt", null, "Projected sell-through"), /*#__PURE__*/React.createElement("dd", null, /*#__PURE__*/React.createElement("b", {
+    style: {
+      color: toneVar
+    }
+  }, pctn(projected * 100, 1)), /*#__PURE__*/React.createElement("span", {
+    className: "dim"
+  }, " if you approve this line")), /*#__PURE__*/React.createElement("dt", null, "Competing UMP plans"), /*#__PURE__*/React.createElement("dd", null, comp.plans.length ? /*#__PURE__*/React.createElement(React.Fragment, null, comp.plans.map(x => `${x.advertiser} ${imps(x.askK)}`).join(", "), " \u2014 ", /*#__PURE__*/React.createElement("b", null, pctn(withComp * 100, 1)), " if all of it lands. ", /*#__PURE__*/React.createElement("span", {
+    className: "dim"
+  }, "Not current functionality: the Allocation Engine does not identify competing UMP demand today. Carried here as the stated requirement.")) : /*#__PURE__*/React.createElement("span", {
+    className: "dim"
+  }, "No other in-flight UMP plan is targeting this product."))), projected > 0.90 && /*#__PURE__*/React.createElement("div", {
+    className: "banner a",
+    style: {
+      marginTop: 9
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "bi"
+  }, "Tight"), /*#__PURE__*/React.createElement("div", {
+    className: "tiny"
+  }, "Approving this line takes the product to ", pctn(projected * 100, 1), " sold. There is", " ", imps(res.capacityK - res.reservedK - askK), " of headroom left for everything else in the quarter.")));
 };
 </script>
 
@@ -5619,7 +6318,7 @@ const Blueprint = ({
     }
   }, /*#__PURE__*/React.createElement("span", {
     className: "bi"
-  }, "Note"), /*#__PURE__*/React.createElement("div", null, AGENTS.length, " agents, named for the desk job each does rather than for the technique. None of them decides anything \u2014 each produces evidence, a proposal or a consequence, and a human adjudicates. The orchestrator is the only one that can stop the plan moving, and even it can only refuse a handoff. Click one to read its contract.")), ["Intake", "Discovery", "Strategize", "Analyze", "Approval", "All"].map(ph => {
+  }, "Note"), /*#__PURE__*/React.createElement("div", null, AGENTS.length, " agents, named for the desk job each does rather than for the technique. None of them decides anything \u2014 each produces evidence, a proposal or a consequence, and a human adjudicates. The orchestrator is the only one that can hold the plan at all, and only when something the next phase needs is missing \u2014 never because it judged the work weak. Click one to read its contract.")), ["Intake", "Discovery", "Strategize", "Analyze", "Approval", "All"].map(ph => {
     const list = AGENTS.filter(a => a.phase === ph);
     if (!list.length) return null;
     return /*#__PURE__*/React.createElement("div", {
@@ -6323,7 +7022,7 @@ const EvalLoopSvg = () => /*#__PURE__*/React.createElement("svg", {
   d: "M562,206 L562,178 L340,178 L340,170",
   color: HITL,
   chip: true,
-  label: "NO \u2014 sent back with what it is missing",
+  label: "THIN \u2014 named, scored, travels anyway",
   lx: 451,
   ly: 178,
   lw: 44
@@ -6420,7 +7119,7 @@ const FlowArchTab = () => /*#__PURE__*/React.createElement(React.Fragment, null,
   sub: "The note defines it in three lines. Everything else on this tab is a consequence of them."
 }, /*#__PURE__*/React.createElement("div", {
   className: "g3"
-}, [["Knows the state machine", "Not just the current phase — every evaluation point inside every phase, and what each one is worth."], ["Scores the intermediate status", "A phase is not done or not-done. It has a score, and the score is made of named points a human can argue with."], ["Below par, loops or surfaces", "It re-runs the phase, or it stops and asks for strategic input. It does not advance the plan and it does not overrule the planner."]].map(([t, b], i) => /*#__PURE__*/React.createElement("div", {
+}, [["Knows the state machine", "Not just the current phase — every evaluation point inside every phase, and what each one is worth."], ["Scores the intermediate status", "A phase is not done or not-done. It has a score, and the score is made of named points a human can argue with."], ["Separates missing from weak", "Something absent holds the handoff, because the next phase would have to guess. Something weak does not — it is scored and carried forward. It never advances the plan and never overrules the planner."]].map(([t, b], i) => /*#__PURE__*/React.createElement("div", {
   key: i,
   style: {
     borderLeft: "2px solid var(--accent)",
@@ -6444,7 +7143,7 @@ const FlowArchTab = () => /*#__PURE__*/React.createElement(React.Fragment, null,
   style: {
     lineHeight: 1.6
   }
-}, "The one power it has is to refuse a handoff. That is a smaller claim than \u201Can AI that plans\u201D, and a much more useful one: it means the inputs to every phase are trustworthy without anyone having to check them, because the phase before it could not have ended otherwise. Live on every phase screen as the ", /*#__PURE__*/React.createElement("b", null, "handoff gate"), ".")), /*#__PURE__*/React.createElement(Card, {
+}, "The one power it has is to refuse a handoff when something is ", /*#__PURE__*/React.createElement("b", null, "absent"), " \u2014 never when something is merely weak. That is a smaller claim than \u201Can AI that plans\u201D, and a much more useful one: the next phase never has to guess at an input, and nobody's judgement is second-guessed by a scoring function. Quality is still measured, but it travels forward to P&I, who holds the only gate that can stop a plan. A gate the desk could not get past under deadline would simply be worked around, which is worse than not having one. Live on every phase screen as the ", /*#__PURE__*/React.createElement("b", null, "handoff gate"), ".")), /*#__PURE__*/React.createElement(Card, {
   title: "1 \xB7 Intake \u2014 agents write to a graph, not to a brief",
   style: {
     marginTop: 14
@@ -6862,7 +7561,15 @@ function seedState(base, phase) {
         availUse: l.availUse,
         overridden: l.overridden,
         systemSpend: l.systemSpend,
-        floorCpm: l.p.floorCpm
+        floorCpm: l.p.floorCpm,
+        /* the forecast class the line rests on, and its derivation */
+        fidelity: l.fidelity,
+        umpPid: l.umpPid,
+        forecastRunAt: l.forecastRunAt,
+        indicativeK: l.indicativeK,
+        constrainedK: l.constrainedK,
+        waterfall: l.waterfall,
+        custom: l.custom
       })),
       roll: {
         spend: res.spend,
@@ -8595,7 +9302,7 @@ const Intake = ({
     },
     note: "The gate asks whether planning would be invalidated by what is missing \u2014 not whether everything is present."
   }), /*#__PURE__*/React.createElement(Assist, {
-    title: "What I would look at first"
+    title: "Worth looking at first"
   }, openGaps.length > 0 ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("b", null, openGaps[0].attr), " is the one that blocks the solve. ", openGaps[0].why, " The recommendation is drawn from ", openGaps[0].cohortSet.length ? `${openGaps[0].cohortSet.length} comparable advertisers` : "this advertiser's own record", ", and it would enter as ", /*#__PURE__*/React.createElement(ProvChip, {
     cls: openGaps[0].wouldCarry,
     small: true
@@ -8714,7 +9421,7 @@ function interrogate(row, ranking) {
   });
   qs.push({
     q: "What is the inventory and price position right now?",
-    a: `${imps(row.live.availK)} sellable across the flight at ${cpmf(row.live.cpm)}${row.custom.length ? ` with ${row.custom.length} customisation${row.custom.length > 1 ? "s" : ""} applied` : ""}. Floor ${cpmf(row.p.floorCpm)}, card ${cpmf(row.p.cardCpm)}, market benchmark ${cpmf((BENCH[row.p.region + "|" + row.p.medium] || {}).cpm)}. ${row.live.availEstimate ? "Avails is an estimate while targeting is customised — the firm number returns with the solve." : "Avails is firm as at derivation."}`
+    a: `Price is exact: ${cpmf(row.live.cpm)}${row.custom.length ? ` with ${row.custom.length} customisation${row.custom.length > 1 ? "s" : ""} applied` : ""}, against a ${cpmf(row.p.floorCpm)} floor, ${cpmf(row.p.cardCpm)} card and a ${cpmf((BENCH[row.p.region + "|" + row.p.medium] || {}).cpm)} market benchmark. Inventory is ${imps(row.p.availK)} on the Indicative pre-screen — product level, no targeting, from the ${INDICATIVE_RUN} nightly pass. ${row.availSignal ? `${row.availSignal.text} ${row.availSignal.why}` : "Nothing customised, so the pre-screen is the honest number."} A Constrained figure for this line arrives when the optimiser runs it through the waterfall.`
   });
   return qs;
 }
@@ -8786,12 +9493,16 @@ const RankRow = ({
     }
   }, /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("span", {
     className: "dim"
-  }, "CPM"), " ", /*#__PURE__*/React.createElement("b", null, cpmf(row.live.cpm))), /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("span", {
+  }, "CPM"), " ", /*#__PURE__*/React.createElement("b", null, cpmf(row.live.cpm))), /*#__PURE__*/React.createElement("span", {
+    title: `Indicative pre-screen, nightly pass ${INDICATIVE_RUN}. No targeting applied.`
+  }, /*#__PURE__*/React.createElement("span", {
     className: "dim"
-  }, "Avails"), " ", /*#__PURE__*/React.createElement("b", null, imps(row.live.availK)), row.live.availEstimate && /*#__PURE__*/React.createElement("span", {
-    className: "dim",
-    title: "Estimate while targeting is customised"
-  }, " est")), /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("span", {
+  }, "Avails"), " ", /*#__PURE__*/React.createElement("b", null, imps(row.p.availK)), /*#__PURE__*/React.createElement("span", {
+    className: "dim"
+  }, " ind"), row.availSignal && row.availSignal.direction !== "flat" && /*#__PURE__*/React.createElement("span", {
+    className: row.availSignal.severity === "sharp" ? "bad" : "warn",
+    title: row.availSignal.text + " " + row.availSignal.why
+  }, " ", row.availSignal.direction === "down" ? "↓" : "↑", row.availSignal.severity === "sharp" ? "↓" : "")), /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("span", {
     className: "dim"
   }, "In-demo"), " ", /*#__PURE__*/React.createElement("b", null, pct(row.live.comp, 0))), /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("span", {
     className: "dim"
@@ -9012,11 +9723,25 @@ const Discovery = ({
     raw: r => r.live.cpm
   }, {
     key: "avail",
-    label: "Avails",
-    w: 74,
+    label: "Avails · ind",
+    w: 86,
     align: "r",
-    get: r => imps(r.live.availK),
-    raw: r => r.live.availK * 1000
+    help: "Indicative pre-screen — product level, no targeting applied, from the nightly pass. Not admissible at approval.",
+    get: r => imps(r.p.availK),
+    raw: r => r.p.availK * 1000
+  }, {
+    key: "availDir",
+    label: "On custom",
+    w: 82,
+    align: "c",
+    help: "Direction of travel against the pre-screen once targeting is customised. The size of the move is not knowable until the solve.",
+    get: r => r.availSignal ? `${r.availSignal.direction} ${r.availSignal.severity}` : "—",
+    cell: r => !r.availSignal ? /*#__PURE__*/React.createElement("span", {
+      className: "dim"
+    }, "\u2014") : /*#__PURE__*/React.createElement(Chip, {
+      c: r.availSignal.severity === "sharp" ? "r" : r.availSignal.severity === "material" ? "a" : "",
+      title: r.availSignal.text
+    }, r.availSignal.direction === "down" ? "↓" : "↑", " ", r.availSignal.severity)
   }, {
     key: "comp",
     label: "In-demo",
@@ -9198,7 +9923,7 @@ const Discovery = ({
     className: "why"
   }, "Relevance to the KPI: incremental 1+ reach ceiling ", imps(r.p.reachK), " at ", cpmf(r.live.cpm), "."), r.custom.length > 0 && /*#__PURE__*/React.createElement("span", {
     className: "why"
-  }, "Customised: ", r.custom.map(i => CUSTOM_OPTIONS.find(o => o.id === i).label).join(", "), " \u2014 price now ", cpmf(r.live.cpm), " (", pctn((r.live.cpm / r.p.openCpm - 1) * 100, 0), " vs opening), avails now ", imps(r.live.availK), " (", pctn((r.live.availK / r.p.availK - 1) * 100, 0), ")."), r.just && /*#__PURE__*/React.createElement("span", {
+  }, "Customised: ", r.custom.map(i => CUSTOM_OPTIONS.find(o => o.id === i).label).join(", "), " \u2014 price now ", cpmf(r.live.cpm), " (", pctn((r.live.cpm / r.p.openCpm - 1) * 100, 0), " vs opening). Inventory ", r.availSignal ? r.availSignal.text.replace(/^Available inventory /, "moves ").replace(/\.$/, "") : "unchanged", " against the ", imps(r.p.availK), " pre-screen; the figure itself arrives with the solve."), r.just && /*#__PURE__*/React.createElement("span", {
     className: "why",
     style: {
       color: "var(--violet)"
@@ -9438,6 +10163,7 @@ const ProductDrawer = ({
   const p = row.p;
   const preview = applyCustom(p, ids);
   const previewBreach = breachesFor(p, preview);
+  const sig = customisationSignal(p, ids, preview);
   const qs = useMemo(() => interrogate(row, ranking), [row, ranking]);
   return /*#__PURE__*/React.createElement(Drawer, {
     title: p.name,
@@ -9445,7 +10171,7 @@ const ProductDrawer = ({
     onClose: onClose,
     foot: m === "target" ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
       className: "tiny dim"
-    }, "Pricing is exact. Avails is an estimate until the solve."), /*#__PURE__*/React.createElement("div", {
+    }, "Pricing is exact. Inventory is a direction until the solve runs the waterfall."), /*#__PURE__*/React.createElement("div", {
       style: {
         flex: 1
       }
@@ -9543,7 +10269,7 @@ const ProductDrawer = ({
     className: "banner b"
   }, /*#__PURE__*/React.createElement("span", {
     className: "bi"
-  }, "Live"), /*#__PURE__*/React.createElement("div", null, "As targeting changes, inventory and price change with it. Any breach of the brief's constraints is raised here, at the moment of customisation \u2014 not at optimisation and not at approval.")), /*#__PURE__*/React.createElement("div", {
+  }, "Live"), /*#__PURE__*/React.createElement("div", null, "Price moves exactly and is shown exactly. Inventory moves too, but by how much is not knowable until the optimiser runs this line through the waterfall \u2014 so what you get here is a direction and a breach check, not a number. Any breach of the brief's constraints is raised at the moment of customisation, not at optimisation and not at approval.")), /*#__PURE__*/React.createElement("div", {
     className: "statgrid",
     style: {
       gridTemplateColumns: "1fr 1fr 1fr"
@@ -9554,15 +10280,24 @@ const ProductDrawer = ({
     delta: preview.cpm === p.openCpm ? "unchanged" : `${pctn((preview.cpm / p.openCpm - 1) * 100, 1)} vs ${cpmf(p.openCpm)}`,
     tone: preview.cpm > FRAME.cpmCeiling ? "bad" : null
   }), /*#__PURE__*/React.createElement(Stat, {
-    label: "Avails",
-    value: imps(preview.availK),
-    delta: preview.availK === p.availK ? "firm" : `${pctn((preview.availK / p.availK - 1) * 100, 0)} · estimate`
+    label: "Avails \xB7 indicative",
+    value: imps(p.availK),
+    delta: `pre-screen, ${INDICATIVE_RUN.slice(0, 10)}`
   }), /*#__PURE__*/React.createElement(Stat, {
     label: "In-demo",
     value: pct(preview.comp, 0),
     delta: preview.comp === p.demoComp ? "unchanged" : `from ${pct(p.demoComp, 0)}`,
     tone: preview.comp > p.demoComp ? "good" : null
-  })), previewBreach.map((b, i) => /*#__PURE__*/React.createElement("div", {
+  })), sig && /*#__PURE__*/React.createElement("div", {
+    className: "banner " + (sig.severity === "sharp" ? "r" : sig.severity === "material" ? "a" : "b")
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "bi"
+  }, "Inventory ", sig.direction === "down" ? "↓" : sig.direction === "up" ? "↑" : "—"), /*#__PURE__*/React.createElement("div", null, sig.text, " The ", imps(sig.reference), " pre-screen above stays as the reference point. ", sig.why, /*#__PURE__*/React.createElement("div", {
+    className: "tiny dim",
+    style: {
+      marginTop: 5
+    }
+  }, "Recorded with the customisation: the targeting change, this direction, and the price consequence \u2014 so the trade-off is readable downstream rather than only its result."))), previewBreach.map((b, i) => /*#__PURE__*/React.createElement("div", {
     key: i,
     className: "banner r"
   }, /*#__PURE__*/React.createElement("span", {
@@ -9571,7 +10306,7 @@ const ProductDrawer = ({
     className: "banner a"
   }, /*#__PURE__*/React.createElement("span", {
     className: "bi"
-  }, "Trade-off"), /*#__PURE__*/React.createElement("div", null, "This buys ", pctn((preview.comp / p.demoComp - 1) * 100, 0), " more in-demo delivery and costs", " ", pctn((preview.cpm / p.openCpm - 1) * 100, 0), " on CPM and ", pctn((1 - preview.availK / p.availK) * 100, 0), " of the sellable inventory. At this price the ", p.region, " envelope buys ", imps(DEAL.netBudget * FRAME.regionSplit[p.region] * 0.3 / preview.cpm), " on a typical line.")), /*#__PURE__*/React.createElement("div", {
+  }, "Trade-off"), /*#__PURE__*/React.createElement("div", null, "This buys ", pctn((preview.comp / p.demoComp - 1) * 100, 0), " more in-demo delivery and costs", " ", pctn((preview.cpm / p.openCpm - 1) * 100, 0), " on CPM, against inventory moving ", sig ? sig.direction : "flat", ". At this price the ", p.region, " envelope buys ", imps(DEAL.netBudget * FRAME.regionSplit[p.region] * 0.3 / preview.cpm), " on a typical line.")), /*#__PURE__*/React.createElement("div", {
     className: "col",
     style: {
       gap: 8
@@ -9619,7 +10354,7 @@ const ProductDrawer = ({
     }
   }, /*#__PURE__*/React.createElement("dl", {
     className: "kv"
-  }, /*#__PURE__*/React.createElement("dt", null, "Format"), /*#__PURE__*/React.createElement("dd", null, p.format), /*#__PURE__*/React.createElement("dt", null, "Placement"), /*#__PURE__*/React.createElement("dd", null, p.placement), /*#__PURE__*/React.createElement("dt", null, "Brand safety"), /*#__PURE__*/React.createElement("dd", null, p.brandSafe), /*#__PURE__*/React.createElement("dt", null, "Floor CPM"), /*#__PURE__*/React.createElement("dd", null, cpmf(p.floorCpm)), /*#__PURE__*/React.createElement("dt", null, "Card CPM"), /*#__PURE__*/React.createElement("dd", null, cpmf(p.cardCpm)), /*#__PURE__*/React.createElement("dt", null, "Opening CPM"), /*#__PURE__*/React.createElement("dd", null, /*#__PURE__*/React.createElement("b", null, cpmf(p.openCpm))), /*#__PURE__*/React.createElement("dt", null, "Market benchmark"), /*#__PURE__*/React.createElement("dd", null, cpmf((BENCH[p.region + "|" + p.medium] || {}).cpm), " \u2014 ", (BENCH[p.region + "|" + p.medium] || {}).note), /*#__PURE__*/React.createElement("dt", null, "Sellable avails"), /*#__PURE__*/React.createElement("dd", null, imps(p.availK), " across ", FLIGHT.weeks, " weeks"), /*#__PURE__*/React.createElement("dt", null, "1+ reach ceiling"), /*#__PURE__*/React.createElement("dd", null, imps(p.reachK), " people"), p.viewability != null && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("dt", null, "Viewability"), /*#__PURE__*/React.createElement("dd", null, pct(p.viewability, 0), " MRC")), p.vcr != null && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("dt", null, "Completion"), /*#__PURE__*/React.createElement("dd", null, pct(p.vcr, 1))), p.grp != null && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("dt", null, "GRPs available"), /*#__PURE__*/React.createElement("dd", null, p.grp)), p.cpp != null && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("dt", null, "Cost per point"), /*#__PURE__*/React.createElement("dd", null, money(p.cpp))), /*#__PURE__*/React.createElement("dt", null, "Attention index"), /*#__PURE__*/React.createElement("dd", null, p.attention), /*#__PURE__*/React.createElement("dt", null, "P&I posture"), /*#__PURE__*/React.createElement("dd", null, POSTURE_LABEL[p.yieldPosture])), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("dt", null, "Format"), /*#__PURE__*/React.createElement("dd", null, p.format), /*#__PURE__*/React.createElement("dt", null, "Placement"), /*#__PURE__*/React.createElement("dd", null, p.placement), /*#__PURE__*/React.createElement("dt", null, "Brand safety"), /*#__PURE__*/React.createElement("dd", null, p.brandSafe), /*#__PURE__*/React.createElement("dt", null, "Floor CPM"), /*#__PURE__*/React.createElement("dd", null, cpmf(p.floorCpm)), /*#__PURE__*/React.createElement("dt", null, "Card CPM"), /*#__PURE__*/React.createElement("dd", null, cpmf(p.cardCpm)), /*#__PURE__*/React.createElement("dt", null, "Opening CPM"), /*#__PURE__*/React.createElement("dd", null, /*#__PURE__*/React.createElement("b", null, cpmf(p.openCpm))), /*#__PURE__*/React.createElement("dt", null, "Market benchmark"), /*#__PURE__*/React.createElement("dd", null, cpmf((BENCH[p.region + "|" + p.medium] || {}).cpm), " \u2014 ", (BENCH[p.region + "|" + p.medium] || {}).note), /*#__PURE__*/React.createElement("dt", null, "Avails \xB7 indicative"), /*#__PURE__*/React.createElement("dd", null, imps(p.availK), " across ", FLIGHT.weeks, " weeks \xB7 pre-screen, no targeting"), /*#__PURE__*/React.createElement("dt", null, "1+ reach ceiling"), /*#__PURE__*/React.createElement("dd", null, imps(p.reachK), " people"), p.viewability != null && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("dt", null, "Viewability"), /*#__PURE__*/React.createElement("dd", null, pct(p.viewability, 0), " MRC")), p.vcr != null && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("dt", null, "Completion"), /*#__PURE__*/React.createElement("dd", null, pct(p.vcr, 1))), p.grp != null && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("dt", null, "GRPs available"), /*#__PURE__*/React.createElement("dd", null, p.grp)), p.cpp != null && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("dt", null, "Cost per point"), /*#__PURE__*/React.createElement("dd", null, money(p.cpp))), /*#__PURE__*/React.createElement("dt", null, "Attention index"), /*#__PURE__*/React.createElement("dd", null, p.attention), /*#__PURE__*/React.createElement("dt", null, "P&I posture"), /*#__PURE__*/React.createElement("dd", null, POSTURE_LABEL[p.yieldPosture])), /*#__PURE__*/React.createElement("div", {
     className: "banner b"
   }, /*#__PURE__*/React.createElement("span", {
     className: "bi"
@@ -9736,7 +10471,15 @@ const Strategize = ({
           availUse: l.availUse,
           overridden: l.overridden,
           systemSpend: l.systemSpend,
-          floorCpm: l.p.floorCpm
+          floorCpm: l.p.floorCpm,
+          /* the forecast class the line rests on, and its derivation */
+          fidelity: l.fidelity,
+          umpPid: l.umpPid,
+          forecastRunAt: l.forecastRunAt,
+          indicativeK: l.indicativeK,
+          constrainedK: l.constrainedK,
+          waterfall: l.waterfall,
+          custom: l.custom
         })),
         roll: {
           spend: res.spend,
@@ -10413,34 +11156,44 @@ const Strategize = ({
   }, /*#__PURE__*/React.createElement("div", {
     className: "scorebadge",
     style: {
-      borderColor: rub.total >= 80 ? "var(--good)" : rub.total >= 65 ? "var(--warn)" : "var(--bad)"
+      borderColor: rub.below.length === 0 ? "var(--good)" : rub.below.length <= 1 ? "var(--warn)" : "var(--bad)"
     }
-  }, /*#__PURE__*/React.createElement("b", null, rub.total.toFixed(0)), /*#__PURE__*/React.createElement("span", null, "RUBRIC")), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("b", null, rub.clear, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 11,
+      fontWeight: 400
+    }
+  }, "/", rub.of)), /*#__PURE__*/React.createElement("span", null, "CLEAR")), /*#__PURE__*/React.createElement("div", {
     className: "grow tiny muted"
-  }, "Scored against the proposed good-plan rubric. [OQ-2] the content of that rubric is not settled \u2014 the shape is.")), RUBRIC.map(r => /*#__PURE__*/React.createElement("div", {
-    key: r.k,
-    className: "row",
-    style: {
-      marginBottom: 6
-    }
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "tiny",
-    style: {
-      width: 118
-    },
-    title: r.help
-  }, r.label), /*#__PURE__*/React.createElement("div", {
-    className: "grow"
-  }, /*#__PURE__*/React.createElement(Bar, {
-    v: rub.parts[r.k] / 100,
-    c: rub.parts[r.k] > 75 ? "g" : rub.parts[r.k] > 50 ? "" : "a"
-  })), /*#__PURE__*/React.createElement("span", {
-    className: "tiny dim",
-    style: {
-      width: 26,
-      textAlign: "right"
-    }
-  }, rub.parts[r.k].toFixed(0)))), /*#__PURE__*/React.createElement("div", {
+  }, "Dimensions clearing the threshold this RFP set. Scored separately, not added up \u2014 the trade-off between them is the thing worth seeing. [OQ-2] the content is not settled.")), RUBRIC.map(r => {
+    const v = rub.parts[r.k],
+      clear = v >= r.bar;
+    return /*#__PURE__*/React.createElement("div", {
+      key: r.k,
+      className: "row",
+      style: {
+        marginBottom: 6
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "tiny",
+      style: {
+        width: 118
+      },
+      title: `${r.help}\n\nNeeds ${r.bar} for this RFP.`
+    }, r.label), /*#__PURE__*/React.createElement("div", {
+      className: "grow"
+    }, /*#__PURE__*/React.createElement(Bar, {
+      v: v / 100,
+      c: clear ? "g" : "a"
+    })), /*#__PURE__*/React.createElement("span", {
+      className: "tiny",
+      style: {
+        width: 26,
+        textAlign: "right",
+        color: clear ? "var(--ink-3)" : "var(--warn)"
+      }
+    }, v.toFixed(0)));
+  }), /*#__PURE__*/React.createElement("div", {
     className: "hr"
   }), unjustified.length > 0 && /*#__PURE__*/React.createElement("div", {
     className: "banner r",
@@ -10496,8 +11249,11 @@ const Strategize = ({
   }, v.name, /*#__PURE__*/React.createElement("div", {
     className: "mini dim"
   }, v.at)), /*#__PURE__*/React.createElement("b", {
-    className: "tiny"
-  }, v.rubric.total.toFixed(0))))))), ovr && /*#__PURE__*/React.createElement(OverrideModal, {
+    className: "tiny",
+    title: v.rubric.below.length ? "Short on: " + v.rubric.below.map(b => `${b.label} ${b.score}/${b.bar}`).join("; ") : "Every dimension clears."
+  }, v.rubric.clear, /*#__PURE__*/React.createElement("span", {
+    className: "dim"
+  }, "/", v.rubric.of))))))), ovr && /*#__PURE__*/React.createElement(OverrideModal, {
     line: ovr.line,
     value: ovr.value,
     res: res,
@@ -10793,7 +11549,7 @@ const Analyze = ({
   }, "Go to Strategize & iterate")));
   const toggleCmp = id => setCmp(c => c.includes(id) ? c.filter(x => x !== id) : [...c, id].slice(-3));
   const cmpList = cmp.length >= 2 ? v.filter(x => cmp.includes(x.id)) : [];
-  const rows = [["Net allocated", x => money(x.roll.spend), x => x.roll.spend], ["Impressions", x => imps(x.roll.impsK), x => x.roll.impsK], ["1+ reach", x => pct(x.roll.reach1, 1), x => x.roll.reach1], ["3+ reach — the stated KPI", x => pct(x.roll.reach3, 1), x => x.roll.reach3], ["Average frequency", x => x.roll.avgFreq.toFixed(2), x => x.roll.avgFreq], ["Blended CPM", x => cpmf(x.roll.blendedCpm), x => -x.roll.blendedCpm], ["Digital CPM", x => cpmf(x.roll.digCpm), x => -x.roll.digCpm], ["Linear share", x => pct(x.roll.linearPct, 1), x => x.roll.linearPct], ["Concentration (HHI)", x => x.roll.hhi.toFixed(3), x => -x.roll.hhi], ["Lines", x => x.lines.length, x => x.lines.length], ["Overrides", x => Object.keys(x.overrides).length, x => -Object.keys(x.overrides).length], ["Rubric", x => x.rubric.total.toFixed(1), x => x.rubric.total]];
+  const rows = [["Net allocated", x => money(x.roll.spend), x => x.roll.spend], ["Impressions", x => imps(x.roll.impsK), x => x.roll.impsK], ["1+ reach", x => pct(x.roll.reach1, 1), x => x.roll.reach1], ["3+ reach — the stated KPI", x => pct(x.roll.reach3, 1), x => x.roll.reach3], ["Average frequency", x => x.roll.avgFreq.toFixed(2), x => x.roll.avgFreq], ["Blended CPM", x => cpmf(x.roll.blendedCpm), x => -x.roll.blendedCpm], ["Digital CPM", x => cpmf(x.roll.digCpm), x => -x.roll.digCpm], ["Linear share", x => pct(x.roll.linearPct, 1), x => x.roll.linearPct], ["Concentration (HHI)", x => x.roll.hhi.toFixed(3), x => -x.roll.hhi], ["Lines", x => x.lines.length, x => x.lines.length], ["Overrides", x => Object.keys(x.overrides).length, x => -Object.keys(x.overrides).length], ["Rubric dimensions clear", x => `${x.rubric.clear} of ${x.rubric.of}`, x => x.rubric.clear], ...RUBRIC.map(r => [`  ${r.label} · needs ${r.bar}`, x => x.rubric.parts[r.k].toFixed(0), x => x.rubric.parts[r.k]])];
   return /*#__PURE__*/React.createElement("div", {
     className: "split"
   }, /*#__PURE__*/React.createElement("div", {
@@ -10848,17 +11604,23 @@ const Analyze = ({
     style: {
       width: 48,
       height: 48,
-      borderColor: x.rubric.total >= 80 ? "var(--good)" : x.rubric.total >= 65 ? "var(--warn)" : "var(--bad)"
-    }
+      borderColor: x.rubric.below.length === 0 ? "var(--good)" : x.rubric.below.length <= 1 ? "var(--warn)" : "var(--bad)"
+    },
+    title: x.rubric.below.length ? "Short on: " + x.rubric.below.map(b => `${b.label} ${b.score} against ${b.bar}`).join("; ") : "Every dimension clears its threshold."
   }, /*#__PURE__*/React.createElement("b", {
     style: {
       fontSize: 17
     }
-  }, x.rubric.total.toFixed(0)), /*#__PURE__*/React.createElement("span", {
+  }, x.rubric.clear, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 10,
+      fontWeight: 400
+    }
+  }, "/", x.rubric.of)), /*#__PURE__*/React.createElement("span", {
     style: {
       fontSize: 7.5
     }
-  }, "RUBRIC")), /*#__PURE__*/React.createElement("div", {
+  }, "CLEAR")), /*#__PURE__*/React.createElement("div", {
     className: "grow tiny"
   }, /*#__PURE__*/React.createElement("div", {
     className: "row",
@@ -11069,24 +11831,43 @@ const Analyze = ({
     className: "bi"
   }, "[OQ-2]"), /*#__PURE__*/React.createElement("div", {
     className: "tiny"
-  }, "The definition of a good plan is not a settled WBD artifact. This rubric is proposed, and the shape \u2014 not the content \u2014 is what the prototype is testing.")), RUBRIC.map(r => /*#__PURE__*/React.createElement("div", {
-    key: r.k,
+  }, "Two layers. The ", /*#__PURE__*/React.createElement("b", null, "dimensions"), " are WBD's standing definition, agreed once rather than per deal. The ", /*#__PURE__*/React.createElement("b", null, "weights and thresholds"), " are instantiated for this RFP. Both are candidates \u2014 the structure is what the prototype is testing, and the content sits with the business.")), RUBRIC.map(r => {
+    const v = cur.rubric.parts[r.k],
+      clear = v >= r.bar;
+    return /*#__PURE__*/React.createElement("div", {
+      key: r.k,
+      style: {
+        marginBottom: 9
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "row tiny",
+      style: {
+        justifyContent: "space-between"
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      title: r.help
+    }, r.label, " ", /*#__PURE__*/React.createElement("span", {
+      className: "dim"
+    }, "\xB7 weight ", pct(r.w, 0), " \xB7 needs ", r.bar)), /*#__PURE__*/React.createElement("b", {
+      style: {
+        color: clear ? null : "var(--warn)"
+      }
+    }, v.toFixed(0), !clear && /*#__PURE__*/React.createElement("span", {
+      className: "dim",
+      style: {
+        fontWeight: 400
+      }
+    }, " \xB7 ", (r.bar - v).toFixed(0), " short"))), /*#__PURE__*/React.createElement(Bar, {
+      v: v / 100,
+      c: clear ? "g" : "a"
+    }));
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "tiny dim",
     style: {
-      marginBottom: 9
+      marginTop: 8,
+      lineHeight: 1.55
     }
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "row tiny",
-    style: {
-      justifyContent: "space-between"
-    }
-  }, /*#__PURE__*/React.createElement("span", {
-    title: r.help
-  }, r.label, " ", /*#__PURE__*/React.createElement("span", {
-    className: "dim"
-  }, "\xB7 weight ", pct(r.w, 0))), /*#__PURE__*/React.createElement("b", null, cur.rubric.parts[r.k].toFixed(0))), /*#__PURE__*/React.createElement(Bar, {
-    v: cur.rubric.parts[r.k] / 100,
-    c: cur.rubric.parts[r.k] > 75 ? "g" : cur.rubric.parts[r.k] > 50 ? "" : "a"
-  })))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+  }, "Scored separately and deliberately not added up. A version that buys reach by abandoning yield alignment should not look the same as one that is merely average everywhere, and a single total hides exactly that. Versions are scored on their own and never ranked against each other \u2014 the comparing is the planner's and the AE's to do.")), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
     className: "lbl"
   }, "Requirement coverage"), /*#__PURE__*/React.createElement("div", {
     className: "col",
@@ -11270,16 +12051,18 @@ const Analyze = ({
   }), /*#__PURE__*/React.createElement(Assist, {
     title: "On this version"
   }, cur && v.length > 1 && (() => {
-    const other = v.filter(x => x.id !== cur.id).sort((a, b) => Math.abs(a.rubric.total - cur.rubric.total) - Math.abs(b.rubric.total - cur.rubric.total))[0];
-    const gap = Math.abs(cur.rubric.total - other.rubric.total);
-    if (gap > 3) return null;
+    /* Closest on the rubric profile — same number of dimensions clear,
+       and the nearest on the ones that matter. Never a ranking. */
+    const other = v.filter(x => x.id !== cur.id).sort((a, b) => Math.abs(a.rubric.clear - cur.rubric.clear) - Math.abs(b.rubric.clear - cur.rubric.clear))[0];
+    const gap = Math.abs(cur.rubric.clear - other.rubric.clear);
+    if (gap > 1) return null;
     const d3 = (cur.roll.reach3 - other.roll.reach3) * 100;
     const dc = cur.roll.blendedCpm - other.roll.blendedCpm;
     return /*#__PURE__*/React.createElement("div", {
       style: {
         marginBottom: 8
       }
-    }, cur.id, " and ", other.id, " score within ", gap.toFixed(1), " of each other, so the rubric is not choosing for you. What separates them is shape: ", cur.id, " is ", d3 >= 0 ? "+" : "", d3.toFixed(1), " points of modelled 3+ reach and ", dc >= 0 ? "+" : "−", cpmf(Math.abs(dc)), " of blended CPM against ", other.id, ". Commit the one whose argument you can make out loud, and the other one stays saved as the alternative you rejected.");
+    }, cur.id, " clears ", cur.rubric.clear, " of ", cur.rubric.of, " dimensions and ", other.id, " clears ", other.rubric.clear, ", so the rubric is not choosing for you. What separates them is shape: ", cur.id, " is ", d3 >= 0 ? "+" : "", d3.toFixed(1), " points of modelled 3+ reach and ", dc >= 0 ? "+" : "−", cpmf(Math.abs(dc)), " of blended CPM against ", other.id, ". Commit the one whose argument you can make out loud, and the other one stays saved as the alternative you rejected.");
   })(), cur && (cur.roll.reach3 < FRAME.reachGoal3 ? /*#__PURE__*/React.createElement(React.Fragment, null, cur.id, " misses the stated KPI by ", pctn((FRAME.reachGoal3 - cur.roll.reach3) * 100, 1), " points. Before you commit it, it is worth saving a second version that trades some of the ", pct(cur.roll.linearPct, 0), " linear share for distinct digital products \u2014 the gap is breadth, not weight.") : Object.keys(cur.overrides).length === 0 ? /*#__PURE__*/React.createElement(React.Fragment, null, cur.id, " is the optimiser's own answer with nothing overridden, which makes it the cleanest version to defend and the least interesting to argue with. If you believe something about this advertiser the ranking does not know, this is the moment it should show up.") : /*#__PURE__*/React.createElement(React.Fragment, null, cur.id, " carries ", Object.keys(cur.overrides).length, " override", Object.keys(cur.overrides).length > 1 ? "s" : "", ". P&I will read each one against a position they already stated, so the justification is doing as much work as the number.")))), commit && /*#__PURE__*/React.createElement(JustifyG, {
     title: "Commit " + commit.id,
     what: /*#__PURE__*/React.createElement(React.Fragment, null, "Approval binds to ", /*#__PURE__*/React.createElement("b", null, commit.id), ", not to the plan. P&I receives the allocation, the intake brief, the product ranking and customisations, the optimiser's original recommendation, and every one of your changes with its explanation."),
@@ -11318,7 +12101,9 @@ const Approval = ({
   } = S;
   const toast = useToast();
   const [ask, setAsk] = useState(null);
-  const [tab, setTab] = useState("lines");
+  const [tab, setTab] = useState(["lines", "position", "inventory", "package"].includes(HASH[3]) ? HASH[3] : "lines");
+  const [invOpen, setInv] = useState(null); // which line's inventory position is open
+  const [wfOpen, setWf] = useState(null); // which line's waterfall is open
   const ver = st.versions.find(v => v.id === st.committed);
   if (!ver) return /*#__PURE__*/React.createElement("div", {
     className: "pad",
@@ -11346,6 +12131,18 @@ const Approval = ({
   const gate = useMemo(() => evaluateGate("approval", st, {}), [st]);
   const apSpend = approved.reduce((s, l) => s + l.spend, 0);
   const dpSpend = disapproved.reduce((s, l) => s + l.spend, 0);
+
+  /* A fresh Constrained run supersedes the previous one rather than replacing
+     it — both remain readable with their run dates, so the delta between them
+     is visible (T4, Forecast §10). P&I can ask for one when the figures are
+     older than the staleness threshold; the planner then accepts a new version
+     or proceeds with the existing one. */
+  const rerun = line => {
+    const fresh = constrainedFor(PRODUCTS.find(p => p.id === line.pid), line.custom);
+    const delta = (fresh.availK - line.constrainedK) / Math.max(line.constrainedK, 1);
+    log("sys", `Fresh Constrained run requested on ${line.name} at approval. ${imps(fresh.availK)} against ${imps(line.constrainedK)} on the ${line.forecastRunAt} pass — ${pctn(delta * 100, 1)}. The earlier run is superseded, not replaced; both stay readable.`);
+    toast(Math.abs(delta) > 0.05 ? `Inventory moved ${pctn(delta * 100, 1)} — the planner sees the delta` : `Re-run: ${pctn(delta * 100, 1)}, no material change`);
+  };
   const decide = (line, d, reason, weight) => {
     up(s => ({
       decisions: {
@@ -11470,7 +12267,7 @@ const Approval = ({
       style: {
         marginBottom: 5
       }
-    }, "Takes ", /*#__PURE__*/React.createElement("b", null, pct(l.availUse, 0)), " of sellable avails for the flight."), /*#__PURE__*/React.createElement("div", {
+    }, "Takes ", /*#__PURE__*/React.createElement("b", null, pct(l.availUse, 0)), " of the net available this line was forecast against."), /*#__PURE__*/React.createElement("div", {
       className: "row tiny",
       style: {
         gap: 7
@@ -11486,7 +12283,19 @@ const Approval = ({
     }, pctn(inv.selloutAfter, 0))), /*#__PURE__*/React.createElement(Bar, {
       v: inv.selloutAfter / 100,
       c: inv.selloutAfter > 85 ? "a" : "g"
-    })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    }), /*#__PURE__*/React.createElement("div", {
+      className: "row",
+      style: {
+        gap: 6,
+        marginTop: 7
+      }
+    }, /*#__PURE__*/React.createElement(Btn, {
+      c: "xs",
+      onClick: () => setInv(inv2 => inv2 === l.pid ? null : l.pid)
+    }, invOpen === l.pid ? "Hide the inventory position" : "Project onto real-time inventory"), /*#__PURE__*/React.createElement(Btn, {
+      c: "xs gho",
+      onClick: () => setWf(w => w === l.pid ? null : l.pid)
+    }, wfOpen === l.pid ? "Hide derivation" : "How this number was derived"))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
       className: "lbl"
     }, "Against your position"), pos.length ? pos.map(p => /*#__PURE__*/React.createElement("div", {
       key: p.id,
@@ -11500,7 +12309,50 @@ const Approval = ({
       className: "mini muted"
     }, p.text))) : /*#__PURE__*/React.createElement("div", {
       className: "tiny dim"
-    }, "No position card touches this line. It falls under the general Q3 posture \u2014 ", POSTURE_LABEL[(PRODUCTS.find(p => p.id === l.pid) || {}).yieldPosture]?.toLowerCase(), "."))), l.overridden && /*#__PURE__*/React.createElement("div", {
+    }, "No position card touches this line. It falls under the general Q3 posture \u2014 ", POSTURE_LABEL[(PRODUCTS.find(p => p.id === l.pid) || {}).yieldPosture]?.toLowerCase(), "."))), invOpen === l.pid && /*#__PURE__*/React.createElement("div", {
+      className: "card",
+      style: {
+        marginBottom: 10
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "card-b"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "row",
+      style: {
+        marginBottom: 8
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "lbl",
+      style: {
+        margin: 0
+      }
+    }, "Real-time inventory \xB7 ", l.name.split(" — ")[0]), /*#__PURE__*/React.createElement("div", {
+      style: {
+        flex: 1
+      }
+    }), /*#__PURE__*/React.createElement(StaleBadge, {
+      runAt: l.forecastRunAt,
+      onRerun: () => rerun(l)
+    })), /*#__PURE__*/React.createElement(SellThrough, {
+      line: l
+    }), /*#__PURE__*/React.createElement("div", {
+      className: "mini dim",
+      style: {
+        marginTop: 9,
+        lineHeight: 1.5
+      }
+    }, "The reserved figure is a live read at the moment of decision. The forecast figures are as at the optimiser run date above \u2014 re-running the waterfall and re-reading the current inventory position are two different things."))), wfOpen === l.pid && /*#__PURE__*/React.createElement("div", {
+      className: "card",
+      style: {
+        marginBottom: 10
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "card-b"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "lbl"
+    }, "Constrained avails \u2014 the derivation"), /*#__PURE__*/React.createElement(WaterfallView, {
+      w: l.waterfall
+    }))), l.overridden && /*#__PURE__*/React.createElement("div", {
       className: "banner b",
       style: {
         marginBottom: 10
@@ -11596,7 +12448,62 @@ const Approval = ({
     className: "banner a"
   }, /*#__PURE__*/React.createElement("span", {
     className: "bi"
-  }, "G04"), /*#__PURE__*/React.createElement("div", null, "No advertiser-specific position was returned for this RFP. Requested 2026-05-04, no response by 2026-05-05. The plan was built on the four standing Q3 cards, and the absence is on the record \u2014 which is the point: nobody can later say the plan ignored a position that was never written down.")))), tab === "inventory" && /*#__PURE__*/React.createElement(Card, {
+  }, "G04"), /*#__PURE__*/React.createElement("div", null, "No advertiser-specific position was returned for this RFP. Requested 2026-05-04, no response by 2026-05-05. The plan was built on the four standing Q3 cards, and the absence is on the record \u2014 which is the point: nobody can later say the plan ignored a position that was never written down.")))), tab === "inventory" && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(Card, {
+    title: "Forecast the decision rests on",
+    sub: "Two fidelity classes reach planning. Only one of them is admissible here.",
+    right: /*#__PURE__*/React.createElement(StaleBadge, {
+      runAt: versionFidelity(ver).runAt
+    })
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "g2",
+    style: {
+      gap: 13
+    }
+  }, ["indicative", "constrained"].map(k => {
+    const d = FIDELITY[k];
+    const n = k === "constrained" ? versionFidelity(ver).constrainedLines : versionFidelity(ver).indicativeLines.length;
+    return /*#__PURE__*/React.createElement("div", {
+      key: k,
+      className: "card"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "card-b"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "row",
+      style: {
+        marginBottom: 6
+      }
+    }, /*#__PURE__*/React.createElement(FidelityChip, {
+      f: k
+    }), /*#__PURE__*/React.createElement("b", {
+      style: {
+        fontSize: 12.5
+      }
+    }, d.label), /*#__PURE__*/React.createElement("div", {
+      style: {
+        flex: 1
+      }
+    }), /*#__PURE__*/React.createElement("span", {
+      className: "tiny dim"
+    }, n, " line", n === 1 ? "" : "s")), /*#__PURE__*/React.createElement("div", {
+      className: "tiny muted",
+      style: {
+        marginBottom: 7,
+        lineHeight: 1.55
+      }
+    }, d.what), /*#__PURE__*/React.createElement("dl", {
+      className: "kv mini",
+      style: {
+        gridTemplateColumns: "88px 1fr"
+      }
+    }, /*#__PURE__*/React.createElement("dt", null, "Granularity"), /*#__PURE__*/React.createElement("dd", null, d.granularity), /*#__PURE__*/React.createElement("dt", null, "Targeting"), /*#__PURE__*/React.createElement("dd", null, d.targeting), /*#__PURE__*/React.createElement("dt", null, "Computed"), /*#__PURE__*/React.createElement("dd", null, d.computed), /*#__PURE__*/React.createElement("dt", null, "Admissible"), /*#__PURE__*/React.createElement("dd", null, d.admissible))));
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "banner b",
+    style: {
+      marginTop: 12
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "bi"
+  }, "The binding rule"), /*#__PURE__*/React.createElement("div", null, "A plan version cannot be committed for approval while any line still rests on an Indicative figure. That is T5 applied to inventory rather than to advertiser requirements \u2014 an inferred value is a proposal and must be confirmed before approval. It is what lets Discovery be fast and approximate without making this package indefensible."))), /*#__PURE__*/React.createElement(Card, {
     title: "What the whole plan does to inventory",
     tight: true,
     sub: "Sellout before and after, and yield against floor, for every line."
@@ -11693,8 +12600,42 @@ const Approval = ({
           color: l.selloutAfter > 85 ? "var(--warn)" : null
         }
       }, pctn(l.selloutAfter, 0))
+    }, {
+      key: "fidelity",
+      label: "Class",
+      w: 58,
+      align: "c",
+      get: l => l.fidelity || "indicative",
+      cell: l => /*#__PURE__*/React.createElement(FidelityChip, {
+        f: l.fidelity,
+        runAt: l.forecastRunAt
+      })
+    }, {
+      key: "umpPid",
+      label: "UMP placement ID",
+      w: 130,
+      get: l => l.umpPid || "—"
+    }, {
+      key: "indicativeK",
+      label: "Was · ind",
+      w: 80,
+      align: "r",
+      get: l => imps(l.indicativeK),
+      raw: l => l.indicativeK,
+      help: "The Indicative pre-screen Discovery ranked on, before this line's targeting was applied."
+    }, {
+      key: "forecastRunAt",
+      label: "Forecast run",
+      w: 118,
+      get: l => l.forecastRunAt || "—"
     }]
-  })), tab === "package" && /*#__PURE__*/React.createElement("div", {
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "tiny dim",
+    style: {
+      marginTop: 9,
+      lineHeight: 1.55
+    }
+  }, "Every Constrained figure above has a ten-step derivation behind it and a run date attached. Open any line on the Lines tab to read it."))), tab === "package" && /*#__PURE__*/React.createElement("div", {
     className: "brief"
   }, /*#__PURE__*/React.createElement("h2", null, "Approval package \xB7 ", ver.id), /*#__PURE__*/React.createElement("div", {
     className: "tiny dim",
@@ -11742,16 +12683,26 @@ const Approval = ({
     }, money(l?.systemSpend)), " \u2192 ", /*#__PURE__*/React.createElement("b", null, money(val)), /*#__PURE__*/React.createElement("span", {
       className: "why"
     }, "\u201C", ver.justifications[pid], "\u201D")));
-  }), /*#__PURE__*/React.createElement("h4", null, "The rubric read"), RUBRIC.map(r => /*#__PURE__*/React.createElement("div", {
-    className: "bl",
-    key: r.k
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "bk"
-  }, r.label), /*#__PURE__*/React.createElement("div", {
-    className: "bv"
-  }, /*#__PURE__*/React.createElement("b", null, ver.rubric.parts[r.k].toFixed(0)), /*#__PURE__*/React.createElement("span", {
-    className: "why"
-  }, r.help)))))), /*#__PURE__*/React.createElement("div", {
+  }), /*#__PURE__*/React.createElement("h4", null, "The rubric read \u2014 ", ver.rubric.clear, " of ", ver.rubric.of, " dimensions clear"), RUBRIC.map(r => {
+    const v = ver.rubric.parts[r.k],
+      clear = v >= r.bar;
+    return /*#__PURE__*/React.createElement("div", {
+      className: "bl",
+      key: r.k
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "bk"
+    }, r.label), /*#__PURE__*/React.createElement("div", {
+      className: "bv"
+    }, /*#__PURE__*/React.createElement("b", {
+      style: {
+        color: clear ? null : "var(--warn)"
+      }
+    }, v.toFixed(0)), /*#__PURE__*/React.createElement("span", {
+      className: "dim"
+    }, " against ", r.bar, " for this RFP", clear ? "" : ` — ${(r.bar - v).toFixed(0)} short`), /*#__PURE__*/React.createElement("span", {
+      className: "why"
+    }, r.help)));
+  }))), /*#__PURE__*/React.createElement("div", {
     className: "col sticky",
     style: {
       gap: 14
@@ -11813,7 +12764,7 @@ const Approval = ({
     gate: gate,
     note: "P&I's own handoff. The orchestrator scores the approval package the same way it scored the planner's work \u2014 a disapproval that does not say what would make the line approvable is not a decision the planner can act on."
   }), /*#__PURE__*/React.createElement(Assist, {
-    title: "What I would look at"
+    title: "Worth looking at"
   }, (() => {
     const thin = ver.lines.map(l => ({
       l,
@@ -11837,7 +12788,9 @@ const Approval = ({
     style: {
       gridTemplateColumns: "110px 1fr"
     }
-  }, /*#__PURE__*/React.createElement("dt", null, "Version"), /*#__PURE__*/React.createElement("dd", null, ver.id, " \xB7 ", ver.name), /*#__PURE__*/React.createElement("dt", null, "Net"), /*#__PURE__*/React.createElement("dd", null, money(ver.roll.spend)), /*#__PURE__*/React.createElement("dt", null, "Lines"), /*#__PURE__*/React.createElement("dd", null, ver.lines.length), /*#__PURE__*/React.createElement("dt", null, "Blended CPM"), /*#__PURE__*/React.createElement("dd", null, cpmf(ver.roll.blendedCpm)), /*#__PURE__*/React.createElement("dt", null, "Linear share"), /*#__PURE__*/React.createElement("dd", null, pct(ver.roll.linearPct, 1)), /*#__PURE__*/React.createElement("dt", null, "3+ reach"), /*#__PURE__*/React.createElement("dd", null, pct(ver.roll.reach3, 1), " vs ", pct(FRAME.reachGoal3, 1), " goal"), /*#__PURE__*/React.createElement("dt", null, "Overrides"), /*#__PURE__*/React.createElement("dd", null, Object.keys(ver.overrides).length, ", each justified"), /*#__PURE__*/React.createElement("dt", null, "Rubric"), /*#__PURE__*/React.createElement("dd", null, ver.rubric.total.toFixed(0)))))), ask && /*#__PURE__*/React.createElement(PiDecision, {
+  }, /*#__PURE__*/React.createElement("dt", null, "Version"), /*#__PURE__*/React.createElement("dd", null, ver.id, " \xB7 ", ver.name), /*#__PURE__*/React.createElement("dt", null, "Net"), /*#__PURE__*/React.createElement("dd", null, money(ver.roll.spend)), /*#__PURE__*/React.createElement("dt", null, "Lines"), /*#__PURE__*/React.createElement("dd", null, ver.lines.length), /*#__PURE__*/React.createElement("dt", null, "Blended CPM"), /*#__PURE__*/React.createElement("dd", null, cpmf(ver.roll.blendedCpm)), /*#__PURE__*/React.createElement("dt", null, "Linear share"), /*#__PURE__*/React.createElement("dd", null, pct(ver.roll.linearPct, 1)), /*#__PURE__*/React.createElement("dt", null, "3+ reach"), /*#__PURE__*/React.createElement("dd", null, pct(ver.roll.reach3, 1), " vs ", pct(FRAME.reachGoal3, 1), " goal"), /*#__PURE__*/React.createElement("dt", null, "Overrides"), /*#__PURE__*/React.createElement("dd", null, Object.keys(ver.overrides).length, ", each justified"), /*#__PURE__*/React.createElement("dt", null, "Rubric"), /*#__PURE__*/React.createElement("dd", null, ver.rubric.clear, " of ", ver.rubric.of, " dimensions clear", ver.rubric.below.length ? ` · short on ${ver.rubric.below[0].label}` : ""), /*#__PURE__*/React.createElement("dt", null, "Forecast"), /*#__PURE__*/React.createElement("dd", null, versionFidelity(ver).constrainedLines, " of ", ver.lines.length, " lines constrained", /*#__PURE__*/React.createElement("span", {
+    className: "dim"
+  }, ", run ", versionFidelity(ver).runAt || "—")))))), ask && /*#__PURE__*/React.createElement(PiDecision, {
     line: ask.line,
     d: ask.d,
     onCancel: () => setAsk(null),

@@ -141,11 +141,16 @@ function scoreProduct(p, live, signals){
 }
 
 function buildRanking(customMap, signals){
-  const rows = PRODUCTS.map(p => {
+  /* Discovery ranks on the Indicative pre-screen. A product with no Indicative
+     inventory across the flight is not eligible in fact, only in principle, and
+     never reaches the list at all (Forecast §1). */
+  const rows = PRODUCTS.filter(p => indicativeFor(p).eligible).map(p => {
     const ids = customMap[p.id] || [];
     const live = applyCustom(p, ids);
     const s = scoreProduct(p, live, signals);
-    return { pid:p.id, p, custom:ids, breaches: breachesFor(p, live), ...s };
+    return { pid:p.id, p, custom:ids, breaches: breachesFor(p, live),
+             /* Direction of travel, not a figure — see 28-forecast.js. */
+             availSignal: customisationSignal(p, ids, live), ...s };
   });
   rows.sort((a,b) => b.total - a.total);
   rows.forEach((r,i) => { r.sysRank = i + 1; });
@@ -191,6 +196,16 @@ function optimise(ranked, opts){
     return true;
   });
 
+  /* Sending the accepted list to the optimiser is what triggers the Constrained
+     run. Until this moment every avails figure on the deal is the Indicative
+     pre-screen; from here each line has its own waterfall derivation, its own
+     UMP placement ID, and a run date that travels with it as provenance.
+     The solve allocates against Constrained avails, not against the pre-screen. */
+  const runAt = NOW();
+  const fc = {};
+  selected.forEach(r => { fc[r.pid] = constrainedFor(r.p, r.custom, runAt); });
+  const conK = r => (fc[r.pid] ? fc[r.pid].availK : r.live.availK);
+
   FRAME.regions.forEach(region => {
     const envelope = DEAL.netBudget * FRAME.regionSplit[region];
     const all = selected.filter(r => r.p.region === region);
@@ -211,8 +226,9 @@ function optimise(ranked, opts){
       if (spend < 1) return;
       const impsK = spend / r.live.cpm;
       lines.push({ pid:r.pid, p:r.p, region, rank: all.indexOf(r)+1, cpm:r.live.cpm, spend, impsK,
-        custom:r.custom, comp:r.live.comp, availK:r.live.availK, view:r.live.view,
-        availUse: impsK / r.live.availK,
+        custom:r.custom, comp:r.live.comp, availK: conK(r), view:r.live.view,
+        availUse: impsK / conK(r),
+        ...forecastOn(fc[r.pid], r.p),
         overridden: o.overrides[r.pid] != null, locked: o.locked[r.pid] != null,
         systemSpend: (o.systemSpend || {})[r.pid] });
     });
@@ -231,14 +247,14 @@ function optimise(ranked, opts){
     let remaining = Math.max(0, envelope - fixedSpend);
     const alloc = pool.map(()=>0);
     for (let pass = 0; pass < 4 && remaining > 1000; pass++){
-      const active = pool.map((r,i) => alloc[i] < r.live.availK * r.live.cpm * o.buyCap);
+      const active = pool.map((r,i) => alloc[i] < conK(r) * r.live.cpm * o.buyCap);
       const aw = weights.map((w,i)=> active[i] ? w : 0);
       const asum = aw.reduce((a,b)=>a+b,0);
       if (asum <= 0) break;
       let spent = 0;
       pool.forEach((r,i) => {
         if (!active[i]) return;
-        const cap = r.live.availK * r.live.cpm * o.buyCap - alloc[i];   // never buy past 80% of sellable avails
+        const cap = conK(r) * r.live.cpm * o.buyCap - alloc[i];   // never buy past 80% of constrained avails
         const want = remaining * (aw[i]/asum);
         const take = Math.max(0, Math.min(cap, want));
         alloc[i] += take; spent += take;
@@ -247,7 +263,7 @@ function optimise(ranked, opts){
       if (spent < 1000) break;
     }
     if (remaining > 5000) unallocated.push({ region, amount: remaining,
-      why: `Every accepted ${region} product hit its avails ceiling at ${pct(o.buyCap,0)} of sellable inventory. More budget needs more products, not more weight.` });
+      why: `Every accepted ${region} product hit its avails ceiling at ${pct(o.buyCap,0)} of constrained inventory. More budget needs more products, not more weight.` });
 
     pool.forEach((r,i) => {
       const spend = alloc[i];
@@ -255,8 +271,9 @@ function optimise(ranked, opts){
       const impsK = spend / r.live.cpm;
       lines.push({
         pid: r.pid, p: r.p, region, rank: all.indexOf(r) + 1, cpm: r.live.cpm, spend, impsK,
-        custom: r.custom, comp: r.live.comp, availK: r.live.availK, view: r.live.view,
-        availUse: impsK / r.live.availK,
+        custom: r.custom, comp: r.live.comp, availK: conK(r), view: r.live.view,
+        availUse: impsK / conK(r),
+        ...forecastOn(fc[r.pid], r.p),
         overridden: false, locked: false,
         systemSpend: (o.systemSpend || {})[r.pid] != null ? o.systemSpend[r.pid] : spend,
       });
@@ -351,13 +368,27 @@ function checkConstraints(res, ranked){
 /* ------------------------------------------------------- the good-plan rubric */
 /* [PROPOSED] — OQ-2 is open. The shape is settled, the content is not.
    Scored in isolation, never ranked against other versions (Analyze §9). */
+/* The definition of a good plan has two layers (OQ-2).
+
+   The standing layer is WBD's, agreed once rather than per deal: these are the
+   dimensions a plan is judged on at all. The per-RFP layer is the weights and
+   thresholds below, instantiated for this brief.
+
+   The dimensions are scored separately and deliberately not collapsed into one
+   number, so the trade-off between them stays visible. A version that buys
+   objective delivery by abandoning yield alignment should look different from
+   one that is merely average everywhere, and a single total hides exactly that.
+
+   [OPEN] The dimensions here are candidates. Whether they are the right ones,
+   how each is measured, and who sets the per-RFP weights are all with the
+   business. */
 const RUBRIC = [
-  { k:"coverage", label:"Requirement coverage", w:0.20, help:"Stated requirements this version satisfies." },
-  { k:"objective",label:"Objective delivery",   w:0.22, help:"1+ and 3+ reach against the goal the brief set." },
-  { k:"price",    label:"Price discipline",     w:0.15, help:"Blended CPM against the ceiling and the advertiser's paid benchmark." },
-  { k:"yield",    label:"Yield alignment",      w:0.16, help:"Agreement with P&I's stated position, floors and caps." },
-  { k:"argument", label:"Quality of argument",  w:0.15, help:"Every deviation from the system proposal carries a reason that would survive a question." },
-  { k:"realism",  label:"Inventory realism",    w:0.12, help:"Deliverability against sellable avails and concentration risk." },
+  { k:"coverage", label:"Requirement coverage", w:0.20, bar:80, help:"Stated requirements this version satisfies." },
+  { k:"objective",label:"KPI service",          w:0.22, bar:85, help:"1+ and 3+ reach against the goal the brief set." },
+  { k:"price",    label:"Efficiency",           w:0.15, bar:70, help:"Blended CPM against the ceiling and the advertiser's paid benchmark." },
+  { k:"yield",    label:"Seller alignment",     w:0.16, bar:75, help:"Agreement with P&I's stated position, floors and caps." },
+  { k:"argument", label:"Argument quality",     w:0.15, bar:70, help:"Every deviation from the system proposal carries a reason that would survive a question." },
+  { k:"realism",  label:"Deliverability",       w:0.12, bar:75, help:"Deliverability against constrained avails and concentration risk." },
 ];
 
 function scorePlan(res, ranked, overrides, justifications, constraints){
@@ -393,8 +424,17 @@ function scorePlan(res, ranked, overrides, justifications, constraints){
   const realism = clamp(100 - overAvails * 18 - Math.max(0, (res.hhi - 0.16)) * 260, 0, 100);
 
   const parts = { coverage, objective, price, yield:yieldScore, argument, realism };
+
+  /* The profile, not a verdict. Which dimensions clear the threshold this RFP
+     set, and which do not — that is the readable answer. `total` is retained
+     only as a weak sort key for the version list; nothing decides on it. */
+  const below = RUBRIC.filter(r => parts[r.k] < r.bar)
+    .map(r => ({ ...r, score: +parts[r.k].toFixed(1), short: +(r.bar - parts[r.k]).toFixed(1) }))
+    .sort((a,b) => b.short - a.short);
   const total = RUBRIC.reduce((s,r) => s + parts[r.k] * r.w, 0);
-  return { parts, total:+total.toFixed(1), coverageItems, devs: devs.length, withReason: withReason.length };
+
+  return { parts, below, clear: RUBRIC.length - below.length, of: RUBRIC.length,
+           total:+total.toFixed(1), coverageItems, devs: devs.length, withReason: withReason.length };
 }
 
 /* ------------------------------------------------------------ P&I line review */

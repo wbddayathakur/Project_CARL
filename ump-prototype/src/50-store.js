@@ -182,7 +182,10 @@ function seedState(base, phase){
       order:s.order.slice(), on:{...s.on}, customMap:JSON.parse(JSON.stringify(s.customMap)),
       lines: res.lines.map(l=>({ pid:l.pid, name:l.p.name, region:l.region, medium:l.p.medium, brand:l.p.brand,
         spend:l.spend, cpm:l.cpm, impsK:l.impsK, comp:l.comp, availUse:l.availUse,
-        overridden:l.overridden, systemSpend:l.systemSpend, floorCpm:l.p.floorCpm })),
+        overridden:l.overridden, systemSpend:l.systemSpend, floorCpm:l.p.floorCpm,
+        /* the forecast class the line rests on, and its derivation */
+        fidelity:l.fidelity, umpPid:l.umpPid, forecastRunAt:l.forecastRunAt,
+        indicativeK:l.indicativeK, constrainedK:l.constrainedK, waterfall:l.waterfall, custom:l.custom })),
       roll: { spend:res.spend, impsK:res.impsK, reach1:res.reach1, reach3:res.reach3, avgFreq:res.avgFreq,
         blendedCpm:res.blendedCpm, digCpm:res.digCpm, linearPct:res.linearPct, hhi:res.hhi, byRegion:res.byRegion } };
   };

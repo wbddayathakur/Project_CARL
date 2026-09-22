@@ -39,7 +39,8 @@ const Analyze = ({S}) => {
     ["Concentration (HHI)", x=>x.roll.hhi.toFixed(3), x=>-x.roll.hhi],
     ["Lines", x=>x.lines.length, x=>x.lines.length],
     ["Overrides", x=>Object.keys(x.overrides).length, x=>-Object.keys(x.overrides).length],
-    ["Rubric", x=>x.rubric.total.toFixed(1), x=>x.rubric.total],
+    ["Rubric dimensions clear", x=>`${x.rubric.clear} of ${x.rubric.of}`, x=>x.rubric.clear],
+    ...RUBRIC.map(r => [`  ${r.label} · needs ${r.bar}`, x=>x.rubric.parts[r.k].toFixed(0), x=>x.rubric.parts[r.k]]),
   ];
 
   return (
@@ -58,9 +59,15 @@ const Analyze = ({S}) => {
                   {x.id===st.committed && <Chip c="g">COMMITTED</Chip>}
                 </div>
                 <div className="row" style={{gap:12}}>
+                  {/* The profile, not a single number — how many dimensions clear
+                      the threshold this RFP set, and which one is furthest short. */}
                   <div className="scorebadge" style={{width:48, height:48,
-                    borderColor: x.rubric.total>=80?"var(--good)":x.rubric.total>=65?"var(--warn)":"var(--bad)"}}>
-                    <b style={{fontSize:17}}>{x.rubric.total.toFixed(0)}</b><span style={{fontSize:7.5}}>RUBRIC</span></div>
+                    borderColor: x.rubric.below.length===0?"var(--good)":x.rubric.below.length<=1?"var(--warn)":"var(--bad)"}}
+                    title={x.rubric.below.length
+                      ? "Short on: " + x.rubric.below.map(b=>`${b.label} ${b.score} against ${b.bar}`).join("; ")
+                      : "Every dimension clears its threshold."}>
+                    <b style={{fontSize:17}}>{x.rubric.clear}<span style={{fontSize:10, fontWeight:400}}>/{x.rubric.of}</span></b>
+                    <span style={{fontSize:7.5}}>CLEAR</span></div>
                   <div className="grow tiny">
                     <div className="row" style={{justifyContent:"space-between"}}><span className="dim">3+ reach</span><b>{pct(x.roll.reach3,1)}</b></div>
                     <div className="row" style={{justifyContent:"space-between"}}><span className="dim">Blended CPM</span><b>{cpmf(x.roll.blendedCpm)}</b></div>
@@ -146,17 +153,29 @@ const Analyze = ({S}) => {
               <div>
                 <div className="lbl">Rated against the good-plan rubric</div>
                 <div className="banner a" style={{marginBottom:10, padding:"7px 10px"}}>
-                  <span className="bi">[OQ-2]</span><div className="tiny">The definition of a good plan is not a settled
-                    WBD artifact. This rubric is proposed, and the shape — not the content — is what the prototype is testing.</div></div>
-                {RUBRIC.map(r=>(
-                  <div key={r.k} style={{marginBottom:9}}>
-                    <div className="row tiny" style={{justifyContent:"space-between"}}>
-                      <span title={r.help}>{r.label} <span className="dim">· weight {pct(r.w,0)}</span></span>
-                      <b>{cur.rubric.parts[r.k].toFixed(0)}</b>
+                  <span className="bi">[OQ-2]</span><div className="tiny">Two layers. The <b>dimensions</b> are WBD's
+                    standing definition, agreed once rather than per deal. The <b>weights and thresholds</b> are
+                    instantiated for this RFP. Both are candidates — the structure is what the prototype is testing,
+                    and the content sits with the business.</div></div>
+                {RUBRIC.map(r=>{
+                  const v = cur.rubric.parts[r.k], clear = v >= r.bar;
+                  return (
+                    <div key={r.k} style={{marginBottom:9}}>
+                      <div className="row tiny" style={{justifyContent:"space-between"}}>
+                        <span title={r.help}>{r.label} <span className="dim">· weight {pct(r.w,0)} · needs {r.bar}</span></span>
+                        <b style={{color: clear ? null : "var(--warn)"}}>{v.toFixed(0)}
+                          {!clear && <span className="dim" style={{fontWeight:400}}> · {(r.bar-v).toFixed(0)} short</span>}</b>
+                      </div>
+                      <Bar v={v/100} c={clear ? "g" : "a"}/>
                     </div>
-                    <Bar v={cur.rubric.parts[r.k]/100} c={cur.rubric.parts[r.k]>75?"g":cur.rubric.parts[r.k]>50?"":"a"}/>
-                  </div>
-                ))}
+                  );
+                })}
+                <div className="tiny dim" style={{marginTop:8, lineHeight:1.55}}>
+                  Scored separately and deliberately not added up. A version that buys reach by abandoning
+                  yield alignment should not look the same as one that is merely average everywhere, and a
+                  single total hides exactly that. Versions are scored on their own and never ranked against
+                  each other — the comparing is the planner's and the AE's to do.
+                </div>
               </div>
               <div>
                 <div className="lbl">Requirement coverage</div>
@@ -246,14 +265,17 @@ const Analyze = ({S}) => {
 
         <Assist title="On this version">
           {cur && v.length > 1 && (() => {
+            /* Closest on the rubric profile — same number of dimensions clear,
+               and the nearest on the ones that matter. Never a ranking. */
             const other = v.filter(x => x.id !== cur.id)
-              .sort((a,b) => Math.abs(a.rubric.total-cur.rubric.total) - Math.abs(b.rubric.total-cur.rubric.total))[0];
-            const gap = Math.abs(cur.rubric.total - other.rubric.total);
-            if (gap > 3) return null;
+              .sort((a,b) => Math.abs(a.rubric.clear-cur.rubric.clear) - Math.abs(b.rubric.clear-cur.rubric.clear))[0];
+            const gap = Math.abs(cur.rubric.clear - other.rubric.clear);
+            if (gap > 1) return null;
             const d3 = (cur.roll.reach3 - other.roll.reach3) * 100;
             const dc = cur.roll.blendedCpm - other.roll.blendedCpm;
             return <div style={{marginBottom:8}}>
-              {cur.id} and {other.id} score within {gap.toFixed(1)} of each other, so the rubric is not choosing for you.
+              {cur.id} clears {cur.rubric.clear} of {cur.rubric.of} dimensions and {other.id} clears {other.rubric.clear},
+              so the rubric is not choosing for you.
               What separates them is shape: {cur.id} is {d3 >= 0 ? "+" : ""}{d3.toFixed(1)} points of modelled 3+ reach
               and {dc >= 0 ? "+" : "−"}{cpmf(Math.abs(dc))} of blended CPM against {other.id}. Commit the one whose
               argument you can make out loud, and the other one stays saved as the alternative you rejected.

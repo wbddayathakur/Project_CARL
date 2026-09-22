@@ -399,8 +399,8 @@ const Blueprint = ({initialTab}) => {
           <span className="bi">Note</span>
           <div>{AGENTS.length} agents, named for the desk job each does rather than for the technique. None of them
             decides anything — each produces evidence, a proposal or a consequence, and a human adjudicates. The
-            orchestrator is the only one that can stop the plan moving, and even it can only refuse a handoff. Click
-            one to read its contract.</div>
+            orchestrator is the only one that can hold the plan at all, and only when something the next phase needs
+            is missing — never because it judged the work weak. Click one to read its contract.</div>
         </div>
         {["Intake","Discovery","Strategize","Analyze","Approval","All"].map(ph => {
           const list = AGENTS.filter(a => a.phase === ph);

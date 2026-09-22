@@ -32,7 +32,7 @@ function interrogate(row, ranking){
       ? pos.map(p=>`${p.title} (${p.id}, ${p.hardness}): ${p.text} Reason given: ${p.reason}`).join(" ")
       : `Nothing specific. It falls under the general Q3 posture — ${POSTURE_LABEL[row.p.yieldPosture].toLowerCase()}. ${row.p.note}` });
   qs.push({ q:"What is the inventory and price position right now?",
-    a:`${imps(row.live.availK)} sellable across the flight at ${cpmf(row.live.cpm)}${row.custom.length ? ` with ${row.custom.length} customisation${row.custom.length>1?"s":""} applied` : ""}. Floor ${cpmf(row.p.floorCpm)}, card ${cpmf(row.p.cardCpm)}, market benchmark ${cpmf((BENCH[row.p.region+"|"+row.p.medium]||{}).cpm)}. ${row.live.availEstimate ? "Avails is an estimate while targeting is customised — the firm number returns with the solve." : "Avails is firm as at derivation."}` });
+    a:`Price is exact: ${cpmf(row.live.cpm)}${row.custom.length ? ` with ${row.custom.length} customisation${row.custom.length>1?"s":""} applied` : ""}, against a ${cpmf(row.p.floorCpm)} floor, ${cpmf(row.p.cardCpm)} card and a ${cpmf((BENCH[row.p.region+"|"+row.p.medium]||{}).cpm)} market benchmark. Inventory is ${imps(row.p.availK)} on the Indicative pre-screen — product level, no targeting, from the ${INDICATIVE_RUN} nightly pass. ${row.availSignal ? `${row.availSignal.text} ${row.availSignal.why}` : "Nothing customised, so the pre-screen is the honest number."} A Constrained figure for this line arrives when the optimiser runs it through the waterfall.` });
   return qs;
 }
 
@@ -62,7 +62,18 @@ const RankRow = ({row, ranking, onMove, onToggle, onOpen}) => {
         </div>
         <div className="row wrap tiny" style={{gap:12, marginTop:6}}>
           <span><span className="dim">CPM</span> <b>{cpmf(row.live.cpm)}</b></span>
-          <span><span className="dim">Avails</span> <b>{imps(row.live.availK)}</b>{row.live.availEstimate && <span className="dim" title="Estimate while targeting is customised"> est</span>}</span>
+          {/* Indicative, always. Customisation moves this figure but by how much
+              is not knowable until the solve, so the pre-screen stays visible as
+              the reference point and the move is shown as a direction (§7). */}
+          <span title={`Indicative pre-screen, nightly pass ${INDICATIVE_RUN}. No targeting applied.`}>
+            <span className="dim">Avails</span> <b>{imps(row.p.availK)}</b>
+            <span className="dim"> ind</span>
+            {row.availSignal && row.availSignal.direction !== "flat" &&
+              <span className={row.availSignal.severity === "sharp" ? "bad" : "warn"}
+                    title={row.availSignal.text + " " + row.availSignal.why}>
+                {" "}{row.availSignal.direction === "down" ? "↓" : "↑"}{row.availSignal.severity === "sharp" ? "↓" : ""}
+              </span>}
+          </span>
           <span><span className="dim">In-demo</span> <b>{pct(row.live.comp,0)}</b></span>
           <span><span className="dim">P&amp;I</span> <b>{POSTURE_LABEL[p.yieldPosture]}</b></span>
           <div style={{flex:1}}/>
@@ -163,7 +174,13 @@ const Discovery = ({S}) => {
     { key:"region", label:"Region", w:60, get:r=>r.p.region },
     { key:"medium", label:"Medium", w:62, get:r=>r.p.medium },
     { key:"cpm", label:"CPM", w:66, align:"r", get:r=>cpmf(r.live.cpm), raw:r=>r.live.cpm },
-    { key:"avail", label:"Avails", w:74, align:"r", get:r=>imps(r.live.availK), raw:r=>r.live.availK*1000 },
+    { key:"avail", label:"Avails · ind", w:86, align:"r", help:"Indicative pre-screen — product level, no targeting applied, from the nightly pass. Not admissible at approval.",
+      get:r=>imps(r.p.availK), raw:r=>r.p.availK*1000 },
+    { key:"availDir", label:"On custom", w:82, align:"c", help:"Direction of travel against the pre-screen once targeting is customised. The size of the move is not knowable until the solve.",
+      get:r=> r.availSignal ? `${r.availSignal.direction} ${r.availSignal.severity}` : "—",
+      cell:r=> !r.availSignal ? <span className="dim">—</span>
+        : <Chip c={r.availSignal.severity==="sharp"?"r":r.availSignal.severity==="material"?"a":""} title={r.availSignal.text}>
+            {r.availSignal.direction==="down"?"↓":"↑"} {r.availSignal.severity}</Chip> },
     { key:"comp", label:"In-demo", w:66, align:"r", get:r=>pct(r.live.comp,0), raw:r=>r.live.comp },
     ...CRITERIA.map(c=>({ key:c.k, label:c.label, w:88, align:"r", help:c.help,
       get:r=>r.parts[c.k].toFixed(0), raw:r=>r.parts[c.k].toFixed(1) })),
@@ -260,7 +277,7 @@ const Discovery = ({S}) => {
                 <div className="bv">{r.p.name}
                   <span className="why">{r.why.audience} {r.why.kpi}</span>
                   <span className="why">Relevance to the KPI: incremental 1+ reach ceiling {imps(r.p.reachK)} at {cpmf(r.live.cpm)}.</span>
-                  {r.custom.length>0 && <span className="why">Customised: {r.custom.map(i=>CUSTOM_OPTIONS.find(o=>o.id===i).label).join(", ")} — price now {cpmf(r.live.cpm)} ({pctn((r.live.cpm/r.p.openCpm-1)*100,0)} vs opening), avails now {imps(r.live.availK)} ({pctn((r.live.availK/r.p.availK-1)*100,0)}).</span>}
+                  {r.custom.length>0 && <span className="why">Customised: {r.custom.map(i=>CUSTOM_OPTIONS.find(o=>o.id===i).label).join(", ")} — price now {cpmf(r.live.cpm)} ({pctn((r.live.cpm/r.p.openCpm-1)*100,0)} vs opening). Inventory {r.availSignal ? r.availSignal.text.replace(/^Available inventory /,"moves ").replace(/\.$/,"") : "unchanged"} against the {imps(r.p.availK)} pre-screen; the figure itself arrives with the solve.</span>}
                   {r.just && <span className="why" style={{color:"var(--violet)"}}>Planner: “{r.just}”</span>}
                 </div>
                 <div className="col" style={{alignItems:"flex-end", gap:3}}>
@@ -416,12 +433,13 @@ const ProductDrawer = ({row, mode, ranking, onClose, onCustom}) => {
   const p = row.p;
   const preview = applyCustom(p, ids);
   const previewBreach = breachesFor(p, preview);
+  const sig = customisationSignal(p, ids, preview);
   const qs = useMemo(()=>interrogate(row, ranking), [row, ranking]);
 
   return (
     <Drawer title={p.name} sub={`${p.brand} · ${p.region} · ${p.medium} · rank ${row.rank} of ${ranking.length}`} onClose={onClose}
       foot={m==="target" ? <>
-        <div className="tiny dim">Pricing is exact. Avails is an estimate until the solve.</div>
+        <div className="tiny dim">Pricing is exact. Inventory is a direction until the solve runs the waterfall.</div>
         <div style={{flex:1}}/>
         <Btn onClick={()=>setIds(row.custom)}>Reset</Btn>
         <Btn c="pri" disabled={JSON.stringify(ids)===JSON.stringify(row.custom)}
@@ -467,23 +485,38 @@ const ProductDrawer = ({row, mode, ranking, onClose, onCustom}) => {
 
       {m==="target" && <div className="col" style={{gap:12}}>
         <div className="banner b"><span className="bi">Live</span>
-          <div>As targeting changes, inventory and price change with it. Any breach of the brief's constraints is raised
-            here, at the moment of customisation — not at optimisation and not at approval.</div></div>
+          <div>Price moves exactly and is shown exactly. Inventory moves too, but by how much is not knowable
+            until the optimiser runs this line through the waterfall — so what you get here is a direction and a
+            breach check, not a number. Any breach of the brief's constraints is raised at the moment of
+            customisation, not at optimisation and not at approval.</div></div>
         <div className="statgrid" style={{gridTemplateColumns:"1fr 1fr 1fr"}}>
           <Stat label="CPM" value={cpmf(preview.cpm)}
             delta={preview.cpm===p.openCpm ? "unchanged" : `${pctn((preview.cpm/p.openCpm-1)*100,1)} vs ${cpmf(p.openCpm)}`}
             tone={preview.cpm>FRAME.cpmCeiling?"bad":null}/>
-          <Stat label="Avails" value={imps(preview.availK)}
-            delta={preview.availK===p.availK ? "firm" : `${pctn((preview.availK/p.availK-1)*100,0)} · estimate`}/>
+          <Stat label="Avails · indicative" value={imps(p.availK)}
+            delta={`pre-screen, ${INDICATIVE_RUN.slice(0,10)}`}/>
           <Stat label="In-demo" value={pct(preview.comp,0)}
             delta={preview.comp===p.demoComp ? "unchanged" : `from ${pct(p.demoComp,0)}`} tone={preview.comp>p.demoComp?"good":null}/>
         </div>
+
+        {/* Direction of travel, the constraint flag, and the pre-screen still
+            visible as the reference point (Forecast §7). */}
+        {sig && <div className={"banner " + (sig.severity==="sharp" ? "r" : sig.severity==="material" ? "a" : "b")}>
+          <span className="bi">Inventory {sig.direction === "down" ? "↓" : sig.direction === "up" ? "↑" : "—"}</span>
+          <div>{sig.text} The {imps(sig.reference)} pre-screen above stays as the reference point. {sig.why}
+            <div className="tiny dim" style={{marginTop:5}}>
+              Recorded with the customisation: the targeting change, this direction, and the price consequence —
+              so the trade-off is readable downstream rather than only its result.
+            </div>
+          </div>
+        </div>}
+
         {previewBreach.map((b,i)=><div key={i} className="banner r"><span className="bi">Breach</span><div>{b.text}</div></div>)}
         {ids.length>0 && preview.cpm*1 > 0 && (
           <div className="banner a"><span className="bi">Trade-off</span>
             <div>This buys {pctn((preview.comp/p.demoComp-1)*100,0)} more in-demo delivery and costs
-              {" "}{pctn((preview.cpm/p.openCpm-1)*100,0)} on CPM and {pctn((1-preview.availK/p.availK)*100,0)} of the
-              sellable inventory. At this price the {p.region} envelope buys {imps(DEAL.netBudget*FRAME.regionSplit[p.region]*0.3/preview.cpm)} on a typical line.</div></div>
+              {" "}{pctn((preview.cpm/p.openCpm-1)*100,0)} on CPM, against inventory moving {sig ? sig.direction : "flat"}.
+              At this price the {p.region} envelope buys {imps(DEAL.netBudget*FRAME.regionSplit[p.region]*0.3/preview.cpm)} on a typical line.</div></div>
         )}
         <div className="col" style={{gap:8}}>
           {customFor(p).map(o=>{
@@ -515,7 +548,7 @@ const ProductDrawer = ({row, mode, ranking, onClose, onCustom}) => {
           <dt>Card CPM</dt><dd>{cpmf(p.cardCpm)}</dd>
           <dt>Opening CPM</dt><dd><b>{cpmf(p.openCpm)}</b></dd>
           <dt>Market benchmark</dt><dd>{cpmf((BENCH[p.region+"|"+p.medium]||{}).cpm)} — {(BENCH[p.region+"|"+p.medium]||{}).note}</dd>
-          <dt>Sellable avails</dt><dd>{imps(p.availK)} across {FLIGHT.weeks} weeks</dd>
+          <dt>Avails · indicative</dt><dd>{imps(p.availK)} across {FLIGHT.weeks} weeks · pre-screen, no targeting</dd>
           <dt>1+ reach ceiling</dt><dd>{imps(p.reachK)} people</dd>
           {p.viewability!=null && <><dt>Viewability</dt><dd>{pct(p.viewability,0)} MRC</dd></>}
           {p.vcr!=null && <><dt>Completion</dt><dd>{pct(p.vcr,1)}</dd></>}
