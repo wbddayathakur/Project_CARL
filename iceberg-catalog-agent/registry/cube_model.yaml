@@ -1,0 +1,275 @@
+# Cube semantic layer model.
+#
+# Two kinds of entry live here and the `status` field is what separates them:
+#
+#   certified  deployed YAML in the carl-semantic-layer repo, hot-loaded on EFS
+#   proposed   designed but not deployed
+#
+# Proposed views are listed on purpose. The Ad Products views were specified in
+# full against the Week 35 workbook months before any YAML exists, and intake
+# needs to see them — otherwise the same request gets raised again by someone
+# who had no way of knowing the design was already done.
+#
+# When the Cube REST /meta endpoint becomes reachable from the agent's network,
+# point `registry.cube_model` at a generated export of it instead and this file
+# becomes the fallback rather than the source.
+
+views:
+  - name: finance_view_pacing_revenue_budget
+    source_table: linear_digital_revenue_gold.fact_pacing_revenue_budget_month
+    layer: gold
+    grain: Net account x AE combo x calendar month
+    measures: [Budget Amount, Booked Revenue, Pacing Percent]
+    dimensions: [Team, Net Account, AE Combo, Agency, Calendar Month]
+    status: certified
+
+  - name: finance_view_combined_revenue
+    source_table: linear_digital_revenue_gold.combined_revenue_sales_holes_totals
+    layer: gold
+    grain: Account x division x month
+    measures: [Combined Revenue, Sales Holes Total]
+    dimensions: [Net Account, Sell Division, Network, Calendar Month]
+    status: certified
+
+  - name: finance_view_dim_teams
+    source_table: linear_digital_revenue_gold.dim_teams
+    layer: gold
+    grain: One row per AE per effective period
+    dimensions: [AE, VP, SVP, EVP, Sales Group]
+    status: certified
+
+  # --- Ad Products: designed against the Week 35 workbook, not yet deployed ---
+
+  - name: adproducts_view_ad_revenue_booked
+    source_table: adproducts_gold.fct_ad_revenue_booked
+    layer: gold
+    grain: >-
+      line_item x product x property x site x format x cost_type x package x
+      audience_flag x calendar month
+    measures:
+      - Net Revenue
+      - Gross Revenue
+      - Contracted Quantity
+      - Booked Contracted Production Quantity
+      - Adjusted Impressions
+    dimensions:
+      [Ad Product, Property, Site, Format, Cost Type, Sponsorship Package, Calendar Date]
+    segments: [is_sports, excl_sports, include_display]
+    status: proposed
+
+  - name: adproducts_view_ad_delivery
+    source_table: adproducts_gold.fct_ad_delivery
+    layer: gold
+    grain: line_item x product x site x ad_unit x format x audience_flag x activity month
+    measures: [Monetized Impressions, Gross Revenue Adjusted, Net Revenue]
+    dimensions: [Ad Product, Site, Format, Activity Date]
+    segments: [is_audience]
+    status: proposed
+
+  - name: adproducts_view_ad_revenue_bucketed
+    source_table: adproducts_gold.fct_ad_revenue_bucketed
+    layer: gold
+    grain: One row per booked line per bucket
+    measures:
+      - Ad Innovation Revenue
+      - DAT Revenue (All)
+      - Overlap Revenue
+      - DAT Revenue excl Overlap
+      - Traditional Revenue
+      - Traditional excl Both
+      - Total Deduplicated Revenue
+    dimensions: [Ad Product, Property, Site, Format, Revenue Bucket, Calendar Date]
+    segments:
+      [ad_innovation, dat_all, dat_excl_overlap, traditional, traditional_excl_both, overlap]
+    status: proposed
+
+  - name: adproducts_view_yield
+    layer: gold
+    grain: Vertical x format x quarter
+    measures: [CPM, Ad Innovation CPM, Traditional CPM, Yield $, Yield %]
+    dimensions: [Property, Format, Calendar Quarter]
+    segments: [ad_innovation, traditional_excl_both]
+    status: proposed
+
+  # --- Research Market Share: designed in CARL-3776, not yet deployed ---
+
+  - name: marketplace_view_telecast_supply_demand
+    source_table: marketplace_insights_gold.fct_telecast_supply
+    layer: gold
+    grain: >-
+      Telecast x broad demo (supply), joined on telecast_key to telecast x buy
+      type x ADU x spot length (marketplace_insights_gold.fct_telecast_demand)
+    measures:
+      [Gross Impressions, Gross Impressions per BC Week, Gross Spend, Upfront Spend,
+       Scatter/Other Spend, DR Spend, EQ30 Spot Count, CPM, Share of Spend,
+       Share of Impressions, Power Ratio, Match Rate]
+    dimensions:
+      [Ownership, Network, Network Type, Program, Telecast, Programming Genre,
+       Nielsen Program Type, Daypart, Buy Type, ADU, Spot Length, Demo,
+       Viewing Methodology, Broadcast Month]
+    segments: [wbd_only, reporting_networks, prime, panel_only, big_data_panel, matched_only]
+    status: proposed
+
+  - name: marketplace_view_category_spend
+    source_table: marketplace_insights_gold.fct_category_spend
+    layer: gold
+    grain: AccuTV delivered grain
+    measures: [Gross Media Spend, EQ30 Spot Count, Share of Spend]
+    dimensions: [Media Parent Owner, Network, Category Group, Category, Subcategory, Buy Type, Broadcast Month]
+    segments: [wbd_only, reporting_networks]
+    status: proposed
+
+  - name: marketplace_view_adintel_spend
+    source_table: marketplace_insights_gold.fct_adintel_spend
+    layer: gold
+    grain: Ad date x network x program x advertiser brand x media type x duration
+    measures: [Estimated Spend, Units, EQ30 Units, Share of Spend]
+    dimensions: [Parent Company, Subsidiary, Brand, Category, Network, Ownership, Program, Media Type, Broadcast Month]
+    segments: [wbd_only, reporting_networks, linear, ctv, excl_static_segment]
+    status: proposed
+
+  - name: marketplace_view_adintel_sales
+    source_table: marketplace_insights_gold.fct_adintel_spend
+    layer: gold
+    grain: Brand x network x broadcast month, curated dimensions, role-based access
+    measures: [Estimated Spend, Share of Spend]
+    dimensions: [Parent Company, Brand, Category, Network, Broadcast Month]
+    status: proposed
+
+  - name: marketplace_view_data_freshness
+    source_table: marketplace_insights_gold.data_freshness
+    layer: gold
+    grain: Source x layer
+    measures: [Hours Since Last Delivery, Hours Since Last Publish, Checks Failed]
+    dimensions: [Source, Layer, Check, Severity, Run Date]
+    status: proposed
+
+measures:
+  - name: Budget Amount
+    cube_view: finance_view_pacing_revenue_budget
+    kpi_class: Primary KPI
+    definition: Budgeted revenue for the account and month
+    aggregation: Sum
+    basis: Net
+    status: certified
+
+  - name: Booked Revenue
+    cube_view: finance_view_pacing_revenue_budget
+    kpi_class: Primary KPI
+    definition: Revenue booked to date against that budget
+    aggregation: Sum
+    basis: Net
+    status: certified
+
+  - name: Pacing Percent
+    cube_view: finance_view_pacing_revenue_budget
+    kpi_class: Derived KPI
+    definition: Booked Revenue divided by Budget Amount
+    expression: sum(booked_revenue) / nullif(sum(budget_amount), 0)
+    aggregation: Calculated
+    basis: Net
+    status: certified
+
+  # --- Ad Products measures, from the Measure Catalog in the Jamie workbook ---
+
+  - name: Net Revenue
+    cube_view: adproducts_view_ad_revenue_booked
+    kpi_class: Primary KPI
+    definition: Booked net revenue for the ad product
+    expression: sum(net_revenue)
+    aggregation: Sum
+    basis: Net
+    status: proposed
+
+  - name: Adjusted Impressions
+    cube_view: adproducts_view_ad_revenue_booked
+    kpi_class: Derived KPI
+    definition: >-
+      Contracted impressions after the In-front adjustment. Replaces a 1.9x
+      constant repeated across 560 formulas with an effective-dated rule row.
+    expression: sum(contracted_qty * factor from ref_adjustment_rule)
+    aggregation: Sum
+    status: proposed
+
+  - name: Overlap Revenue
+    cube_view: adproducts_view_ad_revenue_bucketed
+    kpi_class: Derived KPI
+    definition: Revenue counted in both the Ad Innovation and DAT buckets
+    expression: sum(net_revenue) where overlap_flag
+    aggregation: Sum
+    basis: Net
+    status: proposed
+
+  - name: Total Deduplicated Revenue
+    cube_view: adproducts_view_ad_revenue_bucketed
+    kpi_class: Primary KPI
+    definition: >-
+      Ad Innovation plus DAT excluding overlap plus Traditional excluding both.
+      The number the executive pack should show.
+    aggregation: Sum
+    basis: Net
+    status: proposed
+
+  - name: Yield %
+    cube_view: adproducts_view_yield
+    kpi_class: Derived KPI
+    definition: Ad Innovation CPM over Traditional CPM for the same vertical and format
+    aggregation: Calculated
+    status: proposed
+
+  # --- Research Market Share measures (CARL-3776) ---
+
+  - name: Gross Impressions
+    cube_view: marketplace_view_telecast_supply_demand
+    kpi_class: Primary KPI
+    definition: >-
+      C3 (Live+3 ACM) gross impressions for one selected demo. Demos overlap,
+      so a query must carry exactly one.
+    expression: sum(commercial_program_duration / 30 * demo_delivery)
+    aggregation: Sum
+    basis: n/a
+    status: proposed
+
+  - name: Gross Spend
+    cube_view: marketplace_view_telecast_supply_demand
+    kpi_class: Primary KPI
+    definition: Guideline non-promo gross media spend matched to Nielsen telecasts
+    expression: sum(gross_media_spend)
+    aggregation: Sum
+    basis: Gross
+    status: proposed
+
+  - name: Gross Spend per BC Week
+    cube_view: marketplace_view_telecast_supply_demand
+    kpi_class: Derived KPI
+    definition: Gross Spend divided by broadcast weeks in the period, so 4- and 5-week months compare fairly
+    expression: sum(gross_media_spend) / count(distinct bc_week_start)
+    aggregation: Calculated
+    basis: Gross
+    status: proposed
+
+  - name: CPM
+    cube_view: marketplace_view_telecast_supply_demand
+    kpi_class: Derived KPI
+    definition: Spend per thousand impressions on matched telecasts
+    expression: sum(gross_media_spend) / nullif(sum(gross_impressions) / 1000, 0)
+    aggregation: Calculated
+    basis: Gross
+    status: proposed
+
+  - name: Power Ratio
+    cube_view: marketplace_view_telecast_supply_demand
+    kpi_class: Derived KPI
+    definition: Share of Spend over Share of Impressions; above 1 means monetising ahead of audience share
+    expression: share_of_spend / nullif(share_of_impressions, 0)
+    aggregation: Calculated
+    status: proposed
+
+  - name: Estimated Spend
+    cube_view: marketplace_view_adintel_spend
+    kpi_class: Primary KPI
+    definition: Nielsen Ad Intel estimated spend (US$), active rows only
+    expression: sum(spend) where isactive
+    aggregation: Sum
+    basis: Gross
+    status: proposed

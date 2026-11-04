@@ -1,0 +1,215 @@
+
+===== 00 Executive
+Salesforce Master Analysis: Current State, Findings and Migration |  |  | 
+Explore | Open Looker Explore | Jira / Tracking | Open tracking
+Topic | Finding | Status | Evidence
+Explore identity | eg_sales / salesforce_reporting | Confirmed | User-provided Explore URL
+Base LookML object | DAAP_RPT.WBD_SALESFORCE_MTH_V | Confirmed | Full supplied view
+Current business role | Forward pipeline and opportunity reporting; source is also one of four exports in the temporary converged process | Confirmed | Temporary solution email
+Current CARL state | Metropolis Salesforce Bronze work is in progress; opportunity/account and pacing/working feeds have progressed through review/UAT, but pacing duplicate records and release corrections remain | Partial | Weekly updates and trackers
+Temp bridge state | Daily converged file loaded into CARL-managed storage and QuickSight dev; process and dataset refresh remain manual | Done in dev | 5 Oct executive update
+Confirmed data defect | AE attribution mismatch was traced to the Salesforce Looker report; short-term correction pending in the cited update | Open - Critical | Ad Revenue Temporary thread
+Engineering scope | Long-term governed Silver → Gold build remains separate from fast-track CSV/S3 bridge | Confirmed | 5 Oct executive update
+MVP scope | Executive/PSKY and Finance Pacing subset is about 62% of the 101 North Star fields; detailed attributes follow later | Confirmed | 5 Oct executive update
+Critical access dependency | Mike needs Looker Explorer role to complete pipeline work; update says it had not been granted | Blocked | 5 Oct executive update
+Critical source dependency | Pacing-domain duplicate records remain under technical validation; currency/decimal corrections are awaiting release window | Blocked | 2 Oct weekly update
+Architecture recommendation | Use source-faithful Bronze, typed opportunity snapshot Silver, explicit cross-system bridges, Gold pipeline snapshot, then certified Cube | Proposed | Analysis
+
+===== 01 Current State
+Salesforce Delivery and Program-State Crosswalk |  |  |  |  | 
+Component | Scope | Current status | Blocker / caveat | Owner / team | Jira / evidence
+Metropolis / Salesforce Bronze | Opportunity/account and pacing/working | In progress / UAT | Currency/decimal corrections approved; pacing duplicates under validation | Metropolis Data Engineering | CARL-2778; CARL-3617; CARL-3618
+Fast-track converged bridge | Salesforce + OP1 + iDeal exports to Python output | Done in dev | Manual script execution and manual QuickSight refresh | Aishwarya / Avinaag / Jason | CARL-4033; CARL-4055
+Pipeline Silver | Clean standardized pipeline source table | Targeted in cited update | Explorer access, AE correction and source mapping | Mike / Arlene / Engineering | CARL-3638
+Converged Gold | Booked + pipeline + forecast table | In progress | Forecast feed and source validation | Engineering + Ad Sales validation | CARL-3639
+Linear working revenue Silver | Linear working source | Code completed / implementation handoff | Implementation and reconciliation | Arlene / Engineering | CARL-4048
+Certified Cube end state | Semantic contract | Long-term target | MVP temporarily bypasses Cube per prior scope decision | Semantic platform | To confirm
+
+===== 02 New Findings
+Newer Salesforce Findings and Their Impact |  |  |  |  | 
+ID | Area | Finding | Evidence status | Severity | Required response
+SF-NF-01 | AE attribution | Temporary output showed one AE while Quick/MicroStrategy/iDeal and Salesforce showed another; thread traced issue to Looker pulling Client AE | Confirmed | Critical | Correct source hierarchy and add row-level AE parity test
+SF-NF-02 | Classification naming | upf_vs_scat is labelled Classification in Salesforce LookML; actual Salesforce table field was not identified in thread | Confirmed boundary | High | Map semantic label to physical field and business definition
+SF-NF-03 | Source completeness | Business explicitly requested all Salesforce data, not pipeline-only; metrics should apply filtering downstream | Confirmed | Critical | Do not place report filters in Bronze or final source-complete Silver
+SF-NF-04 | Snapshot history | Temporary output has key_snapshot_date; decision needed on append history vs overwrite | Confirmed open decision | High | Adopt append-only snapshot plus current view if storage/SLA approved
+SF-NF-05 | Pacing duplication | Oracle pacing source duplicate records were still under technical validation in 2 Oct update | Confirmed | Critical | Define dedup key and quarantine duplicates before Silver promotion
+SF-NF-06 | Precision | Currency and decimal-precision corrections approved but waiting for production release window | Confirmed | High | Include decimal/currency contract and parity tolerances
+SF-NF-07 | Record-type rule | Hard-coded ids classify Linear/Digital, with null-ID/date branch before 4 May 2026 | LookML confirmed | High | Version mapping and unit-test date boundary
+SF-NF-08 | Activity date | One semantic field mixes broadcast quarter start, opportunity end date and month | LookML confirmed | High | Split source dates and define certified reporting_activity_date
+SF-NF-09 | Sales hierarchy | AE/VP logic includes hard-coded role swaps and named overrides | LookML confirmed | Critical | Replace with effective-dated sales hierarchy and provenance
+SF-NF-10 | External mapping | Site and vertical depend on pi_site_mapping and a Snowflake UDF | LookML confirmed | High | Retrieve join/UDF definitions and version mappings
+SF-NF-11 | Cross-system linkage | Opportunity, OP1 sales order, placeholder order and iDeal deal ID are available as candidate links | LookML confirmed | High | Build bridge with match method and conflict status
+SF-NF-12 | Finance alignment | Fast-track uses Jason business logic and was not yet checked against Finance expectations in cited update | Confirmed | Critical | Finance reconciliation gate before certification
+SF-NF-13 | Access | Mike lacked Explorer role for required Looker analysis in cited status | Confirmed | Critical | Grant access and record as delivery dependency
+
+===== 03 LookML Inventory
+Full Salesforce LookML Field Inventory |  |  |  | 
+Field | Class | Definition type | Target placement | Priority
+advertiser_name | Dimension | Source or typed reference | Silver | P1
+workflow_status | Dimension | Source or typed reference | Silver | P1
+record_type_id | Dimension | Source or typed reference | Silver | P0
+record_type_name | Dimension | Source or typed reference | Silver | P1
+brand_name | Dimension | Source or typed reference | Silver | P1
+order_id | Dimension | Source or typed reference | Silver | P1
+order_cpm | Dimension | Source or typed reference | Silver | P1
+start_date | Dimension | Source or typed reference | Silver | P1
+end_date | Dimension | Source or typed reference | Silver | P1
+agency_name | Dimension | Source or typed reference | Silver | P1
+buy_agency_name | Dimension | Source or typed reference | Silver | P1
+plan_agency_name | Dimension | Source or typed reference | Silver | P1
+upfront_agency_name | Dimension | Source or typed reference | Silver | P1
+division | Dimension | Source or typed reference | Silver | P1
+operative_has_line_items | Dimension | Source or typed reference | Silver | P1
+revised_created_date | Dimension | Source or typed reference | Silver | P1
+last_mod_dt | Dimension | Source or typed reference | Silver | P1
+file_date_date | Dimension | Source or typed reference | Silver | P0
+forecast_category | Dimension | Source or typed reference | Silver | P1
+network | Dimension | Source or typed reference | Silver | P1
+sports_property | Dimension | Source or typed reference | Silver | P1
+forecasted_value | Dimension | Source or typed reference | Silver | P1
+opp_sales_order_id | Dimension | Source or typed reference | Silver | P0
+opportunity | Dimension | Source or typed reference | Silver | P0
+opportunity_name_id | Dimension | Source or typed reference | Silver | P1
+opportunity_stage | Dimension | Source or typed reference | Silver | P1
+team | Dimension | Source or typed reference | Silver | P1
+digital_strategist | Dimension | Source or typed reference | Silver | P1
+secondary_office | Dimension | Source or typed reference | Silver | P1
+tertiary_office | Dimension | Source or typed reference | Silver | P1
+total_line_traff | Dimension | Source or typed reference | Silver | P1
+total_line_del | Dimension | Source or typed reference | Silver | P1
+active_line_traff | Dimension | Source or typed reference | Silver | P1
+active_line_del | Dimension | Source or typed reference | Silver | P1
+total_amount | Dimension | Source or typed reference | Silver | P1
+total_op_prop_rev | Dimension | Source or typed reference | Silver | P1
+TOTAL_PUBLISHED_REVENUE_SM_C | Dimension | Source or typed reference | Silver | P1
+weighted_scheduled_pipeline | Dimension | Source or typed reference | Silver | P1
+region | Dimension | Source or typed reference | Silver | P1
+deal_type | Dimension | Source or typed reference | Silver | P1
+new_v_exi | Dimension | Source or typed reference | Silver | P1
+closed_lost_category | Dimension | Source or typed reference | Silver | P1
+projection_change_reason | Dimension | Source or typed reference | Silver | P1
+upf_scat | Dimension | Source or typed reference | Silver | P1
+links_to_placeholder | Dimension | Source or typed reference | Silver | P1
+placeholder_operative_order_id | Dimension | Source or typed reference | Silver | P1
+broadway_io_id_c | Dimension | Source or typed reference | Silver | P1
+ad_type | Derived dimension | CASE / COALESCE / join / mapping / ratio | Silver, Gold or Cube | P1
+primary_ae | Derived dimension | CASE / COALESCE / join / mapping / ratio | Silver, Gold or Cube | P0
+secondary_ae | Derived dimension | CASE / COALESCE / join / mapping / ratio | Silver, Gold or Cube | P1
+tertiary_ae | Derived dimension | CASE / COALESCE / join / mapping / ratio | Silver, Gold or Cube | P1
+record_type | Derived dimension | CASE / COALESCE / join / mapping / ratio | Silver, Gold or Cube | P0
+archived | Derived dimension | CASE / COALESCE / join / mapping / ratio | Silver, Gold or Cube | P1
+won | Derived dimension | CASE / COALESCE / join / mapping / ratio | Silver, Gold or Cube | P1
+coordinator | Derived dimension | CASE / COALESCE / join / mapping / ratio | Silver, Gold or Cube | P1
+csm | Derived dimension | CASE / COALESCE / join / mapping / ratio | Silver, Gold or Cube | P1
+end | Derived dimension | CASE / COALESCE / join / mapping / ratio | Silver, Gold or Cube | P0
+age_of_op | Derived dimension | CASE / COALESCE / join / mapping / ratio | Silver, Gold or Cube | P1
+source | Derived dimension | CASE / COALESCE / join / mapping / ratio | Silver, Gold or Cube | P0
+vertical | Derived dimension | CASE / COALESCE / join / mapping / ratio | Silver, Gold or Cube | P1
+reporting_vp | Derived dimension | CASE / COALESCE / join / mapping / ratio | Silver, Gold or Cube | P0
+budget_line | Derived dimension | CASE / COALESCE / join / mapping / ratio | Silver, Gold or Cube | P1
+projection_rank | Derived dimension | CASE / COALESCE / join / mapping / ratio | Silver, Gold or Cube | P0
+linear_total_amount | Derived dimension | CASE / COALESCE / join / mapping / ratio | Silver, Gold or Cube | P1
+primary_office | Derived dimension | CASE / COALESCE / join / mapping / ratio | Silver, Gold or Cube | P1
+payment_type | Derived dimension | CASE / COALESCE / join / mapping / ratio | Silver, Gold or Cube | P1
+linear_digital | Derived dimension | CASE / COALESCE / join / mapping / ratio | Silver, Gold or Cube | P1
+opp_per_sales | Derived dimension | CASE / COALESCE / join / mapping / ratio | Silver, Gold or Cube | P1
+upf_type | Derived dimension | CASE / COALESCE / join / mapping / ratio | Silver, Gold or Cube | P1
+discoveryplusflag | Derived dimension | CASE / COALESCE / join / mapping / ratio | Silver, Gold or Cube | P1
+site_mapped_v2 | Derived dimension | CASE / COALESCE / join / mapping / ratio | Silver, Gold or Cube | P1
+sos_vertical | Derived dimension | CASE / COALESCE / join / mapping / ratio | Silver, Gold or Cube | P1
+TOTAL_PUBLISHED_REVENUE_SUM | Measure | Additive LookML measure | Gold/Cube | P0
+linear_total_amount_sum | Measure | Additive LookML measure | Gold/Cube | P0
+projection | Measure | Additive LookML measure | Gold/Cube | P0
+weighted_projection | Measure | Additive LookML measure | Gold/Cube | P0
+
+===== 04 Rules
+Salesforce Semantic Rules and Parity Tests |  |  |  | 
+Rule | Current LookML | Target | Priority | Parity test
+record_type | Linear id; Digital ids; null id before 2026-05-04; else Other | Silver | P0 | Rows by branch and boundary date
+primary/secondary/tertiary AE | Role order changes for Linear record type | Silver hierarchy | P0 | Compare to Salesforce and trusted external outputs
+activity end time group | Linear broadcast quarter start; WM SF end date; else month | Gold | P0 | Branch and null tests
+source | lwm→wm normalization | Silver | P0 | Resolve whether WM SF/wm labels are equivalent
+vertical | Explicit site mappings then UDF | Gold mapping | P0 | Extract UDF and compare distinct outputs
+reporting_vp | Hard-coded AE names then VP field | Hierarchy | P0 | Effective-date and historical attribution
+budget_line | Sports property/ad type/site CASE | Gold mapping | P1 | Unmapped and duplicate CASE review
+projection_rank | Stage→A/B/C/D/F | Gold | P0 | Unmapped stage coverage
+opp_per_sales | weighted / forecasted using DIV0 | Cube | P1 | Zero/null and aggregate-ratio behavior
+published revenue | COALESCE then sum | Gold/Cube | P0 | Snapshot double-count check
+
+===== 05 Dependencies
+Salesforce Dependency Register |  |  |  | 
+Object | Type | Purpose | Priority | Missing proof
+DAAP_RPT.WBD_SALESFORCE_MTH_V | Base view | All report rows | P0 | DDL, upstream lineage, key and refresh
+sf_opp_won_v | Looker view | Won date | P0 | Join key/cardinality
+sales_office | Looker view | Office fallback | P1 | Join key/cardinality
+op1_order_payment_type | Cross-domain | Payment fallback | P0 | Order link and duplicate behavior
+pi_site_mapping | Reference mapping | Mapped site/vertical | P0 | Owner, version, join key
+DAAP_RPT.UDF_OP_VERTICAL | Snowflake UDF | Vertical fallback | P0 | Definition and release process
+ac_name_suggest / am_name_suggest / classification_suggest | Suggestion explores | UI suggestions | P2 | Retain in semantic layer only
+
+===== 06 Target Model
+Salesforce Iceberg and Cube Target Model |  |  |  | 
+Layer | Object | Purpose | Candidate key | Design control
+Bronze | salesforce_opportunity_snapshot_raw | Source-faithful rows; no pipeline-only filter | Native ID + snapshot/revision | Schema evolution, lineage, watermark
+Silver | dim_salesforce_opportunity_snapshot | Typed record type, source, roles, dates and amounts | source + opportunity + snapshot | Dedup and DQ
+Silver | bridge_opportunity_order | Salesforce→OP1/iDeal/placeholder links | opportunity + order + effective date | Match provenance
+Silver | dim_sales_hierarchy_effective | AE, team, office, VP history | seller + valid_from | No hard-coded names
+Silver | ref_salesforce_classification | Stage/ad type/site/sports rules | rule + value + valid dates | Governed mappings
+Gold | fact_ad_sales_pipeline_snapshot | Certified pipeline and projections | snapshot + opportunity + allocation grain | Source and converged fields side by side
+Cube | ad_sales_pipeline | Certified measures/filters/drill links | Gold key | Expose source provenance
+
+===== 07 DQ Controls
+Salesforce Data Quality and Reconciliation Controls |  | 
+ID | Control | Failure action
+DQ-SF-01 | Opportunity snapshot key uniqueness | Block
+DQ-SF-02 | AE attribution parity vs Salesforce and reference output | Block
+DQ-SF-03 | Pacing duplicate quarantine | Block
+DQ-SF-04 | Record-type parity including 2026-05-04 boundary | Block
+DQ-SF-05 | Projection and weighted projection reconciliation | Block
+DQ-SF-06 | Currency/decimal precision contract | Block
+DQ-SF-07 | External join fanout ≤1 per approved grain | Block
+DQ-SF-08 | All-stage mapping coverage | Warn/block
+DQ-SF-09 | Snapshot append and current-view completeness | Block
+DQ-SF-10 | Opportunity→order/iDeal link coverage and conflicts | Report
+DQ-SF-11 | Finance reconciliation tolerance | Block certification
+DQ-SF-12 | Schema drift and row-count freshness | Quarantine
+
+===== 08 Roadmap
+Salesforce Delivery Roadmap |  |  |  | 
+Seq | Workstream | Exit criterion | Priority | Proposed owner
+1 | Access and scope | Grant Explorer access; confirm all-data not pipeline-only contract | P0 | Looker owner / Product
+2 | Source contract | Retrieve DDL, native key, snapshot, deletes, precision and freshness | P0 | Metropolis / Data Engineering
+3 | Defect closure | Fix AE attribution and pacing duplicates | P0 | Business + Engineering
+4 | Bronze validation | Confirm all required Salesforce objects/columns in Iceberg | P0 | Data Engineering
+5 | Silver opportunity | Build typed snapshot and effective hierarchy | P0 | Data Engineering
+6 | Cross-system bridge | Opportunity→OP1/iDeal links with match provenance | P0 | Data Engineering
+7 | Gold pipeline | Certified source-complete pipeline snapshot | P0 | Data Product
+8 | Finance/Ad Sales validation | Row and aggregate parity, tolerance sign-off | P0 | Finance + Ad Sales
+9 | Cube | Publish certified dimensions/measures | P1 | Semantic platform
+10 | Cutover | Retire temporary export dependency after stable parallel run | P1 | Product + Engineering
+
+===== 09 Jira Links
+Salesforce and UC1 Jira Crosswalk |  |  | 
+Jira | Scope | Evidence status | Link
+CARL-2778 | Metropolis Salesforce Bronze / pacing ingestion | In progress / pacing held | https://wbdprod.atlassian.net/browse/CARL-2778
+CARL-3617 | Ingest sf_linear_order__c as metro_sf_linear_order__c | In UAT Done in notification | https://wbdprod.atlassian.net/browse/CARL-3617
+CARL-3618 | Ingest sf_transfer_request_item__c | In UAT Done in notification | https://wbdprod.atlassian.net/browse/CARL-3618
+CARL-3638 | UC1 Silver epic | In progress / decomposed by table | https://wbdprod.atlassian.net/browse/CARL-3638
+CARL-3639 | UC1 Gold epic | In progress / decomposed by table | https://wbdprod.atlassian.net/browse/CARL-3639
+CARL-4033 | Fast-track Phase 1 | Tracked | https://wbdprod.atlassian.net/browse/CARL-4033
+CARL-4055 | Fast-track Phase 2 | Tracked | https://wbdprod.atlassian.net/browse/CARL-4055
+CARL-4048 | Linear working revenue Silver | Code finished; handoff stated | https://wbdprod.atlassian.net/browse/CARL-4048
+
+===== 10 Evidence
+Salesforce Evidence Register |  |  |  | 
+Ref | Artifact | Supports | Type | Reference / URL
+E-SF-01 | User supplied Salesforce Explore | Explore identity and query | User input | https://looker.wbd.com/explore/eg_sales/salesforce_reporting?qid=KWmvz1S2FkSw3W61ed53Sn&origin_space=9783
+E-SF-02 | Salesforce LookML supplied in chat | Fields/measures/rules | User input | Conversation
+E-SF-03 | Aanalyze the sources - Ad Sales Looker.docx | Compiled SQL | M365 file | turn7search165
+E-SF-04 | Re: CARL: Ad Revenue Temporary | AE mismatch, scripts, snapshot decision | Email | turn7search89
+E-SF-05 | Re: Current Status on CARL [UC1 Ad Sales] | Fast-track and long-term state | Email | turn7search90
+E-SF-06 | CARL Weekly updates 2 Oct | Duplicates, corrections and review | Email | turn7search98
+E-SF-07 | Copy of UC1_Fields_for_CARL.xlsx | Canonical cross-source requirements | M365 file | turn7search130
+E-SF-08 | CARL_Master_Tracker_Sep2026.xlsx | Program and layer status | M365 file | turn7search180
+E-SF-09 | Jira notifications CARL-3617/3618 | Specific Bronze tickets | Email | turn7search109 / 105
+E-SF-10 | Slack Salesforce support | Opportunity-to-Operative operational dependency examples | Public Slack | turn7search187

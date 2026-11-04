@@ -1,0 +1,224 @@
+
+===== 0. Read Me
+CARL UC1 - Total Ad Revenue Pacing Dashboard | 
+Status Pack for Executive Review  |  v3 - Arlene Rose's corrections + Jira links | 
+PROGRAMME | 
+Initiative | UC1 - Total Ad Revenue Pacing Dashboard (QuickSight on CARL Analytics Hub)
+Sponsors | Allie Carr (GSVP, Platform Monetization); Jenn Blue
+Technical POC / Business requirements | Jason Chalmers; Adam Christensen; Felipe Roura (Finance)
+PRD | Nathan Hernandez-Adams | v1.0, June 2026 - still DRAFT
+CARL Product / Delivery | Ping Feng; Daya Thakur; Nathan Hernandez-Adams
+Bronze ingestion lead | Debarghyo Sengupta (Debo)
+CARL data SMEs (Silver -> Gold) | Arlene Rose; Mike Hodge. They transform data to Silver and Gold. They do NOT produce today's reports - various people on Allie Carr's team do.
+KEY LINKS | 
+UC1 parent epic (Jira) | https://wbdprod.atlassian.net/browse/CARL-1364
+CARL Jira board | https://wbdprod.atlassian.net/jira/software/c/projects/CARL/boards/24878
+UC1 PRD (Confluence) | https://wbdprod.atlassian.net/wiki/spaces/PAYTV/pages/7477461047/UC1+Total+Ad+Revenue+Pacing+Dashboard
+HEADLINE | 
+Position | Phase 1a was targeted for Q3 2026 and has not been delivered. There is NOT yet a finalised MVP definition or complete business documentation. Requirements are being finalised field by field while transforms are built on what is available.
+Primary converged metrics | 1) Converged pipeline revenue   2) Booked revenue   3) Finance forecast
+Why delayed (3 causes) | 1) Pipeline Bronze tables not yet available to the Silver team.  2) Requirements still being finalised while transforms are developed.  3) No forecast feed from the business, although the template is agreed.
+Jira position | UC1 is tracked at ~3% complete. Its Silver and Gold epics (CARL-3638, CARL-3639, CARL-3640) are at 0 story points complete. Salesforce / Metropolis Bronze (CARL-2778) is 73% complete, with pacing-domain ingestion still held.
+Escalation | Allie Carr escalated after a PSKY / Paramount meeting. She deferred report modernisation over the summer in anticipation of CARL. Nage Sethu has requested a readiness review with Jason and Allie.
+Sponsor's ask | Tighter, realistic deliverables - not just speed.
+MVP SCOPE - FACTS FROM UC1_Fields_for_CARL_working.xlsx | 
+Fields requested | 101 metrics / attributes (Arlene: '100+'). Many are not needed for high-level Executive / PSky reporting.
+Flagged for v1 | 63 flagged 'Yes' (incl. 3 'Yes - October': gross_revenue, net_revenue, advertiser_name). 34 'Later'. 1 'V1b' (sports_title_group). 3 'Need answer' (ae_credit_pct, invoiced_revenue, optionable / firm_revenue).
+Confirmation state | 25 fields marked confirmed in the iDeal column. None yet marked confirmed in the Op1 / WRR or Salesforce columns.
+Proposed reduction | Arlene: cut MVP to only fields needed for Executive / PSky reporting and Finance Pacing; later sprints add drillable attributes. Jason agreed and is narrowing the list in the working file - PENDING.
+DECISIONS ALREADY TAKEN TO SAVE TIME | 
+1 | Skip the Cube semantic layer for MVP.
+2 | Pull Linear revenue from MicroStrategy Bronze - not directly from iDeal (iDeal direct waits for Venus).
+3 | Pull Digital revenue from WRR Bronze - not directly from Op1.
+TABS | 
+1 | What was committed - roadmap snapshot
+2 | Milestones - timelines, delays and reasons
+3 | Business user feedback - list of asks
+4 | Plan to address and by when
+5 | What actually happened - the delay explained
+6 | Open dependencies
+7 | Revision log
+8 | Jira reference - every UC1-related ticket with status and link
+EVIDENCE | 
+Sources | CARL roadmap tracker; CARL_Master_Tracker_Sep2026 (Jira extract, 18 Sep); CARL_2026Q4_QuarterlyPlanning (Sept Status); CARL_Program_Iceberg_Cube_Usage_29Sep2026; Confluence PRD; UC1_Fields_for_CARL_working.xlsx; emails; Slack.
+Jira status note | Jira statuses are taken from tracker snapshots dated 18-29 Sep 2026, not live Jira. Re-check the board before circulation. 'Jira' column links to the first ticket listed; see tab 8 for every ticket.
+TO CONFIRM | All delivery dates; Jason's narrowed field list; pipeline Bronze delivery date; forecast feed date; whether Bobby V reconciles to Finance. No Jira ticket was found for the forecast feed, allocation automation or the MVP field-list decision.
+
+===== 1. What Was Committed
+# | Phase | Committed Scope | Source (PRD) | Source (Current Decision) | Target | Status Today | Jira | Revised Timeline
+1 | 1a | Booked Revenue (Gross & Net) - Linear | iDeal / Gabriel | MicroStrategy Bronze (iDeal direct waits for Venus) | Q3 2026 | In Progress | CARL-1477 | 
+2 | 1a | Booked Revenue (Gross & Net) - Digital | Operative (Op1) | WRR Bronze | Q3 2026 | In Progress | CARL-2796, CARL-597 | 
+3 | 1a | Converged Pipeline Revenue + Weighted Pipeline | Salesforce (Metropolis) | Salesforce via Oracle -> Bronze (tables not yet available to Silver) | Q3 2026 | In Progress | CARL-2778, CARL-2789, CARL-3614 | 
+4 | 1a / 1b | Finance Forecast (primary converged metric) | Finance WRR / SAP feed | Business feed against agreed template - not yet received | Q4 2026 | In Progress | No ticket found | 
+5 | 1a | Pipeline movement DoD / WoW / MoM; daily snapshots; 24-month history | Derived | Derived | Q3 2026 | Not Started | CARL-1364 | 
+6 | 1a | BU x quarter x network x sales team dimensions | Derived | Derived - requirements still being finalised | Q3 2026 | In Progress | CARL-1364 | 
+7 | 1a | Silver model | - | v1 rough draft in progress (Miro) | Q3 2026 | In Progress | CARL-3638, CARL-3639, CARL-3640 | 
+8 | 1a | Gold model - UC1 Total Ad Revenue Pacing | - | Silver and Gold epics at 0 SP complete | Q3 2026 | Not Started | CARL-3638, CARL-3639, CARL-3640 | 
+9 | 1a | Validation vs Looker / Finance (<1% variance) | - | - | Q3 2026 | Not Started | No ticket found | 
+10 | 1a | Sales and Finance adoption sign-off | - | - | Q3 2026 | In Progress | No ticket found | 
+11 | Arch. | Cube semantic layer | Cube | Skipped for MVP to save time | - | Agreed | - | 
+12 | 1a | STAQ source (listed against UC1) | STAQ | In triage | Pending reprojection | Not Started | CARL-3750 | 
+13 | 1b | Sports Digital OTB + Pipeline | Op1 / SF / FreeWheel | Manual Excel outside CARL | Q4 2026 | Blocked | No ticket found | 
+
+===== 2. Milestones & Delays
+# | Milestone | Committed | Actual / Current | Status | Reason / Detail | Evidence | Jira
+1 | UC1 PRD v1.0 | Jun 2026 | Published; last edited 24 Aug | Complete | Still Draft - never formally approved by sponsors. | Confluence PRD | PRD (Confluence)
+2 | Op1 Bronze (81 tables) | 01 Jul 2026 | Delivered; QA signed off 10 Jul | On Time | - | CARL roadmap tracker | CARL-744, CARL-746
+3 | FreeWheel Bronze (64 tables) | 01 Jul 2026 | Delivered | On Time | - | CARL roadmap tracker | CARL-744, CARL-746
+4 | Pipeline to Bronze (Metropolis, via Oracle) | 30 Jul 2026 | Epic 73% complete (27 of 37 stories done); pipeline Bronze not yet available to Silver team | Slipped | Ingested via Oracle, not direct from Salesforce (design choice). Pacing-domain Salesforce ingestion still held. Mike Hodge building the pipeline query in Oracle meanwhile. Bronze managed by Debo. | Tracker note; Jira epic status; Arlene Rose (Slack) | CARL-2778, CARL-3614
+5 | WRR to Bronze (Digital revenue source) | 30 Jul 2026 | Done | Complete | WRR / LDR2 Bronze, Silver and Gold done. Now the agreed Digital revenue source for MVP. | Program usage 29 Sep | CARL-597, CARL-2796
+6 | MVP requirements finalised | Before build | Not finalised | Slipped | No finalised MVP or complete documentation from the business. 101 fields requested, 63 flagged v1, only iDeal fields confirmed so far. Meeting Jason / Adam multiple times a week to document requirements, formulas and logic while building transforms in parallel. | UC1_Fields_for_CARL_working.xlsx; Arlene Rose (Slack) | CARL-1364
+7 | Allocation requirements | - | Resurfaced 02 Sep | Open | Needed to tie to financial documents; still manual Excel. | Email 02 Sep | No ticket found
+8 | Converged model working sessions | - | 16 Sep (Part 2), 22 Sep (Part 4); continuing weekly | In Progress | Agreed: system + converged fields; no pre-filtering; pipeline logic. Sessions recorded. | Email 22 Sep; Slack recordings | CARL-1364
+9 | Converged dataset mockup | - | 26 Sep - sent BY Jason TO CARL | Complete | Jason's illustration of the target end state to resolve design questions. Not a CARL deliverable. | Email 26 Sep | -
+10 | Time-saving decisions | - | Agreed | Complete | Skip Cube; Linear from MicroStrategy Bronze; Digital from WRR Bronze. | Arlene Rose (Slack) | -
+11 | Silver model v1 | - | Rough draft in progress (Miro) | In Progress | Silver / Gold epics at 0 SP complete; CARL-3638 has 1 story in progress, 3 to do. | Arlene Rose (Slack); Jira epic status | CARL-3638, CARL-3639, CARL-3640
+12 | MVP reduction to Exec / PSky + Finance Pacing | - | Jason agreed; list pending | Open | Arlene's proposal. Jason narrowing fields in the working file. | Arlene Rose (Slack) | No ticket found
+13 | Forecast feed | - | Template agreed; feed not received | Blocked | Required for Finance Pacing. | Arlene Rose (Slack) | No ticket found
+14 | PHASE 1a MVP | Q3 2026 | Not delivered; UC1 ~3% complete in Jira | Missed | (1) Pipeline Bronze not available (2) requirements not finalised (3) no forecast feed. | PRD section 9; Program usage 29 Sep | CARL-1364
+15 | Sponsor escalation / readiness review | - | Sep 2026 | Open | Allie escalated after PSKY / Paramount meeting; Nage requested review. | Email 28 Sep; Nage message | -
+
+===== 3. Business Feedback & Asks
+# | Ask | Detail | Raised By | Date | Priority | Status | Source | Jira
+1 | Realistic, dependable dates | Deferred report modernisation over summer in anticipation of CARL; now heading into acquisition without it. Wants tighter, realistic commitments. | Allie Carr | Sep 2026 | Critical | Open | Nage message | -
+2 | Support Sales / Paramount reporting | Jason building temporary fixes and a report for Allie; wants to tie it back to CARL. Nothing needed beyond UC1 and MicroStrategy migration. | Allie Carr / Jason Chalmers | Sep 2026 | Critical | Open | Slack DM | CARL-1364, CARL-2727, CARL-3571
+3 | Narrowed Exec / PSky + Finance Pacing field list | The MVP definition. Jason agreed to narrow the 63 v1 fields and post it in the working file. | Arlene Rose -> Jason | Sep 2026 | Critical | Open | Arlene Rose (Slack) | No ticket found
+4 | Combined SF / Op1 / iDeal dataset | Would unblock ~75% of planned Phase 1 without forecast / allocations. | Jason Chalmers | 28 Aug | High | Partially Met | Email 28 Aug | CARL-3638
+5 | Short-term automation with existing tables | Per Jason's Friday note. | Jason Chalmers | Sep 2026 | High | Open | Slack DM | No ticket found
+6 | Allocation capability | SF forward projection and Operative by delivery; manual % acceptable first. | Jason Chalmers | 02 Sep | High | Open | Email 02 Sep | No ticket found
+7 | System AND converged fields | Users see what is native vs converged. | Jason Chalmers | 22 Sep | High | Agreed | Email 22 Sep | CARL-3638
+8 | No pre-filtering | Final table holds all data; filter via metrics. | Jason Chalmers | 22 Sep | High | Agreed | Email 22 Sep | CARL-3638
+9 | Sales team data; Premiere / Traditional / DDL; Sales_Division | Enables team views and UF_Group. | Jason Chalmers | 22 Sep | Medium | Open | Email 22 Sep | No ticket found
+10 | Deep dive, documentation and UAT plan before delivery | Avoid finding gaps post-build. | Jason Chalmers | 28 Aug | High | Not Started | Email 28 Aug | No ticket found
+11 | Resolve 'Need answer' fields | ae_credit_pct; invoiced_revenue (separate from current booked for Finance tie-out); optionable / firm revenue. | CARL -> Jason / Adam | Sep 2026 | High | Open | Fields workbook | No ticket found
+12 | Finance date questions | Week 53 2026 vs 2027; Digital $ cutoff day. | CARL -> Finance | Sep 2026 | Medium | Open | Fields workbook - Finance Dates | No ticket found
+13 | Forecast feed | Deliver against the agreed template. | CARL -> Business | Sep 2026 | Critical | Blocked | Arlene Rose (Slack) | No ticket found
+
+===== 4. Plan to Address
+OPTIONS FOR FIRST DELIVERY |  |  |  |  | 
+Dimension | Plan A - Full MVP (63 fields) | Plan B - Reduced MVP (RECOMMENDED) | Option C - Bobby V + SF Pipeline | Revised Timeline | 
+Scope | All 63 v1-flagged fields: booked, converged pipeline, forecast, full dimensions. | Only fields for Executive / PSky reporting and Finance Pacing; drillable attributes added each sprint. | Bobby V booked revenue + Salesforce pipeline revenue. |  | 
+Sources | MicroStrategy Bronze (Linear); WRR Bronze (Digital); SF via Oracle (Pipeline). | Same as Plan A. | Bobby V uses iDeal and Op1 DIRECTLY. |  | 
+Finance alignment | Aligned. | Aligned - same agreed sources. | Not validated; diverges from agreed MicroStrategy / WRR sourcing. |  | 
+Owner of proposal | Original PRD. | Arlene Rose; Jason agreed in principle. | Ping Feng; Jason reviewing. |  | 
+Waiting on | Full requirements; pipeline Bronze; forecast feed. | Jason's narrowed list; pipeline Bronze; forecast feed. | Jason validation; stakeholder sign-off on interim scope. |  | 
+Timeline | TO CONFIRM - longest. | TO CONFIRM once Jason's list lands. | Mid-October (per Ping). |  | 
+Main risk | Further slip. | List creeps back toward 63 fields. | Numbers may not tie to Finance - recreates UC1's core problem. |  | 
+Jira | CARL-1364 | CARL-3638 |  |  | 
+ACTIONS, OWNERS, DATES |  |  |  |  | 
+# | Action | Owner | By When | Status | Jira
+1 | Post narrowed Exec / PSky + Finance Pacing field list in working file | Jason Chalmers | TO CONFIRM - critical path | Open | No ticket found
+2 | Deliver pipeline Bronze tables to Silver team (release held pacing-domain SF ingestion) | Debarghyo Sengupta | TO CONFIRM | Open | CARL-2778
+3 | Deliver forecast feed against agreed template | Business / Finance | TO CONFIRM | Blocked | No ticket found
+4 | Complete Silver model v1 | Arlene Rose / Mike Hodge | TO CONFIRM | In Progress | CARL-3638
+5 | Continue requirement sessions; confirm Op1/WRR and SF field logic | Jason Chalmers / Adam Christensen / Arlene / Mike | Weekly | In Progress | CARL-1364
+6 | Answer 'Need answer' fields and Finance date questions | Jason / Adam / Finance | TO CONFIRM | Open | No ticket found
+7 | Validate whether Bobby V ties to Finance before Option C is offered | Jason Chalmers | Before decision | Open | No ticket found
+8 | Get Jason's Allie / Paramount report to anchor V1 | Ping Feng / Daya Thakur | Before exec review | Open | -
+9 | Decide Plan A / B / C | Allie Carr / Felipe Roura / Jason Chalmers | Early Oct | Open | -
+10 | Publish dated plan built from dependencies, not the deadline | CARL Product / Engineering | After 1-3 land | Open | -
+11 | Fortnightly sponsor-level status | CARL Product / Rohini Vugumudi | Immediate | Open | -
+12 | Move PRD out of Draft | Nathan Hernandez-Adams | Post-decision | Open | PRD (Confluence)
+13 | Create Jira tickets for untracked items: forecast feed, MVP field list, allocation, Bobby V validation | Daya Thakur / Nathan Hernandez-Adams | This week | Open | Jira board
+
+===== 5. What Actually Happened
+WHAT ACTUALLY HAPPENED - THE DELAY EXPLAINED | 
+SHORT VERSION | 
+Position | Phase 1a was due in Q3 2026 and has not been delivered. Bronze ingestion for Op1 and FreeWheel landed on time in July. What has not landed is a finalised MVP definition, the pipeline Bronze tables, and the forecast feed. We have been defining requirements and building transforms at the same time. In Jira, UC1 sits at ~3% complete (CARL-1364) and its Silver / Gold epics are at 0 story points complete.
+WHY IT SLIPPED | 
+1. Requirements not finalised | The request is 101 metrics and attributes, many not needed for high-level Executive / PSky reporting; 63 are flagged for v1. There was no finalised MVP or complete documentation from the business. CARL (Arlene Rose, Mike Hodge) meets Jason Chalmers and Adam Christensen multiple times a week to document requirements, formulas and business logic field by field. So far only iDeal fields are confirmed; Op1 / WRR and Salesforce fields are not.
+2. Pipeline Bronze not available | Pipeline reaches Bronze via Oracle, not directly from Salesforce - a design choice. The Salesforce / Metropolis epic (CARL-2778) is 73% complete, but pacing-domain ingestion is still held, so the pipeline Bronze tables are not yet available to the Silver team. Mike Hodge is building the pipeline query directly in Oracle in the meantime.
+3. No forecast feed | Finance forecast is one of the three primary converged metrics. The template is agreed with the business; the feed has not been provided. There is no Jira ticket tracking it.
+WHAT HAS ALREADY BEEN DONE TO SAVE TIME | 
+Design shortcuts | Skip the Cube semantic layer for MVP. Pull Linear revenue from MicroStrategy Bronze instead of iDeal direct (which waits for Venus). Pull Digital revenue from WRR Bronze (CARL-597, done) instead of Op1 direct.
+Scope reduction | Arlene proposed cutting the MVP to only the fields needed for Executive / PSky reporting and Finance Pacing, adding drillable attributes sprint by sprint. Jason agreed and is narrowing the list. This is the key input we are waiting on.
+WHY IT DID NOT REACH THE SPONSOR | 
+Workarounds absorbed the impact | Jason stayed engaged with CARL and, in parallel, built temporary fixes for Allie. Those kept Sales functioning, so the slip never surfaced as visible pain at working level and was not escalated.
+Sponsor absorbed the cost | Allie paused report modernisation over the summer expecting CARL, then went into a PSKY / Paramount meeting without it, and is heading into acquisition activity in the same position.
+What we own | We relied on the working level to surface a slip that the working level had absorbed. The Q3 position should have gone to the sponsor directly. Several critical items - forecast feed, MVP field list, allocation - were never tracked in Jira, which made the gap harder to see.
+WHAT HAPPENS NEXT | 
+1 | Lock the reduced MVP field list with Jason.
+2 | Get dates for pipeline Bronze (Debo, CARL-2778) and the forecast feed (business).
+3 | Publish a delivery date only once 1 and 2 are known - a date we hold, not an aggressive one.
+4 | Treat Bobby V (Option C) as a caveated interim view only; it uses iDeal / Op1 directly rather than the agreed MicroStrategy / WRR sources.
+5 | Create Jira tickets for every untracked dependency so status is visible on the board.
+6 | Fortnightly sponsor-level status so the next slip reaches Allie from us.
+
+===== 6. Open Dependencies
+# | Dependency | Owner | Blocks | Status | Escalate? | Jira
+1 | Narrowed Exec / PSky + Finance Pacing field list | Jason Chalmers | MVP definition; any date | Open | Yes | No ticket found
+2 | Pipeline Bronze tables (pacing-domain SF ingestion held) | Debarghyo Sengupta | Converged pipeline revenue (Silver) | Open | Yes | CARL-2778
+3 | Forecast feed (template agreed) | Business / Finance | Finance forecast; Finance Pacing | Blocked | Yes | No ticket found
+4 | Op1 / WRR and Salesforce field logic confirmation | Jason Chalmers / Adam Christensen | Silver transforms | Open | Yes | CARL-3638
+5 | 'Need answer' fields (ae_credit_pct, invoiced_revenue, optionable / firm) | Jason / Adam / Finance | Finance tie-out | Open | No | No ticket found
+6 | BU definition and rollup axis | Jason Chalmers / Felipe Roura | Executive rollups | Open | Yes | No ticket found
+7 | Allocation automation (TTN / Turner) | Jason Chalmers / CARL | BU accuracy | Open | No | No ticket found
+8 | Grain and SCD Type 2 decisions | Ad Analytics / CARL | Gold layer | Open | No | CARL-3639, CARL-3640
+9 | Bobby V reconciliation to Finance | Jason Chalmers | Option C | Open | No | No ticket found
+10 | iDeal direct ingestion (Venus / DealBldr) | Debarghyo Sengupta | Post-MVP only - MVP uses MicroStrategy Bronze | Open | No | CARL-1477
+11 | STAQ source listed against UC1 | Avinaag Bonam | Not required for reduced MVP | Triage | No | CARL-3750
+12 | Sports Digital approach | Keith Figa / Jack Velez | Phase 1b | Blocked | No | No ticket found
+
+===== 7. Revision Log
+# | Earlier version said | Corrected to | Source
+1 | A defined MVP and complete business documentation existed. | No finalised MVP; requirements being finalised with Jason / Adam multiple times weekly while transforms are built. | Arlene Rose (Slack)
+2 | Arlene and Mike listed as business SMEs / report owners. | Arlene and Mike are CARL SMEs for Silver -> Gold. Today's reports are pulled by people on Allie Carr's team. Debo leads Bronze. | Arlene Rose (Slack)
+3 | Phase 1a = ~20 reports, agreed boundary. | 101 fields requested; 63 flagged v1; reduction to Exec / PSky + Finance Pacing proposed. | UC1_Fields_for_CARL_working.xlsx
+4 | Forecast treated as Phase 1b only. | Forecast is one of three primary converged metrics. | Arlene Rose (Slack)
+5 | Sources: Op1 and iDeal direct. | Linear from MicroStrategy Bronze (iDeal waits for Venus); Digital from WRR Bronze; Cube skipped. | Arlene Rose (Slack)
+6 | Metropolis 'QA in progress'. | Epic 73% complete but pacing-domain ingestion held; pipeline Bronze not yet available to Silver; Oracle query as stop-gap. | Arlene Rose (Slack); Jira epic CARL-2778
+7 | Forecast feed: unstable schema / cadence. | Template agreed; feed not provided. | Arlene Rose (Slack)
+8 | Plan B = Bobby V + SF pipeline. | Plan B = reduced MVP (recommended). Bobby V moved to Option C with Finance-alignment caveat. | Arlene Rose (Slack); Ping / Jason DM
+9 | Earlier draft cited UC1 Jira as CARL-1364 / 1365 / 1366. | Only CARL-1364 is evidenced as the UC1 epic. UC1 Silver / Gold epics are CARL-3638, CARL-3639, CARL-3640. CARL-1365 / 1366 not found in any source and removed. | Master Tracker Sep 18; Program usage 29 Sep
+10 | No Jira references. | Jira column added to tabs 1, 2, 3, 4 and 6; full ticket list in tab 8. | v3
+
+===== 8. Jira Reference
+Jira Key | Summary | Type | UC1 Role | Status Detail (snapshot) | Status | Source
+CARL-1364 | UC1 Total Ad Revenue (parent epic) | Epic | UC1 programme | 3 stories: 1 Done, 2 In Progress. UC1 overall ~3% complete. | In Progress | Master Tracker Sep 18; Program usage 29 Sep
+CARL-3638 | UC1 Silver / Gold epic | Epic | Silver -> Gold model | 4 stories: 1 In Progress, 3 To Do. 0 SP complete. | In Progress | Quarterly Planning - Sept Status; Program usage 29 Sep
+CARL-3639 | UC1 Silver / Gold epic | Epic | Silver -> Gold model | 0 stories. 0 SP complete. | Not Started | Quarterly Planning - Sept Status; Program usage 29 Sep
+CARL-3640 | UC1 Silver / Gold epic | Epic | Silver -> Gold model | Listed against UC1; no story counts in snapshot. | Not Started | Program usage 29 Sep
+CARL-2778 | Salesforce / Metropolis Bronze ingestion | Epic | Converged pipeline revenue | 37 stories: 27 Done, 1 Blocked, 2 In Progress, 7 UAT (73%). Pacing-domain ingestion still held. | In Progress | Master Tracker Sep 18; Program usage 29 Sep
+CARL-3614 | Salesforce table ingest (labelled Total Ad Revenue Pacing) | Story | Converged pipeline revenue | Linked to CARL-2778; sprint 16; assigned Saman Saran. | In Progress | Slack - Nathan Hernandez-Adams, 19 Aug
+CARL-1477 | iDeal DealBldr / Deal DR | Epic | Linear booked (post-MVP, Venus) | 5 stories: 1 Done, 3 UAT, 1 To Do (~17-20%). | In Progress | Master Tracker Sep 18; Program usage 29 Sep
+CARL-597 | WRR / LDR2 ingestion | Epic | Digital booked revenue source | Bronze / Silver / Gold done. | Done | Program usage 29 Sep
+CARL-744, CARL-746 | Op1 / FreeWheel Bronze epics | Epic | Foundation | Delivered 1 Jul; QA signed off 10 Jul. | Done | CARL_Program_Report
+CARL-3750 | STAQ Bronze | Epic | UC1 source (not in reduced MVP) | In triage, 0 SP. | Triage | Program usage 29 Sep
+CARL-2727 | MicroStrategy migration - Finance cohort | Epic | Related: Jason ties UC1 to MSTR migration | 41 stories; 17% complete. | In Progress | Master Tracker Sep 18
+CARL-3571 | MicroStrategy migration - Ad Sales cohort | Epic | Related: Jason ties UC1 to MSTR migration | 42 stories; 17% complete; 28 in testing. | In Progress | Master Tracker Sep 18
+CARL-2779 | Ingest sf_abs_account__c to Bronze | Story | UC1 source table (Total_Ad_Revenue_Pacing label) | Individual status not in snapshot - check board. | - | Slack - #team-dg-carl-engineering-only, 19 Jul
+CARL-2780 | Ingest sf_abs_ae__c to Bronze | Story | UC1 source table (Total_Ad_Revenue_Pacing label) | Individual status not in snapshot - check board. | - | Slack - #team-dg-carl-engineering-only, 19 Jul
+CARL-2781 | Ingest sf_ad_type__c to Bronze | Story | UC1 source table (Total_Ad_Revenue_Pacing label) | Individual status not in snapshot - check board. | - | Slack - #team-dg-carl-engineering-only, 19 Jul
+CARL-2782 | Ingest sf_ad_unit_inventory_type__c to Bronze | Story | UC1 source table (Total_Ad_Revenue_Pacing label) | Individual status not in snapshot - check board. | - | Slack - #team-dg-carl-engineering-only, 19 Jul
+CARL-2783 | Ingest sf_ae_revenue__c to Bronze | Story | UC1 source table (Total_Ad_Revenue_Pacing label) | Individual status not in snapshot - check board. | - | Slack - #team-dg-carl-engineering-only, 19 Jul
+CARL-2784 | Ingest sf_contact to Bronze | Story | UC1 source table (Total_Ad_Revenue_Pacing label) | Individual status not in snapshot - check board. | - | Slack - #team-dg-carl-engineering-only, 19 Jul
+CARL-2785 | Ingest sf_feeditem to Bronze | Story | UC1 source table (Total_Ad_Revenue_Pacing label) | Individual status not in snapshot - check board. | - | Slack - #team-dg-carl-engineering-only, 19 Jul
+CARL-2786 | Ingest sf_industry_segment to Bronze | Story | UC1 source table (Total_Ad_Revenue_Pacing label) | Individual status not in snapshot - check board. | - | Slack - #team-dg-carl-engineering-only, 19 Jul
+CARL-2787 | Ingest sf_linear_reference_data__c to Bronze | Story | UC1 source table (Total_Ad_Revenue_Pacing label) | Individual status not in snapshot - check board. | - | Slack - #team-dg-carl-engineering-only, 19 Jul
+CARL-2788 | Ingest sf_network__c to Bronze | Story | UC1 source table (Total_Ad_Revenue_Pacing label) | Individual status not in snapshot - check board. | - | Slack - #team-dg-carl-engineering-only, 19 Jul
+CARL-2789 | Ingest sf_opportunity to Bronze | Story | UC1 source table (Total_Ad_Revenue_Pacing label) | Individual status not in snapshot - check board. | - | Slack - #team-dg-carl-engineering-only, 19 Jul
+CARL-2790 | Ingest sf_opportunity_fields_and_data__c to Bronze | Story | UC1 source table (Total_Ad_Revenue_Pacing label) | Individual status not in snapshot - check board. | - | Slack - #team-dg-carl-engineering-only, 19 Jul
+CARL-2791 | Ingest sf_product2 to Bronze | Story | UC1 source table (Total_Ad_Revenue_Pacing label) | Individual status not in snapshot - check board. | - | Slack - #team-dg-carl-engineering-only, 19 Jul
+CARL-2792 | Ingest sf_property_category__c to Bronze | Story | UC1 source table (Total_Ad_Revenue_Pacing label) | Individual status not in snapshot - check board. | - | Slack - #team-dg-carl-engineering-only, 19 Jul
+CARL-2793 | Ingest sf_recordtype to Bronze | Story | UC1 source table (Total_Ad_Revenue_Pacing label) | Individual status not in snapshot - check board. | - | Slack - #team-dg-carl-engineering-only, 19 Jul
+CARL-2794 | Ingest sf_site_month_breakout__c to Bronze | Story | UC1 source table (Total_Ad_Revenue_Pacing label) | Individual status not in snapshot - check board. | - | Slack - #team-dg-carl-engineering-only, 19 Jul
+CARL-2795 | Ingest sf_third_party_report__c to Bronze | Story | UC1 source table (Total_Ad_Revenue_Pacing label) | Individual status not in snapshot - check board. | - | Slack - #team-dg-carl-engineering-only, 19 Jul
+CARL-2796 | Ingest wrr.combined_revenue to Bronze | Story | UC1 source table (Total_Ad_Revenue_Pacing label) | Individual status not in snapshot - check board. | - | Slack - #team-dg-carl-engineering-only, 19 Jul
+CARL-2797 | Ingest etl.date_dim to Bronze | Story | UC1 source table (Total_Ad_Revenue_Pacing label) | Individual status not in snapshot - check board. | - | Slack - #team-dg-carl-engineering-only, 19 Jul
+CARL-2798 | Ingest salesforce_bkp_premetro.sf_third_party_report_c (one-time dump) to Bronze | Story | UC1 source table (Total_Ad_Revenue_Pacing label) | Individual status not in snapshot - check board. | - | Slack - #team-dg-carl-engineering-only, 19 Jul
+CARL-2799 | Ingest salesforce_bkp_premetro.sf_recordtype (one-time dump) to Bronze | Story | UC1 source table (Total_Ad_Revenue_Pacing label) | Individual status not in snapshot - check board. | - | Slack - #team-dg-carl-engineering-only, 19 Jul
+CARL-2800 | Ingest salesforce_bkp_premetro.sf_opportunity (one-time dump) to Bronze | Story | UC1 source table (Total_Ad_Revenue_Pacing label) | Individual status not in snapshot - check board. | - | Slack - #team-dg-carl-engineering-only, 19 Jul
+CARL-2801 | Ingest salesforce_bkp_premetro.sf_account (one-time dump) to Bronze | Story | UC1 source table (Total_Ad_Revenue_Pacing label) | Individual status not in snapshot - check board. | - | Slack - #team-dg-carl-engineering-only, 19 Jul
+CARL-2802 | Ingest bimike.mb_archive_ids (one-time dump) to Bronze | Story | UC1 source table (Total_Ad_Revenue_Pacing label) | Individual status not in snapshot - check board. | - | Slack - #team-dg-carl-engineering-only, 19 Jul
+CARL-2922 | Ingest salesforce.sf_contract to Bronze | Story | UC1 source table (Total_Ad_Revenue_Pacing label) | Individual status not in snapshot - check board. | - | Slack - #team-dg-carl-engineering-only, 19 Jul
+NOT TRACKED IN JIRA |  |  |  |  |  | 
+- | Finance forecast feed |  |  |  |  | 
+- | Narrowed MVP field list (Exec / PSky + Finance Pacing) |  |  |  |  | 
+- | Allocation automation (TTN / Turner) |  |  |  |  | 
+- | BU definition and rollup axis |  |  |  |  | 
+- | Bobby V reconciliation to Finance |  |  |  |  | 
+- | Validation vs Looker / Finance (<1% variance) |  |  |  |  | 
+- | Sports Digital approach |  |  |  |  | 
+Board | Jira board |  |  |  |  | 
+PRD | PRD (Confluence) |  |  |  |  | 
+Note | Statuses are from tracker snapshots dated 18-29 Sep 2026, not live Jira. Verify on the board before sharing. |  |  |  |  | 

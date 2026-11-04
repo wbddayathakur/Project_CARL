@@ -1,0 +1,166 @@
+
+===== 0 Executive Summary
+Salesforce Ad Sales LookML to Iceberg Analysis |  |  | 
+Topic | Finding | Evidence status / caveat | Source
+Source view | DAAP_RPT.WBD_SALESFORCE_MTH_V | Confirmed in supplied LookML and generated Explore SQL | User LookML + enterprise file
+Business grain | Opportunity/order snapshot with mixed Linear and Digital records | Candidate only. Must profile opportunity, sales order, record type and FILE_DT uniqueness before sign-off | LookML interpretation
+Snapshot field | FILE_DT exposed as Historical Snapshot Filter | UC1 workbook says daily snapshot, one row per key/day, weekends included and cannot be backfilled | UC1 workbook
+Primary financial measures | projection, weighted_projection, linear_total_amount_sum, total published revenue sum | Definitions confirmed; additive grain and currency scale still require profiling | LookML
+Semantic density | Many business rules remain embedded in LookML | Move reusable deterministic rules to Silver/Gold; keep labels, suggestions and drill links in Cube/semantic layer | Recommendation
+Readiness | Partial | Physical source exists, but Iceberg source-object lineage, CDC/delete behavior, keys, refresh SLA and dependency ownership remain unproven | Evidence review
+Critical decision | Do not lift-and-shift the view as one opaque Iceberg table | Create source-faithful Bronze, conformed Salesforce opportunity snapshot in Silver, UC1 pipeline Gold, then Cube parity | Recommendation
+Cross-source role | Salesforce is pipeline/opportunity source and links to Operative/iDeal via opportunity/order identifiers | UC1 requires pipeline-to-booked linkage; exact cross-system key completeness must be tested | LookML + UC1
+
+===== 1 LookML Field Inventory
+LookML Field Inventory and Target Placement |  |  |  |  |  |  |  |  | 
+Field | Kind | Type | Label | Group | SQL / Rule | Inputs / dependencies | Recommended target | Priority | Risk / validation
+advertiser_name | dimension | string | Advertiser Name | Order | ${TABLE}.advertiser_name | advertiser_name | Silver opportunity snapshot | P1 | 
+workflow_status | dimension | string | Workflow Status | Order | ${TABLE}.workflow_status | workflow_status | Silver opportunity snapshot | P1 | 
+record_type_id | dimension | string | Record Type ID | Order | ${TABLE}.RECORD_TYPE_ID | RECORD_TYPE_ID | Silver opportunity snapshot | P0 | 
+record_type_name | dimension | string | Record Type Name | Order | ${TABLE}.RECORD_TYPE_NAME | RECORD_TYPE_NAME | Silver opportunity snapshot | P1 | 
+brand_name | dimension | string | Brand Name | Linear | ${TABLE}.BRAND_NAME | BRAND_NAME | Silver opportunity snapshot | P1 | 
+order_id | dimension | string | Order ID | Linear | ${TABLE}.ORDER_ID | ORDER_ID | Silver opportunity snapshot | P1 | 
+order_cpm | dimension | number | Order CPM | Linear | ${TABLE}.ORDER_CPM | ORDER_CPM | Silver opportunity snapshot | P1 | 
+start_date | dimension | date | Start Date | Order | ${TABLE}.START_DATE | START_DATE | Silver opportunity snapshot | P1 | 
+end_date | dimension | date | End Date | Order | ${TABLE}.END_DATE | END_DATE | Silver opportunity snapshot | P1 | 
+agency_name | dimension | string | Agency | Order | ${TABLE}.agency_name | agency_name | Silver opportunity snapshot | P1 | 
+buy_agency_name | dimension | string | Buying Agency | Order | ${TABLE}.BUYING_AGENCY_NAME | BUYING_AGENCY_NAME | Silver opportunity snapshot | P1 | 
+plan_agency_name | dimension | string | Planning Agency | Order | ${TABLE}.PLANNING_AGENCY_NAME | PLANNING_AGENCY_NAME | Silver opportunity snapshot | P1 | 
+upfront_agency_name | dimension | string | Upfront Agency | Order | ${TABLE}.UPFRONT_AGENCY_NAME | UPFRONT_AGENCY_NAME | Silver opportunity snapshot | P1 | 
+division | dimension | string | Division | Deal Groupings | ${TABLE}.division | division | Silver opportunity snapshot | P1 | 
+operative_has_line_items | dimension | string | Operative Has Line Items | Order | ${TABLE}.operative_has_line_items | operative_has_line_items | Silver opportunity snapshot | P1 | 
+revised_created_date | dimension | date | Created Date |  | ${TABLE}.CREATEDDATE | CREATEDDATE | Silver opportunity snapshot | P1 | 
+last_mod_dt | dimension | date | Last Modified Date |  | ${TABLE}.LASTMODIFIEDDATE | LASTMODIFIEDDATE | Silver opportunity snapshot | P1 | 
+file_date_date | dimension | date | Historical Snapshot Filter |  | ${TABLE}.FILE_DT | FILE_DT | Silver opportunity snapshot | P0 | 
+forecast_category | dimension | string | Booked Site | Line Item | ${TABLE}.forecast_category | forecast_category | Silver opportunity snapshot | P1 | 
+network | dimension | string | Linear Network | Deal Groupings | ${TABLE}.network | network | Silver opportunity snapshot | P1 | 
+sports_property | dimension | string | Sports Property | Deal Groupings | ${TABLE}.SPORTS_PROPERTY | SPORTS_PROPERTY | Silver opportunity snapshot | P1 | 
+forecasted_value | dimension | number | Forecasted Value |  | ${TABLE}.forecasted_value | forecasted_value | Silver opportunity snapshot | P1 | 
+opp_sales_order_id | dimension | number | Sales Order ID | Order | ${TABLE}.opp_sales_order_id | opp_sales_order_id | Silver opportunity snapshot | P0 | 
+opportunity | dimension | string | Opportunity ID | Order | ${TABLE}.opportunity | opportunity | Silver opportunity snapshot | P0 | 
+opportunity_name_id | dimension | string | Opportunity Name | Order | ${TABLE}.opportunity_name_id | opportunity_name_id | Silver opportunity snapshot | P1 | 
+opportunity_stage | dimension | string | Opportunity Stage | Order | ${TABLE}.opportunity_stage | opportunity_stage | Silver opportunity snapshot | P1 | 
+team | dimension | string | Team | Order | ${TABLE}.team | team | Silver opportunity snapshot | P1 | 
+digital_strategist | dimension | string | Digital Strategist | Order | ${TABLE}.DSSI | DSSI | Silver opportunity snapshot | P1 | 
+secondary_office | dimension | string | Secondary Office | Order | ${TABLE}.SECOND_OFFICE | SECOND_OFFICE | Silver opportunity snapshot | P1 | 
+tertiary_office | dimension | string | Tertiary Office | Order | ${TABLE}.THIRD_OFFICE | THIRD_OFFICE | Silver opportunity snapshot | P1 | 
+total_line_traff | dimension | number | Total Line Items Trafficked | Order | ${TABLE}.TOTAL_LINE_TRAFF | TOTAL_LINE_TRAFF | Silver opportunity snapshot | P1 | 
+total_line_del | dimension | number | Total Line Items with Delivery | Order | ${TABLE}.TOTAL_LINE_DEL | TOTAL_LINE_DEL | Silver opportunity snapshot | P1 | 
+active_line_traff | dimension | number | Active Line Items Trafficked | Order | ${TABLE}.ACTIVE_LINE_TRAFF | ACTIVE_LINE_TRAFF | Silver opportunity snapshot | P1 | 
+active_line_del | dimension | number | Active Line Items with Delivery | Order | ${TABLE}.ACTIVE_LINE_DEL | ACTIVE_LINE_DEL | Silver opportunity snapshot | P1 | 
+total_amount | dimension | number | Total Amount | Order | ${TABLE}.TOTAL_AMOUNT | TOTAL_AMOUNT | Silver opportunity snapshot | P1 | 
+total_op_prop_rev | dimension | number | Total Operative Proposed Revenue | Order | ${TABLE}.TOTAL_OP_PROP_REV | TOTAL_OP_PROP_REV | Silver opportunity snapshot | P1 | 
+TOTAL_PUBLISHED_REVENUE_SM_C | dimension | number | Total Published Revenue | Order | ${TABLE}.TOTAL_TOTAL_PUBLISHED_REVENUE_SM_C | TOTAL_TOTAL_PUBLISHED_REVENUE_SM_C | Silver opportunity snapshot | P1 | 
+weighted_scheduled_pipeline | dimension | number | Weighted Scheduled Pipeline |  | ${TABLE}.weighted_scheduled_pipeline | weighted_scheduled_pipeline | Silver opportunity snapshot | P1 | 
+region | dimension | string | Region | Order | ${TABLE}.REGION | REGION | Silver opportunity snapshot | P1 | 
+deal_type | dimension | string | Deal Type | Order | ${TABLE}.DEAL_TYPE | DEAL_TYPE | Silver opportunity snapshot | P1 | 
+new_v_exi | dimension | string | New vs. Exist | Order | ${TABLE}.new_vs_exist | new_vs_exist | Silver opportunity snapshot | P1 | 
+closed_lost_category | dimension | string | Closed/Lost Category | Order | ${TABLE}.CLOSED_LOST_CATEGORY | CLOSED_LOST_CATEGORY | Silver opportunity snapshot | P1 | 
+projection_change_reason | dimension | string | Projection Change Reason | Order | ${TABLE}.PROJECTION_CHANGE_REASON | PROJECTION_CHANGE_REASON | Silver opportunity snapshot | P1 | 
+upf_scat | dimension | string | Classification | Order | ${TABLE}.UPF_VS_SCAT | UPF_VS_SCAT | Silver opportunity snapshot | P1 | 
+links_to_placeholder | dimension | string | Links to Placeholder | Order | ${TABLE}.links_to_placeholder | links_to_placeholder | Silver opportunity snapshot | P1 | 
+placeholder_operative_order_id | dimension | string | Placeholder Operative Order ID | Order | ${TABLE}.placeholder_operative_order_id | placeholder_operative_order_id | Silver opportunity snapshot | P1 | 
+broadway_io_id_c | dimension | string | iDeal ID | Order | ${TABLE}.IDEAL_DEAL_ID | IDEAL_DEAL_ID | Silver opportunity snapshot | P1 | 
+ad_type | dimension | string | Ad Type | Line Item | Social Seeding→LaunchPad; Audio→Podcast; else ad_type | ad_type | Silver canonical ad_type | P1 | Mapping must be governed
+primary_ae | dimension | string | Primary AE | Order | Linear record type uses THIRD_NAME; else name | record_type_id, THIRD_NAME, name | Silver sales-role columns | P1 | Role permutation by record type
+secondary_ae | dimension | string | Secondary AE | Order | Linear record type uses name; else SECOND_NAME | record_type_id, name, SECOND_NAME | Silver sales-role columns | P1 | Role permutation by record type
+tertiary_ae | dimension | string | Tertiary AE | Order | Linear record type uses SECOND_NAME; else THIRD_NAME | record_type_id, SECOND_NAME, THIRD_NAME | Silver sales-role columns | P1 | Role permutation by record type
+record_type | dimension | string | Record Type | Order | Linear for ID 012Vq000002N4ubIAC; Digital for null ID before 2026-05-04 or IDs 012Vq000002N4rNIAS/012Vq000002N4szIAC; else Other | record_type_id, FILE_DT | Silver canonical platform | P0 | Hard-coded IDs and date boundary
+archived | dimension | yesno | Archived | Linear | ARCHIVED = 1; null behaves as No | ARCHIVED | Silver boolean | P1 | Null semantics must match
+won | dimension | date | Date Opportunity Won |  | From sf_opp_won_v.won | sf_opp_won_v | Silver enrichment | P1 | External view ownership
+coordinator | dimension | string | Client Success Coordinator | Order | VAR1; suggestions from ac_name_suggest | VAR1, ac_name_suggest | Silver raw + semantic suggestions | P1 | Suggestion dependency
+csm | dimension | string | Account Specialist | Order | VAR2; suggestions from am_name_suggest | VAR2, am_name_suggest | Silver raw + semantic suggestions | P1 | Suggestion dependency
+end | dimension | time group | Activity |  | Linear: first month of broadcast quarter; WM SF: end_date; else month | record_type, BROADCAST_YEAR, BROADCAST_QUARTER, source, end_date, month | Gold activity_date | P0 | Mixed business meanings in one date
+age_of_op | dimension | number | Age of Opportunity |  | DATEDIFF(day, created date, current_date) | CREATEDDATE | Cube runtime measure | P1 | Non-reproducible over historical snapshots
+source | dimension | string | Salesforce Instance |  | lower(source)=lwm→wm; else source | source | Silver normalized_source | P0 | Label suggestions WBD SF/WM SF do not obviously match wm normalization
+vertical | dimension | string | Digital Vertical | Deal Groupings | Explicit mappings then DAAP_RPT.UDF_OP_VERTICAL(forecast_category) | forecast_category, UDF_OP_VERTICAL | Gold governed mapping | P1 | External UDF logic not visible
+reporting_vp | dimension | string | Reporting VP | Order | Hard-coded AE-to-VP overrides; else VP | primary_ae, VP | Silver hierarchy bridge | P1 | Hard-coded people mapping will drift
+budget_line | dimension | string | Sports Budget Line | Deal Groupings | Priority CASE over sports_property, ad_type, forecast_category | sports_property, ad_type, forecast_category | Gold sports mapping | P1 | Duplicate NCAA condition; mapping table preferred
+projection_rank | dimension | string | Projection Rank | Order | Stage groups map to A/B/C/D/F | opportunity_stage | Gold lifecycle mapping | P0 | Stage labels may fall to null
+linear_total_amount | dimension | number | Linear - Total Amount | Order | COALESCE(LINEAR_TOTAL_AMOUNT,TOTAL_ESTIMATED_AMOUNT) | LINEAR_TOTAL_AMOUNT, TOTAL_ESTIMATED_AMOUNT | Silver canonical amount | P1 | Hidden dimension used by sum
+primary_office | dimension | string | Primary Office | Order | COALESCE(office,sales_office.office) | office, sales_office | Silver enrichment | P1 | External join/cardinality
+payment_type | dimension | string | Payment Type | Order | COALESCE(PAYMENT_TYPE,op1_order_payment_type.payment_type) | PAYMENT_TYPE, op1_order_payment_type | Silver enrichment | P1 | Cross-system dependency
+linear_digital | dimension | string | Linear vs. Digital | Deal Groupings | Digital when forecast_category present; Linear when network present | forecast_category, network | Gold classification | P0 | Conflicts possible when both/non-null
+opp_per_sales | dimension | number | Opportunity Probability | Order | ROUND(DIV0(weighted_scheduled_pipeline,forecasted_value),4) | weighted_scheduled_pipeline, forecasted_value | Cube ratio | P1 | Validate zero/null behavior
+upf_type | dimension | string | Upfront Type | Order | COALESCE(UPF_TYPE,'No') | UPF_TYPE | Silver normalized attribute | P1 | No may conflate missing and explicit No
+discoveryplusflag | dimension | yesno | Discovery+ Flag | SOS | Booked-site and opportunity-name pattern logic | forecast_category, opportunity_name_id | Gold flag | P1 | Name matching is brittle
+site_mapped_v2 | dimension | string | Site - Mapped | SOS | D+ override else pi_site_mapping.site_mapped | discoveryplusflag, pi_site_mapping | Gold conformed site | P1 | External mapping governance
+sos_vertical | dimension | string | Vertical | SOS | D+ override else pi_site_mapping.vertical | site_mapped_v2, pi_site_mapping | Gold conformed vertical | P1 | External mapping governance
+TOTAL_PUBLISHED_REVENUE_SUM | measure | sum | Total Published Revenue | Measures | COALESCE(TOTAL_PUBLISHED_REVENUE_SM_C,0) | TOTAL_PUBLISHED_REVENUE_SM_C | Gold/Cube | P0 | Confirm currency, snapshot and aggregation grain
+linear_total_amount_sum | measure | sum | Linear Total Amount | Measures | SUM(linear_total_amount) | linear_total_amount | Gold/Cube | P0 | Confirm currency, snapshot and aggregation grain
+projection | measure | sum | Net Projections | Measures | SUM(forecasted_value) | forecasted_value | Gold/Cube | P0 | Confirm currency, snapshot and aggregation grain
+weighted_projection | measure | sum | Net Weighted Projections | Measures | SUM(weighted_scheduled_pipeline) | weighted_scheduled_pipeline | Gold/Cube | P0 | Confirm currency, snapshot and aggregation grain
+
+===== 2 Business Rules
+Business Rules to Reproduce and Govern |  |  |  |  | 
+ID | Rule | Current LookML logic | Target layer | Priority | Parity / governance test
+R-01 | Record type classification | Hard-coded Salesforce record type IDs plus FILE_DT cutoff | Silver | P0 | Unit-test IDs, cutoff day, null IDs and Other
+R-02 | AE role permutation | Name/SECOND_NAME/THIRD_NAME change meaning for Linear | Silver | P0 | Reconcile each role to Salesforce opportunity-team source
+R-03 | Activity date | Broadcast quarter start for Linear, end_date for WM SF, month otherwise | Gold | P0 | Document meaning; test all branches and nulls
+R-04 | Source normalization | lwm maps to wm | Silver | P0 | Resolve mismatch against suggested labels WBD SF and WM SF
+R-05 | Ad type normalization | Social Seeding→LaunchPad; Audio→Podcast | Silver/ref mapping | P1 | Mapping-table ownership and effective dates
+R-06 | Projection rank | Stage labels mapped A/B/C/D/F | Gold | P0 | Coverage report for unclassified stage values
+R-07 | Vertical mapping | Inline mappings plus Snowflake UDF | Gold/ref mapping | P0 | Extract UDF definition before parity sign-off
+R-08 | Reporting VP | Hard-coded named AE overrides plus source VP | Silver hierarchy | P0 | Replace names with effective-dated org hierarchy
+R-09 | Sports budget line | Priority CASE over property/ad type/site | Gold/ref mapping | P1 | Duplicate NCAA condition and unmapped values
+R-10 | Discovery+ detection | Opportunity-name text patterns plus booked site | Gold | P1 | False positives/negatives and naming drift
+R-11 | Opportunity probability | weighted / forecasted using DIV0 | Cube | P1 | Zero/null/negative tests; aggregate ratio behavior
+R-12 | Published revenue | Source field wrapped with COALESCE then SUM | Gold/Cube | P0 | Confirm source meaning and avoid snapshot double counting
+
+===== 3 Dependencies
+External Dependencies and Required Source Contracts |  |  |  |  | 
+Object | Type | Purpose | Classification | Priority | Missing evidence / action
+DAAP_RPT.WBD_SALESFORCE_MTH_V | Base Snowflake view | All Salesforce reporting fields | Primary source | P0 | DDL, source tables, refresh job, owner, SLA and row grain not retrieved
+sf_opp_won_v | Joined Looker view | Won date | External dependency | P0 | Join key/cardinality not visible in supplied view
+sales_office | Joined Looker view | Primary office fallback | External dependency | P1 | Join key/cardinality not visible
+op1_order_payment_type | Joined Looker view | Payment type fallback | Cross-domain dependency | P0 | Opportunity/order relationship and duplicate behavior unknown
+pi_site_mapping | Joined Looker view | Mapped site and vertical | Reference mapping | P0 | Versioning, owner and join key not visible
+DAAP_RPT.UDF_OP_VERTICAL | Snowflake UDF | Fallback vertical derivation | Code dependency | P0 | Definition not retrieved
+ac_name_suggest | Suggestion explore | Coordinator suggestions | Semantic-only | P2 | Not required in physical Gold; retain in Cube/UI
+am_name_suggest | Suggestion explore | Account specialist suggestions | Semantic-only | P2 | Not required in physical Gold; retain in Cube/UI
+classification_suggest | Suggestion explore | Classification suggestions | Semantic-only | P2 | Not required in physical Gold; retain in Cube/UI
+Salesforce Opportunity URL | Drill link | Opportunity navigation | Semantic-only | P2 | URL should be templated securely
+Operative order URL | Drill link | Order navigation | Semantic-only | P2 | Supplied markup appears malformed; validate template
+
+===== 4 Target Model
+Proposed CARL Iceberg and Cube Target Model |  |  |  |  | 
+Layer | Object | Purpose / grain | Core content | Candidate key | Status
+Bronze | salesforce_opportunity_snapshot_raw | Source-faithful extract equivalent to base view inputs, not LookML output | Raw IDs, raw names, raw amounts, raw dates, FILE_DT, ingest metadata | source instance + native opportunity key + FILE_DT + source revision key | Verify physical Salesforce objects
+Silver | dim_salesforce_opportunity_snapshot | Typed deduplicated opportunity snapshot | Normalized source, canonical record type, AE roles, agency/advertiser, stages, dates, amounts | normalized_source + opportunity_id + snapshot_date | Build after profiling
+Silver | bridge_opportunity_sales_order | Cross-system linkage | opportunity_id, opp_sales_order_id, placeholder order, iDeal ID, match provenance | source + opportunity_id + order_id + effective date | Build
+Silver | dim_sales_hierarchy_effective | Effective-dated AE/office/VP hierarchy | AE identity, office, team, VP, valid_from/to | seller key + valid_from | Replace hard-coded reporting_vp
+Silver | ref_salesforce_classification | Governed mappings | record type, stages, ad type, site, sports property, budget line | rule type + source value + effective dates | Build
+Gold | fact_ad_sales_pipeline_snapshot | UC1 pipeline opportunity snapshot | Projection, weighted projection, linear amount, published revenue, lifecycle and business dimensions | snapshot_date + opportunity + business allocation grain | Build after Silver controls
+Cube | ad_sales_pipeline | Consumption contract | Certified dimensions/measures, timeframes, suggestions, links | Gold key | Build after parity
+
+===== 5 DQ and Parity
+Data Quality and Semantic Parity Test Matrix |  |  |  | 
+ID | Control | Expected result | Test method | Failure action
+DQ-01 | Base grain uniqueness | No duplicates at approved opportunity snapshot grain | COUNT(*) - COUNT(DISTINCT candidate key)=0 | Block Silver promotion
+DQ-02 | Snapshot completeness | One expected snapshot per business key/day subject to source contract | Daily key/date coverage and missing-day report | Alert/block based on SLA
+DQ-03 | Record type parity | LookML and target produce same Linear/Digital/Other | Compare row-level classification including boundary date | Block cutover
+DQ-04 | AE role parity | Primary/secondary/tertiary match LookML branches | Row-level comparison by record type | Block affected dimensions
+DQ-05 | Measure parity | Projection, weighted, linear total and published revenue match | Compare by snapshot, record type, stage and grand total | Block cutover
+DQ-06 | External join fanout | Each base row resolves to at most one won/office/payment/site mapping | Max joined rows per base key=1 | Block enrichment
+DQ-07 | Stage coverage | Every active stage is mapped or explicitly accepted null | Unmapped stage exception report | Govern mapping
+DQ-08 | Source normalization | lwm/wm/WBD SF/WM SF semantics are reconciled | Value distribution before/after normalization | Block source-aware logic
+DQ-09 | Temporal reproducibility | Historical age metrics do not change when rerun | Calculate age against snapshot date for historical reporting | Do not persist current_date metric in historical Gold
+DQ-10 | Schema drift | Columns/types and dependency contracts monitored | Contract diff per run/deployment | Quarantine incompatible changes
+DQ-11 | Cross-system key coverage | Opportunity-to-Operative/iDeal link rate is measured | Null/duplicate/conflicting ID report | Block pipeline-to-booked claims
+DQ-12 | Currency/scale | Money fields have documented currency and decimal scale | Profile types, min/max and currency metadata | Block finance certification
+
+===== 6 Gaps Actions
+Gaps, Decisions and Actions |  |  |  |  | 
+ID | Required action / decision | Priority | Status | Proposed owner | Impact
+SF-LML-01 | Retrieve DDL and upstream lineage for DAAP_RPT.WBD_SALESFORCE_MTH_V | P0 | Open | Data Engineering | Blocks physical Iceberg source contract
+SF-LML-02 | Confirm native opportunity key, row grain, revision/delete semantics and snapshot uniqueness | P0 | Open | Salesforce + Data Engineering | Blocks CDC/dedup design
+SF-LML-03 | Retrieve join definitions/cardinality for sf_opp_won_v, sales_office, op1_order_payment_type and pi_site_mapping | P0 | Open | Looker owner | Prevents reliable dependency recreation
+SF-LML-04 | Extract DAAP_RPT.UDF_OP_VERTICAL definition and ownership | P0 | Open | Snowflake/Looker owner | Blocks vertical parity
+SF-LML-05 | Replace hard-coded reporting VP names with an effective-dated hierarchy | P0 | Proposed | Sales Operations + Data Steward | Avoids organizational drift
+SF-LML-06 | Resolve source-label normalization mismatch | P0 | Open | Salesforce/Looker owner | May misroute activity-date branch
+SF-LML-07 | Define currency, precision and additive grain for every financial field | P0 | Open | Finance + Product | Blocks certification
+SF-LML-08 | Define Glue database/table names, partitioning, SLA, owner and monitoring | P0 | Open | Platform + Data Engineering | Blocks production readiness
+SF-LML-09 | Build row-level Looker vs Iceberg/Cube parity harness | P0 | Proposed | QA + Data Engineering | Required for cutover
+SF-LML-10 | Validate malformed Operative drill-link template | P2 | Open | Looker owner | UI navigation issue
+SF-LML-11 | Resolve duplicate NCAA Non-MM CASE branch in budget_line | P1 | Open | Business owner | Code quality and future rule ambiguity
+SF-LML-12 | Decide whether current_date-based age_of_op belongs in Cube only | P1 | Proposed | Product + Analytics | Historical reproducibility

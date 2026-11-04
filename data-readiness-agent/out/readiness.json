@@ -1,0 +1,2688 @@
+{
+  "generated_for": "2026-10-22",
+  "inputs": {
+    "glue_as_of": "2026-10-07",
+    "history_as_of": "2026-10-13",
+    "jira_as_of": "2026-10-22"
+  },
+  "rubric_status": "PROPOSED",
+  "rows": [
+    {
+      "source": "CARL DWH (legacy gold)",
+      "layer": "gold",
+      "counts": {
+        "tables": 150,
+        "in_dev": 150,
+        "in_prod": 0,
+        "fresh_in_prod": 0,
+        "prod_with_history": 0,
+        "prod_recurring": 0,
+        "prod_single_snapshot": 0
+      },
+      "criteria": [
+        {
+          "id": "G1",
+          "title": "Exists in dev",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "150 of 150 tables in dev"
+        },
+        {
+          "id": "G2",
+          "title": "Promoted to prod",
+          "evidence": "glue",
+          "status": "fail",
+          "detail": "0 of 150 tables in prod"
+        },
+        {
+          "id": "G3",
+          "title": "Updated in prod within the freshness window",
+          "evidence": "glue",
+          "status": "na",
+          "detail": "0 of 0 prod tables updated within 14d of the catalog snapshot"
+        },
+        {
+          "id": "G4",
+          "title": "Business definition documented and owned",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "A data-product registry entry with owner and grain"
+        },
+        {
+          "id": "G5",
+          "title": "Parity with legacy output verified",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Parity-harness results (cf. CARL-4128)"
+        },
+        {
+          "id": "G6",
+          "title": "A golden / eval dataset exists for it",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "A golden-dataset location and naming convention"
+        }
+      ],
+      "stage": "dev only",
+      "flags": [],
+      "jira": null
+    },
+    {
+      "source": "DDL Forecasting",
+      "layer": "bronze",
+      "counts": {
+        "tables": 1,
+        "in_dev": 1,
+        "in_prod": 1,
+        "fresh_in_prod": 1,
+        "prod_with_history": 0,
+        "prod_recurring": 0,
+        "prod_single_snapshot": 0
+      },
+      "criteria": [
+        {
+          "id": "B1",
+          "title": "Landed in dev",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "1 of 1 tables in dev"
+        },
+        {
+          "id": "B2",
+          "title": "Promoted to prod",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "1 of 1 tables in prod"
+        },
+        {
+          "id": "B3",
+          "title": "Updated in prod within the freshness window",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "1 of 1 prod tables updated within 14d of the catalog snapshot"
+        },
+        {
+          "id": "B4",
+          "title": "Loads recur in prod (not a one-time load)",
+          "evidence": "load_history",
+          "status": "unverified",
+          "detail": "no load history for any of the 1 prod tables"
+        },
+        {
+          "id": "B5",
+          "title": "Schema contract enforced (nullability, decimals preserved)",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Source-vs-bronze schema diff results (cf. CARL-3556)"
+        },
+        {
+          "id": "B6",
+          "title": "Complete against the source system's table list",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "A manifest of expected source tables and row counts"
+        }
+      ],
+      "stage": "in prod",
+      "flags": [],
+      "jira": null
+    },
+    {
+      "source": "DDL Forecasting",
+      "layer": "silver",
+      "counts": {
+        "tables": 1,
+        "in_dev": 1,
+        "in_prod": 1,
+        "fresh_in_prod": 1,
+        "prod_with_history": 0,
+        "prod_recurring": 0,
+        "prod_single_snapshot": 0
+      },
+      "criteria": [
+        {
+          "id": "S1",
+          "title": "Exists in dev",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "1 of 1 tables in dev"
+        },
+        {
+          "id": "S2",
+          "title": "Promoted to prod",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "1 of 1 tables in prod"
+        },
+        {
+          "id": "S3",
+          "title": "Updated in prod within the freshness window",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "1 of 1 prod tables updated within 14d of the catalog snapshot"
+        },
+        {
+          "id": "S4",
+          "title": "Loads recur in prod (not a one-time load)",
+          "evidence": "load_history",
+          "status": "unverified",
+          "detail": "no load history for any of the 1 prod tables"
+        },
+        {
+          "id": "S5",
+          "title": "Join integrity verified (match rate, orphan rate)",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Join-verification results (cf. CARL-4177)"
+        },
+        {
+          "id": "S6",
+          "title": "Data-quality rule results are logged",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Rows in a DQ results table (a dq_metrics database exists in dev only)"
+        }
+      ],
+      "stage": "in prod",
+      "flags": [],
+      "jira": null
+    },
+    {
+      "source": "FreeWheel",
+      "layer": "bronze",
+      "counts": {
+        "tables": 79,
+        "in_dev": 79,
+        "in_prod": 0,
+        "fresh_in_prod": 0,
+        "prod_with_history": 0,
+        "prod_recurring": 0,
+        "prod_single_snapshot": 0
+      },
+      "criteria": [
+        {
+          "id": "B1",
+          "title": "Landed in dev",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "79 of 79 tables in dev"
+        },
+        {
+          "id": "B2",
+          "title": "Promoted to prod",
+          "evidence": "glue",
+          "status": "fail",
+          "detail": "0 of 79 tables in prod"
+        },
+        {
+          "id": "B3",
+          "title": "Updated in prod within the freshness window",
+          "evidence": "glue",
+          "status": "na",
+          "detail": "0 of 0 prod tables updated within 14d of the catalog snapshot"
+        },
+        {
+          "id": "B4",
+          "title": "Loads recur in prod (not a one-time load)",
+          "evidence": "load_history",
+          "status": "na",
+          "detail": "nothing in prod"
+        },
+        {
+          "id": "B5",
+          "title": "Schema contract enforced (nullability, decimals preserved)",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Source-vs-bronze schema diff results (cf. CARL-3556)"
+        },
+        {
+          "id": "B6",
+          "title": "Complete against the source system's table list",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "A manifest of expected source tables and row counts"
+        }
+      ],
+      "stage": "dev only",
+      "flags": [],
+      "jira": {
+        "requested_tables": 98,
+        "found_in_dev": 0,
+        "found_in_prod": 0,
+        "story_classes": {
+          "testing_no_table": 11,
+          "open_no_table": 87
+        }
+      }
+    },
+    {
+      "source": "FreeWheel",
+      "layer": "silver",
+      "counts": {
+        "tables": 0,
+        "in_dev": 0,
+        "in_prod": 0,
+        "fresh_in_prod": 0,
+        "prod_with_history": 0,
+        "prod_recurring": 0,
+        "prod_single_snapshot": 0
+      },
+      "criteria": [
+        {
+          "id": "S1",
+          "title": "Exists in dev",
+          "evidence": "glue",
+          "status": "na",
+          "detail": "0 of 0 tables in dev"
+        },
+        {
+          "id": "S2",
+          "title": "Promoted to prod",
+          "evidence": "glue",
+          "status": "na",
+          "detail": "0 of 0 tables in prod"
+        },
+        {
+          "id": "S3",
+          "title": "Updated in prod within the freshness window",
+          "evidence": "glue",
+          "status": "na",
+          "detail": "0 of 0 prod tables updated within 14d of the catalog snapshot"
+        },
+        {
+          "id": "S4",
+          "title": "Loads recur in prod (not a one-time load)",
+          "evidence": "load_history",
+          "status": "na",
+          "detail": "nothing in prod"
+        },
+        {
+          "id": "S5",
+          "title": "Join integrity verified (match rate, orphan rate)",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Join-verification results (cf. CARL-4177)"
+        },
+        {
+          "id": "S6",
+          "title": "Data-quality rule results are logged",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Rows in a DQ results table (a dq_metrics database exists in dev only)"
+        }
+      ],
+      "stage": "not present",
+      "flags": [],
+      "jira": {
+        "requested_tables": 18,
+        "found_in_dev": 0,
+        "found_in_prod": 0,
+        "story_classes": {
+          "testing_no_table": 17,
+          "done_after_snapshot": 1
+        }
+      }
+    },
+    {
+      "source": "International",
+      "layer": "bronze",
+      "counts": {
+        "tables": 5,
+        "in_dev": 5,
+        "in_prod": 0,
+        "fresh_in_prod": 0,
+        "prod_with_history": 0,
+        "prod_recurring": 0,
+        "prod_single_snapshot": 0
+      },
+      "criteria": [
+        {
+          "id": "B1",
+          "title": "Landed in dev",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "5 of 5 tables in dev"
+        },
+        {
+          "id": "B2",
+          "title": "Promoted to prod",
+          "evidence": "glue",
+          "status": "fail",
+          "detail": "0 of 5 tables in prod"
+        },
+        {
+          "id": "B3",
+          "title": "Updated in prod within the freshness window",
+          "evidence": "glue",
+          "status": "na",
+          "detail": "0 of 0 prod tables updated within 14d of the catalog snapshot"
+        },
+        {
+          "id": "B4",
+          "title": "Loads recur in prod (not a one-time load)",
+          "evidence": "load_history",
+          "status": "na",
+          "detail": "nothing in prod"
+        },
+        {
+          "id": "B5",
+          "title": "Schema contract enforced (nullability, decimals preserved)",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Source-vs-bronze schema diff results (cf. CARL-3556)"
+        },
+        {
+          "id": "B6",
+          "title": "Complete against the source system's table list",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "A manifest of expected source tables and row counts"
+        }
+      ],
+      "stage": "dev only",
+      "flags": [],
+      "jira": null
+    },
+    {
+      "source": "International",
+      "layer": "silver",
+      "counts": {
+        "tables": 7,
+        "in_dev": 7,
+        "in_prod": 0,
+        "fresh_in_prod": 0,
+        "prod_with_history": 0,
+        "prod_recurring": 0,
+        "prod_single_snapshot": 0
+      },
+      "criteria": [
+        {
+          "id": "S1",
+          "title": "Exists in dev",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "7 of 7 tables in dev"
+        },
+        {
+          "id": "S2",
+          "title": "Promoted to prod",
+          "evidence": "glue",
+          "status": "fail",
+          "detail": "0 of 7 tables in prod"
+        },
+        {
+          "id": "S3",
+          "title": "Updated in prod within the freshness window",
+          "evidence": "glue",
+          "status": "na",
+          "detail": "0 of 0 prod tables updated within 14d of the catalog snapshot"
+        },
+        {
+          "id": "S4",
+          "title": "Loads recur in prod (not a one-time load)",
+          "evidence": "load_history",
+          "status": "na",
+          "detail": "nothing in prod"
+        },
+        {
+          "id": "S5",
+          "title": "Join integrity verified (match rate, orphan rate)",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Join-verification results (cf. CARL-4177)"
+        },
+        {
+          "id": "S6",
+          "title": "Data-quality rule results are logged",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Rows in a DQ results table (a dq_metrics database exists in dev only)"
+        }
+      ],
+      "stage": "dev only",
+      "flags": [],
+      "jira": null
+    },
+    {
+      "source": "International",
+      "layer": "gold",
+      "counts": {
+        "tables": 7,
+        "in_dev": 7,
+        "in_prod": 0,
+        "fresh_in_prod": 0,
+        "prod_with_history": 0,
+        "prod_recurring": 0,
+        "prod_single_snapshot": 0
+      },
+      "criteria": [
+        {
+          "id": "G1",
+          "title": "Exists in dev",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "7 of 7 tables in dev"
+        },
+        {
+          "id": "G2",
+          "title": "Promoted to prod",
+          "evidence": "glue",
+          "status": "fail",
+          "detail": "0 of 7 tables in prod"
+        },
+        {
+          "id": "G3",
+          "title": "Updated in prod within the freshness window",
+          "evidence": "glue",
+          "status": "na",
+          "detail": "0 of 0 prod tables updated within 14d of the catalog snapshot"
+        },
+        {
+          "id": "G4",
+          "title": "Business definition documented and owned",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "A data-product registry entry with owner and grain"
+        },
+        {
+          "id": "G5",
+          "title": "Parity with legacy output verified",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Parity-harness results (cf. CARL-4128)"
+        },
+        {
+          "id": "G6",
+          "title": "A golden / eval dataset exists for it",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "A golden-dataset location and naming convention"
+        }
+      ],
+      "stage": "dev only",
+      "flags": [],
+      "jira": null
+    },
+    {
+      "source": "LDR modelled (dim/fact)",
+      "layer": "silver",
+      "counts": {
+        "tables": 17,
+        "in_dev": 17,
+        "in_prod": 7,
+        "fresh_in_prod": 6,
+        "prod_with_history": 0,
+        "prod_recurring": 0,
+        "prod_single_snapshot": 0
+      },
+      "criteria": [
+        {
+          "id": "S1",
+          "title": "Exists in dev",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "17 of 17 tables in dev"
+        },
+        {
+          "id": "S2",
+          "title": "Promoted to prod",
+          "evidence": "glue",
+          "status": "partial",
+          "detail": "7 of 17 tables in prod"
+        },
+        {
+          "id": "S3",
+          "title": "Updated in prod within the freshness window",
+          "evidence": "glue",
+          "status": "partial",
+          "detail": "6 of 7 prod tables updated within 14d of the catalog snapshot"
+        },
+        {
+          "id": "S4",
+          "title": "Loads recur in prod (not a one-time load)",
+          "evidence": "load_history",
+          "status": "unverified",
+          "detail": "no load history for any of the 7 prod tables"
+        },
+        {
+          "id": "S5",
+          "title": "Join integrity verified (match rate, orphan rate)",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Join-verification results (cf. CARL-4177)"
+        },
+        {
+          "id": "S6",
+          "title": "Data-quality rule results are logged",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Rows in a DQ results table (a dq_metrics database exists in dev only)"
+        }
+      ],
+      "stage": "partly in prod",
+      "flags": [
+        "1 stale in prod"
+      ],
+      "jira": {
+        "requested_tables": 12,
+        "found_in_dev": 5,
+        "found_in_prod": 5,
+        "story_classes": {
+          "done_no_table_found": 1,
+          "done_and_in_prod": 5,
+          "open_no_table": 6
+        }
+      }
+    },
+    {
+      "source": "LDR modelled (dim/fact)",
+      "layer": "gold",
+      "counts": {
+        "tables": 17,
+        "in_dev": 17,
+        "in_prod": 11,
+        "fresh_in_prod": 9,
+        "prod_with_history": 0,
+        "prod_recurring": 0,
+        "prod_single_snapshot": 0
+      },
+      "criteria": [
+        {
+          "id": "G1",
+          "title": "Exists in dev",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "17 of 17 tables in dev"
+        },
+        {
+          "id": "G2",
+          "title": "Promoted to prod",
+          "evidence": "glue",
+          "status": "partial",
+          "detail": "11 of 17 tables in prod"
+        },
+        {
+          "id": "G3",
+          "title": "Updated in prod within the freshness window",
+          "evidence": "glue",
+          "status": "partial",
+          "detail": "9 of 11 prod tables updated within 14d of the catalog snapshot"
+        },
+        {
+          "id": "G4",
+          "title": "Business definition documented and owned",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "A data-product registry entry with owner and grain"
+        },
+        {
+          "id": "G5",
+          "title": "Parity with legacy output verified",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Parity-harness results (cf. CARL-4128)"
+        },
+        {
+          "id": "G6",
+          "title": "A golden / eval dataset exists for it",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "A golden-dataset location and naming convention"
+        }
+      ],
+      "stage": "partly in prod",
+      "flags": [
+        "2 stale in prod"
+      ],
+      "jira": {
+        "requested_tables": 7,
+        "found_in_dev": 2,
+        "found_in_prod": 2,
+        "story_classes": {
+          "open_no_table": 3,
+          "done_no_table_found": 2,
+          "live_but_open": 1,
+          "done_and_in_prod": 1
+        }
+      }
+    },
+    {
+      "source": "LDR other",
+      "layer": "bronze",
+      "counts": {
+        "tables": 12,
+        "in_dev": 12,
+        "in_prod": 7,
+        "fresh_in_prod": 6,
+        "prod_with_history": 0,
+        "prod_recurring": 0,
+        "prod_single_snapshot": 0
+      },
+      "criteria": [
+        {
+          "id": "B1",
+          "title": "Landed in dev",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "12 of 12 tables in dev"
+        },
+        {
+          "id": "B2",
+          "title": "Promoted to prod",
+          "evidence": "glue",
+          "status": "partial",
+          "detail": "7 of 12 tables in prod"
+        },
+        {
+          "id": "B3",
+          "title": "Updated in prod within the freshness window",
+          "evidence": "glue",
+          "status": "partial",
+          "detail": "6 of 7 prod tables updated within 14d of the catalog snapshot"
+        },
+        {
+          "id": "B4",
+          "title": "Loads recur in prod (not a one-time load)",
+          "evidence": "load_history",
+          "status": "unverified",
+          "detail": "no load history for any of the 7 prod tables"
+        },
+        {
+          "id": "B5",
+          "title": "Schema contract enforced (nullability, decimals preserved)",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Source-vs-bronze schema diff results (cf. CARL-3556)"
+        },
+        {
+          "id": "B6",
+          "title": "Complete against the source system's table list",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "A manifest of expected source tables and row counts"
+        }
+      ],
+      "stage": "partly in prod",
+      "flags": [
+        "1 stale in prod"
+      ],
+      "jira": null
+    },
+    {
+      "source": "LDR other",
+      "layer": "silver",
+      "counts": {
+        "tables": 9,
+        "in_dev": 9,
+        "in_prod": 3,
+        "fresh_in_prod": 3,
+        "prod_with_history": 0,
+        "prod_recurring": 0,
+        "prod_single_snapshot": 0
+      },
+      "criteria": [
+        {
+          "id": "S1",
+          "title": "Exists in dev",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "9 of 9 tables in dev"
+        },
+        {
+          "id": "S2",
+          "title": "Promoted to prod",
+          "evidence": "glue",
+          "status": "partial",
+          "detail": "3 of 9 tables in prod"
+        },
+        {
+          "id": "S3",
+          "title": "Updated in prod within the freshness window",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "3 of 3 prod tables updated within 14d of the catalog snapshot"
+        },
+        {
+          "id": "S4",
+          "title": "Loads recur in prod (not a one-time load)",
+          "evidence": "load_history",
+          "status": "unverified",
+          "detail": "no load history for any of the 3 prod tables"
+        },
+        {
+          "id": "S5",
+          "title": "Join integrity verified (match rate, orphan rate)",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Join-verification results (cf. CARL-4177)"
+        },
+        {
+          "id": "S6",
+          "title": "Data-quality rule results are logged",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Rows in a DQ results table (a dq_metrics database exists in dev only)"
+        }
+      ],
+      "stage": "partly in prod",
+      "flags": [],
+      "jira": null
+    },
+    {
+      "source": "LDR other",
+      "layer": "gold",
+      "counts": {
+        "tables": 12,
+        "in_dev": 12,
+        "in_prod": 9,
+        "fresh_in_prod": 4,
+        "prod_with_history": 0,
+        "prod_recurring": 0,
+        "prod_single_snapshot": 0
+      },
+      "criteria": [
+        {
+          "id": "G1",
+          "title": "Exists in dev",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "12 of 12 tables in dev"
+        },
+        {
+          "id": "G2",
+          "title": "Promoted to prod",
+          "evidence": "glue",
+          "status": "partial",
+          "detail": "9 of 12 tables in prod"
+        },
+        {
+          "id": "G3",
+          "title": "Updated in prod within the freshness window",
+          "evidence": "glue",
+          "status": "partial",
+          "detail": "4 of 9 prod tables updated within 14d of the catalog snapshot"
+        },
+        {
+          "id": "G4",
+          "title": "Business definition documented and owned",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "A data-product registry entry with owner and grain"
+        },
+        {
+          "id": "G5",
+          "title": "Parity with legacy output verified",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Parity-harness results (cf. CARL-4128)"
+        },
+        {
+          "id": "G6",
+          "title": "A golden / eval dataset exists for it",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "A golden-dataset location and naming convention"
+        }
+      ],
+      "stage": "partly in prod",
+      "flags": [
+        "5 stale in prod"
+      ],
+      "jira": null
+    },
+    {
+      "source": "Linear Forecasting",
+      "layer": "bronze",
+      "counts": {
+        "tables": 1,
+        "in_dev": 1,
+        "in_prod": 0,
+        "fresh_in_prod": 0,
+        "prod_with_history": 0,
+        "prod_recurring": 0,
+        "prod_single_snapshot": 0
+      },
+      "criteria": [
+        {
+          "id": "B1",
+          "title": "Landed in dev",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "1 of 1 tables in dev"
+        },
+        {
+          "id": "B2",
+          "title": "Promoted to prod",
+          "evidence": "glue",
+          "status": "fail",
+          "detail": "0 of 1 tables in prod"
+        },
+        {
+          "id": "B3",
+          "title": "Updated in prod within the freshness window",
+          "evidence": "glue",
+          "status": "na",
+          "detail": "0 of 0 prod tables updated within 14d of the catalog snapshot"
+        },
+        {
+          "id": "B4",
+          "title": "Loads recur in prod (not a one-time load)",
+          "evidence": "load_history",
+          "status": "na",
+          "detail": "nothing in prod"
+        },
+        {
+          "id": "B5",
+          "title": "Schema contract enforced (nullability, decimals preserved)",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Source-vs-bronze schema diff results (cf. CARL-3556)"
+        },
+        {
+          "id": "B6",
+          "title": "Complete against the source system's table list",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "A manifest of expected source tables and row counts"
+        }
+      ],
+      "stage": "dev only",
+      "flags": [],
+      "jira": null
+    },
+    {
+      "source": "Linear Forecasting",
+      "layer": "silver",
+      "counts": {
+        "tables": 6,
+        "in_dev": 6,
+        "in_prod": 0,
+        "fresh_in_prod": 0,
+        "prod_with_history": 0,
+        "prod_recurring": 0,
+        "prod_single_snapshot": 0
+      },
+      "criteria": [
+        {
+          "id": "S1",
+          "title": "Exists in dev",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "6 of 6 tables in dev"
+        },
+        {
+          "id": "S2",
+          "title": "Promoted to prod",
+          "evidence": "glue",
+          "status": "fail",
+          "detail": "0 of 6 tables in prod"
+        },
+        {
+          "id": "S3",
+          "title": "Updated in prod within the freshness window",
+          "evidence": "glue",
+          "status": "na",
+          "detail": "0 of 0 prod tables updated within 14d of the catalog snapshot"
+        },
+        {
+          "id": "S4",
+          "title": "Loads recur in prod (not a one-time load)",
+          "evidence": "load_history",
+          "status": "na",
+          "detail": "nothing in prod"
+        },
+        {
+          "id": "S5",
+          "title": "Join integrity verified (match rate, orphan rate)",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Join-verification results (cf. CARL-4177)"
+        },
+        {
+          "id": "S6",
+          "title": "Data-quality rule results are logged",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Rows in a DQ results table (a dq_metrics database exists in dev only)"
+        }
+      ],
+      "stage": "dev only",
+      "flags": [],
+      "jira": null
+    },
+    {
+      "source": "Linear Forecasting",
+      "layer": "gold",
+      "counts": {
+        "tables": 1,
+        "in_dev": 1,
+        "in_prod": 0,
+        "fresh_in_prod": 0,
+        "prod_with_history": 0,
+        "prod_recurring": 0,
+        "prod_single_snapshot": 0
+      },
+      "criteria": [
+        {
+          "id": "G1",
+          "title": "Exists in dev",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "1 of 1 tables in dev"
+        },
+        {
+          "id": "G2",
+          "title": "Promoted to prod",
+          "evidence": "glue",
+          "status": "fail",
+          "detail": "0 of 1 tables in prod"
+        },
+        {
+          "id": "G3",
+          "title": "Updated in prod within the freshness window",
+          "evidence": "glue",
+          "status": "na",
+          "detail": "0 of 0 prod tables updated within 14d of the catalog snapshot"
+        },
+        {
+          "id": "G4",
+          "title": "Business definition documented and owned",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "A data-product registry entry with owner and grain"
+        },
+        {
+          "id": "G5",
+          "title": "Parity with legacy output verified",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Parity-harness results (cf. CARL-4128)"
+        },
+        {
+          "id": "G6",
+          "title": "A golden / eval dataset exists for it",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "A golden-dataset location and naming convention"
+        }
+      ],
+      "stage": "dev only",
+      "flags": [],
+      "jira": null
+    },
+    {
+      "source": "Market Share (Ad Intel)",
+      "layer": "bronze",
+      "counts": {
+        "tables": 10,
+        "in_dev": 10,
+        "in_prod": 10,
+        "fresh_in_prod": 10,
+        "prod_with_history": 0,
+        "prod_recurring": 0,
+        "prod_single_snapshot": 0
+      },
+      "criteria": [
+        {
+          "id": "B1",
+          "title": "Landed in dev",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "10 of 10 tables in dev"
+        },
+        {
+          "id": "B2",
+          "title": "Promoted to prod",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "10 of 10 tables in prod"
+        },
+        {
+          "id": "B3",
+          "title": "Updated in prod within the freshness window",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "10 of 10 prod tables updated within 14d of the catalog snapshot"
+        },
+        {
+          "id": "B4",
+          "title": "Loads recur in prod (not a one-time load)",
+          "evidence": "load_history",
+          "status": "unverified",
+          "detail": "no load history for any of the 10 prod tables"
+        },
+        {
+          "id": "B5",
+          "title": "Schema contract enforced (nullability, decimals preserved)",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Source-vs-bronze schema diff results (cf. CARL-3556)"
+        },
+        {
+          "id": "B6",
+          "title": "Complete against the source system's table list",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "A manifest of expected source tables and row counts"
+        }
+      ],
+      "stage": "in prod",
+      "flags": [],
+      "jira": null
+    },
+    {
+      "source": "NEO",
+      "layer": "bronze",
+      "counts": {
+        "tables": 12,
+        "in_dev": 12,
+        "in_prod": 0,
+        "fresh_in_prod": 0,
+        "prod_with_history": 0,
+        "prod_recurring": 0,
+        "prod_single_snapshot": 0
+      },
+      "criteria": [
+        {
+          "id": "B1",
+          "title": "Landed in dev",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "12 of 12 tables in dev"
+        },
+        {
+          "id": "B2",
+          "title": "Promoted to prod",
+          "evidence": "glue",
+          "status": "fail",
+          "detail": "0 of 12 tables in prod"
+        },
+        {
+          "id": "B3",
+          "title": "Updated in prod within the freshness window",
+          "evidence": "glue",
+          "status": "na",
+          "detail": "0 of 0 prod tables updated within 14d of the catalog snapshot"
+        },
+        {
+          "id": "B4",
+          "title": "Loads recur in prod (not a one-time load)",
+          "evidence": "load_history",
+          "status": "na",
+          "detail": "nothing in prod"
+        },
+        {
+          "id": "B5",
+          "title": "Schema contract enforced (nullability, decimals preserved)",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Source-vs-bronze schema diff results (cf. CARL-3556)"
+        },
+        {
+          "id": "B6",
+          "title": "Complete against the source system's table list",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "A manifest of expected source tables and row counts"
+        }
+      ],
+      "stage": "dev only",
+      "flags": [],
+      "jira": null
+    },
+    {
+      "source": "NEO",
+      "layer": "silver",
+      "counts": {
+        "tables": 7,
+        "in_dev": 7,
+        "in_prod": 0,
+        "fresh_in_prod": 0,
+        "prod_with_history": 0,
+        "prod_recurring": 0,
+        "prod_single_snapshot": 0
+      },
+      "criteria": [
+        {
+          "id": "S1",
+          "title": "Exists in dev",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "7 of 7 tables in dev"
+        },
+        {
+          "id": "S2",
+          "title": "Promoted to prod",
+          "evidence": "glue",
+          "status": "fail",
+          "detail": "0 of 7 tables in prod"
+        },
+        {
+          "id": "S3",
+          "title": "Updated in prod within the freshness window",
+          "evidence": "glue",
+          "status": "na",
+          "detail": "0 of 0 prod tables updated within 14d of the catalog snapshot"
+        },
+        {
+          "id": "S4",
+          "title": "Loads recur in prod (not a one-time load)",
+          "evidence": "load_history",
+          "status": "na",
+          "detail": "nothing in prod"
+        },
+        {
+          "id": "S5",
+          "title": "Join integrity verified (match rate, orphan rate)",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Join-verification results (cf. CARL-4177)"
+        },
+        {
+          "id": "S6",
+          "title": "Data-quality rule results are logged",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Rows in a DQ results table (a dq_metrics database exists in dev only)"
+        }
+      ],
+      "stage": "dev only",
+      "flags": [],
+      "jira": null
+    },
+    {
+      "source": "NEO",
+      "layer": "gold",
+      "counts": {
+        "tables": 7,
+        "in_dev": 7,
+        "in_prod": 0,
+        "fresh_in_prod": 0,
+        "prod_with_history": 0,
+        "prod_recurring": 0,
+        "prod_single_snapshot": 0
+      },
+      "criteria": [
+        {
+          "id": "G1",
+          "title": "Exists in dev",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "7 of 7 tables in dev"
+        },
+        {
+          "id": "G2",
+          "title": "Promoted to prod",
+          "evidence": "glue",
+          "status": "fail",
+          "detail": "0 of 7 tables in prod"
+        },
+        {
+          "id": "G3",
+          "title": "Updated in prod within the freshness window",
+          "evidence": "glue",
+          "status": "na",
+          "detail": "0 of 0 prod tables updated within 14d of the catalog snapshot"
+        },
+        {
+          "id": "G4",
+          "title": "Business definition documented and owned",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "A data-product registry entry with owner and grain"
+        },
+        {
+          "id": "G5",
+          "title": "Parity with legacy output verified",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Parity-harness results (cf. CARL-4128)"
+        },
+        {
+          "id": "G6",
+          "title": "A golden / eval dataset exists for it",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "A golden-dataset location and naming convention"
+        }
+      ],
+      "stage": "dev only",
+      "flags": [],
+      "jira": null
+    },
+    {
+      "source": "Nielsen Big MIT",
+      "layer": "bronze",
+      "counts": {
+        "tables": 8,
+        "in_dev": 8,
+        "in_prod": 8,
+        "fresh_in_prod": 8,
+        "prod_with_history": 0,
+        "prod_recurring": 0,
+        "prod_single_snapshot": 0
+      },
+      "criteria": [
+        {
+          "id": "B1",
+          "title": "Landed in dev",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "8 of 8 tables in dev"
+        },
+        {
+          "id": "B2",
+          "title": "Promoted to prod",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "8 of 8 tables in prod"
+        },
+        {
+          "id": "B3",
+          "title": "Updated in prod within the freshness window",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "8 of 8 prod tables updated within 14d of the catalog snapshot"
+        },
+        {
+          "id": "B4",
+          "title": "Loads recur in prod (not a one-time load)",
+          "evidence": "load_history",
+          "status": "unverified",
+          "detail": "no load history for any of the 8 prod tables"
+        },
+        {
+          "id": "B5",
+          "title": "Schema contract enforced (nullability, decimals preserved)",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Source-vs-bronze schema diff results (cf. CARL-3556)"
+        },
+        {
+          "id": "B6",
+          "title": "Complete against the source system's table list",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "A manifest of expected source tables and row counts"
+        }
+      ],
+      "stage": "in prod",
+      "flags": [],
+      "jira": null
+    },
+    {
+      "source": "Nielsen NRLD",
+      "layer": "bronze",
+      "counts": {
+        "tables": 12,
+        "in_dev": 12,
+        "in_prod": 0,
+        "fresh_in_prod": 0,
+        "prod_with_history": 0,
+        "prod_recurring": 0,
+        "prod_single_snapshot": 0
+      },
+      "criteria": [
+        {
+          "id": "B1",
+          "title": "Landed in dev",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "12 of 12 tables in dev"
+        },
+        {
+          "id": "B2",
+          "title": "Promoted to prod",
+          "evidence": "glue",
+          "status": "fail",
+          "detail": "0 of 12 tables in prod"
+        },
+        {
+          "id": "B3",
+          "title": "Updated in prod within the freshness window",
+          "evidence": "glue",
+          "status": "na",
+          "detail": "0 of 0 prod tables updated within 14d of the catalog snapshot"
+        },
+        {
+          "id": "B4",
+          "title": "Loads recur in prod (not a one-time load)",
+          "evidence": "load_history",
+          "status": "na",
+          "detail": "nothing in prod"
+        },
+        {
+          "id": "B5",
+          "title": "Schema contract enforced (nullability, decimals preserved)",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Source-vs-bronze schema diff results (cf. CARL-3556)"
+        },
+        {
+          "id": "B6",
+          "title": "Complete against the source system's table list",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "A manifest of expected source tables and row counts"
+        }
+      ],
+      "stage": "dev only",
+      "flags": [],
+      "jira": null
+    },
+    {
+      "source": "Operative",
+      "layer": "bronze",
+      "counts": {
+        "tables": 89,
+        "in_dev": 81,
+        "in_prod": 89,
+        "fresh_in_prod": 88,
+        "prod_with_history": 0,
+        "prod_recurring": 0,
+        "prod_single_snapshot": 0
+      },
+      "criteria": [
+        {
+          "id": "B1",
+          "title": "Landed in dev",
+          "evidence": "glue",
+          "status": "partial",
+          "detail": "81 of 89 tables in dev"
+        },
+        {
+          "id": "B2",
+          "title": "Promoted to prod",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "89 of 89 tables in prod"
+        },
+        {
+          "id": "B3",
+          "title": "Updated in prod within the freshness window",
+          "evidence": "glue",
+          "status": "partial",
+          "detail": "88 of 89 prod tables updated within 14d of the catalog snapshot"
+        },
+        {
+          "id": "B4",
+          "title": "Loads recur in prod (not a one-time load)",
+          "evidence": "load_history",
+          "status": "unverified",
+          "detail": "no load history for any of the 89 prod tables"
+        },
+        {
+          "id": "B5",
+          "title": "Schema contract enforced (nullability, decimals preserved)",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Source-vs-bronze schema diff results (cf. CARL-3556)"
+        },
+        {
+          "id": "B6",
+          "title": "Complete against the source system's table list",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "A manifest of expected source tables and row counts"
+        }
+      ],
+      "stage": "in prod",
+      "flags": [
+        "1 stale in prod"
+      ],
+      "jira": null
+    },
+    {
+      "source": "QuickSight usage",
+      "layer": "bronze",
+      "counts": {
+        "tables": 5,
+        "in_dev": 5,
+        "in_prod": 5,
+        "fresh_in_prod": 5,
+        "prod_with_history": 0,
+        "prod_recurring": 0,
+        "prod_single_snapshot": 0
+      },
+      "criteria": [
+        {
+          "id": "B1",
+          "title": "Landed in dev",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "5 of 5 tables in dev"
+        },
+        {
+          "id": "B2",
+          "title": "Promoted to prod",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "5 of 5 tables in prod"
+        },
+        {
+          "id": "B3",
+          "title": "Updated in prod within the freshness window",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "5 of 5 prod tables updated within 14d of the catalog snapshot"
+        },
+        {
+          "id": "B4",
+          "title": "Loads recur in prod (not a one-time load)",
+          "evidence": "load_history",
+          "status": "unverified",
+          "detail": "no load history for any of the 5 prod tables"
+        },
+        {
+          "id": "B5",
+          "title": "Schema contract enforced (nullability, decimals preserved)",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Source-vs-bronze schema diff results (cf. CARL-3556)"
+        },
+        {
+          "id": "B6",
+          "title": "Complete against the source system's table list",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "A manifest of expected source tables and row counts"
+        }
+      ],
+      "stage": "in prod",
+      "flags": [],
+      "jira": null
+    },
+    {
+      "source": "QuickSight usage",
+      "layer": "silver",
+      "counts": {
+        "tables": 4,
+        "in_dev": 4,
+        "in_prod": 4,
+        "fresh_in_prod": 4,
+        "prod_with_history": 0,
+        "prod_recurring": 0,
+        "prod_single_snapshot": 0
+      },
+      "criteria": [
+        {
+          "id": "S1",
+          "title": "Exists in dev",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "4 of 4 tables in dev"
+        },
+        {
+          "id": "S2",
+          "title": "Promoted to prod",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "4 of 4 tables in prod"
+        },
+        {
+          "id": "S3",
+          "title": "Updated in prod within the freshness window",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "4 of 4 prod tables updated within 14d of the catalog snapshot"
+        },
+        {
+          "id": "S4",
+          "title": "Loads recur in prod (not a one-time load)",
+          "evidence": "load_history",
+          "status": "unverified",
+          "detail": "no load history for any of the 4 prod tables"
+        },
+        {
+          "id": "S5",
+          "title": "Join integrity verified (match rate, orphan rate)",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Join-verification results (cf. CARL-4177)"
+        },
+        {
+          "id": "S6",
+          "title": "Data-quality rule results are logged",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Rows in a DQ results table (a dq_metrics database exists in dev only)"
+        }
+      ],
+      "stage": "in prod",
+      "flags": [],
+      "jira": null
+    },
+    {
+      "source": "QuickSight usage",
+      "layer": "gold",
+      "counts": {
+        "tables": 1,
+        "in_dev": 1,
+        "in_prod": 1,
+        "fresh_in_prod": 1,
+        "prod_with_history": 0,
+        "prod_recurring": 0,
+        "prod_single_snapshot": 0
+      },
+      "criteria": [
+        {
+          "id": "G1",
+          "title": "Exists in dev",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "1 of 1 tables in dev"
+        },
+        {
+          "id": "G2",
+          "title": "Promoted to prod",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "1 of 1 tables in prod"
+        },
+        {
+          "id": "G3",
+          "title": "Updated in prod within the freshness window",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "1 of 1 prod tables updated within 14d of the catalog snapshot"
+        },
+        {
+          "id": "G4",
+          "title": "Business definition documented and owned",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "A data-product registry entry with owner and grain"
+        },
+        {
+          "id": "G5",
+          "title": "Parity with legacy output verified",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Parity-harness results (cf. CARL-4128)"
+        },
+        {
+          "id": "G6",
+          "title": "A golden / eval dataset exists for it",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "A golden-dataset location and naming convention"
+        }
+      ],
+      "stage": "in prod",
+      "flags": [],
+      "jira": null
+    },
+    {
+      "source": "Salesforce (via Oracle)",
+      "layer": "bronze",
+      "counts": {
+        "tables": 50,
+        "in_dev": 50,
+        "in_prod": 45,
+        "fresh_in_prod": 37,
+        "prod_with_history": 0,
+        "prod_recurring": 0,
+        "prod_single_snapshot": 0
+      },
+      "criteria": [
+        {
+          "id": "B1",
+          "title": "Landed in dev",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "50 of 50 tables in dev"
+        },
+        {
+          "id": "B2",
+          "title": "Promoted to prod",
+          "evidence": "glue",
+          "status": "partial",
+          "detail": "45 of 50 tables in prod"
+        },
+        {
+          "id": "B3",
+          "title": "Updated in prod within the freshness window",
+          "evidence": "glue",
+          "status": "partial",
+          "detail": "37 of 45 prod tables updated within 14d of the catalog snapshot"
+        },
+        {
+          "id": "B4",
+          "title": "Loads recur in prod (not a one-time load)",
+          "evidence": "load_history",
+          "status": "unverified",
+          "detail": "no load history for any of the 45 prod tables"
+        },
+        {
+          "id": "B5",
+          "title": "Schema contract enforced (nullability, decimals preserved)",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Source-vs-bronze schema diff results (cf. CARL-3556)"
+        },
+        {
+          "id": "B6",
+          "title": "Complete against the source system's table list",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "A manifest of expected source tables and row counts"
+        }
+      ],
+      "stage": "partly in prod",
+      "flags": [
+        "8 stale in prod"
+      ],
+      "jira": {
+        "requested_tables": 18,
+        "found_in_dev": 0,
+        "found_in_prod": 0,
+        "story_classes": {
+          "done_after_snapshot": 17,
+          "open_no_table": 1
+        }
+      }
+    },
+    {
+      "source": "Venus",
+      "layer": "silver",
+      "counts": {
+        "tables": 80,
+        "in_dev": 80,
+        "in_prod": 0,
+        "fresh_in_prod": 0,
+        "prod_with_history": 0,
+        "prod_recurring": 0,
+        "prod_single_snapshot": 0
+      },
+      "criteria": [
+        {
+          "id": "S1",
+          "title": "Exists in dev",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "80 of 80 tables in dev"
+        },
+        {
+          "id": "S2",
+          "title": "Promoted to prod",
+          "evidence": "glue",
+          "status": "fail",
+          "detail": "0 of 80 tables in prod"
+        },
+        {
+          "id": "S3",
+          "title": "Updated in prod within the freshness window",
+          "evidence": "glue",
+          "status": "na",
+          "detail": "0 of 0 prod tables updated within 14d of the catalog snapshot"
+        },
+        {
+          "id": "S4",
+          "title": "Loads recur in prod (not a one-time load)",
+          "evidence": "load_history",
+          "status": "na",
+          "detail": "nothing in prod"
+        },
+        {
+          "id": "S5",
+          "title": "Join integrity verified (match rate, orphan rate)",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Join-verification results (cf. CARL-4177)"
+        },
+        {
+          "id": "S6",
+          "title": "Data-quality rule results are logged",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Rows in a DQ results table (a dq_metrics database exists in dev only)"
+        }
+      ],
+      "stage": "dev only",
+      "flags": [],
+      "jira": null
+    },
+    {
+      "source": "Venus",
+      "layer": "gold",
+      "counts": {
+        "tables": 1,
+        "in_dev": 1,
+        "in_prod": 0,
+        "fresh_in_prod": 0,
+        "prod_with_history": 0,
+        "prod_recurring": 0,
+        "prod_single_snapshot": 0
+      },
+      "criteria": [
+        {
+          "id": "G1",
+          "title": "Exists in dev",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "1 of 1 tables in dev"
+        },
+        {
+          "id": "G2",
+          "title": "Promoted to prod",
+          "evidence": "glue",
+          "status": "fail",
+          "detail": "0 of 1 tables in prod"
+        },
+        {
+          "id": "G3",
+          "title": "Updated in prod within the freshness window",
+          "evidence": "glue",
+          "status": "na",
+          "detail": "0 of 0 prod tables updated within 14d of the catalog snapshot"
+        },
+        {
+          "id": "G4",
+          "title": "Business definition documented and owned",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "A data-product registry entry with owner and grain"
+        },
+        {
+          "id": "G5",
+          "title": "Parity with legacy output verified",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Parity-harness results (cf. CARL-4128)"
+        },
+        {
+          "id": "G6",
+          "title": "A golden / eval dataset exists for it",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "A golden-dataset location and naming convention"
+        }
+      ],
+      "stage": "dev only",
+      "flags": [],
+      "jira": null
+    },
+    {
+      "source": "adsales_iceberg",
+      "layer": "silver",
+      "counts": {
+        "tables": 3,
+        "in_dev": 3,
+        "in_prod": 0,
+        "fresh_in_prod": 0,
+        "prod_with_history": 0,
+        "prod_recurring": 0,
+        "prod_single_snapshot": 0
+      },
+      "criteria": [
+        {
+          "id": "S1",
+          "title": "Exists in dev",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "3 of 3 tables in dev"
+        },
+        {
+          "id": "S2",
+          "title": "Promoted to prod",
+          "evidence": "glue",
+          "status": "fail",
+          "detail": "0 of 3 tables in prod"
+        },
+        {
+          "id": "S3",
+          "title": "Updated in prod within the freshness window",
+          "evidence": "glue",
+          "status": "na",
+          "detail": "0 of 0 prod tables updated within 14d of the catalog snapshot"
+        },
+        {
+          "id": "S4",
+          "title": "Loads recur in prod (not a one-time load)",
+          "evidence": "load_history",
+          "status": "na",
+          "detail": "nothing in prod"
+        },
+        {
+          "id": "S5",
+          "title": "Join integrity verified (match rate, orphan rate)",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Join-verification results (cf. CARL-4177)"
+        },
+        {
+          "id": "S6",
+          "title": "Data-quality rule results are logged",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Rows in a DQ results table (a dq_metrics database exists in dev only)"
+        }
+      ],
+      "stage": "dev only",
+      "flags": [],
+      "jira": null
+    },
+    {
+      "source": "carl_inflight",
+      "layer": "bronze",
+      "counts": {
+        "tables": 1,
+        "in_dev": 1,
+        "in_prod": 0,
+        "fresh_in_prod": 0,
+        "prod_with_history": 0,
+        "prod_recurring": 0,
+        "prod_single_snapshot": 0
+      },
+      "criteria": [
+        {
+          "id": "B1",
+          "title": "Landed in dev",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "1 of 1 tables in dev"
+        },
+        {
+          "id": "B2",
+          "title": "Promoted to prod",
+          "evidence": "glue",
+          "status": "fail",
+          "detail": "0 of 1 tables in prod"
+        },
+        {
+          "id": "B3",
+          "title": "Updated in prod within the freshness window",
+          "evidence": "glue",
+          "status": "na",
+          "detail": "0 of 0 prod tables updated within 14d of the catalog snapshot"
+        },
+        {
+          "id": "B4",
+          "title": "Loads recur in prod (not a one-time load)",
+          "evidence": "load_history",
+          "status": "na",
+          "detail": "nothing in prod"
+        },
+        {
+          "id": "B5",
+          "title": "Schema contract enforced (nullability, decimals preserved)",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Source-vs-bronze schema diff results (cf. CARL-3556)"
+        },
+        {
+          "id": "B6",
+          "title": "Complete against the source system's table list",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "A manifest of expected source tables and row counts"
+        }
+      ],
+      "stage": "dev only",
+      "flags": [],
+      "jira": null
+    },
+    {
+      "source": "global_channel_insights",
+      "layer": "bronze",
+      "counts": {
+        "tables": 1,
+        "in_dev": 1,
+        "in_prod": 1,
+        "fresh_in_prod": 0,
+        "prod_with_history": 0,
+        "prod_recurring": 0,
+        "prod_single_snapshot": 0
+      },
+      "criteria": [
+        {
+          "id": "B1",
+          "title": "Landed in dev",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "1 of 1 tables in dev"
+        },
+        {
+          "id": "B2",
+          "title": "Promoted to prod",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "1 of 1 tables in prod"
+        },
+        {
+          "id": "B3",
+          "title": "Updated in prod within the freshness window",
+          "evidence": "glue",
+          "status": "fail",
+          "detail": "0 of 1 prod tables updated within 14d of the catalog snapshot"
+        },
+        {
+          "id": "B4",
+          "title": "Loads recur in prod (not a one-time load)",
+          "evidence": "load_history",
+          "status": "unverified",
+          "detail": "no load history for any of the 1 prod tables"
+        },
+        {
+          "id": "B5",
+          "title": "Schema contract enforced (nullability, decimals preserved)",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Source-vs-bronze schema diff results (cf. CARL-3556)"
+        },
+        {
+          "id": "B6",
+          "title": "Complete against the source system's table list",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "A manifest of expected source tables and row counts"
+        }
+      ],
+      "stage": "in prod",
+      "flags": [
+        "1 stale in prod"
+      ],
+      "jira": null
+    },
+    {
+      "source": "global_channel_insights",
+      "layer": "silver",
+      "counts": {
+        "tables": 1,
+        "in_dev": 1,
+        "in_prod": 1,
+        "fresh_in_prod": 0,
+        "prod_with_history": 0,
+        "prod_recurring": 0,
+        "prod_single_snapshot": 0
+      },
+      "criteria": [
+        {
+          "id": "S1",
+          "title": "Exists in dev",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "1 of 1 tables in dev"
+        },
+        {
+          "id": "S2",
+          "title": "Promoted to prod",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "1 of 1 tables in prod"
+        },
+        {
+          "id": "S3",
+          "title": "Updated in prod within the freshness window",
+          "evidence": "glue",
+          "status": "fail",
+          "detail": "0 of 1 prod tables updated within 14d of the catalog snapshot"
+        },
+        {
+          "id": "S4",
+          "title": "Loads recur in prod (not a one-time load)",
+          "evidence": "load_history",
+          "status": "unverified",
+          "detail": "no load history for any of the 1 prod tables"
+        },
+        {
+          "id": "S5",
+          "title": "Join integrity verified (match rate, orphan rate)",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Join-verification results (cf. CARL-4177)"
+        },
+        {
+          "id": "S6",
+          "title": "Data-quality rule results are logged",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Rows in a DQ results table (a dq_metrics database exists in dev only)"
+        }
+      ],
+      "stage": "in prod",
+      "flags": [
+        "1 stale in prod"
+      ],
+      "jira": null
+    },
+    {
+      "source": "h18",
+      "layer": "gold",
+      "counts": {
+        "tables": 1,
+        "in_dev": 1,
+        "in_prod": 0,
+        "fresh_in_prod": 0,
+        "prod_with_history": 0,
+        "prod_recurring": 0,
+        "prod_single_snapshot": 0
+      },
+      "criteria": [
+        {
+          "id": "G1",
+          "title": "Exists in dev",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "1 of 1 tables in dev"
+        },
+        {
+          "id": "G2",
+          "title": "Promoted to prod",
+          "evidence": "glue",
+          "status": "fail",
+          "detail": "0 of 1 tables in prod"
+        },
+        {
+          "id": "G3",
+          "title": "Updated in prod within the freshness window",
+          "evidence": "glue",
+          "status": "na",
+          "detail": "0 of 0 prod tables updated within 14d of the catalog snapshot"
+        },
+        {
+          "id": "G4",
+          "title": "Business definition documented and owned",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "A data-product registry entry with owner and grain"
+        },
+        {
+          "id": "G5",
+          "title": "Parity with legacy output verified",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Parity-harness results (cf. CARL-4128)"
+        },
+        {
+          "id": "G6",
+          "title": "A golden / eval dataset exists for it",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "A golden-dataset location and naming convention"
+        }
+      ],
+      "stage": "dev only",
+      "flags": [],
+      "jira": null
+    },
+    {
+      "source": "h18_silver_new",
+      "layer": "silver",
+      "counts": {
+        "tables": 5,
+        "in_dev": 5,
+        "in_prod": 0,
+        "fresh_in_prod": 0,
+        "prod_with_history": 0,
+        "prod_recurring": 0,
+        "prod_single_snapshot": 0
+      },
+      "criteria": [
+        {
+          "id": "S1",
+          "title": "Exists in dev",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "5 of 5 tables in dev"
+        },
+        {
+          "id": "S2",
+          "title": "Promoted to prod",
+          "evidence": "glue",
+          "status": "fail",
+          "detail": "0 of 5 tables in prod"
+        },
+        {
+          "id": "S3",
+          "title": "Updated in prod within the freshness window",
+          "evidence": "glue",
+          "status": "na",
+          "detail": "0 of 0 prod tables updated within 14d of the catalog snapshot"
+        },
+        {
+          "id": "S4",
+          "title": "Loads recur in prod (not a one-time load)",
+          "evidence": "load_history",
+          "status": "na",
+          "detail": "nothing in prod"
+        },
+        {
+          "id": "S5",
+          "title": "Join integrity verified (match rate, orphan rate)",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Join-verification results (cf. CARL-4177)"
+        },
+        {
+          "id": "S6",
+          "title": "Data-quality rule results are logged",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Rows in a DQ results table (a dq_metrics database exists in dev only)"
+        }
+      ],
+      "stage": "dev only",
+      "flags": [],
+      "jira": null
+    },
+    {
+      "source": "iDeal (Oracle)",
+      "layer": "bronze",
+      "counts": {
+        "tables": 392,
+        "in_dev": 392,
+        "in_prod": 129,
+        "fresh_in_prod": 116,
+        "prod_with_history": 129,
+        "prod_recurring": 0,
+        "prod_single_snapshot": 127
+      },
+      "criteria": [
+        {
+          "id": "B1",
+          "title": "Landed in dev",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "392 of 392 tables in dev"
+        },
+        {
+          "id": "B2",
+          "title": "Promoted to prod",
+          "evidence": "glue",
+          "status": "partial",
+          "detail": "129 of 392 tables in prod"
+        },
+        {
+          "id": "B3",
+          "title": "Updated in prod within the freshness window",
+          "evidence": "glue",
+          "status": "partial",
+          "detail": "116 of 129 prod tables updated within 14d of the catalog snapshot"
+        },
+        {
+          "id": "B4",
+          "title": "Loads recur in prod (not a one-time load)",
+          "evidence": "load_history",
+          "status": "unverified",
+          "detail": "0 recurring, 127 with a single retained snapshot, history covers 129 of 129 prod tables"
+        },
+        {
+          "id": "B5",
+          "title": "Schema contract enforced (nullability, decimals preserved)",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Source-vs-bronze schema diff results (cf. CARL-3556)"
+        },
+        {
+          "id": "B6",
+          "title": "Complete against the source system's table list",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "A manifest of expected source tables and row counts"
+        }
+      ],
+      "stage": "partly in prod",
+      "flags": [
+        "13 stale in prod",
+        "129 with no recurring-load evidence"
+      ],
+      "jira": {
+        "requested_tables": 22,
+        "found_in_dev": 21,
+        "found_in_prod": 11,
+        "story_classes": {
+          "in_dev_open": 10,
+          "live_but_open": 7,
+          "done_and_in_prod": 4,
+          "testing_no_table": 1
+        }
+      }
+    },
+    {
+      "source": "iDeal (Oracle)",
+      "layer": "silver",
+      "counts": {
+        "tables": 192,
+        "in_dev": 191,
+        "in_prod": 149,
+        "fresh_in_prod": 101,
+        "prod_with_history": 149,
+        "prod_recurring": 0,
+        "prod_single_snapshot": 149
+      },
+      "criteria": [
+        {
+          "id": "S1",
+          "title": "Exists in dev",
+          "evidence": "glue",
+          "status": "partial",
+          "detail": "191 of 192 tables in dev"
+        },
+        {
+          "id": "S2",
+          "title": "Promoted to prod",
+          "evidence": "glue",
+          "status": "partial",
+          "detail": "149 of 192 tables in prod"
+        },
+        {
+          "id": "S3",
+          "title": "Updated in prod within the freshness window",
+          "evidence": "glue",
+          "status": "partial",
+          "detail": "101 of 149 prod tables updated within 14d of the catalog snapshot"
+        },
+        {
+          "id": "S4",
+          "title": "Loads recur in prod (not a one-time load)",
+          "evidence": "load_history",
+          "status": "unverified",
+          "detail": "0 recurring, 149 with a single retained snapshot, history covers 149 of 149 prod tables"
+        },
+        {
+          "id": "S5",
+          "title": "Join integrity verified (match rate, orphan rate)",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Join-verification results (cf. CARL-4177)"
+        },
+        {
+          "id": "S6",
+          "title": "Data-quality rule results are logged",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Rows in a DQ results table (a dq_metrics database exists in dev only)"
+        }
+      ],
+      "stage": "partly in prod",
+      "flags": [
+        "48 stale in prod",
+        "149 with no recurring-load evidence"
+      ],
+      "jira": null
+    },
+    {
+      "source": "impact",
+      "layer": "bronze",
+      "counts": {
+        "tables": 3,
+        "in_dev": 3,
+        "in_prod": 0,
+        "fresh_in_prod": 0,
+        "prod_with_history": 0,
+        "prod_recurring": 0,
+        "prod_single_snapshot": 0
+      },
+      "criteria": [
+        {
+          "id": "B1",
+          "title": "Landed in dev",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "3 of 3 tables in dev"
+        },
+        {
+          "id": "B2",
+          "title": "Promoted to prod",
+          "evidence": "glue",
+          "status": "fail",
+          "detail": "0 of 3 tables in prod"
+        },
+        {
+          "id": "B3",
+          "title": "Updated in prod within the freshness window",
+          "evidence": "glue",
+          "status": "na",
+          "detail": "0 of 0 prod tables updated within 14d of the catalog snapshot"
+        },
+        {
+          "id": "B4",
+          "title": "Loads recur in prod (not a one-time load)",
+          "evidence": "load_history",
+          "status": "na",
+          "detail": "nothing in prod"
+        },
+        {
+          "id": "B5",
+          "title": "Schema contract enforced (nullability, decimals preserved)",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Source-vs-bronze schema diff results (cf. CARL-3556)"
+        },
+        {
+          "id": "B6",
+          "title": "Complete against the source system's table list",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "A manifest of expected source tables and row counts"
+        }
+      ],
+      "stage": "dev only",
+      "flags": [],
+      "jira": null
+    },
+    {
+      "source": "ump_linear_de",
+      "layer": "silver",
+      "counts": {
+        "tables": 5,
+        "in_dev": 5,
+        "in_prod": 0,
+        "fresh_in_prod": 0,
+        "prod_with_history": 0,
+        "prod_recurring": 0,
+        "prod_single_snapshot": 0
+      },
+      "criteria": [
+        {
+          "id": "S1",
+          "title": "Exists in dev",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "5 of 5 tables in dev"
+        },
+        {
+          "id": "S2",
+          "title": "Promoted to prod",
+          "evidence": "glue",
+          "status": "fail",
+          "detail": "0 of 5 tables in prod"
+        },
+        {
+          "id": "S3",
+          "title": "Updated in prod within the freshness window",
+          "evidence": "glue",
+          "status": "na",
+          "detail": "0 of 0 prod tables updated within 14d of the catalog snapshot"
+        },
+        {
+          "id": "S4",
+          "title": "Loads recur in prod (not a one-time load)",
+          "evidence": "load_history",
+          "status": "na",
+          "detail": "nothing in prod"
+        },
+        {
+          "id": "S5",
+          "title": "Join integrity verified (match rate, orphan rate)",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Join-verification results (cf. CARL-4177)"
+        },
+        {
+          "id": "S6",
+          "title": "Data-quality rule results are logged",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Rows in a DQ results table (a dq_metrics database exists in dev only)"
+        }
+      ],
+      "stage": "dev only",
+      "flags": [],
+      "jira": null
+    },
+    {
+      "source": "unmapped",
+      "layer": "silver",
+      "counts": {
+        "tables": 0,
+        "in_dev": 0,
+        "in_prod": 0,
+        "fresh_in_prod": 0,
+        "prod_with_history": 0,
+        "prod_recurring": 0,
+        "prod_single_snapshot": 0
+      },
+      "criteria": [
+        {
+          "id": "S1",
+          "title": "Exists in dev",
+          "evidence": "glue",
+          "status": "na",
+          "detail": "0 of 0 tables in dev"
+        },
+        {
+          "id": "S2",
+          "title": "Promoted to prod",
+          "evidence": "glue",
+          "status": "na",
+          "detail": "0 of 0 tables in prod"
+        },
+        {
+          "id": "S3",
+          "title": "Updated in prod within the freshness window",
+          "evidence": "glue",
+          "status": "na",
+          "detail": "0 of 0 prod tables updated within 14d of the catalog snapshot"
+        },
+        {
+          "id": "S4",
+          "title": "Loads recur in prod (not a one-time load)",
+          "evidence": "load_history",
+          "status": "na",
+          "detail": "nothing in prod"
+        },
+        {
+          "id": "S5",
+          "title": "Join integrity verified (match rate, orphan rate)",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Join-verification results (cf. CARL-4177)"
+        },
+        {
+          "id": "S6",
+          "title": "Data-quality rule results are logged",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Rows in a DQ results table (a dq_metrics database exists in dev only)"
+        }
+      ],
+      "stage": "not present",
+      "flags": [],
+      "jira": {
+        "requested_tables": 1,
+        "found_in_dev": 0,
+        "found_in_prod": 0,
+        "story_classes": {
+          "open_no_table": 1
+        }
+      }
+    },
+    {
+      "source": "usaffdwh",
+      "layer": "silver",
+      "counts": {
+        "tables": 28,
+        "in_dev": 28,
+        "in_prod": 0,
+        "fresh_in_prod": 0,
+        "prod_with_history": 0,
+        "prod_recurring": 0,
+        "prod_single_snapshot": 0
+      },
+      "criteria": [
+        {
+          "id": "S1",
+          "title": "Exists in dev",
+          "evidence": "glue",
+          "status": "pass",
+          "detail": "28 of 28 tables in dev"
+        },
+        {
+          "id": "S2",
+          "title": "Promoted to prod",
+          "evidence": "glue",
+          "status": "fail",
+          "detail": "0 of 28 tables in prod"
+        },
+        {
+          "id": "S3",
+          "title": "Updated in prod within the freshness window",
+          "evidence": "glue",
+          "status": "na",
+          "detail": "0 of 0 prod tables updated within 14d of the catalog snapshot"
+        },
+        {
+          "id": "S4",
+          "title": "Loads recur in prod (not a one-time load)",
+          "evidence": "load_history",
+          "status": "na",
+          "detail": "nothing in prod"
+        },
+        {
+          "id": "S5",
+          "title": "Join integrity verified (match rate, orphan rate)",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Join-verification results (cf. CARL-4177)"
+        },
+        {
+          "id": "S6",
+          "title": "Data-quality rule results are logged",
+          "evidence": "none",
+          "status": "unverified",
+          "detail": "no evidence source",
+          "needs": "Rows in a DQ results table (a dq_metrics database exists in dev only)"
+        }
+      ],
+      "stage": "dev only",
+      "flags": [],
+      "jira": null
+    }
+  ],
+  "excluded": {
+    "sandbox database": 178,
+    "no medallion layer (raw/audit/unknown)": 13,
+    "test/tmp-looking table name": 55
+  },
+  "jira_match": {
+    "stories_total": 250,
+    "reconciled": 176,
+    "matched": 28,
+    "unparsed": 74,
+    "unmatched_parsed": 148
+  },
+  "findings": [
+    {
+      "id": "dev-only-layers",
+      "count": 421,
+      "text": "421 tables across 21 source/layer groups exist only in dev, with nothing in prod. Largest: CARL DWH (legacy gold) gold (150); Venus silver (80); FreeWheel bronze (79); usaffdwh silver (28); NEO bronze (12)."
+    },
+    {
+      "id": "one_time_loads",
+      "count": 56,
+      "text": "56 prod tables have exactly one retained snapshot older than 14 days, so no recurring load is evidenced. By source: iDeal (Oracle) (56)."
+    },
+    {
+      "id": "testing_no_table",
+      "count": 29,
+      "text": "29 stories are in Ready for Testing / In Testing / UAT / In Review with no matching table in the catalog (e.g. CARL-1382, CARL-1383, CARL-1384, CARL-1386, CARL-1389, CARL-1390). All were touched after the 2026-10-07 snapshot, so the tables may simply post-date the catalog export. Refresh the catalog before treating these as gaps."
+    },
+    {
+      "id": "done_after_snapshot",
+      "count": 18,
+      "text": "18 Done stories were resolved after the catalog snapshot, so they cannot be judged until the catalog is refreshed."
+    },
+    {
+      "id": "live_but_open",
+      "count": 8,
+      "text": "8 stories are still open although a matching table is already in prod (7 of them Blocked: CARL-696, CARL-698, CARL-705, CARL-1469, CARL-1470, CARL-1472, CARL-2803). The ticket status is stale, or the table is live but unaccepted. Either way reporting on Jira status misstates the lake."
+    },
+    {
+      "id": "done_no_table_found",
+      "count": 3,
+      "text": "3 stories were Done before the catalog snapshot but no matching table exists: CARL-242, CARL-280, CARL-295. 2 of them have a near-identical table name in the catalog (likely a rename), so they are naming drift rather than missing data; the rest need an owner to confirm."
+    }
+  ]
+}

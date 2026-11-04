@@ -1,0 +1,134 @@
+# iceberg-catalog-agent configuration.
+#
+# This is the only file you normally edit. Everything with a REPLACE_ME is
+# something the agent cannot discover for itself.
+
+run:
+  # A table counts as "refreshed" if its Glue UpdateTime falls inside this many
+  # days in any environment. 14 matches the original hand-run snapshot.
+  window_days: 14
+  timezone: Asia/Kolkata
+  # Restrict collection to Iceberg tables. Set false to include Hive/Delta too.
+  iceberg_only: true
+  output_dir: out
+
+# One block per AWS account. Use `profile` on a laptop, `role_arn` in CI.
+# Account IDs are the ones recorded in the September snapshot.
+environments:
+  - name: dev
+    account_id: "657246005217"
+    region: us-east-1
+    profile: carl-dev
+    # role_arn: arn:aws:iam::657246005217:role/CarlCatalogReader
+  - name: qa
+    account_id: "571850511884"
+    region: us-east-1
+    profile: carl-qa
+  - name: stage
+    account_id: "956322716698"
+    region: us-east-1
+    profile: carl-stage
+  - name: prod
+    account_id: "488343657546"
+    region: us-east-1
+    profile: carl-prod
+
+# Databases excluded from collection entirely. These are scratch spaces whose
+# contents would drown the published document. Anything not excluded but still
+# scratch-looking gets tiered as `sandbox` instead — see classify.py.
+exclude_databases:
+  - "glue_db_*"
+  - "glue-apac-mr-poc"
+  - "wbd_sample_database"
+  - "sagemaker_sample_db"
+
+# Databases whose names mark them as scratch. Tables here are collected and
+# counted but never surfaced as available.
+sandbox_patterns:
+  - "*test*"
+  - "*_poc*"
+  - "poc_*"
+  - "*sample*"
+  - "*example*"
+  - "default"
+  - "vg_*"
+  - "*sandbox*"
+  - "*_uat*"
+
+# Business domains. A database matching any pattern joins that domain; anything
+# unmatched falls back to its own name with layer/env suffixes stripped.
+domains:
+  Linear & Digital Revenue:
+    - "linear_digital_revenue_*"
+    - "carl_dwhprd_gold_*"
+  Measurement:
+    - "big_mit_*"
+    - "marketshare_*"
+    - "marketresearch_*"
+  Digital Ad Serving:
+    - "freewheel_*"
+    - "operative_*"
+    - "operative1_*"
+  Forecasting:
+    - "ddl_forecasting_*"
+    - "linear_forecasting_*"
+  Linear Programming:
+    - "linear_programming_*"
+  Ad Products:
+    - "adproducts_*"
+  Platform & Observability:
+    - "ingestion_control"
+    - "dq_metrics"
+    - "carl_lumos_audit_*"
+    - "neo_audit"
+    - "quicksight_usage_*"
+  Venus:
+    - "venus_*"
+  NRLD:
+    - "nrld_*"
+  Neo:
+    - "neo_bronze"
+    - "neo_silver"
+    - "neo_gold"
+
+registry:
+  products: registry/products.yaml
+  cube_model: registry/cube_model.yaml
+
+# Optional. A CSV or JSON export of the intake form's responses, used to
+# compute the reuse rate — the share of incoming demand answered with something
+# that already existed. Without it that metric is reported as unknown rather
+# than estimated.
+intake:
+  # The catalog's "Request this" and "Request new" links point here. The agent
+  # appends query parameters so the form opens with the product already named:
+  #   ?product_id=LDR-PACING-001&product_name=...&mode=reuse
+  form_url: "REPLACE_ME — paste the Intake demand form URL"
+  log_path: null   # e.g. intake/responses.csv
+
+# Adoption targets. Published next to each metric so the number has a verdict
+# rather than just a value. Set to null to publish the number without a target.
+targets:
+  product_coverage: 40
+  semantic_coverage: 60
+  consumer_visibility: 50
+  producer_visibility: 80
+  prod_freshness: 95
+  promotion_rate: 45
+  reuse_rate: 30
+
+# Weekly publish target.
+confluence:
+  enabled: false
+  base_url: "REPLACE_ME — https://<your-tenant>.atlassian.net/wiki"
+  space_key: "REPLACE_ME"
+  # Create the page once by hand, then paste its ID here. The agent updates
+  # that page in place every week so the URL you circulate never changes —
+  # which matters, because it is the link sitting inside the intake form.
+  page_id: "REPLACE_ME"
+  page_title: "CARL Iceberg & Cube — what's available"
+  # Credentials come from the environment, never from this file:
+  #   CONFLUENCE_USER   your atlassian account email
+  #   CONFLUENCE_TOKEN  an API token from id.atlassian.com
+  auth_env_user: CONFLUENCE_USER
+  auth_env_token: CONFLUENCE_TOKEN

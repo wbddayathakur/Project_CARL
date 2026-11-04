@@ -1,0 +1,600 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NEO Reporting — Pacing Hub (prototype)</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --card: #fff; --ink: #1d2330; --muted: #6b7385; --line: #e3e6ec;
+    --neo: #0e7490; --neo-bg: #e2f3f7;
+    --bronze: #b0703a; --bronze-bg: #f7ece2; --silver: #6f7d8c; --silver-bg: #eceff3;
+    --gold: #b38b12; --gold-bg: #f8f1d9; --cube: #5b4bd6; --cube-bg: #ecebfb;
+    --src: #475569; --src-bg: #eef1f5;
+    --ok: #1f8a5b; --ok-bg: #dff3e9; --warn: #c27c0e; --warn-bg: #fbf0dc; --bad: #c2412d; --bad-bg: #fbe4e0;
+    --none: #8b8f99; --none-bg: #eeeff1;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 14px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--ink); }
+  header { background: #141a26; color: #fff; padding: 16px 28px 0; position: sticky; top: 0; z-index: 5; }
+  .hrow { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  header h1 { margin: 0; font-size: 19px; font-weight: 650; }
+  header h1 span { color: #7dd3e6; }
+  header .meta { color: #a9b1c2; font-size: 12px; margin-top: 3px; }
+  .persona { margin-left: auto; display: flex; align-items: center; gap: 8px; font-size: 12px; color: #a9b1c2; }
+  .persona select { background: #222b3b; color: #fff; border: 1px solid #3a4558; border-radius: 7px; padding: 6px 8px; font-size: 13px; }
+  nav { display: flex; gap: 2px; margin-top: 12px; overflow-x: auto; }
+  nav button { background: none; border: 0; color: #c4cad6; padding: 10px 14px; font-size: 14px; cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; }
+  nav button:hover { color: #fff; }
+  nav button.active { color: #fff; border-bottom-color: #7dd3e6; font-weight: 600; }
+  nav button.locked { color: #5d6678; cursor: not-allowed; }
+  main { padding: 20px 28px 60px; max-width: 1500px; margin: 0 auto; }
+  section.tab { display: none; } section.tab.active { display: block; }
+  h2 { font-size: 16px; margin: 24px 0 10px; } h2:first-child { margin-top: 0; }
+  h2 small { font-weight: 400; color: var(--muted); font-size: 12px; margin-left: 8px; }
+  .banner { background: var(--warn-bg); color: #7a4d08; border: 1px solid #f0d9a8; border-radius: 8px; padding: 8px 12px; font-size: 12px; margin-bottom: 16px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+  .grid { display: grid; gap: 14px; }
+  .kpis { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
+  .kpi .l { color: var(--muted); font-size: 12px; } .kpi .v { font-size: 26px; font-weight: 700; } .kpi .s { font-size: 12px; color: var(--muted); }
+  .two { grid-template-columns: 1.4fr 1fr; } .half { grid-template-columns: 1fr 1fr; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 7px 9px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); background: #fafbfc; white-space: nowrap; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  tr.click { cursor: pointer; } tr.click:hover td { background: #f7f8fb; } tr.sel td { background: #eef6fa !important; }
+  .scroll { max-height: 520px; overflow: auto; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+  .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; }
+  .muted { color: var(--muted); } .note { font-size: 12px; color: var(--muted); margin-top: 8px; }
+  .chip { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; white-space: nowrap; margin: 1px 2px 1px 0; }
+  .h-ok { background: var(--ok-bg); color: var(--ok); } .h-risk { background: var(--warn-bg); color: var(--warn); }
+  .h-behind { background: var(--bad-bg); color: var(--bad); } .h-none { background: var(--none-bg); color: var(--none); }
+  .s-live { background: var(--ok-bg); color: var(--ok); } .s-build { background: #e3eefc; color: #1d5bb8; }
+  .s-uat { background: #eee8fb; color: #5a3fb0; } .s-plan { background: var(--warn-bg); color: #94600a; } .s-block { background: var(--bad-bg); color: var(--bad); }
+  .m-native { background: var(--neo-bg); color: var(--neo); } .m-embed { background: var(--cube-bg); color: var(--cube); }
+  .m-link { background: var(--src-bg); color: var(--src); } .m-feed { background: var(--gold-bg); color: var(--gold); }
+  .controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 0 0 10px; }
+  .controls input[type=search] { flex: 1 1 240px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 7px; font-size: 13px; }
+  .controls select { padding: 7px 8px; border: 1px solid var(--line); border-radius: 7px; font-size: 13px; background: #fff; }
+  .controls .n { color: var(--muted); font-size: 12px; margin-left: auto; }
+  .trust { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12px; color: var(--muted); border-top: 1px dashed var(--line); margin-top: 12px; padding-top: 8px; }
+  .trust b { color: var(--ink); font-weight: 600; }
+  .trust a { color: var(--neo); cursor: pointer; text-decoration: none; }
+  .pbar { position: relative; height: 10px; background: #eef0f3; border-radius: 5px; min-width: 120px; }
+  .pbar .fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 5px; }
+  .pbar .tick { position: absolute; top: -3px; bottom: -3px; width: 2px; background: #1d2330; }
+  .lens { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; }
+  .lens .card { border-top: 4px solid var(--c); cursor: pointer; transition: box-shadow .15s; }
+  .lens .card:hover { box-shadow: 0 4px 14px rgba(0,0,0,.08); }
+  .lens .card.off { opacity: .45; cursor: not-allowed; }
+  .lens h3 { margin: 0 0 4px; font-size: 14px; color: var(--c); }
+  .lens .big { font-size: 28px; font-weight: 700; }
+  .alert { display: grid; grid-template-columns: 8px 1fr auto; gap: 10px; align-items: start; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+  .alert:last-child { border-bottom: 0; }
+  .alert i { width: 8px; height: 8px; border-radius: 50%; margin-top: 6px; }
+  .btn { border: 1px solid var(--line); background: #fff; border-radius: 7px; padding: 6px 11px; font-size: 13px; cursor: pointer; }
+  .btn.primary { background: var(--neo); border-color: var(--neo); color: #fff; }
+  .chain { display: flex; align-items: stretch; gap: 0; overflow-x: auto; padding-bottom: 4px; }
+  .node { min-width: 175px; background: #fff; border: 1px solid var(--line); border-top: 4px solid var(--c); border-radius: 8px; padding: 9px 10px; font-size: 12px; }
+  .node .t { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--c); font-weight: 700; }
+  .node .n { font-weight: 600; font-size: 13px; margin: 2px 0; word-break: break-word; }
+  .node .d { color: var(--muted); }
+  .node ul { margin: 4px 0 0; padding-left: 16px; }
+  .arrow { display: flex; align-items: center; padding: 0 6px; color: var(--muted); font-size: 18px; }
+  .chips-pick { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chips-pick label { border: 1px solid var(--line); border-radius: 14px; padding: 3px 10px; font-size: 12px; cursor: pointer; background: #fff; user-select: none; }
+  .chips-pick input { display: none; }
+  .chips-pick input:checked + span { color: var(--neo); font-weight: 650; }
+  .chips-pick label:has(input:checked) { border-color: var(--neo); background: var(--neo-bg); }
+  .chips-pick label.na { opacity: .4; cursor: not-allowed; }
+  .fgroup { margin-bottom: 12px; } .fgroup .ft { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin-bottom: 5px; font-weight: 600; }
+  .legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: 12px; color: var(--muted); margin: 4px 0 8px; }
+  .legend i { display: inline-block; width: 12px; height: 3px; margin-right: 5px; vertical-align: 3px; }
+  svg text { font: 11px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: var(--muted); }
+  @media (max-width: 1000px) { .two, .half { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="hrow">
+    <div>
+      <h1><span>NEO</span> Reporting · Pacing Hub</h1>
+      <div class="meta">Every pacing report in one place, scoped to who you are, traceable to CARL and the source system.</div>
+    </div>
+    <div class="persona">Viewing as
+      <select id="persona"></select>
+    </div>
+  </div>
+  <nav id="nav"></nav>
+</header>
+<main>
+  <div class="banner">Layout prototype. Campaign, team and dollar figures are illustrative. The report library, owners, Jira keys, tables and Cube views are real, taken from Jira, Confluence (ADD 015, NEO Reporting PRD) and the CARL registry on 4 Nov 2026.</div>
+  <section class="tab" id="tab-home"></section>
+  <section class="tab" id="tab-delivery"></section>
+  <section class="tab" id="tab-revenue"></section>
+  <section class="tab" id="tab-library"></section>
+  <section class="tab" id="tab-builder"></section>
+  <section class="tab" id="tab-lineage"></section>
+</main>
+<script>
+// ---------------------------------------------------------------- personas
+// Scope is enforced in the Cube access policy, not in the UI; the UI only mirrors it.
+const PERSONAS = {
+  buyer:   { label: "Agency / advertiser buyer", scope: "Campaigns of your agency–advertiser combination only",
+             tabs: ["home", "delivery", "builder", "lineage"], lenses: ["delivery"] },
+  ae:      { label: "Account executive", scope: "Your book of business (accounts assigned in Salesforce)",
+             tabs: ["home", "delivery", "revenue", "library", "builder", "lineage"], lenses: ["delivery", "revenue", "alerts"] },
+  finance: { label: "Sales leadership / Finance", scope: "All teams, networks and accounts",
+             tabs: ["home", "revenue", "library", "builder", "lineage"], lenses: ["revenue", "forecast", "library"] },
+  ops:     { label: "NEO Ops / support", scope: "All NEO campaigns, after picking an advertiser or agency",
+             tabs: ["home", "delivery", "library", "builder", "lineage"], lenses: ["delivery", "trust", "library"] },
+};
+const TABS = [
+  ["home", "Pacing home"], ["delivery", "Delivery pacing"], ["revenue", "Revenue pacing"],
+  ["library", "All pacing reports"], ["builder", "Build a report"], ["lineage", "Lineage & trust"],
+];
+
+// ---------------------------------------------------------------- illustrative delivery data
+// Health band = achieved daily rate vs required daily rate for the remainder of the flight.
+const CAMPAIGNS = [
+  { id: "C-10482", name: "Q4 Holiday CTV — Streaming Prime", adv: "Northwind Retail", agency: "Horizon Media", ae: "ae", buy: "NEO",
+    start: "2026-10-06", end: "2026-11-30", goal: 18000000, delivered: 9120000, elapsed: 0.53, req: 330000, rate: 318000, spend: 296400, vcr: 94.1, cpm: 32.5 },
+  { id: "C-10511", name: "Fall Launch — Food & Home", adv: "Contoso Foods", agency: "Horizon Media", ae: "ae", buy: "NEO",
+    start: "2026-10-13", end: "2026-11-23", goal: 9500000, delivered: 3610000, elapsed: 0.55, req: 310000, rate: 210000, spend: 112000, vcr: 92.7, cpm: 31.0 },
+  { id: "C-10533", name: "Sports Sponsorship — Sunday Football", adv: "Fabrikam Auto", agency: "OMD", ae: "ae", buy: "Direct IO",
+    start: "2026-09-08", end: "2026-12-28", goal: 24000000, delivered: 13350000, elapsed: 0.51, req: 196000, rate: 214000, spend: 534000, vcr: 96.3, cpm: 40.0 },
+  { id: "C-10547", name: "Always-on Brand — True Crime", adv: "Litware Pharma", agency: "OMD", ae: "other", buy: "NEO",
+    start: "2026-10-01", end: "2026-12-31", goal: 12000000, delivered: 4960000, elapsed: 0.38, req: 125000, rate: 146000, spend: 168600, vcr: 93.4, cpm: 34.0 },
+  { id: "C-10560", name: "Black Friday Burst", adv: "Northwind Retail", agency: "Horizon Media", ae: "ae", buy: "NEO",
+    start: "2026-11-20", end: "2026-11-29", goal: 6000000, delivered: 0, elapsed: 0, req: null, rate: null, spend: 0, vcr: null, cpm: null, state: "notstarted" },
+  { id: "C-10571", name: "Kids Co-viewing — Animation", adv: "Tailspin Toys", agency: "Publicis", ae: "other", buy: "NEO",
+    start: "2026-10-20", end: "2026-12-15", goal: 7000000, delivered: 1410000, elapsed: 0.27, req: 140000, rate: 88000, spend: 45100, vcr: 91.2, cpm: 32.0, state: "stale" },
+];
+const DAILY = (() => {   // illustrative daily series for C-10511
+  const days = 42, goal = 9500000, today = 23, deliveredToDate = 3610000;
+  const raw = Array.from({ length: today }, (_, d) => 150000 + 60000 * Math.sin(d / 3) + d * 1500);
+  const scale = deliveredToDate / raw.reduce((a, b) => a + b, 0);
+  let cum = 0;
+  return Array.from({ length: days }, (_, d) => {
+    if (d < today) cum += raw[d] * scale;
+    return { d, plan: Math.round(goal / days * (d + 1)), cum: d < today ? Math.round(cum) : null };
+  });
+})();
+
+// ---------------------------------------------------------------- illustrative revenue data
+const TEAMS = [
+  { team: "Entertainment — East", budget: 48.2, booked: 41.9, forecast: 47.1, prior: 0.86 },
+  { team: "Entertainment — West", budget: 39.5, booked: 36.8, forecast: 40.2, prior: 0.91 },
+  { team: "News", budget: 22.0, booked: 17.4, forecast: 20.3, prior: 0.82 },
+  { team: "Sports", budget: 61.8, booked: 60.1, forecast: 63.0, prior: 0.95 },
+  { team: "Digital — Streaming", budget: 33.4, booked: 25.0, forecast: 30.9, prior: 0.71 },
+  { team: "Direct Response", budget: 14.6, booked: 13.9, forecast: 14.4, prior: 0.93 },
+];
+
+// ---------------------------------------------------------------- real report inventory
+// status: live | uat | build | plan | block      mode: native | embed | link | feed
+const REPORTS = [
+  { name: "NEO Campaign & Deal Delivery Pacing", kind: "Delivery", aud: ["buyer", "ae", "ops"], today: "NEO 1.0 (Laravel, Postgres)",
+    status: "build", mode: "native", lineage: "delivery", jira: ["CN-64", "CN-86"], owner: "Brian Federico · Shefali Jaipuriar",
+    note: "ADD 015 Phase 1: dev pipelines live, Gold populated, Cube models in progress. Pacing % = cumulative impressions / contracted impressions." },
+  { name: "NEO Delivery Health Benchmarks (windowed)", kind: "Delivery", aud: ["buyer", "ae", "ops"], today: "Not built",
+    status: "plan", mode: "native", lineage: "delivery", jira: [], owner: "NEO Product",
+    note: "Reporting PRD Stage 1: pre-flight benchmark in aggregated windows, recomputed in flight, shown as a status band. FreeWheel OSI / FFDR post-MVP." },
+  { name: "Linear & Digital Converged Pacing", kind: "Revenue", aud: ["ae", "finance"], today: "Quick Suite",
+    status: "live", mode: "embed", lineage: "revenue", jira: ["CARL-5", "CARL-2771", "CARL-2769", "CARL-2770"], owner: "Arlene Rose",
+    note: "Live. Open: filter fixes, cosmetic issues and a user-feedback round. Replaced the Tableau pacing dashboard." },
+  { name: "Ad Sales National Incentive Revenue Pacing (SIP)", kind: "Revenue", aud: ["ae", "finance"], today: "Quick Suite",
+    status: "live", mode: "embed", lineage: "revenue", jira: ["CARL-4110", "CARL-3696", "CARL-3933"], owner: "Arlene Rose",
+    note: "Released 30 Sep. Budget/revenue bug in UAT; RLS login-ID case sensitivity and VP sign-off still open." },
+  { name: "Finance Forecasting Pacing (booked vs budget vs forecast)", kind: "Forecast", aud: ["finance"], today: "Excel / manual",
+    status: "build", mode: "embed", lineage: "forecast", jira: ["CARL-1364", "CARL-1366", "CARL-3952", "CARL-4239"], owner: "Arlene Rose · Saman Saran",
+    note: "Gold table not deployed (CARL-3952 To Do). Blocked on the live Finance forecast file. Cube view vs dataset path undecided (CARL-4239)." },
+  { name: "CNN Domestic Ad Sales — Finance Pacing", kind: "Revenue", aud: ["finance"], today: "Power BI",
+    status: "build", mode: "link", lineage: "revenue", jira: ["CARL-4095"], owner: "Daya Thakur",
+    note: "Assessing how much of the 2026 Power BI report the CARL semantic layer can already serve." },
+  { name: "2026 Linear Pending (Revamp Pacing)", kind: "Revenue", aud: ["ae", "finance"], today: "MicroStrategy",
+    status: "uat", mode: "link", lineage: "revenue", jira: ["CARL-4311"], owner: "Mary Thrower",
+    note: "New MSTR report in testing. Linked from NEO until MSTR retirement moves it onto Cube." },
+  { name: "2026 Sports Rev (Revamp Pacing)", kind: "Revenue", aud: ["ae", "finance"], today: "MicroStrategy",
+    status: "uat", mode: "link", lineage: "revenue", jira: ["CARL-4314"], owner: "Mary Thrower", note: "Ready for UAT." },
+  { name: "2026 Ent & News Rev (Revamp Pacing)", kind: "Revenue", aud: ["ae", "finance"], today: "MicroStrategy",
+    status: "uat", mode: "link", lineage: "revenue", jira: ["CARL-4313"], owner: "Mary Thrower", note: "Ready for UAT." },
+  { name: "Salesforce ABS Pacing feed", kind: "Feed", aud: ["finance"], today: "Oracle wkg_wrr",
+    status: "uat", mode: "feed", lineage: "revenue", jira: ["CARL-3659", "CARL-3915"], owner: "Christina McCoy",
+    note: "las_sf_abs_pacing_curr in Bronze. Duplicate records in Oracle and Athena being fixed. Supplies budget, not a report on its own." },
+  { name: "Operative One line-day pacing rebuild", kind: "Delivery", aud: ["ae", "finance"], today: "Not built",
+    status: "plan", mode: "native", lineage: "delivery", jira: ["CARL-4252"], owner: "Mike Hodge · Diana Saafi (suggested)",
+    note: "Needs Operative One Silver, which has no date. Required before direct-IO digital buys can be paced alongside NEO buys." },
+  { name: "Venus digital pacing", kind: "Delivery", aud: ["ae", "finance"], today: "Third-party enriched FreeWheel feed",
+    status: "block", mode: "link", lineage: "delivery", jira: [], owner: "Hong Zhang · Ping Feng",
+    note: "Waits on FreeWheel decoupling, which has no committed date." },
+];
+
+// ---------------------------------------------------------------- lineage chains
+const LINEAGE = {
+  delivery: {
+    title: "Delivery pacing (NEO campaigns and deals)",
+    nodes: [
+      { t: "Upstream", c: "var(--src)", n: "Source systems", items: ["FreeWheel NEO_INTRADAY_AD_STREAM_V (Snowflake gneast)", "NEO Postgres via DMS — deals, contracted goals", "Ad-Juster S3 CSV — 3P impressions", "ClearLine API — NG creative delivery"] },
+      { t: "Bronze", c: "var(--bronze)", n: "neo_bronze", d: "Raw landings, intraday DAG at :20 ET" },
+      { t: "Silver", c: "var(--silver)", n: "neo_silver", d: "Conformed ad stream joined to DMS deals" },
+      { t: "Gold", c: "var(--gold)", n: "neo_gold.rpt_deal_daily_metrics", d: "Pacing %, time elapsed %, cumulative impressions. Also rpt_package_performance, rpt_discrepancy" },
+      { t: "Cube", c: "var(--cube)", n: "NEO deal metrics views", d: "Pre-aggregations; access_policy row filter on agency_id / advertiser_id" },
+      { t: "NEO", c: "var(--neo)", n: "Reporting Suite · Campaign Cockpit", d: "Cube REST /load, 50–200 ms pre-aggregated" },
+    ],
+    fresh: "Impressions and spend about 1 hour (delivery itself lags about 2 hours). Campaign metadata daily at 07:00 ET. 3P daily.",
+    gaps: ["Prod Glue registration for FreeWheel tables not done", "ClearLine Bronze in triage (P0 for NEO, no date)", "PrivateLink path to Cube is CARL-3609"],
+  },
+  revenue: {
+    title: "Revenue pacing (booked vs budget)",
+    nodes: [
+      { t: "Upstream", c: "var(--src)", n: "Source systems", items: ["iDeal / Gabriel (gabprd), stwprd, DWH — linear and digital revenue", "Salesforce ABS — budgets (wkg_wrr.las_sf_abs_pacing_curr)", "Salesforce comp tables — team hierarchy", "WRR / LDR2"] },
+      { t: "Bronze", c: "var(--bronze)", n: "linear_digital_revenue_bronze", d: "176 tables" },
+      { t: "Silver", c: "var(--silver)", n: "…silver.fact_pacing_revenue_budget_month", d: "Plus dim_teams, dim_net_account" },
+      { t: "Gold", c: "var(--gold)", n: "…gold.fact_pacing_revenue_budget_month", d: "Net account × AE combo × calendar month" },
+      { t: "Cube", c: "var(--cube)", n: "finance_view_pacing_revenue_budget", d: "Budget Amount, Booked Revenue, Revenue Pacing %. Cube model build is CARL-2760 (To Do)" },
+      { t: "NEO", c: "var(--neo)", n: "Revenue pacing lens", d: "Quick Suite embedded in NEO today; native NEO once the Cube view is deployed" },
+    ],
+    fresh: "Daily at 10:00 ET, 30-hour freshness SLA.",
+    gaps: ["Registry lists the Cube view as certified, but CARL-2760 (build it) is To Do — reconcile before NEO depends on it", "ABS feed duplicate rows (CARL-3915)", "Team moves mid-month show at next refresh"],
+  },
+  forecast: {
+    title: "Forecast pacing (booked vs budget vs forecast)",
+    nodes: [
+      { t: "Upstream", c: "var(--src)", n: "Source systems", items: ["Finance weekly forecast CSV (standard template, CARL-1479)", "Revenue and budget as above"] },
+      { t: "Bronze", c: "var(--bronze)", n: "S3 forecast feed", d: "Not yet arriving from Finance" },
+      { t: "Silver", c: "var(--silver)", n: "Total Ad Revenue Pacing model", d: "CARL-1366 in progress" },
+      { t: "Gold", c: "var(--gold)", n: "Finance pacing Gold", d: "CARL-3952 To Do" },
+      { t: "Cube", c: "var(--cube)", n: "Undecided", d: "Cube view vs direct Quick dataset (CARL-4239)" },
+      { t: "NEO", c: "var(--neo)", n: "Forecast column in revenue lens", d: "Hidden until Gold is live" },
+    ],
+    fresh: "Weekly, once the live Finance file arrives.",
+    gaps: ["Live Finance file not arriving; date to be reset from first delivery", "Finance contact changed (Jen Blue)"],
+  },
+};
+
+// ---------------------------------------------------------------- helpers
+const $ = (s, el = document) => el.querySelector(s);
+const fmt = (n) => n == null ? "—" : n >= 1e6 ? (n / 1e6).toFixed(n >= 1e7 ? 1 : 2) + "M" : n >= 1e3 ? Math.round(n / 1e3) + "K" : String(n);
+const money = (n) => n == null ? "—" : "$" + (n >= 1e6 ? (n / 1e6).toFixed(2) + "M" : n >= 1e3 ? Math.round(n / 1e3) + "K" : n);
+const pct = (x) => x == null ? "—" : Math.round(x * 100) + "%";
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const jiraLink = (k) => `<a class="mono" href="https://wbdprod.atlassian.net/browse/${k}" target="_blank">${k}</a>`;
+
+function health(c) {
+  if (c.state === "notstarted") return { k: "none", label: "Not started" };
+  if (c.state === "stale") return { k: "none", label: "Data stale" };
+  if (c.req == null) return { k: "none", label: "No benchmark" };
+  const r = c.rate / c.req;
+  if (r >= 0.95) return { k: "ok", label: "On track", r };
+  if (r >= 0.85) return { k: "risk", label: "At risk", r };
+  return { k: "behind", label: "Behind", r };
+}
+const healthChip = (h) => `<span class="chip h-${h.k}">${h.label}</span>`;
+const STATUS = { live: "Live", uat: "In UAT", build: "In build", plan: "Planned", block: "Blocked" };
+const MODE = { native: "Native in NEO", embed: "Embedded in NEO", link: "Linked from NEO", feed: "Feeds other reports" };
+
+function pbar(value, tick, color) {
+  return `<div class="pbar"><div class="fill" style="width:${Math.min(100, value * 100)}%;background:${color}"></div>
+    ${tick != null ? `<div class="tick" style="left:${Math.min(100, tick * 100)}%"></div>` : ""}</div>`;
+}
+function trustLine(lin, extra = "") {
+  const L = LINEAGE[lin];
+  const gold = L.nodes.find((n) => n.t === "Gold").n, cube = L.nodes.find((n) => n.t === "Cube").n;
+  return `<div class="trust"><span>Source <b>${esc(cube)}</b> → <span class="mono">${esc(gold)}</span></span>
+    <span>Freshness <b>${esc(L.fresh.split(".")[0])}</b></span>${extra}
+    <a onclick="go('lineage','${lin}')">Trace to source →</a></div>`;
+}
+
+let state = { persona: "ae", tab: "home", campaign: "C-10511", lineage: "delivery", lib: { q: "", kind: "", status: "" } };
+const P = () => PERSONAS[state.persona];
+const myCampaigns = () => state.persona === "ae" ? CAMPAIGNS.filter((c) => c.ae === "ae")
+  : state.persona === "buyer" ? CAMPAIGNS.filter((c) => c.agency === "Horizon Media") : CAMPAIGNS;
+const myReports = () => REPORTS.filter((r) => r.aud.includes(state.persona));
+
+// ---------------------------------------------------------------- shell
+function renderNav() {
+  $("#nav").innerHTML = TABS.map(([k, l]) => {
+    const ok = P().tabs.includes(k);
+    return `<button class="${k === state.tab ? "active" : ""} ${ok ? "" : "locked"}" ${ok ? `onclick="go('${k}')"` : `title="Not in scope for ${esc(P().label)}"`}>${l}</button>`;
+  }).join("");
+}
+function go(tab, arg) {
+  if (!P().tabs.includes(tab)) return;
+  state.tab = tab;
+  if (tab === "lineage" && arg) state.lineage = arg;
+  if (tab === "delivery" && arg) state.campaign = arg;
+  render();
+  window.scrollTo(0, 0);
+}
+function render() {
+  renderNav();
+  document.querySelectorAll("section.tab").forEach((s) => s.classList.toggle("active", s.id === "tab-" + state.tab));
+  ({ home: renderHome, delivery: renderDelivery, revenue: renderRevenue, library: renderLibrary, builder: renderBuilder, lineage: renderLineage })[state.tab]();
+}
+
+// ---------------------------------------------------------------- home
+function renderHome() {
+  const cs = myCampaigns().map((c) => ({ ...c, h: health(c) }));
+  const count = (k) => cs.filter((c) => c.h.k === k).length;
+  const tb = TEAMS.reduce((a, t) => ({ b: a.b + t.budget, k: a.k + t.booked }), { b: 0, k: 0 });
+  const reps = myReports();
+  const lens = (key, c, title, big, sub, tab) => {
+    const on = P().lenses.includes(key) || P().tabs.includes(tab);
+    return `<div class="card ${on ? "" : "off"}" style="--c:${c}" ${on ? `onclick="go('${tab}')"` : ""}>
+      <h3>${title}</h3><div class="big">${big}</div><div class="muted" style="font-size:12px">${sub}</div></div>`;
+  };
+  const alerts = [
+    ["var(--bad)", "<b>Fall Launch — Food &amp; Home</b> is behind: achieved 210K/day against 310K/day required.", "Delivery", "C-10511"],
+    ["var(--none)", "<b>Kids Co-viewing — Animation</b> has had no new delivery for 26 hours. Health is withheld until data resumes.", "Data", "C-10571"],
+    ["var(--warn)", "<b>Digital — Streaming</b> revenue is pacing at 75% of budget with 4 weeks left in the quarter.", "Revenue", null],
+    ["var(--ok)", "<b>Black Friday Burst</b> reports go live to Northwind Retail on 20 Nov.", "Go-live", "C-10560"],
+  ].filter((a) => state.persona !== "buyer" || a[2] !== "Revenue").filter((a) => state.persona !== "finance" || a[2] === "Revenue");
+  $("#tab-home").innerHTML = `
+    <h2>${esc(P().label)} <small>${esc(P().scope)}</small></h2>
+    <div class="lens">
+      ${lens("delivery", "var(--neo)", "Delivery pacing", `${count("behind") + count("risk")} need attention`,
+        `${cs.length} campaigns in scope · ${count("ok")} on track · ${count("none")} without a health status`, "delivery")}
+      ${lens("revenue", "var(--gold)", "Revenue pacing", state.persona === "buyer" ? "Internal only" : pct(tb.k / tb.b) + " of budget",
+        state.persona === "buyer" ? "WBD revenue and budgets are never exposed to buyers" : `$${tb.k.toFixed(1)}M booked of $${tb.b.toFixed(1)}M budget, Q4 to date`, "revenue")}
+      ${lens("library", "var(--cube)", "All pacing reports", `${reps.length} available to you`,
+        `${reps.filter((r) => r.status === "live").length} live · ${reps.filter((r) => ["build", "uat"].includes(r.status)).length} coming · one catalog across NEO, Quick and MSTR`, "library")}
+      ${lens("builder", "var(--src)", "Build your own", "Self-serve",
+        "Pick governed pacing measures and dimensions. What you see is what you export or schedule.", "builder")}
+    </div>
+    <div class="grid two" style="margin-top:14px">
+      <div class="card">
+        <h2 style="margin-top:0">Needs attention <small>sorted by risk, worst first</small></h2>
+        ${state.persona === "finance" ? revenueAttention() : `<table><thead><tr><th>Campaign</th><th>Health</th><th>Delivered vs goal</th><th class="num">Time elapsed</th><th>Buy</th></tr></thead><tbody>
+          ${cs.slice().sort((a, b) => (a.h.r ?? 9) - (b.h.r ?? 9)).map((c) => `<tr class="click" onclick="go('delivery','${c.id}')">
+            <td><b>${esc(c.name)}</b><div class="muted" style="font-size:12px">${esc(c.adv)} · ${esc(c.agency)}</div></td>
+            <td>${healthChip(c.h)}</td><td>${pbar(c.delivered / c.goal, c.elapsed, "var(--neo)")}<div class="muted" style="font-size:11px">${fmt(c.delivered)} of ${fmt(c.goal)}</div></td>
+            <td class="num">${pct(c.elapsed)}</td><td>${c.buy}</td></tr>`).join("")}
+        </tbody></table>${trustLine("delivery")}`}
+      </div>
+      <div class="card">
+        <h2 style="margin-top:0">Alerts <small>also sent by email, Slack and in-app</small></h2>
+        ${alerts.map(([c, t, k, id]) => `<div class="alert"><i style="background:${c}"></i><div>${t}<div class="muted" style="font-size:11px">${k}</div></div>
+          ${id && P().tabs.includes("delivery") ? `<button class="btn" onclick="go('delivery','${id}')">Open</button>` : ""}</div>`).join("")}
+        <div class="note">Alerts are written by a model from governed Cube metrics and cite them. No number in an alert is model-generated.</div>
+      </div>
+    </div>`;
+}
+function revenueAttention() {
+  return `<table><thead><tr><th>Team</th><th>Booked vs budget</th><th class="num">Revenue pacing</th><th class="num">vs same week last year</th></tr></thead><tbody>
+    ${TEAMS.slice().sort((a, b) => a.booked / a.budget - b.booked / b.budget).map((t) => {
+      const p = t.booked / t.budget;
+      return `<tr class="click" onclick="go('revenue')"><td><b>${t.team}</b></td><td>${pbar(p, null, p >= .95 ? "var(--ok)" : p >= .85 ? "var(--warn)" : "var(--bad)")}</td>
+      <td class="num">${pct(p)}</td><td class="num">${p >= t.prior ? "+" : ""}${Math.round((p - t.prior) * 100)} pts</td></tr>`;
+    }).join("")}</tbody></table>${trustLine("revenue")}`;
+}
+
+// ---------------------------------------------------------------- delivery
+function renderDelivery() {
+  const cs = myCampaigns().map((c) => ({ ...c, h: health(c) }));
+  if (!cs.find((c) => c.id === state.campaign)) state.campaign = cs[0].id;
+  const c = cs.find((x) => x.id === state.campaign);
+  const remaining = c.goal - c.delivered;
+  $("#tab-delivery").innerHTML = `
+    <div class="controls">
+      <input type="search" placeholder="Search campaign, advertiser, deal ID…" oninput="filterRows(this,'#dtable')">
+      <select><option>All health states</option><option>Behind</option><option>At risk</option><option>On track</option><option>No health status</option></select>
+      <select><option>NEO and direct IO buys</option><option>NEO buys</option><option>Direct IO buys</option></select>
+      <select><option>Active flights</option><option>Completed</option><option>Upcoming</option></select>
+      <span class="n">${esc(P().scope)}</span>
+    </div>
+    <div class="grid two">
+      <div class="card" style="padding:0"><div class="scroll" id="dtable"><table><thead><tr><th>Campaign</th><th>Health</th><th>Pacing</th><th class="num">Delivered</th><th class="num">Spend</th><th class="num">VCR</th></tr></thead><tbody>
+        ${cs.map((x) => `<tr class="click ${x.id === c.id ? "sel" : ""}" onclick="state.campaign='${x.id}';renderDelivery()">
+          <td><b>${esc(x.name)}</b><div class="muted" style="font-size:12px">${x.id} · ${esc(x.adv)} · ${x.buy}</div></td><td>${healthChip(x.h)}</td>
+          <td>${pbar(x.delivered / x.goal, x.elapsed, "var(--neo)")}</td><td class="num">${fmt(x.delivered)}</td><td class="num">${money(x.spend)}</td><td class="num">${x.vcr ? x.vcr + "%" : "—"}</td></tr>`).join("")}
+      </tbody></table></div></div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:start;gap:8px">
+          <div><h2 style="margin:0">${esc(c.name)}</h2><div class="muted" style="font-size:12px">${c.id} · ${esc(c.adv)} · ${esc(c.agency)} · ${c.start} → ${c.end}</div></div>
+          ${healthChip(c.h)}
+        </div>
+        <div class="grid kpis" style="margin-top:12px">
+          <div class="kpi"><div class="l">Delivered / contracted</div><div class="v">${pct(c.delivered / c.goal)}</div><div class="s">${fmt(c.delivered)} of ${fmt(c.goal)}</div></div>
+          <div class="kpi"><div class="l">Flight elapsed</div><div class="v">${pct(c.elapsed)}</div><div class="s">tick on the pacing bar</div></div>
+          <div class="kpi"><div class="l">Required per day</div><div class="v">${fmt(c.req)}</div><div class="s">achieving ${fmt(c.rate)}/day</div></div>
+          <div class="kpi"><div class="l">Remaining</div><div class="v">${fmt(remaining)}</div><div class="s">impressions</div></div>
+        </div>
+        ${c.id === "C-10511" ? deliveryChart() : `<div class="note" style="margin:16px 0">${c.state === "stale" ? "Delivery data has not refreshed for 26 hours, so health is withheld rather than shown as behind." : c.state === "notstarted" ? "Flight has not started. The pre-flight benchmark is set; health appears once delivery begins." : "Select <b>Fall Launch — Food &amp; Home</b> to see the daily pacing chart in this prototype."}</div>`}
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+          <button class="btn primary" onclick="go('builder')">Break down this campaign</button>
+          <button class="btn">Export current view (CSV)</button>
+          ${state.persona !== "buyer" ? `<button class="btn">Open in Campaign Cockpit</button><button class="btn">Open opportunity in Salesforce</button>` : ""}
+        </div>
+        ${trustLine("delivery", `<span>Status <b>Preliminary</b> until 7 days after flight end</span>`)}
+      </div>
+    </div>
+    <h2>Benchmark windows <small>pre-flight benchmark kept unchanged next to the rolling one (Reporting PRD, Stage 1)</small></h2>
+    <div class="card" style="padding:0"><table><thead><tr><th>Window</th><th class="num">Original benchmark</th><th class="num">Rolling benchmark</th><th class="num">Delivered</th><th class="num">Required rate for remainder</th><th>Band</th></tr></thead><tbody>
+      <tr><td>Days 1–14</td><td class="num">3.17M</td><td class="num">3.17M</td><td class="num">2.18M</td><td class="num">261K / day</td><td><span class="chip h-behind">Behind</span></td></tr>
+      <tr><td>Days 15–28</td><td class="num">3.17M</td><td class="num">3.65M</td><td class="num">1.43M <span class="muted">(in progress)</span></td><td class="num">310K / day</td><td><span class="chip h-behind">Behind</span></td></tr>
+      <tr><td>Days 29–42</td><td class="num">3.17M</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td><span class="chip h-none">Not started</span></td></tr>
+    </tbody></table></div>`;
+}
+function deliveryChart() {
+  const W = 560, H = 210, pad = { l: 44, r: 10, t: 10, b: 24 };
+  const maxY = 9500000, n = DAILY.length;
+  const x = (d) => pad.l + (W - pad.l - pad.r) * d / (n - 1);
+  const y = (v) => pad.t + (H - pad.t - pad.b) * (1 - v / maxY);
+  const path = (k) => DAILY.filter((p) => p[k] != null).map((p, i) => `${i ? "L" : "M"}${x(p.d).toFixed(1)},${y(p[k]).toFixed(1)}`).join("");
+  const last = DAILY.filter((p) => p.cum != null).pop();
+  const req = `M${x(last.d)},${y(last.cum)}L${x(n - 1)},${y(maxY)}`;
+  const grid = [0, .25, .5, .75, 1].map((f) => `<line x1="${pad.l}" x2="${W - pad.r}" y1="${y(maxY * f)}" y2="${y(maxY * f)}" stroke="#eef0f3"/><text x="${pad.l - 6}" y="${y(maxY * f) + 4}" text-anchor="end">${fmt(maxY * f)}</text>`).join("");
+  return `<div class="legend"><span><i style="background:var(--neo)"></i>Delivered (cumulative)</span><span><i style="background:#9aa3b2"></i>Plan</span><span><i style="background:var(--bad)"></i>Required to finish</span></div>
+    <svg viewBox="0 0 ${W} ${H}" width="100%">${grid}
+      <path d="${path("plan")}" fill="none" stroke="#9aa3b2" stroke-width="2" stroke-dasharray="4 3"/>
+      <path d="${path("cum")}" fill="none" stroke="var(--neo)" stroke-width="2.5"/>
+      <path d="${req}" fill="none" stroke="var(--bad)" stroke-width="2" stroke-dasharray="2 3"/>
+      <line x1="${x(last.d)}" x2="${x(last.d)}" y1="${pad.t}" y2="${H - pad.b}" stroke="#c9ced8"/><text x="${x(last.d) + 4}" y="${pad.t + 10}">Today</text>
+      <text x="${pad.l}" y="${H - 6}">13 Oct</text><text x="${W - pad.r}" y="${H - 6}" text-anchor="end">23 Nov</text>
+    </svg>`;
+}
+
+// ---------------------------------------------------------------- revenue
+function renderRevenue() {
+  const tb = TEAMS.reduce((a, t) => ({ b: a.b + t.budget, k: a.k + t.booked, f: a.f + t.forecast }), { b: 0, k: 0, f: 0 });
+  const showForecast = state.persona === "finance";
+  $("#tab-revenue").innerHTML = `
+    <div class="controls">
+      <select><option>Q4 2026</option><option>November 2026</option><option>Full year 2026</option></select>
+      <select><option>Linear + Digital (converged)</option><option>Linear</option><option>Digital</option></select>
+      <select><option>All networks</option><option>CNN</option><option>TNT Sports</option><option>HGTV</option></select>
+      <select><option>Net</option><option>Gross</option></select>
+      <span class="n">${esc(P().scope)} · internal users only</span>
+    </div>
+    <div class="grid kpis">
+      <div class="card kpi"><div class="l">Booked revenue</div><div class="v">$${tb.k.toFixed(1)}M</div><div class="s">Q4 to date</div></div>
+      <div class="card kpi"><div class="l">Budget</div><div class="v">$${tb.b.toFixed(1)}M</div><div class="s">Salesforce ABS</div></div>
+      <div class="card kpi"><div class="l">Revenue pacing</div><div class="v">${pct(tb.k / tb.b)}</div><div class="s">booked ÷ budget</div></div>
+      <div class="card kpi"><div class="l">Forecast</div><div class="v muted">${showForecast ? "$" + tb.f.toFixed(1) + "M" : "—"}</div><div class="s">${showForecast ? "Pending live Finance file — shown greyed until Gold is live" : "Finance only"}</div></div>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <h2 style="margin-top:0">Booked vs budget by team <small>click a team to drill to VP, AE and account</small></h2>
+      <table><thead><tr><th>Team</th><th class="num">Budget</th><th class="num">Booked</th><th>Pacing</th><th class="num">Revenue pacing</th>${showForecast ? `<th class="num">Forecast</th><th class="num">Forecast vs budget</th>` : ""}<th class="num">vs last year</th></tr></thead><tbody>
+      ${TEAMS.map((t) => { const p = t.booked / t.budget; return `<tr class="click"><td><b>${t.team}</b></td><td class="num">$${t.budget.toFixed(1)}M</td><td class="num">$${t.booked.toFixed(1)}M</td>
+        <td>${pbar(p, null, p >= .95 ? "var(--ok)" : p >= .85 ? "var(--warn)" : "var(--bad)")}</td><td class="num">${pct(p)}</td>
+        ${showForecast ? `<td class="num muted">$${t.forecast.toFixed(1)}M</td><td class="num muted">${pct(t.forecast / t.budget)}</td>` : ""}
+        <td class="num">${p >= t.prior ? "+" : ""}${Math.round((p - t.prior) * 100)} pts</td></tr>`; }).join("")}
+      </tbody></table>
+      ${trustLine("revenue", `<span>Measure <b>Revenue Pacing %</b> (not the same as Delivery Pacing %)</span>`)}
+    </div>
+    <h2>Pacing reports in this lens <small>open in place; each reads the same Cube view where one exists</small></h2>
+    <div class="grid half">
+      ${myReports().filter((r) => ["Revenue", "Forecast"].includes(r.kind)).map(reportCard).join("")}
+    </div>`;
+}
+function reportCard(r) {
+  return `<div class="card"><div style="display:flex;justify-content:space-between;gap:8px"><b>${esc(r.name)}</b><span class="chip s-${r.status}">${STATUS[r.status]}</span></div>
+    <div style="margin:6px 0"><span class="chip m-${r.mode}">${MODE[r.mode]}</span> <span class="muted" style="font-size:12px">today in ${esc(r.today)}</span></div>
+    <div class="muted" style="font-size:12px">${esc(r.note)}</div>
+    <div class="trust"><span>Owner <b>${esc(r.owner)}</b></span><span>${r.jira.map(jiraLink).join(" ")}</span><a onclick="go('lineage','${r.lineage}')">Trace →</a></div></div>`;
+}
+
+// ---------------------------------------------------------------- library
+function renderLibrary() {
+  const f = state.lib;
+  const rows = myReports().filter((r) => (!f.q || (r.name + r.note + r.owner + r.jira.join(" ")).toLowerCase().includes(f.q.toLowerCase()))
+    && (!f.kind || r.kind === f.kind) && (!f.status || r.status === f.status));
+  const byMode = (m) => myReports().filter((r) => r.mode === m).length;
+  $("#tab-library").innerHTML = `
+    <div class="grid kpis">
+      <div class="card kpi"><div class="l">Pacing reports you can reach</div><div class="v">${myReports().length}</div><div class="s">of ${REPORTS.length} across WBD Ad Sales</div></div>
+      <div class="card kpi"><div class="l">Native in NEO</div><div class="v">${byMode("native")}</div><div class="s">React on Cube REST</div></div>
+      <div class="card kpi"><div class="l">Embedded in NEO</div><div class="v">${byMode("embed")}</div><div class="s">Quick Suite inside NEO, same Cube view</div></div>
+      <div class="card kpi"><div class="l">Linked until migrated</div><div class="v">${byMode("link")}</div><div class="s">MSTR, Power BI, upstream feeds</div></div>
+    </div>
+    <h2>All pacing reports <small>one catalog regardless of which tool renders the report today</small></h2>
+    <div class="controls">
+      <input type="search" placeholder="Search name, owner, Jira key…" value="${esc(f.q)}" oninput="state.lib.q=this.value;renderLibrary();this.focus();this.setSelectionRange(this.value.length,this.value.length)">
+      <select onchange="state.lib.kind=this.value;renderLibrary()"><option value="">All kinds</option>${["Delivery", "Revenue", "Forecast", "Feed"].map((k) => `<option ${f.kind === k ? "selected" : ""}>${k}</option>`).join("")}</select>
+      <select onchange="state.lib.status=this.value;renderLibrary()"><option value="">All statuses</option>${Object.entries(STATUS).map(([k, v]) => `<option value="${k}" ${f.status === k ? "selected" : ""}>${v}</option>`).join("")}</select>
+      <button class="btn">Request a pacing report</button>
+      <span class="n">${rows.length} shown</span>
+    </div>
+    <div class="card" style="padding:0"><div class="scroll"><table><thead><tr><th>Report</th><th>Kind</th><th>Status</th><th>How it appears in NEO</th><th>Today</th><th>Owner</th><th>Jira</th><th></th></tr></thead><tbody>
+      ${rows.map((r) => `<tr><td><b>${esc(r.name)}</b><div class="muted" style="font-size:12px;max-width:420px">${esc(r.note)}</div></td><td>${r.kind}</td>
+        <td><span class="chip s-${r.status}">${STATUS[r.status]}</span></td><td><span class="chip m-${r.mode}">${MODE[r.mode]}</span></td>
+        <td>${esc(r.today)}</td><td style="font-size:12px">${esc(r.owner)}</td><td style="white-space:nowrap">${r.jira.map(jiraLink).join("<br>") || "<span class='muted'>none</span>"}</td>
+        <td style="white-space:nowrap"><button class="btn" onclick="go('lineage','${r.lineage}')">Trace</button> <button class="btn">Subscribe</button></td></tr>`).join("")}
+    </tbody></table></div></div>
+    <div class="note">"Request a pacing report" opens the CARL intake form with the closest existing report pre-filled, so demand attaches to what exists before a new build is raised.</div>`;
+}
+
+// ---------------------------------------------------------------- builder
+function renderBuilder() {
+  const internal = state.persona !== "buyer";
+  const measures = [
+    ["Delivered impressions (1P)", 1], ["Contracted impressions", 1], ["Delivery Pacing %", 1], ["Flight elapsed %", 1], ["Required daily rate", 1],
+    ["Spend", 1], ["CPM", 0], ["VCR", 0], ["3P impressions", 0], ["Discrepancy 1P vs 3P", 0],
+    ...(internal ? [["Booked revenue", 0], ["Budget", 0], ["Revenue Pacing %", 0], ["Forecast", 0]] : []),
+  ];
+  const dims = {
+    Time: ["Day", "Week", "Month", "Quarter"], Delivery: ["Device", "Modality", "Platform brand"], Inventory: ["Campaign", "Deal ID", "Placement", "Package"],
+    Geography: ["DMA", "State"], Content: ["Genre", "Rating", "Series"], Creative: ["Creative", "Duration"],
+    ...(internal ? { Sales: ["Team", "AE", "Net account", "Agency", "Network"] } : {}),
+  };
+  $("#tab-builder").innerHTML = `
+    <div class="grid" style="grid-template-columns:340px 1fr">
+      <div class="card">
+        <div class="fgroup"><div class="ft">Scope</div><input type="search" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:7px" placeholder="Search campaigns… (3 selected)"></div>
+        <div class="fgroup"><div class="ft">Measures — governed in Cube</div><div class="chips-pick">
+          ${measures.map(([m, on]) => `<label><input type="checkbox" ${on ? "checked" : ""}><span>${m}</span></label>`).join("")}
+          <label class="na" title="Reach is not additive; available at flight level only"><input type="checkbox" disabled><span>Reach (households)</span></label>
+        </div></div>
+        ${Object.entries(dims).map(([g, ds]) => `<div class="fgroup"><div class="ft">${g}</div><div class="chips-pick">
+          ${ds.map((d) => `<label><input type="checkbox" ${["Day", "Campaign"].includes(d) ? "checked" : ""}><span>${d}</span></label>`).join("")}</div></div>`).join("")}
+        <button class="btn primary" style="width:100%">Run report</button>
+        <div class="note">The report runs on Run, not on every click. Export and Schedule reuse exactly these choices.</div>
+      </div>
+      <div class="card">
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <h2 style="margin:0">Campaign › Day</h2><span class="muted" style="font-size:12px">first 6 rows shown · 126 total</span>
+          <span style="margin-left:auto;display:flex;gap:6px"><button class="btn">Save</button><button class="btn">Schedule…</button><button class="btn primary">Export CSV</button></span>
+        </div>
+        <table style="margin-top:10px"><thead><tr><th>Campaign</th><th>Day</th><th class="num">Delivered</th><th class="num">Contracted</th><th class="num">Delivery Pacing %</th><th class="num">Flight elapsed</th><th class="num">Required / day</th><th class="num">Spend</th></tr></thead><tbody>
+          <tr><td rowspan="3"><b>Fall Launch — Food &amp; Home</b></td><td>3 Nov</td><td class="num">198K</td><td class="num">9.50M</td><td class="num">36%</td><td class="num">52%</td><td class="num">305K</td><td class="num">$6.1K</td></tr>
+          <tr><td>2 Nov</td><td class="num">214K</td><td class="num">9.50M</td><td class="num">34%</td><td class="num">50%</td><td class="num">299K</td><td class="num">$6.6K</td></tr>
+          <tr><td>1 Nov</td><td class="num">221K</td><td class="num">9.50M</td><td class="num">32%</td><td class="num">48%</td><td class="num">294K</td><td class="num">$6.9K</td></tr>
+          <tr><td rowspan="3"><b>Q4 Holiday CTV — Streaming Prime</b></td><td>3 Nov</td><td class="num">322K</td><td class="num">18.0M</td><td class="num">51%</td><td class="num">53%</td><td class="num">330K</td><td class="num">$10.5K</td></tr>
+          <tr><td>2 Nov</td><td class="num">309K</td><td class="num">18.0M</td><td class="num">49%</td><td class="num">51%</td><td class="num">329K</td><td class="num">$10.0K</td></tr>
+          <tr><td>1 Nov</td><td class="num">331K</td><td class="num">18.0M</td><td class="num">47%</td><td class="num">49%</td><td class="num">328K</td><td class="num">$10.8K</td></tr>
+        </tbody></table>
+        <div class="card" style="margin-top:12px;background:#fafbfc">
+          <b>Schedule semantics</b>
+          <div class="muted" style="font-size:12px;margin-top:4px">Daily = previous day · Weekly = prior Monday–Sunday · Monthly = previous calendar month · Flight-to-date available on every cadence.
+          Exports run in the background and land in the Download center with a notification. Every file carries scope, date range, metric definitions, source and generated time.</div>
+        </div>
+        ${trustLine("delivery")}
+      </div>
+    </div>`;
+}
+
+// ---------------------------------------------------------------- lineage
+function renderLineage() {
+  const avail = state.persona === "buyer" ? ["delivery"] : state.persona === "finance" ? ["revenue", "forecast"] : Object.keys(LINEAGE);
+  if (!avail.includes(state.lineage)) state.lineage = avail[0];
+  const L = LINEAGE[state.lineage];
+  const reps = REPORTS.filter((r) => r.lineage === state.lineage && r.aud.includes(state.persona));
+  $("#tab-lineage").innerHTML = `
+    <div class="controls">${avail.map((k) => `<button class="btn ${k === state.lineage ? "primary" : ""}" onclick="state.lineage='${k}';renderLineage()">${LINEAGE[k].title}</button>`).join("")}</div>
+    <div class="card">
+      <h2 style="margin-top:0">${L.title} <small>source system → CARL medallion → Cube → NEO</small></h2>
+      <div class="chain">${L.nodes.map((n, i) => `${i ? '<div class="arrow">→</div>' : ""}<div class="node" style="--c:${n.c}">
+        <div class="t">${n.t}</div><div class="n ${n.t === "Upstream" ? "" : "mono"}">${esc(n.n)}</div>${n.d ? `<div class="d">${esc(n.d)}</div>` : ""}
+        ${n.items ? `<ul>${n.items.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}</div>`).join("")}</div>
+      <div class="grid half" style="margin-top:14px">
+        <div><div class="ft muted" style="font-size:11px;text-transform:uppercase;font-weight:600">Freshness</div><div>${esc(L.fresh)}</div></div>
+        <div><div class="ft muted" style="font-size:11px;text-transform:uppercase;font-weight:600">Known gaps</div><ul style="margin:4px 0;padding-left:18px">${L.gaps.map((g) => `<li>${esc(g)}</li>`).join("")}</ul></div>
+      </div>
+    </div>
+    <div class="grid half" style="margin-top:14px">
+      <div class="card"><h2 style="margin-top:0">Latest loads <small>from CARL ingestion_control and dq_metrics</small></h2>
+        <table><thead><tr><th>Step</th><th>Last success</th><th>Checks</th></tr></thead><tbody>
+          ${L.nodes.slice(1, 5).map((n, i) => `<tr><td class="mono">${esc(n.n)}</td><td>${["04 Nov 13:20 ET", "04 Nov 13:34 ET", "04 Nov 13:41 ET", "04 Nov 13:45 ET"][i]}</td><td><span class="chip ${i === 2 && state.lineage === "revenue" ? "h-risk" : "h-ok"}">${i === 2 && state.lineage === "revenue" ? "1 warning" : "Passed"}</span></td></tr>`).join("")}
+        </tbody></table>
+        <div class="note">Load times and check results are illustrative.</div></div>
+      <div class="card"><h2 style="margin-top:0">Reports built on this path</h2>
+        ${reps.map((r) => `<div style="padding:6px 0;border-bottom:1px solid var(--line)"><b>${esc(r.name)}</b> <span class="chip s-${r.status}">${STATUS[r.status]}</span><div class="muted" style="font-size:12px">${r.jira.map(jiraLink).join(" ")}</div></div>`).join("") || "<div class='muted'>None in your scope.</div>"}
+      </div>
+    </div>`;
+}
+
+function filterRows(input, sel) {
+  const q = input.value.toLowerCase();
+  document.querySelectorAll(`${sel} tbody tr`).forEach((tr) => { tr.style.display = tr.textContent.toLowerCase().includes(q) ? "" : "none"; });
+}
+
+const [hp, ht] = location.hash.slice(1).split("/");
+if (PERSONAS[hp]) state.persona = hp;
+if (ht && P().tabs.includes(ht)) state.tab = ht;
+$("#persona").innerHTML = Object.entries(PERSONAS).map(([k, p]) => `<option value="${k}" ${k === state.persona ? "selected" : ""}>${p.label}</option>`).join("");
+$("#persona").onchange = (e) => { state.persona = e.target.value; if (!P().tabs.includes(state.tab)) state.tab = "home"; render(); };
+render();
+</script>
+</body>
+</html>

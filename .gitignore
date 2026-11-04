@@ -36,3 +36,9 @@ pnpm-debug.log*
 .vscode/*
 !.vscode/extensions.json
 .idea/
+
+# Local virtualenv
+.venv-snowflake/
+
+# Legacy company source (do not publish)
+uc1-field-mapping/work/legacy/

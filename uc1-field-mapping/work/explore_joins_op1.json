@@ -1,0 +1,1572 @@
+[
+ {
+  "join": "oper_sales_order_t",
+  "line": 276,
+  "end": 286,
+  "frm": "oper_sales_order_t",
+  "type": "inner",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_id}=${oper_sales_order_t.sales_order_id} AND ${oper_sales_order_line_items_t.source}=${oper_sales_order_t.source}",
+  "fields": "oper_sales_order_t.op1_rev_data*"
+ },
+ {
+  "join": "excel_advertiser_mapping",
+  "line": 288,
+  "end": 300,
+  "frm": "excel_advertiser_mapping",
+  "type": "left_outer",
+  "view_label": "Excel -> Looker input",
+  "sql_on": "${oper_sales_order_line_items_t.advertiser_name} = ${excel_advertiser_mapping.advertiser_source}",
+  "fields": "excel_advertiser_mapping.advertiser_revised"
+ },
+ {
+  "join": "op_premium_product_map_v",
+  "line": 303,
+  "end": 312,
+  "frm": "op_premium_product_map_v",
+  "type": "left_outer",
+  "view_label": "Excel -> Looker input",
+  "sql_on": "${oper_sales_order_line_items_t.product_name} = ${op_premium_product_map_v.product_name}",
+  "fields": ""
+ },
+ {
+  "join": "max_takeover_tracker",
+  "line": 315,
+  "end": 325,
+  "frm": "max_takeover_tracker",
+  "type": "left_outer",
+  "view_label": "Excel -> Looker input",
+  "sql_on": "${oper_sales_order_line_items_t.calendar_date} = ${max_takeover_tracker.date}",
+  "fields": "max_takeover_tracker.reason"
+ },
+ {
+  "join": "oper_premium_product_flag_v",
+  "line": 327,
+  "end": 335,
+  "frm": "oper_premium_product_flag_v",
+  "type": "left_outer",
+  "view_label": null,
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id} = ${oper_premium_product_flag_v.sales_order_line_item_id} AND ${oper_sales_order_line_items_t.source} = 'wbd'",
+  "fields": ""
+ },
+ {
+  "join": "op1_guaranteed_demo",
+  "line": 337,
+  "end": 350,
+  "frm": "oper_sales_order_custom_field_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_id}=${op1_guaranteed_demo.sales_order_id} and ${op1_guaranteed_demo.custom_field_id} IN (93,125) and ${oper_sales_order_line_items_t.source}=${op1_guaranteed_demo.source}",
+  "fields": "guaranteed_demo"
+ },
+ {
+  "join": "legacy_wm_sales_id",
+  "line": 353,
+  "end": 366,
+  "frm": "oper_sales_order_custom_field_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_id}=${legacy_wm_sales_id.sales_order_id} and ${legacy_wm_sales_id.custom_field_id} IN (230) and ${oper_sales_order_line_items_t.source}=${legacy_wm_sales_id.source}",
+  "fields": "legacy_wm_sales_id.legacy_sales_oid"
+ },
+ {
+  "join": "op_audi_flag",
+  "line": 368,
+  "end": 376,
+  "frm": "op_audi_flag",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${op_audi_flag.sales_order_line_item_id}=${oper_sales_order_line_items_t.sales_order_line_item_id} AND ${oper_sales_order_line_items_t.source} = 'wbd'",
+  "fields": ""
+ },
+ {
+  "join": "op_unlinked_flag",
+  "line": 378,
+  "end": 387,
+  "frm": "op_unlinked_flag",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${op_unlinked_flag.sales_order_line_item_id}=${oper_sales_order_line_items_t.sales_order_line_item_id} AND ${oper_sales_order_line_items_t.source} = 'wbd'",
+  "fields": ""
+ },
+ {
+  "join": "op1_order_deal_type",
+  "line": 389,
+  "end": 402,
+  "frm": "oper_sales_order_custom_field_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_id}=${op1_order_deal_type.sales_order_id} and ${op1_order_deal_type.custom_field_id} IN (41,214) AND ${oper_sales_order_line_items_t.source}=${op1_order_deal_type.source}",
+  "fields": "deal_type, vod_type, nba_deal_type"
+ },
+ {
+  "join": "op1_order_wbd_iq",
+  "line": 404,
+  "end": 416,
+  "frm": "oper_sales_order_custom_field_t",
+  "type": "inner",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_id}=${op1_order_wbd_iq.sales_order_id} and ${op1_order_wbd_iq.custom_field_id} IN (122,228) AND ${oper_sales_order_line_items_t.source}=${op1_order_wbd_iq.source}",
+  "fields": "op1_order_wbd_iq.wbd_iq_flag"
+ },
+ {
+  "join": "op1_production_buffer",
+  "line": 418,
+  "end": 426,
+  "frm": "op1_production_buffer",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${op1_production_buffer.sales_order_line_item_id} = ${oper_sales_order_line_items_t.sales_order_line_item_id} AND ${oper_sales_order_line_items_t.source} = 'wbd'",
+  "fields": ""
+ },
+ {
+  "join": "various_flag",
+  "line": 428,
+  "end": 439,
+  "frm": "oper_sales_order_custom_field_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_id}=${various_flag.sales_order_id} and ${various_flag.custom_field_name}='various_flag' AND ${oper_sales_order_line_items_t.source} = ${various_flag.source}",
+  "fields": "various_flag.various_flag"
+ },
+ {
+  "join": "converged_sponsorship",
+  "line": 441,
+  "end": 452,
+  "frm": "oper_sales_order_custom_field_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_id}=${converged_sponsorship.sales_order_id} and ${converged_sponsorship.custom_field_name}='Converged Sponsorship' AND ${oper_sales_order_line_items_t.source} = ${converged_sponsorship.source}",
+  "fields": "converged_sponsorship.converge_spon"
+ },
+ {
+  "join": "op1_order_is_upfront",
+  "line": 454,
+  "end": 466,
+  "frm": "upfront_type_op_v",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_id}=${op1_order_is_upfront.sales_order_id} AND ${op1_order_is_upfront.is_upfront} IS NOT NULL AND ${oper_sales_order_line_items_t.source} = ${op1_order_is_upfront.source}",
+  "fields": "is_upfront"
+ },
+ {
+  "join": "op1_order_ssp",
+  "line": 468,
+  "end": 480,
+  "frm": "oper_sales_order_custom_field_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_id}=${op1_order_ssp.sales_order_id} and (${op1_order_ssp.custom_field_name}='SSP') and ${oper_sales_order_line_items_t.source}= ${op1_order_ssp.source}",
+  "fields": "op1_order_ssp.ssp"
+ },
+ {
+  "join": "op1_order_classification",
+  "line": 483,
+  "end": 495,
+  "frm": "oper_sales_order_custom_field_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_id}=${op1_order_classification.sales_order_id} and ${op1_order_classification.classification} IS NOT NULL AND ${oper_sales_order_line_items_t.source} = ${op1_order_classification.source}",
+  "fields": "op1_order_classification.classification,"
+ },
+ {
+  "join": "is_linear_addressable",
+  "line": 497,
+  "end": 509,
+  "frm": "oper_sales_order_custom_field_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_id}=${is_linear_addressable.sales_order_id} and ${is_linear_addressable.classification} = 'Linear Addressable' AND ${oper_sales_order_line_items_t.source} = ${is_linear_addressable.source}",
+  "fields": "is_linear_addressable.is_linear_addressable"
+ },
+ {
+  "join": "op1_order_order_level_target",
+  "line": 514,
+  "end": 525,
+  "frm": "oper_sales_order_custom_field_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_id}=${op1_order_order_level_target.sales_order_id} and (${op1_order_order_level_target.custom_field_name}='Order Level Target' OR ${op1_order_order_level_target.custom_field_name}='Warner Order Level Target') AND ${oper_sales_order_line_items_t.source} = ${op1_order_order_level_target.source}",
+  "fields": "order_level_target"
+ },
+ {
+  "join": "op1_order_opportunity_id",
+  "line": 527,
+  "end": 538,
+  "frm": "oper_sales_order_custom_field_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_id}=${op1_order_opportunity_id.sales_order_id} and (${op1_order_opportunity_id.custom_field_name}='Opportunity ID' OR ${op1_order_opportunity_id.custom_field_name}='Warner SF Deal ID') AND ${oper_sales_order_line_items_t.source} = ${op1_order_opportunity_id.source}",
+  "fields": "opportunity_id"
+ },
+ {
+  "join": "op1_order_sales_split",
+  "line": 540,
+  "end": 552,
+  "frm": "oper_sales_order_custom_field_t",
+  "type": "inner",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_id}= ${op1_order_sales_split.sales_order_id} and ${op1_order_sales_split.custom_field_id} IN (253,33) and ${oper_sales_order_line_items_t.source}=${op1_order_sales_split.source}",
+  "fields": "sales_split, estimated_split_net_revenue"
+ },
+ {
+  "join": "op1_order_tentpole",
+  "line": 554,
+  "end": 565,
+  "frm": "oper_sales_order_custom_field_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_id}=${op1_order_tentpole.sales_order_id} and ${op1_order_tentpole.custom_field_id} IN (295) and ${oper_sales_order_line_items_t.source}=${op1_order_tentpole.source}",
+  "fields": "op1_order_tentpole.tentpole_event"
+ },
+ {
+  "join": "ideal_deal_id",
+  "line": 568,
+  "end": 579,
+  "frm": "oper_sales_order_custom_field_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_id}=${ideal_deal_id.sales_order_id} and ${ideal_deal_id.custom_field_id} IN (147) and ${oper_sales_order_line_items_t.source}=${ideal_deal_id.source}",
+  "fields": "ideal_deal_id.ideal_deal_id"
+ },
+ {
+  "join": "oper_product_custom_field_t",
+  "line": 581,
+  "end": 592,
+  "frm": "oper_product_custom_field_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.product_id}=${oper_product_custom_field_t.product_id} and ${oper_product_custom_field_t.ad_type} IS NOT NULL and ${oper_sales_order_line_items_t.source} = ${oper_product_custom_field_t.source}",
+  "fields": "oper_product_custom_field_t.op1_rev_data*"
+ },
+ {
+  "join": "launch_pad_flag",
+  "line": 594,
+  "end": 606,
+  "frm": "oper_product_custom_field_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.product_id}=${launch_pad_flag.product_id} AND ${launch_pad_flag.launchpad_flag} = 'Yes' and ${oper_sales_order_line_items_t.source} = ${launch_pad_flag.source}",
+  "fields": "launch_pad_flag.launchpad_flag"
+ },
+ {
+  "join": "dt_fw_gam_placement_status",
+  "line": 608,
+  "end": 617,
+  "frm": "dt_fw_gam_placement_status",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${dt_fw_gam_placement_status.sales_order_line_item_id}= COALESCE(${oper_sales_order_line_items_t.old_wm_line},${oper_sales_order_line_items_t.sales_order_line_item_id}) AND ${oper_sales_order_line_items_t.source} = 'wbd'",
+  "fields": "dt_fw_gam_placement_status.status"
+ },
+ {
+  "join": "dt_oper_vertical_booked",
+  "line": 619,
+  "end": 628,
+  "frm": "dt_oper_vertical_booked",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${dt_oper_vertical_booked.sales_order_line_item_id}= ${oper_sales_order_line_items_t.sales_order_line_item_id} AND ${oper_sales_order_line_items_t.source} = ${dt_oper_vertical_booked.source}",
+  "fields": "dt_oper_vertical_booked.vertical"
+ },
+ {
+  "join": "op1_g_demo",
+  "line": 630,
+  "end": 642,
+  "frm": "oper_sales_order_line_item_custom_field_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${op1_g_demo.sales_order_line_item_id} and ${op1_g_demo.demo_guaranteed} IS NOT NULL and ${oper_sales_order_line_items_t.source}=${op1_g_demo.source}",
+  "fields": "demo_guaranteed"
+ },
+ {
+  "join": "order_id_rev_run",
+  "line": 644,
+  "end": 655,
+  "frm": "oper_sales_order_line_item_custom_field_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${order_id_rev_run.sales_order_line_item_id} and ${order_id_rev_run.order_id_rev_run} IS NOT NULL AND ${oper_sales_order_line_items_t.source} = ${order_id_rev_run.source}",
+  "fields": "order_id_rev_run"
+ },
+ {
+  "join": "run_revenue",
+  "line": 657,
+  "end": 669,
+  "frm": "oper_sales_order_line_item_custom_field_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${run_revenue.sales_order_line_item_id} and ${run_revenue.run_revenue} = 1 and ${oper_sales_order_line_items_t.source}= ${run_revenue.source}",
+  "fields": "run_revenue.run_revenue"
+ },
+ {
+  "join": "l_wm_line_id",
+  "line": 673,
+  "end": 685,
+  "frm": "oper_sales_order_line_item_custom_field_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${l_wm_line_id.sales_order_line_item_id} and ${l_wm_line_id.legacy_li} IS NOT NULL and ${oper_sales_order_line_items_t.source}=${l_wm_line_id.source}",
+  "fields": "l_wm_line_id.legacy_li"
+ },
+ {
+  "join": "dt_oper_contextual_segments",
+  "line": 688,
+  "end": 697,
+  "frm": "dt_oper_contextual_segments",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${dt_oper_contextual_segments.sales_order_line_item_id} =${oper_sales_order_line_items_t.sales_order_line_item_id} AND ${oper_sales_order_line_items_t.source} = ${dt_oper_contextual_segments.source}",
+  "fields": "dt_oper_contextual_segments.contextual_segments"
+ },
+ {
+  "join": "oper_sales_order_line_item_custom_field_t",
+  "line": 700,
+  "end": 710,
+  "frm": "oper_sales_order_line_item_custom_field_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${oper_sales_order_line_item_custom_field_t.sales_order_line_item_id} AND ${oper_sales_order_line_items_t.source}=${oper_sales_order_line_item_custom_field_t.source}",
+  "fields": "oper_sales_order_line_item_custom_field_t.op1_rev_dev_data*"
+ },
+ {
+  "join": "oper_sales_line_item_targeting_t",
+  "line": 712,
+  "end": 722,
+  "frm": "oper_sales_line_item_targeting_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${oper_sales_line_item_targeting_t.sales_order_line_item_id} AND ${oper_sales_order_line_items_t.source}=${oper_sales_line_item_targeting_t.source}",
+  "fields": "oper_sales_line_item_targeting_t.op1_rev_data*"
+ },
+ {
+  "join": "accounts_t",
+  "line": 724,
+  "end": 736,
+  "frm": "accounts_t",
+  "type": "inner",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_t.advertiser_id}=${accounts_t.account_id} AND ${oper_sales_order_t.source}=${accounts_t.source}",
+  "fields": "accounts_t.industry"
+ },
+ {
+  "join": "oper_production_line_item",
+  "line": 738,
+  "end": 749,
+  "frm": "oper_production_line_item",
+  "type": "inner",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${oper_production_line_item.sales_order_line_item_id} AND ${oper_sales_order_line_items_t.source}=${oper_production_line_item.source}",
+  "fields": "oper_production_line_item.op1_rev_data*"
+ },
+ {
+  "join": "oper_sales_order_trafficker",
+  "line": 752,
+  "end": 763,
+  "frm": "oper_sales_order_users_map_t",
+  "type": "full_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_t.sales_order_id}=${oper_sales_order_trafficker.sales_order_id} AND ${oper_sales_order_t.source} = ${oper_sales_order_trafficker.source}",
+  "fields": "trafficker"
+ },
+ {
+  "join": "oper_sales_order_account_manager",
+  "line": 765,
+  "end": 776,
+  "frm": "oper_sales_order_users_map_t",
+  "type": "full_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_t.sales_order_id}=${oper_sales_order_account_manager.sales_order_id} AND ${oper_sales_order_t.source} = ${oper_sales_order_account_manager.source}",
+  "fields": "account_manager"
+ },
+ {
+  "join": "oper_sales_order_client_service",
+  "line": 778,
+  "end": 789,
+  "frm": "oper_sales_order_users_map_t",
+  "type": "full_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_t.sales_order_id}=${oper_sales_order_client_service.sales_order_id} AND ${oper_sales_order_t.source} = ${oper_sales_order_client_service.source}",
+  "fields": "client_service"
+ },
+ {
+  "join": "agency",
+  "line": 791,
+  "end": 801,
+  "frm": "agency",
+  "type": "full_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_t.agency_name} = ${agency.agency} AND LOWER(${oper_sales_order_t.source}) = 'wbd'",
+  "fields": "agency.parentagency"
+ },
+ {
+  "join": "sf_agency",
+  "line": 803,
+  "end": 812,
+  "frm": "sf_agency",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "LOWER(${oper_sales_order_t.agency_name}) = LOWER(${sf_agency.agency}) AND LOWER(${oper_sales_order_t.source}) = 'wbd'",
+  "fields": ""
+ },
+ {
+  "join": "op1_show_exculsions",
+  "line": 814,
+  "end": 825,
+  "frm": "oper_sales_order_line_item_custom_field_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${op1_show_exculsions.sales_order_line_item_id} and ${op1_show_exculsions.custom_field_name} IN ('Show Exclusions','Warner Show Exclusions') AND ${oper_sales_order_line_items_t.source} = ${op1_show_exculsions.source}",
+  "fields": "show_exclusions"
+ },
+ {
+  "join": "op1_site_exclusions",
+  "line": 827,
+  "end": 838,
+  "frm": "oper_sales_order_line_item_custom_field_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${op1_site_exclusions.sales_order_line_item_id} and ${op1_site_exclusions.custom_field_name} IN ('Site Exclusions','Warner Site Exclusions') AND ${oper_sales_order_line_items_t.source} = ${op1_site_exclusions.source}",
+  "fields": "site_exclusions"
+ },
+ {
+  "join": "op1_demo_composition_percentage",
+  "line": 841,
+  "end": 853,
+  "frm": "oper_sales_order_line_item_custom_field_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${op1_demo_composition_percentage.sales_order_line_item_id} and ${op1_demo_composition_percentage.custom_field_id} IN (84,184,133) and ${oper_sales_order_line_items_t.source}=${op1_demo_composition_percentage.source}",
+  "fields": "demo_composition_percentage"
+ },
+ {
+  "join": "op1_frequency_cap",
+  "line": 855,
+  "end": 867,
+  "frm": "oper_sales_order_line_item_custom_field_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${op1_frequency_cap.sales_order_line_item_id} and ${op1_frequency_cap.custom_field_id} IN (85,258) and ${oper_sales_order_line_items_t.source}=${op1_frequency_cap.source}",
+  "fields": "frequency_cap"
+ },
+ {
+  "join": "oper_sales_line_item_booked_delivered_t",
+  "line": 870,
+  "end": 879,
+  "frm": "oper_sales_line_item_booked_delivered_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${oper_sales_line_item_booked_delivered_t.sales_order_line_item_id} AND ${oper_sales_order_line_items_t.calendar_date} = ${oper_sales_line_item_booked_delivered_t.delivery_date} AND ${oper_sales_order_line_items_t.source} = 'wbd'",
+  "fields": ""
+ },
+ {
+  "join": "vod_olv_fluidity",
+  "line": 880,
+  "end": 891,
+  "frm": "oper_sales_order_custom_field_t",
+  "type": "inner",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_id}=${vod_olv_fluidity.sales_order_id} AND ${vod_olv_fluidity.custom_field_name} = 'VOD/OLV Fluidity' AND ${oper_sales_order_line_items_t.source} = ${vod_olv_fluidity.source}",
+  "fields": "vod_olv_fluidity.vod_olv_fluidity"
+ },
+ {
+  "join": "oper_products_t",
+  "line": 893,
+  "end": 902,
+  "frm": "oper_products_t",
+  "type": "full_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.product_id}=${oper_products_t.product_id} AND ${oper_sales_order_line_items_t.source}=${oper_products_t.source}",
+  "fields": ""
+ },
+ {
+  "join": "sales_office",
+  "line": 905,
+  "end": 915,
+  "frm": "sales_office",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "LOWER(REPLACE(REPLACE(${oper_sales_order_t.primary_salesperson_name},'''', ''),' ',' ')) = LOWER(REPLACE(REPLACE(${sales_office.ae},'''', ''),' ',' ')) AND LOWER(${oper_sales_order_t.source}) = 'wbd'",
+  "fields": "sales_office.office"
+ },
+ {
+  "join": "dt_total_delivery",
+  "line": 917,
+  "end": 929,
+  "frm": "dt_total_delivery",
+  "type": "full_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${dt_total_delivery.sales_order_line_item_id} AND ${oper_sales_order_line_items_t.source} = 'wbd'",
+  "fields": "dt_total_delivery.total_delivered_impressions"
+ },
+ {
+  "join": "news_itv_content_type_join",
+  "line": 931,
+  "end": 943,
+  "frm": "oper_sales_line_item_targeting_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${news_itv_content_type_join.sales_order_line_item_id} AND ${news_itv_content_type_join.targeting_id}=1331 AND ${oper_sales_order_line_items_t.source} = ${news_itv_content_type_join.source}",
+  "fields": "news_itv_content_type_join.news_itv_content_type"
+ },
+ {
+  "join": "priority_fw",
+  "line": 945,
+  "end": 957,
+  "frm": "oper_sales_line_item_targeting_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${priority_fw.sales_order_line_item_id} AND ${priority_fw.targeting_id}=631 AND ${oper_sales_order_line_items_t.source} = ${priority_fw.source}",
+  "fields": "priority_fw.priority_fw"
+ },
+ {
+  "join": "feq_cap_mea_fw_pg",
+  "line": 959,
+  "end": 971,
+  "frm": "oper_sli_text_targeting_v",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${feq_cap_mea_fw_pg.sales_order_line_item_id} AND ${feq_cap_mea_fw_pg.targeting_id}=1446 AND ${oper_sales_order_line_items_t.source} = ${feq_cap_mea_fw_pg.source}",
+  "fields": "feq_cap_mea_fw_pg.feq_cap_mea_fw_pg"
+ },
+ {
+  "join": "feq_cap_mea_fw",
+  "line": 973,
+  "end": 985,
+  "frm": "oper_sli_text_targeting_v",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${feq_cap_mea_fw.sales_order_line_item_id} AND ${feq_cap_mea_fw.targeting_id} IN (1435,1446) AND ${oper_sales_order_line_items_t.source} = ${feq_cap_mea_fw.source}",
+  "fields": "feq_cap_mea_fw.feq_cap_mea_fw"
+ },
+ {
+  "join": "title_spon_full",
+  "line": 987,
+  "end": 999,
+  "frm": "oper_sales_line_item_targeting_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${title_spon_full.sales_order_line_item_id} AND ${title_spon_full.targeting_id}=1661 AND ${oper_sales_order_line_items_t.source} = ${title_spon_full.source}",
+  "fields": "title_spon_full.title_spon_full"
+ },
+ {
+  "join": "title_spon_less",
+  "line": 1001,
+  "end": 1013,
+  "frm": "oper_sales_line_item_targeting_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${title_spon_less.sales_order_line_item_id} AND ${title_spon_less.targeting_id}=1662 AND ${oper_sales_order_line_items_t.source} = ${title_spon_less.source}",
+  "fields": "title_spon_less.title_spon_less"
+ },
+ {
+  "join": "title_spon",
+  "line": 1015,
+  "end": 1026,
+  "frm": "dt_oper_hbo_targeting",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${title_spon.sales_lin} and ${oper_sales_order_line_items_t.source}=${title_spon.source}",
+  "fields": "title_spon.title_spon"
+ },
+ {
+  "join": "hbo_max_inventory_package",
+  "line": 1029,
+  "end": 1040,
+  "frm": "dt_oper_hbo_targeting",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${hbo_max_inventory_package.sales_lin} and ${oper_sales_order_line_items_t.source}=${hbo_max_inventory_package.source}",
+  "fields": "hbo_max_inventory_package.hbo_max_inventory_package"
+ },
+ {
+  "join": "dplus_wbd_stream_title_spon",
+  "line": 1042,
+  "end": 1053,
+  "frm": "dt_oper_hbo_targeting",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${dplus_wbd_stream_title_spon.sales_lin} and ${oper_sales_order_line_items_t.source}=${dplus_wbd_stream_title_spon.source}",
+  "fields": "dplus_wbd_stream_title_spon.dplus_wbd_stream_title_spon"
+ },
+ {
+  "join": "lwm_ent_title_spons_fw",
+  "line": 1055,
+  "end": 1066,
+  "frm": "dt_oper_hbo_targeting",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${lwm_ent_title_spons_fw.sales_lin} and ${oper_sales_order_line_items_t.source}=${lwm_ent_title_spons_fw.source}",
+  "fields": "lwm_ent_title_spons_fw.lwm_ent_title_spons_fw"
+ },
+ {
+  "join": "max_content_group_include_exclude",
+  "line": 1068,
+  "end": 1080,
+  "frm": "dt_oper_hbo_targeting",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${max_content_group_include_exclude.sales_lin} and ${oper_sales_order_line_items_t.source}=${max_content_group_include_exclude.source}",
+  "fields": "max_content_group_include_exclude.max_content_group_include, max_content_group_include_exclude.max_content_group_exclude"
+ },
+ {
+  "join": "max_advertiser_include_exclude",
+  "line": 1084,
+  "end": 1094,
+  "frm": "dt_oper_hbo_targeting",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${max_advertiser_include_exclude.sales_lin} and ${oper_sales_order_line_items_t.source}=${max_advertiser_include_exclude.source}",
+  "fields": "max_advertiser_include_exclude.max_advertiser_include_exclude"
+ },
+ {
+  "join": "news_ent_advertiser_include_exclude_fw",
+  "line": 1097,
+  "end": 1107,
+  "frm": "dt_oper_hbo_targeting",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${news_ent_advertiser_include_exclude_fw.sales_lin} and ${oper_sales_order_line_items_t.source}=${news_ent_advertiser_include_exclude_fw.source}",
+  "fields": "news_ent_advertiser_include_exclude_fw.news_ent_advertiser_include_exclude_fw"
+ },
+ {
+  "join": "max_brand_exclude",
+  "line": 1110,
+  "end": 1122,
+  "frm": "oper_sales_line_item_targeting_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${max_brand_exclude.sales_order_line_item_id} AND ${max_brand_exclude.targeting_id}=1659 AND ${oper_sales_order_line_items_t.source} = ${max_brand_exclude.source}",
+  "fields": "max_brand_exclude.max_brand_exclude"
+ },
+ {
+  "join": "max_brand_include",
+  "line": 1125,
+  "end": 1137,
+  "frm": "oper_sales_line_item_targeting_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${max_brand_include.sales_order_line_item_id} AND ${max_brand_include.targeting_id}=1658 AND ${oper_sales_order_line_items_t.source} = ${max_brand_include.source}",
+  "fields": "max_brand_include.max_brand_include"
+ },
+ {
+  "join": "max_content_rating_include",
+  "line": 1139,
+  "end": 1151,
+  "frm": "oper_sales_line_item_targeting_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${max_content_rating_include.sales_order_line_item_id} AND ${max_content_rating_include.targeting_id}=1650 AND ${oper_sales_order_line_items_t.source} = 'wbd'",
+  "fields": "max_content_rating_include.max_content_rating_include"
+ },
+ {
+  "join": "max_genre_include",
+  "line": 1154,
+  "end": 1166,
+  "frm": "oper_sales_line_item_targeting_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${max_genre_include.sales_order_line_item_id} AND ${max_genre_include.targeting_id}=1655 AND ${oper_sales_order_line_items_t.source} = 'wbd'",
+  "fields": "max_genre_include.max_genre_include"
+ },
+ {
+  "join": "max_kids_content_name_exclude",
+  "line": 1169,
+  "end": 1181,
+  "frm": "oper_sales_line_item_targeting_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${max_kids_content_name_exclude.sales_order_line_item_id} AND ${max_kids_content_name_exclude.targeting_id}=1667 AND ${oper_sales_order_line_items_t.source} = 'wbd'",
+  "fields": "max_kids_content_name_exclude.max_kids_content_name_exclude"
+ },
+ {
+  "join": "max_kids_content_name_include",
+  "line": 1184,
+  "end": 1196,
+  "frm": "oper_sales_line_item_targeting_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${max_kids_content_name_include.sales_order_line_item_id} AND ${max_kids_content_name_include.targeting_id}=1666 AND ${oper_sales_order_line_items_t.source} = 'wbd'",
+  "fields": "max_kids_content_name_include.max_kids_content_name_include"
+ },
+ {
+  "join": "max_series_include_byseason",
+  "line": 1198,
+  "end": 1210,
+  "frm": "oper_sales_line_item_targeting_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${max_series_include_byseason.sales_order_line_item_id} AND ${max_series_include_byseason.targeting_id}=1643 AND ${oper_sales_order_line_items_t.source} = 'wbd'",
+  "fields": "max_series_include_byseason.max_series_include_byseason"
+ },
+ {
+  "join": "video_series_fw",
+  "line": 1214,
+  "end": 1226,
+  "frm": "oper_sales_line_item_targeting_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${video_series_fw.sales_order_line_item_id} AND ${video_series_fw.targeting_id}=1212 AND ${oper_sales_order_line_items_t.source} = 'wbd'",
+  "fields": "video_series_fw.video_series_fw"
+ },
+ {
+  "join": "video_group_fw",
+  "line": 1228,
+  "end": 1240,
+  "frm": "oper_sales_line_item_targeting_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${video_group_fw.sales_order_line_item_id} AND ${video_group_fw.targeting_id}=1235 AND ${oper_sales_order_line_items_t.source} = 'wbd'",
+  "fields": "video_group_fw.video_group_fw"
+ },
+ {
+  "join": "frequency_cap_measure_fw",
+  "line": 1243,
+  "end": 1255,
+  "frm": "oper_sales_line_item_targeting_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${frequency_cap_measure_fw.sales_order_line_item_id} AND ${frequency_cap_measure_fw.targeting_id}=1431 AND ${oper_sales_order_line_items_t.source} = 'wbd'",
+  "fields": "frequency_cap_measure_fw.frequency_cap_measure_fw"
+ },
+ {
+  "join": "exclude_video_group_fw",
+  "line": 1258,
+  "end": 1270,
+  "frm": "oper_sales_line_item_targeting_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${exclude_video_group_fw.sales_order_line_item_id} AND ${exclude_video_group_fw.targeting_id}=1206 AND ${oper_sales_order_line_items_t.source} = 'wbd'",
+  "fields": "exclude_video_group_fw.exclude_video_group_fw"
+ },
+ {
+  "join": "exclude_site_group_fw",
+  "line": 1272,
+  "end": 1284,
+  "frm": "oper_sales_line_item_targeting_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${exclude_site_group_fw.sales_order_line_item_id} AND ${exclude_site_group_fw.targeting_id}=1207 AND ${oper_sales_order_line_items_t.source} = 'wbd'",
+  "fields": "exclude_site_group_fw.exclude_site_group_fw"
+ },
+ {
+  "join": "exclude_video_series_fw",
+  "line": 1286,
+  "end": 1298,
+  "frm": "oper_sales_line_item_targeting_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${exclude_video_series_fw.sales_order_line_item_id} AND ${exclude_video_series_fw.targeting_id}=1232 AND ${oper_sales_order_line_items_t.source} = 'wbd'",
+  "fields": "exclude_video_series_fw.exclude_video_series_fw"
+ },
+ {
+  "join": "excess_inventory_fw",
+  "line": 1300,
+  "end": 1312,
+  "frm": "oper_sales_line_item_targeting_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${excess_inventory_fw.sales_order_line_item_id} AND ${excess_inventory_fw.targeting_id}=1218 AND ${oper_sales_order_line_items_t.source} = 'wbd'",
+  "fields": "excess_inventory_fw.excess_inventory_fw"
+ },
+ {
+  "join": "news_newsletter_content_type",
+  "line": 1315,
+  "end": 1327,
+  "frm": "oper_sales_line_item_targeting_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${news_newsletter_content_type.sales_order_line_item_id} AND ${news_newsletter_content_type.targeting_id} IN (1439,1559) AND ${oper_sales_order_line_items_t.source}=${news_newsletter_content_type.source}",
+  "fields": "news_newsletter_content_type.news_newsletter_content_type"
+ },
+ {
+  "join": "cnn_special",
+  "line": 1329,
+  "end": 1342,
+  "frm": "oper_sales_line_item_targeting_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${cnn_special.sales_order_line_item_id} AND ${cnn_special.targeting_id} IN (790,1481) AND ${oper_sales_order_line_items_t.source}=${cnn_special.source}",
+  "fields": "cnn_special.cnn_specials"
+ },
+ {
+  "join": "cnn_business_special",
+  "line": 1344,
+  "end": 1356,
+  "frm": "oper_sales_line_item_targeting_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${cnn_business_special.sales_order_line_item_id} AND ${cnn_business_special.targeting_id} IN (1177,1496) AND ${oper_sales_order_line_items_t.source}=${cnn_business_special.source}",
+  "fields": "cnn_business_special.cnnbusiness_specials_display"
+ },
+ {
+  "join": "gbs_special",
+  "line": 1358,
+  "end": 1370,
+  "frm": "oper_sales_line_item_targeting_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${gbs_special.sales_order_line_item_id} AND ${gbs_special.targeting_id}=1265 AND ${oper_sales_order_line_items_t.source}=${gbs_special.source}",
+  "fields": "gbs_special.gbs_specials"
+ },
+ {
+  "join": "freewheel_specials",
+  "line": 1372,
+  "end": 1384,
+  "frm": "oper_sales_line_item_targeting_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${freewheel_specials.sales_order_line_item_id} AND ${freewheel_specials.targeting_id}=1269 AND ${oper_sales_order_line_items_t.source} = 'wbd'",
+  "fields": "freewheel_specials.freewheel_specials"
+ },
+ {
+  "join": "freewheel_video_group",
+  "line": 1388,
+  "end": 1400,
+  "frm": "oper_sales_line_item_targeting_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${freewheel_video_group.sales_order_line_item_id} AND ${freewheel_video_group.targeting_id}=1291 AND ${oper_sales_order_line_items_t.source} = 'wbd'",
+  "fields": "freewheel_video_group.freewheel_video_group"
+ },
+ {
+  "join": "gbs_article",
+  "line": 1402,
+  "end": 1414,
+  "frm": "oper_sales_line_item_targeting_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${gbs_article.sales_order_line_item_id} AND ${gbs_article.targeting_id}=860 AND ${oper_sales_order_line_items_t.source} = 'wbd'",
+  "fields": "gbs_article.gbs_article"
+ },
+ {
+  "join": "gbs_page",
+  "line": 1416,
+  "end": 1428,
+  "frm": "oper_sales_line_item_targeting_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${gbs_page.sales_order_line_item_id} AND ${gbs_page.targeting_id}=904 AND ${oper_sales_order_line_items_t.source} = 'wbd'",
+  "fields": "gbs_page.gbs_page"
+ },
+ {
+  "join": "launchpad_type",
+  "line": 1430,
+  "end": 1442,
+  "frm": "oper_sales_line_item_targeting_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${launchpad_type.sales_order_line_item_id} AND ${launchpad_type.targeting_id} IN (1296,1511) AND ${oper_sales_order_line_items_t.source}=${launchpad_type.source}",
+  "fields": "launchpad_type.launchpad_type"
+ },
+ {
+  "join": "guarantee_type",
+  "line": 1444,
+  "end": 1457,
+  "frm": "oper_sales_line_item_targeting_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${guarantee_type.sales_order_line_item_id} AND ${guarantee_type.targeting_id} IN (1304,1517) AND ${oper_sales_order_line_items_t.source}=${guarantee_type.source}",
+  "fields": "guarantee_type.guarantee_type"
+ },
+ {
+  "join": "interactive_format",
+  "line": 1459,
+  "end": 1472,
+  "frm": "oper_sales_line_item_targeting_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${interactive_format.sales_order_line_item_id} AND ${interactive_format.interactive_format} IS NOT NULL AND ${oper_sales_order_line_items_t.source}=${interactive_format.source}",
+  "fields": "interactive_format.interactive_format"
+ },
+ {
+  "join": "br_brand_targets",
+  "line": 1474,
+  "end": 1485,
+  "frm": "dt_oper_bleacher_report_targeting",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${br_brand_targets.SALES_ORDER_LINE_ITEM_ID} AND ${oper_sales_order_line_items_t.source}=${br_brand_targets.source}",
+  "fields": "br_brand_targets.br_brand_targets"
+ },
+ {
+  "join": "sports_spon_pkg_name",
+  "line": 1487,
+  "end": 1498,
+  "frm": "dt_oper_bleacher_report_targeting",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${sports_spon_pkg_name.SALES_ORDER_LINE_ITEM_ID} AND ${oper_sales_order_line_items_t.source}=${sports_spon_pkg_name.source}",
+  "fields": "sports_spon_pkg_name.sports_spon_pkg_name"
+ },
+ {
+  "join": "br_sports_targets",
+  "line": 1500,
+  "end": 1511,
+  "frm": "dt_oper_bleacher_report_targeting",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${br_sports_targets.SALES_ORDER_LINE_ITEM_ID} AND ${oper_sales_order_line_items_t.source}=${br_sports_targets.source}",
+  "fields": "br_sports_targets.br_sports"
+ },
+ {
+  "join": "br_content_type",
+  "line": 1513,
+  "end": 1524,
+  "frm": "dt_oper_bleacher_report_targeting",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${br_content_type.SALES_ORDER_LINE_ITEM_ID} AND ${oper_sales_order_line_items_t.source}=${br_content_type.source}",
+  "fields": "br_content_type.br_content_type"
+ },
+ {
+  "join": "podcast_group",
+  "line": 1526,
+  "end": 1537,
+  "frm": "dt_oper_podcast_targeting",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${podcast_group.sales_lin} AND ${oper_sales_order_line_items_t.source} = ${podcast_group.source}",
+  "fields": "podcast_group.podcast_group"
+ },
+ {
+  "join": "context_targeting",
+  "line": 1539,
+  "end": 1553,
+  "frm": "dt_oper_context_suitabliity",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${context_targeting.sales_lin} AND ${oper_sales_order_line_items_t.source} = ${context_targeting.source}",
+  "fields": "context_targeting.con_exc, context_targeting.con_inc, context_targeting.suit_exc, context_targeting.suit_inc"
+ },
+ {
+  "join": "context_targeting_count",
+  "line": 1555,
+  "end": 1570,
+  "frm": "dt_oper_context_suitabliity_count",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${context_targeting_count.sales_order_line_item_id} AND ${oper_sales_order_line_items_t.source} = ${context_targeting_count.source}",
+  "fields": "context_targeting_count.suitability_include, context_targeting_count.suitability_exclude, context_targeting_count.advanced_contextual_include, context_targeting_count.advanced_contextual_exclude, context_targeting_count.total_segment_count"
+ },
+ {
+  "join": "newsletter",
+  "line": 1572,
+  "end": 1584,
+  "frm": "dt_oper_context_suitabliity",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${newsletter.sales_lin} AND ${oper_sales_order_line_items_t.source} = ${newsletter.source}",
+  "fields": "newsletter.newslet"
+ },
+ {
+  "join": "podcast_station",
+  "line": 1586,
+  "end": 1597,
+  "frm": "dt_oper_podcast_targeting",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${podcast_station.sales_lin} AND ${oper_sales_order_line_items_t.source}=${podcast_station.source}",
+  "fields": "podcast_station.podcast_station"
+ },
+ {
+  "join": "podcast_position",
+  "line": 1600,
+  "end": 1612,
+  "frm": "dt_oper_podcast_targeting",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${podcast_position.sales_lin} AND ${oper_sales_order_line_items_t.source}=${podcast_position.source}",
+  "fields": "podcast_position.podcast_position"
+ },
+ {
+  "join": "mg_podcast",
+  "line": 1615,
+  "end": 1627,
+  "frm": "dt_oper_podcast_targeting",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${mg_podcast.sales_lin} AND ${oper_sales_order_line_items_t.source}=${mg_podcast.source}",
+  "fields": "mg_podcast.mg_podcast"
+ },
+ {
+  "join": "podcast_capping",
+  "line": 1631,
+  "end": 1643,
+  "frm": "oper_sales_line_item_targeting_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${podcast_capping.sales_order_line_item_id} AND ${podcast_capping.targeting_id} IN (1481) AND ${oper_sales_order_line_items_t.source}=${podcast_capping.source}",
+  "fields": "podcast_capping.podcast_capping"
+ },
+ {
+  "join": "podcast_priority",
+  "line": 1645,
+  "end": 1657,
+  "frm": "oper_sales_line_item_targeting_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${podcast_priority.sales_order_line_item_id} AND ${podcast_priority.targeting_id} IN (1492,1474) AND ${oper_sales_order_line_items_t.source}=${podcast_priority.source}",
+  "fields": "podcast_priority.podcast_priority"
+ },
+ {
+  "join": "twitter_content",
+  "line": 1659,
+  "end": 1671,
+  "frm": "oper_sales_line_item_targeting_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${twitter_content.sales_order_line_item_id} AND ${twitter_content.targeting_id} IN (1496,1562) AND ${oper_sales_order_line_items_t.source}=${twitter_content.source}",
+  "fields": "twitter_content.twitter_content_themes"
+ },
+ {
+  "join": "mg_av_reason",
+  "line": 1674,
+  "end": 1685,
+  "frm": "oper_sales_order_line_item_custom_field_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${mg_av_reason.sales_order_line_item_id} and ${mg_av_reason.custom_field_id} IN (115,267) AND ${oper_sales_order_line_items_t.source} = ${mg_av_reason.source}",
+  "fields": "mg_av_reason.mg_av_reason"
+ },
+ {
+  "join": "line_item_level_target_demo",
+  "line": 1689,
+  "end": 1701,
+  "frm": "oper_sales_order_line_item_custom_field_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${line_item_level_target_demo.sales_order_line_item_id} and ${line_item_level_target_demo.custom_field_id} IN (132) and ${oper_sales_order_line_items_t.source}=${line_item_level_target_demo.source}",
+  "fields": "line_item_level_target_demo.target_demo"
+ },
+ {
+  "join": "product",
+  "line": 1705,
+  "end": 1717,
+  "frm": "oper_products_t",
+  "type": "inner",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.product_id} = ${product.product_id} AND ${oper_sales_order_line_items_t.source} = ${product.source}",
+  "fields": "product.product_status, product.tag_name"
+ },
+ {
+  "join": "currency",
+  "line": 1719,
+  "end": 1730,
+  "frm": "oper_currency_dt_map",
+  "type": "inner",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.order_currency_id} = ${currency.currency_id} AND ${oper_sales_order_line_items_t.source} = ${currency.source}",
+  "fields": "currency.currency_name"
+ },
+ {
+  "join": "gam_invent_size",
+  "line": 1732,
+  "end": 1744,
+  "frm": "oper_sales_line_item_targeting_t",
+  "type": "inner",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${gam_invent_size.sales_order_line_item_id} AND ${gam_invent_size.gam_inventory_size} IS NOT NULL AND ${oper_sales_order_line_items_t.source}=${gam_invent_size.source}",
+  "fields": "gam_invent_size.gam_inventory_size"
+ },
+ {
+  "join": "collections_op",
+  "line": 1746,
+  "end": 1758,
+  "frm": "oper_sales_line_item_targeting_t",
+  "type": "inner",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${collections_op.sales_order_line_item_id} AND ${collections_op.collections} IS NOT NULL AND ${oper_sales_order_line_items_t.source}=${collections_op.source}",
+  "fields": "collections_op.collections"
+ },
+ {
+  "join": "gam_content_type",
+  "line": 1760,
+  "end": 1772,
+  "frm": "oper_sales_line_item_targeting_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${gam_content_type.sales_order_line_item_id} AND ${gam_content_type.gam_content_type} IS NOT NULL AND ${oper_sales_order_line_items_t.source}=${gam_content_type.source}",
+  "fields": "gam_content_type.gam_content_type"
+ },
+ {
+  "join": "dt_oper_sales_targeting",
+  "line": 1774,
+  "end": 1783,
+  "frm": "dt_oper_sales_targeting",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${dt_oper_sales_targeting.sales_order_line_item_id} AND ${oper_sales_order_line_items_t.source} = ${dt_oper_sales_targeting.source}",
+  "fields": ""
+ },
+ {
+  "join": "op1_gam_priority",
+  "line": 1785,
+  "end": 1797,
+  "frm": "oper_product_embedded_targeting_map_v",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.product_id} = ${op1_gam_priority.product_id} AND ${op1_gam_priority.targeting_id} IN (677,1583) AND ${oper_sales_order_line_items_t.source} = ${op1_gam_priority.source}",
+  "fields": "gam_priority"
+ },
+ {
+  "join": "op1_gam_pacing",
+  "line": 1799,
+  "end": 1811,
+  "frm": "oper_product_embedded_targeting_map_v",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.product_id} = ${op1_gam_pacing.product_id} AND ${op1_gam_pacing.targeting_id} = 675 AND ${oper_sales_order_line_items_t.source} = ${op1_gam_pacing.source}",
+  "fields": "gam_pacing"
+ },
+ {
+  "join": "op1_gam_dma",
+  "line": 1813,
+  "end": 1825,
+  "frm": "oper_product_embedded_targeting_map_v",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.product_id} = ${op1_gam_dma.product_id} AND ${op1_gam_dma.targeting_id} = 686 AND ${oper_sales_order_line_items_t.source} = = ${op1_gam_dma.source}",
+  "fields": "gam_dma"
+ },
+ {
+  "join": "op1_gam_country",
+  "line": 1827,
+  "end": 1839,
+  "frm": "oper_product_embedded_targeting_map_v",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.product_id} = ${op1_gam_country.product_id} AND ${op1_gam_country.targeting_id} = 685 AND ${oper_sales_order_line_items_t.source} = ${op1_gam_country.source}",
+  "fields": "gam_country"
+ },
+ {
+  "join": "sports_event_calendar",
+  "line": 1841,
+  "end": 1853,
+  "frm": "sports_event_calendar",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sports_join_date} = ${sports_event_calendar.date_date} and ${oper_sales_order_line_items_t.sports_property} = ${sports_event_calendar.property} AND ${oper_sales_order_line_items_t.source} = 'wbd'",
+  "fields": "sports_event_calendar.property, sports_event_calendar.seasonality_event, sports_event_calendar.seasonality_group"
+ },
+ {
+  "join": "gam_dma_line",
+  "line": 1856,
+  "end": 1868,
+  "frm": "dt_oper_dma",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${gam_dma_line.sales_li} AND ${oper_sales_order_line_items_t.source}=${gam_dma_line.source}",
+  "fields": "gam_dma_line.gam_dma"
+ },
+ {
+  "join": "fw_dma_line",
+  "line": 1870,
+  "end": 1882,
+  "frm": "dt_oper_dma",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${fw_dma_line.sales_li} and ${oper_sales_order_line_items_t.source}=${fw_dma_line.source}",
+  "fields": "fw_dma_line.fw_dma"
+ },
+ {
+  "join": "fw_state_line",
+  "line": 1884,
+  "end": 1896,
+  "frm": "dt_oper_dma",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${fw_state_line.sales_li} and ${oper_sales_order_line_items_t.source}=${fw_state_line.source}",
+  "fields": "fw_state_line.fw_state"
+ },
+ {
+  "join": "fw_country_line",
+  "line": 1898,
+  "end": 1910,
+  "frm": "dt_oper_dma",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${fw_country_line.sales_li} and ${oper_sales_order_line_items_t.source}=${fw_country_line.source}",
+  "fields": "fw_country_line.fw_country"
+ },
+ {
+  "join": "st_exc_fw",
+  "line": 1912,
+  "end": 1924,
+  "frm": "dt_oper_dma",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${st_exc_fw.sales_li} and ${oper_sales_order_line_items_t.source}=${st_exc_fw.source}",
+  "fields": "st_exc_fw.st_exc_fw"
+ },
+ {
+  "join": "st_prov_inc_fw",
+  "line": 1927,
+  "end": 1939,
+  "frm": "dt_oper_dma",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${st_prov_inc_fw.sales_li} and ${oper_sales_order_line_items_t.source}=${st_prov_inc_fw.source}",
+  "fields": "st_prov_inc_fw.st_prov_inc_fw"
+ },
+ {
+  "join": "target_list",
+  "line": 1941,
+  "end": 1953,
+  "frm": "dt_oper_targ_list",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${target_list.sales_lin} AND ${oper_sales_order_line_items_t.source}=${target_list.source}",
+  "fields": "target_list.targeting_name_list, target_list.targeting_option_list"
+ },
+ {
+  "join": "oper_targeting_count",
+  "line": 1955,
+  "end": 1964,
+  "frm": "oper_targeting_count",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${oper_targeting_count.sales_order_line_item_id} AND ${oper_sales_order_line_items_t.source}=${oper_targeting_count.source}",
+  "fields": ""
+ },
+ {
+  "join": "fw_gen_excl",
+  "line": 1967,
+  "end": 1978,
+  "frm": "dt_oper_hbo_targeting",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${fw_gen_excl.sales_lin} AND ${oper_sales_order_line_items_t.source} = ${fw_gen_excl.source}",
+  "fields": "fw_gen_excl.fw_gen_excl"
+ },
+ {
+  "join": "max_series_include_allseasons",
+  "line": 1980,
+  "end": 1991,
+  "frm": "dt_oper_hbo_targeting",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${max_series_include_allseasons.sales_lin} AND ${oper_sales_order_line_items_t.source} = ${max_series_include_allseasons.source}",
+  "fields": "max_series_include_allseasons.max_series_include_allseasons"
+ },
+ {
+  "join": "fw_mv_rat_excl",
+  "line": 1993,
+  "end": 2004,
+  "frm": "dt_oper_hbo_targeting",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${fw_mv_rat_excl.sales_lin} and ${oper_sales_order_line_items_t.source}=${fw_mv_rat_excl.source}",
+  "fields": "fw_mv_rat_excl.fw_mv_rat_excl"
+ },
+ {
+  "join": "fw_mv_rat_incl_nc",
+  "line": 2006,
+  "end": 2017,
+  "frm": "dt_oper_hbo_targeting",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${fw_mv_rat_incl_nc.sales_lin} and ${oper_sales_order_line_items_t.source}=${fw_mv_rat_incl_nc.source}",
+  "fields": "fw_mv_rat_incl_nc.fw_mv_rat_incl_nc"
+ },
+ {
+  "join": "fw_prof_excl",
+  "line": 2019,
+  "end": 2030,
+  "frm": "dt_oper_hbo_targeting",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${fw_prof_excl.sales_lin} and ${oper_sales_order_line_items_t.source}=${fw_prof_excl.source}",
+  "fields": "fw_prof_excl.fw_prof_excl"
+ },
+ {
+  "join": "fw_tv_rat_excl",
+  "line": 2032,
+  "end": 2044,
+  "frm": "dt_oper_hbo_targeting",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${fw_tv_rat_excl.sales_lin} and ${oper_sales_order_line_items_t.source}=${fw_tv_rat_excl.source}",
+  "fields": "fw_tv_rat_excl.fw_tv_rat_excl"
+ },
+ {
+  "join": "fw_con_age_excl",
+  "line": 2046,
+  "end": 2057,
+  "frm": "dt_oper_hbo_targeting",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${fw_con_age_excl.sales_lin} and ${oper_sales_order_line_items_t.source}=${fw_con_age_excl.source}",
+  "fields": "fw_con_age_excl.fw_con_age_excl"
+ },
+ {
+  "join": "hbo_aud_seg",
+  "line": 2059,
+  "end": 2070,
+  "frm": "dt_oper_hbo_targeting",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${hbo_aud_seg.sales_lin} and ${oper_sales_order_line_items_t.source}=${hbo_aud_seg.source}",
+  "fields": "hbo_aud_seg.hbo_aud_seg"
+ },
+ {
+  "join": "hbo_targeting",
+  "line": 2072,
+  "end": 2083,
+  "frm": "dt_oper_hbo_targeting",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${hbo_targeting.sales_lin} and ${oper_sales_order_line_items_t.source}=${hbo_targeting.source}",
+  "fields": "hbo_targeting.max_device_targeting"
+ },
+ {
+  "join": "dt_oper_hbo_targeting",
+  "line": 2085,
+  "end": 2100,
+  "frm": "dt_oper_hbo_targeting",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${dt_oper_hbo_targeting.sales_lin} and ${oper_sales_order_line_items_t.source}=${dt_oper_hbo_targeting.source}",
+  "fields": "dt_oper_hbo_targeting.max_series_exclude_allseasons, dt_oper_hbo_targeting.max_series_exclude_byseasons, dt_oper_hbo_targeting.max_content_rating_exclude, dt_oper_hbo_targeting.discovery_brand_include, dt_oper_hbo_targeting.discovery_inventory_package"
+ },
+ {
+  "join": "gam_youtube_targeting",
+  "line": 2102,
+  "end": 2114,
+  "frm": "dt_oper_gam_youtube_targeting",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${gam_youtube_targeting.sales_order_line_item_id} AND ${oper_sales_order_line_items_t.source}=${gam_youtube_targeting.source}",
+  "fields": "gam_youtube_targeting.gam_youtube_age ,gam_youtube_targeting.gam_youtube_gender"
+ },
+ {
+  "join": "fw_ind_excl",
+  "line": 2116,
+  "end": 2127,
+  "frm": "dt_sli_grp_tar",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${fw_ind_excl.sales_lin} AND ${oper_sales_order_line_items_t.source}=${fw_ind_excl.source}",
+  "fields": "fw_ind_excl.fw_ind_excl"
+ },
+ {
+  "join": "dt_prod_lin_stat",
+  "line": 2129,
+  "end": 2139,
+  "frm": "dt_prod_lin_stat",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${dt_prod_lin_stat.sales_lin} AND ${oper_sales_order_line_items_t.source}=${dt_prod_lin_stat.source}",
+  "fields": "dt_prod_lin_stat.prod_line_item_sts"
+ },
+ {
+  "join": "op1_order_invoice_affidavit",
+  "line": 2141,
+  "end": 2153,
+  "frm": "oper_sales_order_custom_field_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_t.sales_order_id}=${op1_order_invoice_affidavit.sales_order_id} and ${op1_order_invoice_affidavit.custom_field_name}='Invoice/Affidavit' AND ${oper_sales_order_t.source} = ${op1_order_invoice_affidavit.source}",
+  "fields": "invoice_affidavit"
+ },
+ {
+  "join": "raw_line_item",
+  "line": 2155,
+  "end": 2164,
+  "frm": "old_version_oper_sales_order_line_items_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.parent_line_item_id} = ${raw_line_item.sales_order_line_item_id} AND ${oper_sales_order_line_items_t.source} = ${raw_line_item.source}",
+  "fields": ""
+ },
+ {
+  "join": "oper_dimdate_v",
+  "line": 2166,
+  "end": 2180,
+  "frm": "oper_dimdate_v",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.calendar_date} = ${oper_dimdate_v.calendardate}",
+  "fields": "oper_dimdate_v.broadcastmonthname, oper_dimdate_v.broadcastmonthenddate, oper_dimdate_v.broadcastweekstartdate, oper_dimdate_v.broadcastyear, oper_dimdate_v.broadcastquarterenddate"
+ },
+ {
+  "join": "dt_custom_pacing_map",
+  "line": 2182,
+  "end": 2192,
+  "frm": "dt_custom_pacing_map",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${dt_custom_pacing_map.sales_order_line_item_id} = ${oper_sales_order_line_items_t.sales_order_line_item_id} and ${dt_custom_pacing_map.pacing_date} = ${oper_sales_order_line_items_t.calendar_date} AND ${oper_sales_order_line_items_t.source} = 'wbd'",
+  "fields": ""
+ },
+ {
+  "join": "rep_parent_adv_v",
+  "line": 2194,
+  "end": 2203,
+  "frm": "rep_parent_adv_v",
+  "type": "left_outer",
+  "view_label": null,
+  "sql_on": "${oper_sales_order_line_items_t.operative_advertiser_id} = ${rep_parent_adv_v.advertiser_id} AND ${oper_sales_order_line_items_t.source} = 'wbd'",
+  "fields": ""
+ },
+ {
+  "join": "dt_oper_created_on_wm",
+  "line": 2205,
+  "end": 2214,
+  "frm": "dt_oper_created_on_wm",
+  "type": "left_outer",
+  "view_label": null,
+  "sql_on": "${oper_sales_order_t.sales_order_id} = ${dt_oper_created_on_wm.sales_order_id} AND LOWER(${oper_sales_order_t.source}) = 'wbd'",
+  "fields": ""
+ },
+ {
+  "join": "dt_oper_targ_list_site_group",
+  "line": 2216,
+  "end": 2226,
+  "frm": "dt_oper_targ_list_site_group",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${dt_oper_targ_list_site_group.sales_lin} AND ${oper_sales_order_line_items_t.source}= 'wbd'",
+  "fields": "dt_oper_targ_list_site_group.site_group_fw"
+ },
+ {
+  "join": "dt_wbd_oper_targ_breakouts",
+  "line": 2228,
+  "end": 2237,
+  "frm": "dt_wbd_oper_targ_breakouts",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${dt_wbd_oper_targ_breakouts.sales_lin} AND ${oper_sales_order_line_items_t.source} = 'wbd'",
+  "fields": "dt_wbd_oper_targ_breakouts.medal_teir"
+ },
+ {
+  "join": "dt_news_ent_content",
+  "line": 2239,
+  "end": 2249,
+  "frm": "dt_news_ent_content",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${dt_news_ent_content.sales_lin} AND ${oper_sales_order_line_items_t.source} = 'wbd'",
+  "fields": "dt_news_ent_content.news_ent_content_target_exc"
+ },
+ {
+  "join": "ttn_ten_flag",
+  "line": 2251,
+  "end": 2262,
+  "frm": "dt_news_ent_content",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${ttn_ten_flag.sales_lin} AND ${oper_sales_order_line_items_t.source} = 'wbd'",
+  "fields": "ttn_ten_flag.ttn_ten_flag"
+ },
+ {
+  "join": "dt_news_ent_content_inc",
+  "line": 2265,
+  "end": 2276,
+  "frm": "dt_news_ent_content",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${dt_news_ent_content_inc.sales_lin} AND ${oper_sales_order_line_items_t.source} = 'wbd'",
+  "fields": "dt_news_ent_content_inc.news_ent_content_target_inc"
+ },
+ {
+  "join": "payment_type_wbd",
+  "line": 2278,
+  "end": 2290,
+  "frm": "oper_sales_order_custom_field_t",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_id}=${payment_type_wbd.sales_order_id} AND ${payment_type_wbd.payment_type_wbd} IS NOT NULL AND ${oper_sales_order_line_items_t.source}=${payment_type_wbd.source}",
+  "fields": "payment_type_wbd.payment_type_wbd"
+ },
+ {
+  "join": "video_ad_analytics_deals_bids_rpt_v",
+  "line": 2294,
+  "end": 2305,
+  "frm": "video_ad_analytics_deals_bids_rpt_v",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${video_ad_analytics_deals_bids_rpt_v.line_item_id} AND ${oper_sales_order_line_items_t.calendar_date} = ${video_ad_analytics_deals_bids_rpt_v.event_date} AND ${oper_sales_order_line_items_t.source} = 'wbd'",
+  "fields": ""
+ },
+ {
+  "join": "lineitem_adid_v",
+  "line": 2307,
+  "end": 2317,
+  "frm": "lineitem_adid_v",
+  "type": "left_outer",
+  "view_label": "Op1 Contracted Data",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_line_item_id}=${lineitem_adid_v.line_item_id} AND ${oper_sales_order_line_items_t.source} = 'wbd'",
+  "fields": "lineitem_adid_v.ad_id"
+ },
+ {
+  "join": "rev_min_date",
+  "line": 2319,
+  "end": 2328,
+  "frm": "rev_min_date",
+  "type": "left_outer",
+  "view_label": "Op1 Line Item Delivery",
+  "sql_on": "${oper_sales_order_line_items_t.sales_order_id}=${rev_min_date.order_id} AND ${oper_sales_order_line_items_t.source} = 'wbd'",
+  "fields": ""
+ },
+ {
+  "join": "sf_opp_won_v",
+  "line": 2331,
+  "end": 2340,
+  "frm": "sf_opp_won_v",
+  "type": "left_outer",
+  "view_label": "Salesforce",
+  "sql_on": "${op1_order_opportunity_id.opportunity_id} = ${sf_opp_won_v.opportunity}",
+  "fields": "sf_opp_won_v.won"
+ },
+ {
+  "join": "salesforce_eds",
+  "line": 2343,
+  "end": 2351,
+  "frm": "salesforce_eds",
+  "type": "left_outer",
+  "view_label": "Salesforce",
+  "sql_on": "${op1_order_opportunity_id.opportunity_id} = ${salesforce_eds.id}",
+  "fields": "salesforce_eds.stage_name"
+ },
+ {
+  "join": "pi_advertiser_mapping",
+  "line": 2353,
+  "end": 2361,
+  "frm": "pi_advertiser_mapping",
+  "type": "left_outer",
+  "view_label": "SOS",
+  "sql_on": "LOWER(${oper_sales_order_line_items_t.advertiser_name}) = LOWER(${pi_advertiser_mapping.ori_adv})",
+  "fields": "pi_advertiser_mapping.rev_adv"
+ },
+ {
+  "join": "pi_agency_mapping",
+  "line": 2363,
+  "end": 2371,
+  "frm": "pi_agency_mapping",
+  "type": "left_outer",
+  "view_label": "SOS",
+  "sql_on": "LOWER(${oper_sales_order_line_items_t.agency_name}) = LOWER(${pi_agency_mapping.ori_agy})",
+  "fields": "pi_agency_mapping.rev_agy"
+ },
+ {
+  "join": "pi_holdco_mapping",
+  "line": 2373,
+  "end": 2381,
+  "frm": "pi_holdco_mapping",
+  "type": "left_outer",
+  "view_label": "SOS",
+  "sql_on": "COALESCE(LOWER(${agency.parentagency}),LOWER(${pi_agency_mapping.rev_agy}),LOWER(${oper_sales_order_line_items_t.agency_name})) = LOWER(${pi_holdco_mapping.ori_agy})",
+  "fields": "pi_holdco_mapping.rev_agy"
+ },
+ {
+  "join": "pi_site_mapping",
+  "line": 2383,
+  "end": 2390,
+  "frm": "pi_site_mapping",
+  "type": "left_outer",
+  "view_label": "SOS",
+  "sql_on": "LOWER(${oper_sales_order_line_items_t.forecast_category}) = LOWER(${pi_site_mapping.site_raw})",
+  "fields": ""
+ }
+]

@@ -1,0 +1,177 @@
+key,status,resolved,epic,source,layer,candidate_table,match,tables,in_dev,in_prod,classification,summary
+CARL-242,Done,2026-03-19,CARL-312,LDR modelled (dim/fact),silver,fact_pacing_revenue_budget_mo,none,,False,False,done_no_table_found,SILVER.FACT_PACING_REVENUE_BUDGET_MO transformation/business logic
+CARL-254,Done,2026-08-25,CARL-312,LDR modelled (dim/fact),silver,dim_net_account,exact,linear_digital_revenue_silver.dim_net_account,True,True,done_and_in_prod,feature/SILVER.DIM_NET_ACCOUNT transformation business logic
+CARL-255,To Do,,CARL-313,LDR modelled (dim/fact),gold,dim_net_account,none,,False,False,open_no_table,[Q2] Phase 2 GOLD.DIM_NET_ACCOUNT transformation/business logic
+CARL-268,To Do,,CARL-312,LDR modelled (dim/fact),silver,dim_advertisers,none,,False,False,open_no_table,[Q2] Phase 2 SILVER.DIM_ADVERTISERS  transformation logic
+CARL-269,To Do,,CARL-313,LDR modelled (dim/fact),gold,dim_advertisers,none,,False,False,open_no_table,[Q2] Phase 2 GOLD.DIM_ADVERTISERS  transformation/business logic
+CARL-280,Done,2026-03-19,CARL-313,LDR modelled (dim/fact),gold,fact_pacing_revenue_budget_mo,none,,False,False,done_no_table_found,GOLD.FACT_PACING_REVENUE_BUDGET_MO  transformation/business logic
+CARL-281,To Do,,CARL-312,LDR modelled (dim/fact),silver,dim_users,none,,False,False,open_no_table,[Q2] Phase 2 SILVER.DIM_USERS transformation logic
+CARL-282,To Do,,CARL-313,LDR modelled (dim/fact),gold,dim_users,none,,False,False,open_no_table,[Q2] Phase 2 GOLD.DIM_USERS  transformation/business logic
+CARL-283,Done,2026-07-01,CARL-312,LDR modelled (dim/fact),silver,dim_agency,exact,linear_digital_revenue_silver.dim_agency,True,True,done_and_in_prod,[Q2] Phase 2 SILVER.DIM_AGENCY transformation logic
+CARL-284,To Do,,CARL-313,LDR modelled (dim/fact),gold,dim_agency,exact,linear_digital_revenue_gold.dim_agency,True,True,live_but_open,[Q2] Phase 2 GOLD.DIM_AGENCY transformation/business logic
+CARL-287,Done,2026-03-18,CARL-312,LDR modelled (dim/fact),silver,dim_teams,exact,linear_digital_revenue_silver.dim_teams,True,True,done_and_in_prod,SILVER.DIM_TEAMS transformation/business logic
+CARL-288,Done,2026-03-19,CARL-313,LDR modelled (dim/fact),gold,dim_teams,exact,linear_digital_revenue_gold.dim_teams,True,True,done_and_in_prod,GOLD.DIM_TEAMS TYPE2  transformation/business logic
+CARL-294,Done,2026-03-16,CARL-312,LDR modelled (dim/fact),silver,dim_month,exact,linear_digital_revenue_silver.dim_month,True,True,done_and_in_prod,SILVER.DIM_MONTH one time create
+CARL-295,Done,2026-07-06,CARL-313,LDR modelled (dim/fact),gold,dim_month,none,,False,False,done_no_table_found,[Q2] Phase 2 GOLD.DIM_MONTH
+CARL-297,Done,2026-07-01,CARL-312,LDR modelled (dim/fact),silver,dim_net_account_ae_combo,exact,linear_digital_revenue_silver.dim_net_account_ae_combo,True,True,done_and_in_prod,[Q2] Phase 2 SILVER.DIM_NET_ACCOUNT_AE_COMBO transformation/business logic
+CARL-691,Blocked,,CARL-351,iDeal (Oracle),bronze,dci_inv_schedule_entity,exact,linear_digital_revenue_bronze.ideal_dci_dci_inv_schedule_entity,True,False,in_dev_open,Get DCI_INV_SCHEDULE_ENTITY table available in bronze
+CARL-696,Blocked,,CARL-351,iDeal (Oracle),bronze,dci_ratecard_demovpvh,ambiguous,linear_digital_revenue_bronze.ideal_dci_dci_ratecard_demovpvh|linear_digital_revenue_bronze.ideal_dci_ratecard_demovpvh,True,True,live_but_open,Get DCI_RATECARD_DEMOVPVH table available in bronze
+CARL-698,Blocked,,CARL-351,iDeal (Oracle),bronze,dci_ratecard_header,ambiguous,linear_digital_revenue_bronze.ideal_dci_dci_ratecard_header|linear_digital_revenue_bronze.ideal_dci_ratecard_header,True,True,live_but_open,Get DCI_RATECARD_HEADER table available in bronze
+CARL-705,Blocked,,CARL-351,iDeal (Oracle),bronze,dci_deal_summary_data,exact,linear_digital_revenue_bronze.ideal_dealbldr_dci_deal_summary_data,True,True,live_but_open,Get DCI_DEAL_SUMMARY_DATA table available in bronze
+CARL-1188,Ready For UAT,,CARL-1477,iDeal (Oracle),bronze,dealbldr_ice_account_transfer,exact,linear_digital_revenue_bronze.ideal_dealbldr_ice_account_transfer,True,False,in_dev_open,Oracle-->Bronze DEALBLDR.ICE_ACCOUNT_TRANSFER
+CARL-1382,Ready for Testing,,CARL-1380,FreeWheel,bronze,video_ad_api_advertisers,none,,False,False,testing_no_table,Bronze Ingestion — video_ad_api_advertisers (Pilot)
+CARL-1383,In Testing,,CARL-1380,FreeWheel,bronze,video_ad_api_agency,none,,False,False,testing_no_table,Bronze Ingestion — video_ad_api_agency
+CARL-1384,In Testing,,CARL-1380,FreeWheel,bronze,video_ad_api_campaigns,none,,False,False,testing_no_table,Bronze Ingestion — video_ad_api_campaigns
+CARL-1385,To Do,,CARL-1380,FreeWheel,bronze,video_ad_api_list_segment,none,,False,False,open_no_table,Bronze Ingestion — video_ad_api_list_segment
+CARL-1386,In Testing,,CARL-1380,FreeWheel,bronze,video_ad_api_inventory_package,none,,False,False,testing_no_table,Bronze Ingestion — video_ad_api_inventory_package
+CARL-1388,To Do,,CARL-1380,FreeWheel,bronze,video_ad_api_contextual_segments,none,,False,False,open_no_table,Bronze Ingestion — video_ad_api_contextual_segments
+CARL-1389,Ready for Testing,,CARL-1380,FreeWheel,bronze,video_ad_api_matched_audience_items,none,,False,False,testing_no_table,Bronze Ingestion — video_ad_api_matched_audience_items
+CARL-1390,Ready for Testing,,CARL-1380,FreeWheel,bronze,video_ad_api_audience_definition,none,,False,False,testing_no_table,Bronze Ingestion — video_ad_api_audience_definition
+CARL-1391,Ready for Testing,,CARL-1380,FreeWheel,bronze,video_ad_api_audience_data_provider,none,,False,False,testing_no_table,Bronze Ingestion — video_ad_api_audience_data_provider
+CARL-1392,Ready for Testing,,CARL-1380,FreeWheel,bronze,video_ad_api_insertion_orders,none,,False,False,testing_no_table,Bronze Ingestion — video_ad_api_insertion_orders
+CARL-1393,To Do,,CARL-1380,FreeWheel,bronze,video_ad_api_videoasset,none,,False,False,open_no_table,Bronze Ingestion — video_ad_api_videoasset
+CARL-1394,To Do,,CARL-1380,FreeWheel,bronze,video_ad_api_placements,none,,False,False,open_no_table,Bronze Ingestion — video_ad_api_placements
+CARL-1469,Blocked,,CARL-351,iDeal (Oracle),bronze,stw_impression,exact,linear_digital_revenue_bronze.ideal_posting_stw_impression,True,True,live_but_open,Ingest STW_IMPRESSION to bronze (Prod)
+CARL-1470,Blocked,,CARL-351,iDeal (Oracle),bronze,stw_unit_impression,exact,linear_digital_revenue_bronze.ideal_posting_stw_unit_impression,True,True,live_but_open,Ingest STW_UNIT_IMPRESSION to bronze (Prod)
+CARL-1472,Blocked,,CARL-351,iDeal (Oracle),bronze,de_units,ambiguous,linear_digital_revenue_bronze.ideal_dealbldr_dci_de_units|linear_digital_revenue_bronze.ideal_msa_de_units,True,True,live_but_open,Ingest DE_UNITS to bronze (Prod)
+CARL-1481,Done,2026-09-24,CARL-1477,iDeal (Oracle),bronze,dci_order_line_impressions,exact,linear_digital_revenue_bronze.ideal_dealbldr_dci_order_line_impressions,True,True,done_and_in_prod,Ingest DCI_ORDER_LINE_IMPRESSIONS to bronze
+CARL-1482,Done,2026-07-17,CARL-1477,iDeal (Oracle),bronze,dci_order_sloa_revision,exact,linear_digital_revenue_bronze.ideal_dealbldr_dci_order_sloa_revision,True,True,done_and_in_prod,Ingest DCI_ORDER_SLOA_REVISION to bronze
+CARL-2712,Done,2026-09-24,CARL-1477,iDeal (Oracle),bronze,dealbldr_dci_rateclass,exact,linear_digital_revenue_bronze.ideal_dealbldr_dci_rateclass,True,True,done_and_in_prod,Ingest DEALBLDR.DCI_RATECLASS -  (Production)
+CARL-2720,Done,2026-09-24,CARL-1477,iDeal (Oracle),bronze,dealbldr_idl_order_inventory,exact,linear_digital_revenue_bronze.ideal_dealbldr_idl_order_inventory,True,True,done_and_in_prod,Ingest DEALBLDR.IDL_ORDER_INVENTORY -  (Production)
+CARL-2803,Blocked,,CARL-351,iDeal (Oracle),bronze,dci_order_header,exact,linear_digital_revenue_bronze.ideal_dealbldr_dci_order_header,True,True,live_but_open,Get DCI_ORDER_HEADER table available in bronze
+CARL-2807,To Do,,CARL-1756,FreeWheel,bronze,f_mpp_mkpl_hourly,none,,False,False,open_no_table,Ingest Freewheel F_MPP_MKPL_HOURLY to Bronze
+CARL-2808,To Do,,CARL-1756,FreeWheel,bronze,f_direct_sold_mkpl_hourly,none,,False,False,open_no_table,Ingest Freewheel F_DIRECT_SOLD_MKPL_HOURLY to Bronze
+CARL-2809,To Do,,CARL-1756,FreeWheel,bronze,f_programmatic_slot_troubleshooting_mkpl_hourly,none,,False,False,open_no_table,Ingest Freewheel F_PROGRAMMATIC_SLOT_TROUBLESHOOTING_MKPL_HOURLY to Bronze
+CARL-2810,To Do,,CARL-1756,FreeWheel,bronze,f_programmatic_slot_troubleshooting_ni_hourly,none,,False,False,open_no_table,Ingest Freewheel F_PROGRAMMATIC_SLOT_TROUBLESHOOTING_NI_HOURLY to Bronze
+CARL-2811,To Do,,CARL-1756,FreeWheel,bronze,f_mpe_mkpl_hourly,none,,False,False,open_no_table,Ingest Freewheel F_MPE_MKPL_HOURLY to Bronze
+CARL-2812,To Do,,CARL-1756,FreeWheel,bronze,f_reseller_sold_ni_hourly,none,,False,False,open_no_table,Ingest Freewheel F_RESELLER_SOLD_NI_HOURLY to Bronze
+CARL-2813,To Do,,CARL-1756,FreeWheel,bronze,f_reseller_sold_ni_opportunity_hourly,none,,False,False,open_no_table,Ingest Freewheel F_RESELLER_SOLD_NI_OPPORTUNITY_HOURLY to Bronze
+CARL-2814,To Do,,CARL-1756,FreeWheel,bronze,v4_bid_logs,none,,False,False,open_no_table,Ingest Freewheel V4_BID_LOGS to Bronze
+CARL-2815,To Do,,CARL-1756,FreeWheel,bronze,batch_status,none,,False,False,open_no_table,Ingest Freewheel BATCH_STATUS to Bronze
+CARL-2816,To Do,,CARL-1756,FreeWheel,bronze,d_break,none,,False,False,open_no_table,Ingest Freewheel D_BREAK to Bronze
+CARL-2817,To Do,,CARL-1756,FreeWheel,bronze,d_airing,none,,False,False,open_no_table,Ingest Freewheel D_AIRING to Bronze
+CARL-2818,To Do,,CARL-1756,FreeWheel,bronze,d_concrete_event,none,,False,False,open_no_table,Ingest Freewheel D_CONCRETE_EVENT to Bronze
+CARL-2819,To Do,,CARL-1756,FreeWheel,bronze,d_abstract_event,none,,False,False,open_no_table,Ingest Freewheel D_ABSTRACT_EVENT to Bronze
+CARL-2820,To Do,,CARL-1756,FreeWheel,bronze,d_global_industry,none,,False,False,open_no_table,Ingest Freewheel D_GLOBAL_INDUSTRY to Bronze
+CARL-2821,To Do,,CARL-1756,FreeWheel,bronze,d_tv_network,none,,False,False,open_no_table,Ingest Freewheel D_TV_NETWORK to Bronze
+CARL-2822,To Do,,CARL-1756,FreeWheel,bronze,d_channel,none,,False,False,open_no_table,Ingest Freewheel D_CHANNEL to Bronze
+CARL-2823,To Do,,CARL-1756,FreeWheel,bronze,d_brand,none,,False,False,open_no_table,Ingest Freewheel D_BRAND to Bronze
+CARL-2824,To Do,,CARL-1756,FreeWheel,bronze,d_network,none,,False,False,open_no_table,Ingest Freewheel D_NETWORK to Bronze
+CARL-2825,To Do,,CARL-1756,FreeWheel,bronze,d_marketplace_creative,none,,False,False,open_no_table,Ingest Freewheel D_MARKETPLACE_CREATIVE to Bronze
+CARL-2826,To Do,,CARL-1756,FreeWheel,bronze,d_exchange_creative,none,,False,False,open_no_table,Ingest Freewheel D_EXCHANGE_CREATIVE to Bronze
+CARL-2827,To Do,,CARL-1756,FreeWheel,bronze,d_creative_instance_metric,none,,False,False,open_no_table,Ingest Freewheel D_CREATIVE_INSTANCE_METRIC to Bronze
+CARL-2828,Ready For UAT,,CARL-1756,FreeWheel,bronze,d_direct_sold_creative_instance_metric,none,,False,False,testing_no_table,Ingest Freewheel D_DIRECT_SOLD_CREATIVE_INSTANCE_METRIC to Bronze
+CARL-2829,To Do,,CARL-1756,FreeWheel,bronze,d_creative_rendition,none,,False,False,open_no_table,Ingest Freewheel D_CREATIVE_RENDITION to Bronze
+CARL-2830,To Do,,CARL-1756,FreeWheel,bronze,d_creative_rendition_asset,none,,False,False,open_no_table,Ingest Freewheel D_CREATIVE_RENDITION_ASSET to Bronze
+CARL-2831,Ready For UAT,,CARL-1756,FreeWheel,bronze,d_direct_sold_creative_rendition_asset,none,,False,False,testing_no_table,Ingest Freewheel D_DIRECT_SOLD_CREATIVE_RENDITION_ASSET to Bronze
+CARL-2832,To Do,,CARL-1756,FreeWheel,bronze,d_creative_instance,none,,False,False,open_no_table,Ingest Freewheel D_CREATIVE_INSTANCE to Bronze
+CARL-2833,To Do,,CARL-1756,FreeWheel,bronze,d_impression_cap_configuration,none,,False,False,open_no_table,Ingest Freewheel D_IMPRESSION_CAP_CONFIGURATION to Bronze
+CARL-2834,To Do,,CARL-1756,FreeWheel,bronze,d_contextual_segment,none,,False,False,open_no_table,Ingest Freewheel D_CONTEXTUAL_SEGMENT to Bronze
+CARL-2835,To Do,,CARL-1756,FreeWheel,bronze,d_domain,none,,False,False,open_no_table,Ingest Freewheel D_DOMAIN to Bronze
+CARL-2836,To Do,,CARL-1756,FreeWheel,bronze,d_content_package,none,,False,False,open_no_table,Ingest Freewheel D_CONTENT_PACKAGE to Bronze
+CARL-2837,To Do,,CARL-1756,FreeWheel,bronze,d_domain_package,none,,False,False,open_no_table,Ingest Freewheel D_DOMAIN_PACKAGE to Bronze
+CARL-2838,To Do,,CARL-1756,FreeWheel,bronze,d_delivered_city,none,,False,False,open_no_table,Ingest Freewheel D_DELIVERED_CITY to Bronze
+CARL-2839,To Do,,CARL-1756,FreeWheel,bronze,d_delivered_postal_code_package,none,,False,False,open_no_table,Ingest Freewheel D_DELIVERED_POSTAL_CODE_PACKAGE to Bronze
+CARL-2840,To Do,,CARL-1756,FreeWheel,bronze,d_delivered_state,none,,False,False,open_no_table,Ingest Freewheel D_DELIVERED_STATE to Bronze
+CARL-2841,To Do,,CARL-1756,FreeWheel,bronze,d_visitor_zone,none,,False,False,open_no_table,Ingest Freewheel D_VISITOR_ZONE to Bronze
+CARL-2842,To Do,,CARL-1756,FreeWheel,bronze,d_region,none,,False,False,open_no_table,Ingest Freewheel D_REGION to Bronze
+CARL-2843,To Do,,CARL-1756,FreeWheel,bronze,d_delivered_dma,none,,False,False,open_no_table,Ingest Freewheel D_DELIVERED_DMA to Bronze
+CARL-2844,To Do,,CARL-1756,FreeWheel,bronze,d_demand_entity,none,,False,False,open_no_table,Ingest Freewheel D_DEMAND_ENTITY to Bronze
+CARL-2845,To Do,,CARL-1756,FreeWheel,bronze,d_reseller_placement,none,,False,False,open_no_table,Ingest Freewheel D_RESELLER_PLACEMENT to Bronze
+CARL-2846,To Do,,CARL-1756,FreeWheel,bronze,d_reseller,none,,False,False,open_no_table,Ingest Freewheel D_RESELLER to Bronze
+CARL-2847,To Do,,CARL-1756,FreeWheel,bronze,d_sales_channel_type,none,,False,False,open_no_table,Ingest Freewheel D_SALES_CHANNEL_TYPE to Bronze
+CARL-2848,To Do,,CARL-1756,FreeWheel,bronze,d_supply_source,none,,False,False,open_no_table,Ingest Freewheel D_SUPPLY_SOURCE to Bronze
+CARL-2849,To Do,,CARL-1756,FreeWheel,bronze,d_forecast_scenario,none,,False,False,open_no_table,Ingest Freewheel D_FORECAST_SCENARIO to Bronze
+CARL-2850,To Do,,CARL-1756,FreeWheel,bronze,d_inventory_prioritization_sub_configuration,none,,False,False,open_no_table,Ingest Freewheel D_INVENTORY_PRIORITIZATION_SUB_CONFIGURATION to Bronze
+CARL-2851,To Do,,CARL-1756,FreeWheel,bronze,d_yo_sub_configuration,none,,False,False,open_no_table,Ingest Freewheel D_YO_SUB_CONFIGURATION to Bronze
+CARL-2852,To Do,,CARL-1756,FreeWheel,bronze,d_inventory_prioritization_configuration,none,,False,False,open_no_table,Ingest Freewheel D_INVENTORY_PRIORITIZATION_CONFIGURATION to Bronze
+CARL-2853,To Do,,CARL-1756,FreeWheel,bronze,d_yo_configuration,none,,False,False,open_no_table,Ingest Freewheel D_YO_CONFIGURATION to Bronze
+CARL-2854,To Do,,CARL-1756,FreeWheel,bronze,d_nested_yo_sub_configuration,none,,False,False,open_no_table,Ingest Freewheel D_NESTED_YO_SUB_CONFIGURATION to Bronze
+CARL-2856,To Do,,CARL-1756,FreeWheel,bronze,d_margin_target_configuration,none,,False,False,open_no_table,Ingest Freewheel D_MARGIN_TARGET_CONFIGURATION to Bronze
+CARL-2857,To Do,,CARL-1756,FreeWheel,bronze,d_private_listing,none,,False,False,open_no_table,Ingest Freewheel D_PRIVATE_LISTING to Bronze
+CARL-2858,To Do,,CARL-1756,FreeWheel,bronze,d_inventory_split,none,,False,False,open_no_table,Ingest Freewheel D_INVENTORY_SPLIT to Bronze
+CARL-2859,To Do,,CARL-1756,FreeWheel,bronze,d_inbound_mrm_rule,none,,False,False,open_no_table,Ingest Freewheel D_INBOUND_MRM_RULE to Bronze
+CARL-2860,To Do,,CARL-1756,FreeWheel,bronze,d_exchange_listing,none,,False,False,open_no_table,Ingest Freewheel D_EXCHANGE_LISTING to Bronze
+CARL-2861,To Do,,CARL-1756,FreeWheel,bronze,d_open_exchange_rule,none,,False,False,open_no_table,Ingest Freewheel D_OPEN_EXCHANGE_RULE to Bronze
+CARL-2862,To Do,,CARL-1756,FreeWheel,bronze,d_linear_schedule_break_details,none,,False,False,open_no_table,Ingest Freewheel D_LINEAR_SCHEDULE_BREAK_DETAILS to Bronze
+CARL-2863,To Do,,CARL-1756,FreeWheel,bronze,d_linear_schedule_spot_details,none,,False,False,open_no_table,Ingest Freewheel D_LINEAR_SCHEDULE_SPOT_DETAILS to Bronze
+CARL-2864,To Do,,CARL-1756,FreeWheel,bronze,d_linear_schedule_window_details,none,,False,False,open_no_table,Ingest Freewheel D_LINEAR_SCHEDULE_WINDOW_DETAILS to Bronze
+CARL-2865,To Do,,CARL-1756,FreeWheel,bronze,d_linear_station_details,none,,False,False,open_no_table,Ingest Freewheel D_LINEAR_STATION_DETAILS to Bronze
+CARL-2866,To Do,,CARL-1756,FreeWheel,bronze,d_third_party_partner,none,,False,False,open_no_table,Ingest Freewheel D_THIRD_PARTY_PARTNER to Bronze
+CARL-2867,To Do,,CARL-1756,FreeWheel,bronze,d_isp,none,,False,False,open_no_table,Ingest Freewheel D_ISP to Bronze
+CARL-2868,To Do,,CARL-1756,FreeWheel,bronze,d_currency,none,,False,False,open_no_table,Ingest Freewheel D_CURRENCY to Bronze
+CARL-2869,To Do,,CARL-1756,FreeWheel,bronze,d_profile,none,,False,False,open_no_table,Ingest Freewheel D_PROFILE to Bronze
+CARL-2870,To Do,,CARL-1756,FreeWheel,bronze,d_third_party_identifier,none,,False,False,open_no_table,Ingest Freewheel D_THIRD_PARTY_IDENTIFIER to Bronze
+CARL-2871,To Do,,CARL-1756,FreeWheel,bronze,d_site_section_to_site,none,,False,False,open_no_table,Ingest Freewheel D_SITE_SECTION_TO_SITE to Bronze
+CARL-2872,To Do,,CARL-1756,FreeWheel,bronze,d_standard_app_bundle,none,,False,False,open_no_table,Ingest Freewheel D_STANDARD_APP_BUNDLE to Bronze
+CARL-2873,To Do,,CARL-1756,FreeWheel,bronze,d_standard_app,none,,False,False,open_no_table,Ingest Freewheel D_STANDARD_APP to Bronze
+CARL-2874,To Do,,CARL-1756,FreeWheel,bronze,d_standard_domain,none,,False,False,open_no_table,Ingest Freewheel D_STANDARD_DOMAIN to Bronze
+CARL-2875,To Do,,CARL-1756,FreeWheel,bronze,d_standard_content_series,none,,False,False,open_no_table,Ingest Freewheel D_STANDARD_CONTENT_SERIES to Bronze
+CARL-2876,To Do,,CARL-1756,FreeWheel,bronze,d_standard_publisher,none,,False,False,open_no_table,Ingest Freewheel D_STANDARD_PUBLISHER to Bronze
+CARL-2877,To Do,,CARL-1756,FreeWheel,bronze,d_standard_iab_category,none,,False,False,open_no_table,Ingest Freewheel D_STANDARD_IAB_CATEGORY to Bronze
+CARL-2878,To Do,,CARL-1756,FreeWheel,bronze,d_standard_sports_entity,none,,False,False,open_no_table,Ingest Freewheel D_STANDARD_SPORTS_ENTITY to Bronze
+CARL-2879,To Do,,CARL-1756,FreeWheel,bronze,d_standard_country,none,,False,False,open_no_table,Ingest Freewheel D_STANDARD_COUNTRY to Bronze
+CARL-2880,To Do,,CARL-1756,FreeWheel,bronze,d_standard_dma,none,,False,False,open_no_table,Ingest Freewheel D_STANDARD_DMA to Bronze
+CARL-2881,To Do,,CARL-1756,FreeWheel,bronze,d_standard_sub_device_type,none,,False,False,open_no_table,Ingest Freewheel D_STANDARD_SUB_DEVICE_TYPE to Bronze
+CARL-2882,To Do,,CARL-1756,FreeWheel,bronze,d_standard_addressability,none,,False,False,open_no_table,Ingest Freewheel D_STANDARD_ADDRESSABILITY to Bronze
+CARL-2883,To Do,,CARL-1756,FreeWheel,bronze,d_standard_viewership_profile,none,,False,False,open_no_table,Ingest Freewheel D_STANDARD_VIEWERSHIP_PROFILE to Bronze
+CARL-2884,To Do,,CARL-1756,FreeWheel,bronze,d_standard_operator,none,,False,False,open_no_table,Ingest Freewheel D_STANDARD_OPERATOR to Bronze
+CARL-2885,To Do,,CARL-1756,FreeWheel,bronze,d_standard_privacy,none,,False,False,open_no_table,Ingest Freewheel D_STANDARD_PRIVACY to Bronze
+CARL-2886,To Do,,CARL-1756,FreeWheel,bronze,d_standard_ip_enabled_audience,none,,False,False,open_no_table,Ingest Freewheel D_STANDARD_IP_ENABLED_AUDIENCE to Bronze
+CARL-2892,To Do,,CARL-1756,FreeWheel,bronze,d_impression_cap_sub_configuration,none,,False,False,open_no_table,Ingest Freewheel D_IMPRESSION_CAP_SUB_CONFIGURATION to Bronze
+CARL-2893,To Do,,CARL-1756,FreeWheel,bronze,d_impression_target_configuration,none,,False,False,open_no_table,Ingest Freewheel D_IMPRESSION_TARGET_CONFIGURATION to Bronze
+CARL-2894,To Do,,CARL-1756,FreeWheel,bronze,d_impression_target_sub_configuration,none,,False,False,open_no_table,Ingest Freewheel D_IMPRESSION_TARGET_SUB_CONFIGURATION to Bronze
+CARL-2895,To Do,,CARL-1756,FreeWheel,bronze,d_nested_inventory_prioritization_configuration,none,,False,False,open_no_table,Ingest Freewheel D_NESTED_INVENTORY_PRIORITIZATION_CONFIGURATION to Bronze
+CARL-2896,To Do,,CARL-1756,FreeWheel,bronze,d_nested_inventory_prioritization_sub_configuration,none,,False,False,open_no_table,Ingest Freewheel D_NESTED_INVENTORY_PRIORITIZATION_SUB_CONFIGURATION to Bronze
+CARL-2897,To Do,,CARL-1756,FreeWheel,bronze,d_nested_yo_configuration,none,,False,False,open_no_table,Ingest Freewheel D_NESTED_YO_CONFIGURATION to Bronze
+CARL-3792,Ready for Testing,,CARL-2887,FreeWheel,silver,dim_ad_unit_type,none,,False,False,testing_no_table,Develop FreeWheel dim_ad_unit_type in Silver
+CARL-3793,Ready for Testing,,CARL-2887,FreeWheel,silver,dim_audience_item,none,,False,False,testing_no_table,Develop FreeWheel dim_audience_item in Silver
+CARL-3794,Ready for Testing,,CARL-2887,FreeWheel,silver,dim_cbp,none,,False,False,testing_no_table,Develop FreeWheel dim_cbp in Silver
+CARL-3795,Ready for Testing,,CARL-2887,FreeWheel,silver,dim_content_brand,none,,False,False,testing_no_table,Develop FreeWheel dim_content_brand in Silver
+CARL-3796,Ready for Testing,,CARL-2887,FreeWheel,silver,dim_content_channel,none,,False,False,testing_no_table,Develop FreeWheel dim_content_channel in Silver
+CARL-3797,Done,2026-10-12,CARL-2887,FreeWheel,silver,dim_creative,none,,False,False,done_after_snapshot,Develop FreeWheel dim_creative in Silver
+CARL-3798,Ready for Testing,,CARL-2887,FreeWheel,silver,dim_deal,none,,False,False,testing_no_table,Develop FreeWheel dim_deal in Silver
+CARL-3799,Ready for Testing,,CARL-2887,FreeWheel,silver,dim_genre,none,,False,False,testing_no_table,Develop FreeWheel dim_genre in Silver
+CARL-3800,Ready for Testing,,CARL-2887,FreeWheel,silver,dim_global_advertiser,none,,False,False,testing_no_table,Develop FreeWheel dim_global_advertiser in Silver
+CARL-3801,Ready for Testing,,CARL-2887,FreeWheel,silver,dim_global_brand,none,,False,False,testing_no_table,Develop FreeWheel dim_global_brand in Silver
+CARL-3802,Ready for Testing,,CARL-2887,FreeWheel,silver,dim_network,none,,False,False,testing_no_table,Develop FreeWheel dim_network in Silver
+CARL-3803,Ready for Testing,,CARL-2887,FreeWheel,silver,dim_placement,none,,False,False,testing_no_table,Develop FreeWheel dim_placement in Silver
+CARL-3804,Ready for Testing,,CARL-2887,FreeWheel,silver,dim_site,none,,False,False,testing_no_table,Develop FreeWheel dim_site in Silver
+CARL-3805,Ready for Testing,,CARL-2887,FreeWheel,silver,dim_site_section,none,,False,False,testing_no_table,Develop FreeWheel dim_site_section in Silver
+CARL-3806,Ready for Testing,,CARL-2887,FreeWheel,silver,dim_tv_rating,none,,False,False,testing_no_table,Develop FreeWheel dim_tv_rating in Silver
+CARL-3807,Ready for Testing,,CARL-2887,FreeWheel,silver,dim_video,none,,False,False,testing_no_table,Develop FreeWheel dim_video in Silver
+CARL-3808,Ready for Testing,,CARL-2887,FreeWheel,silver,dim_video_series,none,,False,False,testing_no_table,Develop FreeWheel dim_video_series in Silver
+CARL-3811,Ready For UAT,,CARL-1756,FreeWheel,bronze,d_direct_sold_creative_ad_assignment,none,,False,False,testing_no_table,Ingest Freewheel D_DIRECT_SOLD_CREATIVE_AD_ASSIGNMENT to Bronze
+CARL-3920,Ready for Testing,,CARL-2887,FreeWheel,silver,dim_campaign,none,,False,False,testing_no_table,Develop FreeWheel dim_campaign in Silver (For Tool 1)
+CARL-3947,In Progress,,CARL-3638,LDR modelled (dim/fact),silver,fact_digital_op1,none,,False,False,open_no_table,Silver Table: fact_digital_op1
+CARL-3948,In Progress,,CARL-3638,LDR modelled (dim/fact),silver,fact_linear_revenue_ms,none,,False,False,open_no_table,Silver Table: fact_linear_revenue_ms
+CARL-3949,In Progress,,CARL-3638,LDR modelled (dim/fact),silver,fact_pipeline_sf,none,,False,False,open_no_table,Silver Table: fact_pipeline_sf
+CARL-3950,In Progress,,CARL-1479,unmapped,silver,fact_finance_weekly_quarter_forecast,none,,False,False,open_no_table,Silver Table: fact_finance_weekly_quarter_forecast
+CARL-4036,Ready For UAT,,CARL-4035,iDeal (Oracle),bronze,p_sch_off,exact,linear_digital_revenue_bronze.ideal_msa_p_sch_off,True,False,in_dev_open,Get P_SCH_OFF table available in bronze
+CARL-4037,Ready For UAT,,CARL-4035,iDeal (Oracle),bronze,e_sch_off,none,,False,False,testing_no_table,Get E_SCH_OFF table available in bronze
+CARL-4038,Ready For UAT,,CARL-4035,iDeal (Oracle),bronze,dci_psp_sell_title_exp_dtl_stg,ambiguous,linear_digital_revenue_bronze.ideal_dci_dci_psp_sell_title_exp_dtl_stg|linear_digital_revenue_bronze.ideal_dci_psp_sell_title_exp_dtl_stg,True,False,in_dev_open,Get DCI_PSP_SELL_TITLE_EXP_DTL_STG table available in bronze
+CARL-4039,Ready For UAT,,CARL-4035,iDeal (Oracle),bronze,dci_psp_sports_sell_title,ambiguous,linear_digital_revenue_bronze.ideal_dci_dci_psp_sports_sell_title|linear_digital_revenue_bronze.ideal_dci_psp_sports_sell_title,True,False,in_dev_open,Get DCI_PSP_SPORTS_SELL_TITLE table available in bronze
+CARL-4040,Ready For UAT,,CARL-4035,iDeal (Oracle),bronze,dci_psp_alt_sell_title,ambiguous,linear_digital_revenue_bronze.ideal_dci_dci_psp_alt_sell_title|linear_digital_revenue_bronze.ideal_dci_psp_alt_sell_title,True,False,in_dev_open,Get DCI_PSP_ALT_SELL_TITLE table available in bronze
+CARL-4041,Ready For UAT,,CARL-4035,iDeal (Oracle),bronze,dci_pricing_import_hdr,ambiguous,linear_digital_revenue_bronze.ideal_dci_dci_pricing_import_hdr|linear_digital_revenue_bronze.ideal_dci_pricing_import_hdr,True,False,in_dev_open,Get DCI_PRICING_IMPORT_HDR table available in bronze
+CARL-4042,Ready For UAT,,CARL-4035,iDeal (Oracle),bronze,dci_star_ue_export_stg,exact,linear_digital_revenue_bronze.ideal_dci_dci_star_ue_export_stg,True,False,in_dev_open,Get DCI_STAR_UE_EXPORT_STG table available in bronze
+CARL-4043,In Testing,,CARL-4035,iDeal (Oracle),bronze,dci_star_estimates_export_stg,exact,linear_digital_revenue_bronze.ideal_dci_dci_star_estimates_export_stg,True,False,in_dev_open,Get DCI_STAR_ESTIMATES_EXPORT_STG table available in bronze
+CARL-4044,Ready For UAT,,CARL-4035,iDeal (Oracle),bronze,ideal_dci_super_deal,exact,linear_digital_revenue_bronze.ideal_dci_super_deal,True,False,in_dev_open,Get IDEAL_DCI_SUPER_DEAL table available in bronze
+CARL-4048,In Progress,,CARL-3638,LDR modelled (dim/fact),silver,fact_linear_working_ms,none,,False,False,open_no_table,Silver Table: fact_linear_working_ms
+CARL-4069,Done,2026-10-14,CARL-4153,Salesforce (via Oracle),bronze,salesforce_sf_case,none,,False,False,done_after_snapshot,Ingest SALESFORCE.SF_CASE from Oracle into Iceberg Bronze
+CARL-4070,Done,2026-10-14,CARL-4153,Salesforce (via Oracle),bronze,salesforce_sf_casefeed,none,,False,False,done_after_snapshot,Ingest SALESFORCE.SF_CASEFEED from Oracle into Iceberg Bronze
+CARL-4071,Done,2026-10-14,CARL-4153,Salesforce (via Oracle),bronze,salesforce_sf_engage_request__c,none,,False,False,done_after_snapshot,Ingest SALESFORCE.SF_ENGAGE_REQUEST__C from Oracle into Iceberg Bronze
+CARL-4072,Done,2026-10-14,CARL-4153,Salesforce (via Oracle),bronze,salesforce_sf_feedcomment,none,,False,False,done_after_snapshot,Ingest SALESFORCE.SF_FEEDCOMMENT from Oracle into Iceberg Bronze
+CARL-4073,Done,2026-10-14,CARL-4153,Salesforce (via Oracle),bronze,salesforce_sf_casecomment,none,,False,False,done_after_snapshot,Ingest SALESFORCE.SF_CASECOMMENT from Oracle into Iceberg Bronze
+CARL-4074,Done,2026-10-14,CARL-4153,Salesforce (via Oracle),bronze,salesforce_sf_mml_midroll_video_details__c,none,,False,False,done_after_snapshot,Ingest SALESFORCE.SF_MML_MIDROLL_VIDEO_DETAILS__C from Oracle into Iceberg Bronze
+CARL-4075,Done,2026-10-14,CARL-4153,Salesforce (via Oracle),bronze,salesforce_sf_feedattachment,none,,False,False,done_after_snapshot,Ingest SALESFORCE.SF_FEEDATTACHMENT from Oracle into Iceberg Bronze
+CARL-4076,Done,2026-10-14,CARL-4153,Salesforce (via Oracle),bronze,salesforce_sf_international_ae__c,none,,False,False,done_after_snapshot,Ingest SALESFORCE.SF_INTERNATIONAL_AE__C from Oracle into Iceberg Bronze
+CARL-4077,Done,2026-10-14,CARL-4153,Salesforce (via Oracle),bronze,salesforce_sf_international_ae_member__c,none,,False,False,done_after_snapshot,Ingest SALESFORCE.SF_INTERNATIONAL_AE_MEMBER__C from Oracle into Iceberg Bronze
+CARL-4078,Done,2026-10-15,CARL-4153,Salesforce (via Oracle),bronze,salesforce_sf_opportunity_integration_fields__c,none,,False,False,done_after_snapshot,Ingest SALESFORCE.SF_OPPORTUNITY_INTEGRATION_FIELDS__C from Oracle into Iceberg Bronze
+CARL-4079,Done,2026-10-15,CARL-4153,Salesforce (via Oracle),bronze,salesforce_sf_upfront_internal_spec__c,none,,False,False,done_after_snapshot,Ingest SALESFORCE.SF_UPFRONT_INTERNAL_SPEC__C from Oracle into Iceberg Bronze
+CARL-4080,Done,2026-10-15,CARL-4153,Salesforce (via Oracle),bronze,salesforce_sf_operative_product__c,none,,False,False,done_after_snapshot,Ingest SALESFORCE.SF_OPERATIVE_PRODUCT__C from Oracle into Iceberg Bronze
+CARL-4081,Done,2026-10-15,CARL-4153,Salesforce (via Oracle),bronze,salesforce_sf_process_log__c,none,,False,False,done_after_snapshot,Ingest SALESFORCE.SF_PROCESS_LOG__C from Oracle into Iceberg Bronze
+CARL-4082,Done,2026-10-15,CARL-4153,Salesforce (via Oracle),bronze,salesforce_sf_request_form__c,none,,False,False,done_after_snapshot,Ingest SALESFORCE.SF_REQUEST_FORM__C from Oracle into Iceberg Bronze
+CARL-4083,Done,2026-10-15,CARL-4153,Salesforce (via Oracle),bronze,salesforce_sf_scatter_internal_spec__c,none,,False,False,done_after_snapshot,Ingest SALESFORCE.SF_SCATTER_INTERNAL_SPEC__C from Oracle into Iceberg Bronze
+CARL-4084,Done,2026-10-15,CARL-4153,Salesforce (via Oracle),bronze,salesforce_sf_vendor_certification__c,none,,False,False,done_after_snapshot,Ingest SALESFORCE.SF_VENDOR_CERTIFICATION__C from Oracle into Iceberg Bronze
+CARL-4085,Done,2026-10-15,CARL-4153,Salesforce (via Oracle),bronze,salesforce_sf_vendor__c,none,,False,False,done_after_snapshot,Ingest SALESFORCE.SF_VENDOR__C from Oracle into Iceberg Bronze
+CARL-4211,To Do,,CARL-4153,Salesforce (via Oracle),bronze,salesforce_sf_opportunity_estimate__c,none,,False,False,open_no_table,Ingest SALESFORCE.SF_OPPORTUNITY_ESTIMATE__C from Oracle into Iceberg Bronze

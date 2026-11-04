@@ -1,0 +1,73 @@
+# Weekly roadmap refresh.
+#
+# Use this rather than cron if the page must refresh whether or not a
+# particular laptop is open on Monday morning.
+#
+# One thing to settle before enabling: the published page lives in OneDrive, so
+# a GitHub runner cannot write to it directly. Either
+#   (a) keep the page in this repo and let OneDrive sync from a checkout, or
+#   (b) run the agent on a machine that has the OneDrive folder mounted.
+# Until that is decided this workflow runs with --dry-run and uploads the
+# rendered page as an artifact, which is useful on its own for reviewing what
+# the refresh would have changed.
+
+name: Weekly CARL roadmap refresh
+
+on:
+  schedule:
+    # Monday 07:00 Asia/Kolkata is 01:30 UTC. GitHub cron is UTC only.
+    - cron: "30 1 * * 1"
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Write the page (leave off for a dry run)
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Refresh from Jira
+        id: refresh
+        env:
+          JIRA_USER: ${{ secrets.JIRA_USER }}
+          JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
+        run: |
+          python -m carl_roadmap run \
+            ${{ (github.event_name == 'workflow_dispatch' && inputs.publish) && '' || '--dry-run' }}
+        # Exit 1 is "refreshed, but a new epic needs a programme". That should
+        # show up as a warning on the run, not kill the job.
+        continue-on-error: true
+
+      - name: Keep the run output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: roadmap-${{ github.run_number }}
+          path: |
+            out/carl-roadmap.json
+            out/history/
+          retention-days: 400
+
+      - name: Fail the run if Jira could not be reached
+        if: steps.refresh.outcome == 'failure'
+        run: |
+          # Exit 2 from the agent means no data was pulled. Distinguish that
+          # from exit 1, which is a successful refresh with open questions.
+          echo "::error::Jira refresh failed — the page still shows last week."
+          exit 1

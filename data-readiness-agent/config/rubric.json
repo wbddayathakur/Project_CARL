@@ -1,0 +1,72 @@
+{
+  "status": "PROPOSED",
+  "note": "There is no agreed definition of bronze/silver/gold readiness at WBD today (raised in the 30 Sep CARL/Iceberg leadership review). This file is a starting proposal so the scorer has something explicit to test against. Every criterion below can be edited, removed or promoted by the data owners. Criteria whose evidence is 'none' cannot be assessed from any data this PoC has; they are reported as UNVERIFIED, never guessed.",
+
+  "fresh_window_days": 14,
+  "recurring_min_commit_days_30d": 2,
+
+  "criteria": [
+    {"id": "B1", "layer": "bronze", "title": "Landed in dev", "evidence": "glue"},
+    {"id": "B2", "layer": "bronze", "title": "Promoted to prod", "evidence": "glue"},
+    {"id": "B3", "layer": "bronze", "title": "Updated in prod within the freshness window", "evidence": "glue"},
+    {"id": "B4", "layer": "bronze", "title": "Loads recur in prod (not a one-time load)", "evidence": "load_history"},
+    {"id": "B5", "layer": "bronze", "title": "Schema contract enforced (nullability, decimals preserved)", "evidence": "none", "needs": "Source-vs-bronze schema diff results (cf. CARL-3556)"},
+    {"id": "B6", "layer": "bronze", "title": "Complete against the source system's table list", "evidence": "none", "needs": "A manifest of expected source tables and row counts"},
+
+    {"id": "S1", "layer": "silver", "title": "Exists in dev", "evidence": "glue"},
+    {"id": "S2", "layer": "silver", "title": "Promoted to prod", "evidence": "glue"},
+    {"id": "S3", "layer": "silver", "title": "Updated in prod within the freshness window", "evidence": "glue"},
+    {"id": "S4", "layer": "silver", "title": "Loads recur in prod (not a one-time load)", "evidence": "load_history"},
+    {"id": "S5", "layer": "silver", "title": "Join integrity verified (match rate, orphan rate)", "evidence": "none", "needs": "Join-verification results (cf. CARL-4177)"},
+    {"id": "S6", "layer": "silver", "title": "Data-quality rule results are logged", "evidence": "none", "needs": "Rows in a DQ results table (a dq_metrics database exists in dev only)"},
+
+    {"id": "G1", "layer": "gold", "title": "Exists in dev", "evidence": "glue"},
+    {"id": "G2", "layer": "gold", "title": "Promoted to prod", "evidence": "glue"},
+    {"id": "G3", "layer": "gold", "title": "Updated in prod within the freshness window", "evidence": "glue"},
+    {"id": "G4", "layer": "gold", "title": "Business definition documented and owned", "evidence": "none", "needs": "A data-product registry entry with owner and grain"},
+    {"id": "G5", "layer": "gold", "title": "Parity with legacy output verified", "evidence": "none", "needs": "Parity-harness results (cf. CARL-4128)"},
+    {"id": "G6", "layer": "gold", "title": "A golden / eval dataset exists for it", "evidence": "none", "needs": "A golden-dataset location and naming convention"}
+  ],
+
+  "sandbox_db_patterns": ["*test*", "*_poc*", "poc_*", "*sample*", "*example*", "default", "vg_*", "*sandbox*", "*_uat*"],
+
+  "noise_table_patterns": ["*_test*", "test_*", "*_tmp*", "tmp_*", "*_probe*", "*_poc*", "poc_*", "dev_test_*", "*do_not_promote*", "*_bak", "*_backup*"],
+
+  "sources": [
+    {"db": "freewheel_*", "name": "FreeWheel"},
+    {"db": "operative*", "name": "Operative"},
+    {"db": "linear_digital_revenue_*", "table_prefix": ["ideal_"], "name": "iDeal (Oracle)"},
+    {"db": "linear_digital_revenue_*", "table_prefix": ["metro_", "legacy_", "salesforce_"], "name": "Salesforce (via Oracle)"},
+    {"db": "linear_digital_revenue_*", "table_prefix": ["dim_", "fact_"], "name": "LDR modelled (dim/fact)"},
+    {"db": "linear_digital_revenue_*", "name": "LDR other"},
+    {"db": "nrld_*", "name": "Nielsen NRLD"},
+    {"db": "big_mit_*", "name": "Nielsen Big MIT"},
+    {"db": "marketshare_*", "name": "Market Share (Ad Intel)"},
+    {"db": "neo_*", "name": "NEO"},
+    {"db": "venus_*", "name": "Venus"},
+    {"db": "intnl_*", "name": "International"},
+    {"db": "ddl_forecasting_*", "name": "DDL Forecasting"},
+    {"db": "linear_forecasting_*", "name": "Linear Forecasting"},
+    {"db": "quicksight_usage_*", "name": "QuickSight usage"},
+    {"db": "carl_dwhprd_gold_*", "name": "CARL DWH (legacy gold)"}
+  ],
+
+  "epic_sources": {
+    "CARL-1756": "FreeWheel",
+    "CARL-1380": "FreeWheel",
+    "CARL-2887": "FreeWheel",
+    "CARL-1477": "iDeal (Oracle)",
+    "CARL-4035": "iDeal (Oracle)",
+    "CARL-4153": "Salesforce (via Oracle)",
+    "CARL-312": "LDR modelled (dim/fact)",
+    "CARL-313": "LDR modelled (dim/fact)",
+    "CARL-3638": "LDR modelled (dim/fact)",
+    "CARL-3639": "LDR modelled (dim/fact)",
+    "CARL-3779": "Nielsen NRLD",
+    "CARL-3500": "Nielsen Big MIT",
+    "CARL-3499": "Market Share (Ad Intel)",
+    "CARL-2888": "Operative"
+  },
+
+  "epic_sources_note": "Epic-to-source mapping is hand-maintained from the epic titles. Epics not listed here are reported as 'unmapped' rather than guessed."
+}

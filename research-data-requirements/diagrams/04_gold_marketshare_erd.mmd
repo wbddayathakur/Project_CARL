@@ -1,0 +1,61 @@
+erDiagram
+  dim_broadcast_calendar ||--o{ ms_fct_adintel_spend_daily : "date_key"
+  dim_network ||--o{ ms_fct_adintel_spend_daily : "network_key"
+  dim_media_type ||--o{ ms_fct_adintel_spend_daily : "media_type_key"
+  dim_advertiser_brand ||--o{ ms_fct_adintel_spend_daily : "primary_advertiser_brand_key"
+  dim_daypart ||--o{ ms_fct_adintel_spend_daily : "daypart_key"
+  dim_broadcast_calendar }|--o{ ms_agg_category_share_month : "broadcast_month_key"
+  dim_network ||--o{ ms_agg_category_share_month : "network_key"
+
+  ms_fct_adintel_spend_daily {
+    int date_key FK
+    bigint network_key FK
+    bigint media_type_key FK
+    bigint primary_advertiser_brand_key FK
+    bigint daypart_key FK
+    decimal spend_usd "EST SPEND = sum"
+    int units
+    decimal eq30_units
+    int occurrence_count
+  }
+  ms_agg_category_share_month {
+    int broadcast_month_key FK
+    bigint network_key FK
+    string category
+    decimal spend_usd
+    int units
+    decimal eq30_units
+  }
+  dim_advertiser_brand {
+    bigint advertiser_brand_key PK
+    string brand_code
+    string brand_desc
+    string advertiser_parent_desc
+    string advertiser_subsidiary_desc
+    string product_desc
+    string category "from ref_product_category if blank"
+    string subcategory
+    boolean is_active "display only, never filter"
+  }
+  dim_media_type {
+    bigint media_type_key PK
+    string media_type_desc
+  }
+  dim_network {
+    bigint network_key PK
+    date effective_from PK
+    string network_name
+    string network_code
+    string ownership_group
+    boolean is_junk_sk "hide from picker only"
+  }
+  dim_broadcast_calendar {
+    int date_key PK
+    int broadcast_week_key
+    int broadcast_month_key
+    int weeks_in_broadcast_month
+  }
+  dim_daypart {
+    bigint daypart_key PK
+    string daypart_name
+  }

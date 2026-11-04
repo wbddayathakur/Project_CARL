@@ -1,0 +1,722 @@
+[
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dealbldr_dci_deal_header",
+  "snapshots_retained": 485,
+  "log_entries": 485,
+  "first": "2026-08-01 05:10",
+  "last": "2026-10-13 17:38",
+  "commits_30d": 362,
+  "days_loaded_30d": 31,
+  "max_per_day": 14,
+  "ops": {
+   "delete": 181,
+   "append": 181
+  },
+  "top_hours": [
+   [
+    21,
+    62
+   ],
+   [
+    1,
+    60
+   ],
+   [
+    5,
+    60
+   ],
+   [
+    9,
+    60
+   ]
+  ],
+  "last10": [
+   "10-13 01:33",
+   "10-13 01:33",
+   "10-13 05:33",
+   "10-13 05:33",
+   "10-13 09:35",
+   "10-13 09:35",
+   "10-13 13:34",
+   "10-13 13:34",
+   "10-13 17:38",
+   "10-13 17:38"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dealbldr_dci_deal_revision",
+  "snapshots_retained": 246,
+  "log_entries": 246,
+  "first": "2026-08-01 04:26",
+  "last": "2026-10-13 18:14",
+  "commits_30d": 182,
+  "days_loaded_30d": 31,
+  "max_per_day": 7,
+  "ops": {
+   "overwrite": 182
+  },
+  "top_hours": [
+   [
+    22,
+    30
+   ],
+   [
+    2,
+    30
+   ],
+   [
+    6,
+    30
+   ],
+   [
+    10,
+    30
+   ]
+  ],
+  "last10": [
+   "10-12 06:25",
+   "10-12 10:22",
+   "10-12 14:23",
+   "10-12 17:59",
+   "10-12 22:22",
+   "10-13 02:24",
+   "10-13 06:08",
+   "10-13 10:31",
+   "10-13 14:06",
+   "10-13 18:14"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dealbldr_dci_deal_summary_data",
+  "snapshots_retained": 210,
+  "log_entries": 210,
+  "first": "2026-08-03 18:42",
+  "last": "2026-10-13 17:39",
+  "commits_30d": 110,
+  "days_loaded_30d": 30,
+  "max_per_day": 12,
+  "ops": {
+   "delete": 55,
+   "append": 55
+  },
+  "top_hours": [
+   [
+    18,
+    50
+   ],
+   [
+    21,
+    10
+   ],
+   [
+    1,
+    10
+   ],
+   [
+    5,
+    10
+   ]
+  ],
+  "last10": [
+   "10-13 01:36",
+   "10-13 01:36",
+   "10-13 05:33",
+   "10-13 05:34",
+   "10-13 09:36",
+   "10-13 09:36",
+   "10-13 13:37",
+   "10-13 13:37",
+   "10-13 17:39",
+   "10-13 17:39"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dealbldr_dci_order_header",
+  "snapshots_retained": 243,
+  "log_entries": 243,
+  "first": "2026-08-01 07:37",
+  "last": "2026-10-13 18:55",
+  "commits_30d": 180,
+  "days_loaded_30d": 31,
+  "max_per_day": 6,
+  "ops": {
+   "overwrite": 180
+  },
+  "top_hours": [
+   [
+    10,
+    30
+   ],
+   [
+    14,
+    30
+   ],
+   [
+    18,
+    30
+   ],
+   [
+    22,
+    29
+   ]
+  ],
+  "last10": [
+   "10-12 06:50",
+   "10-12 10:47",
+   "10-12 14:49",
+   "10-12 18:53",
+   "10-12 22:51",
+   "10-13 02:52",
+   "10-13 06:50",
+   "10-13 10:51",
+   "10-13 14:55",
+   "10-13 18:55"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dealbldr_dci_order_line",
+  "snapshots_retained": 483,
+  "log_entries": 483,
+  "first": "2026-08-01 18:25",
+  "last": "2026-10-13 17:37",
+  "commits_30d": 362,
+  "days_loaded_30d": 31,
+  "max_per_day": 14,
+  "ops": {
+   "delete": 181,
+   "append": 181
+  },
+  "top_hours": [
+   [
+    21,
+    62
+   ],
+   [
+    1,
+    60
+   ],
+   [
+    5,
+    60
+   ],
+   [
+    9,
+    60
+   ]
+  ],
+  "last10": [
+   "10-13 01:34",
+   "10-13 01:34",
+   "10-13 05:33",
+   "10-13 05:33",
+   "10-13 09:34",
+   "10-13 09:34",
+   "10-13 13:36",
+   "10-13 13:36",
+   "10-13 17:37",
+   "10-13 17:37"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dealbldr_ice_deal",
+  "snapshots_retained": 240,
+  "log_entries": 240,
+  "first": "2026-08-06 05:13",
+  "last": "2026-10-13 18:31",
+  "commits_30d": 182,
+  "days_loaded_30d": 31,
+  "max_per_day": 7,
+  "ops": {
+   "overwrite": 182
+  },
+  "top_hours": [
+   [
+    22,
+    30
+   ],
+   [
+    2,
+    30
+   ],
+   [
+    6,
+    30
+   ],
+   [
+    10,
+    30
+   ]
+  ],
+  "last10": [
+   "10-12 06:20",
+   "10-12 10:16",
+   "10-12 14:18",
+   "10-12 17:45",
+   "10-12 22:16",
+   "10-13 02:17",
+   "10-13 06:20",
+   "10-13 10:25",
+   "10-13 14:21",
+   "10-13 18:31"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_super_deal",
+  "snapshots_retained": 30,
+  "log_entries": 30,
+  "first": "2026-10-08 22:30",
+  "last": "2026-10-13 18:22",
+  "commits_30d": 30,
+  "days_loaded_30d": 6,
+  "max_per_day": 6,
+  "ops": {
+   "append": 1,
+   "overwrite": 29
+  },
+  "top_hours": [
+   [
+    22,
+    5
+   ],
+   [
+    2,
+    5
+   ],
+   [
+    6,
+    5
+   ],
+   [
+    10,
+    5
+   ]
+  ],
+  "last10": [
+   "10-12 06:34",
+   "10-12 10:31",
+   "10-12 14:11",
+   "10-12 17:56",
+   "10-12 22:31",
+   "10-13 02:12",
+   "10-13 06:03",
+   "10-13 10:18",
+   "10-13 14:16",
+   "10-13 18:22"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_super_deal_deals",
+  "snapshots_retained": 118,
+  "log_entries": 118,
+  "first": "2026-09-24 06:12",
+  "last": "2026-10-13 18:16",
+  "commits_30d": 118,
+  "days_loaded_30d": 20,
+  "max_per_day": 6,
+  "ops": {
+   "append": 1,
+   "overwrite": 117
+  },
+  "top_hours": [
+   [
+    6,
+    20
+   ],
+   [
+    10,
+    20
+   ],
+   [
+    18,
+    19
+   ],
+   [
+    22,
+    19
+   ]
+  ],
+  "last10": [
+   "10-12 06:29",
+   "10-12 10:27",
+   "10-12 14:27",
+   "10-12 17:52",
+   "10-12 22:27",
+   "10-13 02:27",
+   "10-13 06:13",
+   "10-13 10:13",
+   "10-13 14:08",
+   "10-13 18:16"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_serving_deals",
+  "snapshots_retained": 241,
+  "log_entries": 241,
+  "first": "2026-08-04 00:18",
+  "last": "2026-10-13 20:16",
+  "commits_30d": 150,
+  "days_loaded_30d": 26,
+  "max_per_day": 13,
+  "ops": {
+   "overwrite": 146,
+   "delete": 2,
+   "append": 2
+  },
+  "top_hours": [
+   [
+    20,
+    22
+   ],
+   [
+    21,
+    13
+   ],
+   [
+    9,
+    9
+   ],
+   [
+    5,
+    8
+   ]
+  ],
+  "last10": [
+   "10-12 22:36",
+   "10-13 00:53",
+   "10-13 02:25",
+   "10-13 04:43",
+   "10-13 06:09",
+   "10-13 08:30",
+   "10-13 09:54",
+   "10-13 12:11",
+   "10-13 13:37",
+   "10-13 20:16"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_serving_orders",
+  "snapshots_retained": 419,
+  "log_entries": 419,
+  "first": "2026-08-01 16:42",
+  "last": "2026-10-13 20:22",
+  "commits_30d": 344,
+  "days_loaded_30d": 31,
+  "max_per_day": 14,
+  "ops": {
+   "overwrite": 344
+  },
+  "top_hours": [
+   [
+    20,
+    32
+   ],
+   [
+    12,
+    26
+   ],
+   [
+    16,
+    26
+   ],
+   [
+    8,
+    23
+   ]
+  ],
+  "last10": [
+   "10-13 02:27",
+   "10-13 04:49",
+   "10-13 06:12",
+   "10-13 08:35",
+   "10-13 09:56",
+   "10-13 12:17",
+   "10-13 13:39",
+   "10-13 16:08",
+   "10-13 17:25",
+   "10-13 20:22"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_order_header",
+  "snapshots_retained": 1653,
+  "log_entries": 1653,
+  "first": "2026-08-01 08:54",
+  "last": "2026-10-13 19:27",
+  "commits_30d": 852,
+  "days_loaded_30d": 31,
+  "max_per_day": 33,
+  "ops": {
+   "overwrite": 505,
+   "append": 339,
+   "delete": 8
+  },
+  "top_hours": [
+   [
+    7,
+    78
+   ],
+   [
+    15,
+    78
+   ],
+   [
+    19,
+    76
+   ],
+   [
+    3,
+    75
+   ]
+  ],
+  "last10": [
+   "10-13 14:14",
+   "10-13 14:15",
+   "10-13 15:16",
+   "10-13 15:16",
+   "10-13 15:25",
+   "10-13 18:03",
+   "10-13 18:03",
+   "10-13 19:16",
+   "10-13 19:17",
+   "10-13 19:27"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_deal_demos",
+  "snapshots_retained": 2667,
+  "log_entries": 2667,
+  "first": "2026-08-01 08:51",
+  "last": "2026-10-13 19:08",
+  "commits_30d": 602,
+  "days_loaded_30d": 31,
+  "max_per_day": 31,
+  "ops": {
+   "overwrite": 378,
+   "append": 219,
+   "delete": 5
+  },
+  "top_hours": [
+   [
+    7,
+    79
+   ],
+   [
+    3,
+    78
+   ],
+   [
+    23,
+    75
+   ],
+   [
+    15,
+    64
+   ]
+  ],
+  "last10": [
+   "10-13 10:40",
+   "10-13 10:41",
+   "10-13 11:08",
+   "10-13 11:13",
+   "10-13 14:18",
+   "10-13 14:19",
+   "10-13 15:03",
+   "10-13 15:08",
+   "10-13 19:03",
+   "10-13 19:08"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_deal_hdr",
+  "snapshots_retained": 382,
+  "log_entries": 382,
+  "first": "2026-08-06 10:44",
+  "last": "2026-10-13 19:13",
+  "commits_30d": 315,
+  "days_loaded_30d": 30,
+  "max_per_day": 14,
+  "ops": {
+   "overwrite": 157,
+   "append": 158
+  },
+  "top_hours": [
+   [
+    15,
+    48
+   ],
+   [
+    3,
+    46
+   ],
+   [
+    7,
+    46
+   ],
+   [
+    23,
+    44
+   ]
+  ],
+  "last10": [
+   "10-13 03:51",
+   "10-13 03:51",
+   "10-13 07:47",
+   "10-13 07:47",
+   "10-13 11:27",
+   "10-13 11:28",
+   "10-13 15:12",
+   "10-13 15:13",
+   "10-13 19:13",
+   "10-13 19:13"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_deal_header",
+  "snapshots_retained": 646,
+  "log_entries": 646,
+  "first": "2026-08-01 08:50",
+  "last": "2026-10-13 19:20",
+  "commits_30d": 472,
+  "days_loaded_30d": 31,
+  "max_per_day": 26,
+  "ops": {
+   "overwrite": 236,
+   "append": 236
+  },
+  "top_hours": [
+   [
+    3,
+    54
+   ],
+   [
+    7,
+    54
+   ],
+   [
+    15,
+    50
+   ],
+   [
+    23,
+    46
+   ]
+  ],
+  "last10": [
+   "10-13 10:39",
+   "10-13 10:40",
+   "10-13 11:09",
+   "10-13 11:09",
+   "10-13 14:17",
+   "10-13 14:18",
+   "10-13 15:04",
+   "10-13 15:04",
+   "10-13 19:20",
+   "10-13 19:20"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_deal_revision",
+  "snapshots_retained": 393,
+  "log_entries": 393,
+  "first": "2026-08-01 09:11",
+  "last": "2026-10-13 19:18",
+  "commits_30d": 316,
+  "days_loaded_30d": 31,
+  "max_per_day": 14,
+  "ops": {
+   "overwrite": 150,
+   "append": 162,
+   "delete": 4
+  },
+  "top_hours": [
+   [
+    3,
+    48
+   ],
+   [
+    7,
+    47
+   ],
+   [
+    23,
+    45
+   ],
+   [
+    15,
+    45
+   ]
+  ],
+  "last10": [
+   "10-12 23:51",
+   "10-13 03:50",
+   "10-13 03:50",
+   "10-13 07:51",
+   "10-13 07:51",
+   "10-13 11:21",
+   "10-13 15:16",
+   "10-13 15:17",
+   "10-13 19:17",
+   "10-13 19:18"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_deal_summary_data",
+  "snapshots_retained": 131,
+  "log_entries": 131,
+  "first": "2026-08-04 00:01",
+  "last": "2026-10-13 20:10",
+  "commits_30d": 106,
+  "days_loaded_30d": 29,
+  "max_per_day": 12,
+  "ops": {
+   "overwrite": 53,
+   "append": 53
+  },
+  "top_hours": [
+   [
+    19,
+    35
+   ],
+   [
+    20,
+    19
+   ],
+   [
+    0,
+    6
+   ],
+   [
+    11,
+    6
+   ]
+  ],
+  "last10": [
+   "10-13 04:33",
+   "10-13 04:36",
+   "10-13 08:22",
+   "10-13 08:25",
+   "10-13 11:59",
+   "10-13 12:05",
+   "10-13 15:58",
+   "10-13 16:03",
+   "10-13 20:07",
+   "10-13 20:10"
+  ]
+ }
+]

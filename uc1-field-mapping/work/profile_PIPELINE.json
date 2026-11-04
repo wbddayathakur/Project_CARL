@@ -1,0 +1,912 @@
+{
+ "Salesforce Opportunity Stage": {
+  "non_null": 23756,
+  "null": 1,
+  "distinct": 7,
+  "top": [
+   [
+    "Closed Won",
+    13336
+   ],
+   [
+    "Prospecting/Planning Costs",
+    2974
+   ],
+   [
+    "Verbal Commitment/HOLD",
+    2943
+   ],
+   [
+    "Proposal/Working",
+    2045
+   ],
+   [
+    "Proposal Low/Projection",
+    1219
+   ],
+   [
+    "Closed Lost",
+    1209
+   ]
+  ]
+ },
+ "Salesforce Classification": {
+  "non_null": 22182,
+  "null": 1575,
+  "distinct": 19,
+  "top": [
+   [
+    "Upfront 26/27",
+    11517
+   ],
+   [
+    "Scatter",
+    6098
+   ],
+   [
+    "DDL",
+    1963
+   ],
+   [
+    "Programmatic National Upfront 26/27",
+    689
+   ],
+   [
+    "Demo Direct",
+    398
+   ],
+   [
+    "Premiere",
+    371
+   ]
+  ]
+ },
+ "UF Year": {
+  "non_null": 23756,
+  "null": 1,
+  "distinct": 3,
+  "top": [
+   [
+    "26/27",
+    12377
+   ],
+   [
+    "N/A",
+    10987
+   ],
+   [
+    "25/26",
+    392
+   ]
+  ]
+ },
+ "Status Group": {
+  "non_null": 23756,
+  "null": 1,
+  "distinct": 4,
+  "top": [
+   [
+    "Order",
+    14037
+   ],
+   [
+    "Pipeline",
+    5813
+   ],
+   [
+    "Prospecting",
+    2606
+   ],
+   [
+    "closed_lost",
+    1300
+   ]
+  ]
+ },
+ "Property Detail": {
+  "non_null": 23032,
+  "null": 725,
+  "distinct": 66,
+  "top": [
+   [
+    "HBO Max",
+    2223
+   ],
+   [
+    "HGTV",
+    1604
+   ],
+   [
+    "Food Network",
+    1583
+   ],
+   [
+    "The Turner Network",
+    1457
+   ],
+   [
+    "TBS",
+    1222
+   ],
+   [
+    "Discovery Networks",
+    1216
+   ]
+  ]
+ },
+ "Property": {
+  "non_null": 23032,
+  "null": 725,
+  "distinct": 56,
+  "top": [
+   [
+    "HBO Max",
+    2223
+   ],
+   [
+    "CNN",
+    2060
+   ],
+   [
+    "HGTV",
+    1604
+   ],
+   [
+    "Food Network",
+    1583
+   ],
+   [
+    "Turner Entertainment",
+    1477
+   ],
+   [
+    "TBS",
+    1227
+   ]
+  ]
+ },
+ "Platform": {
+  "non_null": 23756,
+  "null": 1,
+  "distinct": 2,
+  "top": [
+   [
+    "Linear",
+    16208
+   ],
+   [
+    "Digital",
+    7548
+   ]
+  ]
+ },
+ "Market Type": {
+  "non_null": 23756,
+  "null": 1,
+  "distinct": 7,
+  "top": [
+   [
+    "Upfront",
+    12769
+   ],
+   [
+    "Scatter",
+    9272
+   ],
+   [
+    "Unmapped",
+    1596
+   ],
+   [
+    "International",
+    73
+   ],
+   [
+    "ADU / Makegood",
+    29
+   ],
+   [
+    "PSA",
+    15
+   ]
+  ]
+ },
+ "uf_group": {
+  "non_null": 23756,
+  "null": 1,
+  "distinct": 12,
+  "top": [
+   [
+    "Linear - Traditional",
+    10458
+   ],
+   [
+    "Sports Linear - Non-NCAA",
+    2825
+   ],
+   [
+    "Digital - WBD Stream",
+    2748
+   ],
+   [
+    "Digital - MAX",
+    2223
+   ],
+   [
+    "Linear - DDL",
+    1963
+   ],
+   [
+    "Sports Digital - Non-NCAA",
+    1002
+   ]
+  ]
+ },
+ "sales_division": {
+  "non_null": 23756,
+  "null": 1,
+  "distinct": 3,
+  "top": [
+   [
+    "Linear",
+    13201
+   ],
+   [
+    "Digital",
+    6011
+   ],
+   [
+    "Sports",
+    4544
+   ]
+  ]
+ },
+ "Salesforce Opportunity ID": {
+  "non_null": 23756,
+  "null": 1,
+  "distinct": 7233,
+  "top": [
+   [
+    "006Vq00000mHnBzIAK",
+    137
+   ],
+   [
+    "006Vq00000mL4Y1IAK",
+    97
+   ],
+   [
+    "006Vq00000mLH5RIAW",
+    94
+   ],
+   [
+    "006Vq00000lTCilIAG",
+    79
+   ],
+   [
+    "006Vq00000mJtmjIAC",
+    78
+   ],
+   [
+    "006Vq00000hnWlxIAE",
+    75
+   ]
+  ]
+ },
+ "Salesforce Opportunity Name": {
+  "non_null": 23756,
+  "null": 1,
+  "distinct": 6115,
+  "top": [
+   [
+    "Upfront Broadcast-2027-SPARK COMMUNICATIONS-NY-AbbVie Inc.-TRADITIONAL",
+    425
+   ],
+   [
+    "Scatter-2026-NEW BUSINESS AGENCY-NEW BUSINESS ADV-TRADITIONAL",
+    314
+   ],
+   [
+    "Upfront Broadcast-2027-Spark Foundry C/O Re: Sources USA-Macys Inc-TRADITIONAL",
+    275
+   ],
+   [
+    "Upfront Broadcast-2027-Zenith Media Services Inc-Haleon-TRADITIONAL",
+    164
+   ],
+   [
+    "Scatter-2026-NEW BUSINESS AGENCY--TRADITIONAL",
+    141
+   ],
+   [
+    "Upfront Broadcast-2027-Infinite Roar Division of VNC Communications Inc.-Marcos Pizza Inc.-TRADITIONAL",
+    111
+   ]
+  ]
+ },
+ "Salesforce Advertiser Name": {
+  "non_null": 23756,
+  "null": 1,
+  "distinct": 1060,
+  "top": [
+   [
+    "NEW BUSINESS ADV",
+    1177
+   ],
+   [
+    "Procter and Gamble",
+    1023
+   ],
+   [
+    "AbbVie Inc.",
+    601
+   ],
+   [
+    "Nestle USA Inc",
+    445
+   ],
+   [
+    "Reckitt Benckiser LLC",
+    387
+   ],
+   [
+    "Capital One Financial Corporation",
+    320
+   ]
+  ]
+ },
+ "Salesforce Agency": {
+  "non_null": 23693,
+  "null": 64,
+  "distinct": 475,
+  "top": [
+   [
+    "Zenith Media Services, Inc",
+    1311
+   ],
+   [
+    "NEW BUSINESS AGENCY",
+    1099
+   ],
+   [
+    "CARAT-DETROIT",
+    945
+   ],
+   [
+    "Horizon Media, Inc.",
+    848
+   ],
+   [
+    "OMD",
+    829
+   ],
+   [
+    "Spark Foundry C/O Re: Sources USA",
+    780
+   ]
+  ]
+ },
+ "Salesforce Mega Agency": {
+  "non_null": 23037,
+  "null": 720,
+  "distinct": 115,
+  "top": [
+   [
+    "PMX",
+    5454
+   ],
+   [
+    "OTHER",
+    4091
+   ],
+   [
+    "GROUPM",
+    2530
+   ],
+   [
+    "MAGNA",
+    1853
+   ],
+   [
+    "OMNICOM",
+    1776
+   ],
+   [
+    "CARAT",
+    1156
+   ]
+  ]
+ },
+ "Salesforce Activity Quarter": {
+  "non_null": 23338,
+  "null": 419,
+  "distinct": 17,
+  "top": [
+   [
+    "2026-10",
+    13081
+   ],
+   [
+    "2027-01",
+    4048
+   ],
+   [
+    "2027-04",
+    3462
+   ],
+   [
+    "2027-07",
+    2281
+   ],
+   [
+    "2027-10",
+    440
+   ],
+   [
+    "2028-01",
+    10
+   ]
+  ]
+ },
+ "Salesforce Total Amount": {
+  "non_null": 21903,
+  "null": 1854,
+  "distinct": 9125,
+  "top": [
+   [
+    "0",
+    4102
+   ],
+   [
+    "500000",
+    501
+   ],
+   [
+    "100000",
+    431
+   ],
+   [
+    "250000",
+    281
+   ],
+   [
+    "1000000",
+    266
+   ],
+   [
+    "300000",
+    248
+   ]
+  ]
+ },
+ "Salesforce Projection Rank": {
+  "non_null": 20752,
+  "null": 3005,
+  "distinct": 5,
+  "top": [
+   [
+    "A",
+    13336
+   ],
+   [
+    "B",
+    2943
+   ],
+   [
+    "C",
+    2045
+   ],
+   [
+    "D",
+    1219
+   ],
+   [
+    "F",
+    1209
+   ]
+  ]
+ },
+ "Salesforce Order ID": {
+  "non_null": 15507,
+  "null": 8250,
+  "distinct": 15507,
+  "top": [
+   [
+    "3323757",
+    1
+   ],
+   [
+    "3323758",
+    1
+   ],
+   [
+    "3327336",
+    1
+   ],
+   [
+    "3327911",
+    1
+   ],
+   [
+    "3332359",
+    1
+   ],
+   [
+    "3332254",
+    1
+   ]
+  ]
+ },
+ "Salesforce iDeal ID": {
+  "non_null": 16048,
+  "null": 7709,
+  "distinct": 3762,
+  "top": [
+   [
+    "680630",
+    137
+   ],
+   [
+    "680669",
+    97
+   ],
+   [
+    "680674",
+    94
+   ],
+   [
+    "680348",
+    79
+   ],
+   [
+    "680650",
+    78
+   ],
+   [
+    "677490",
+    75
+   ]
+  ]
+ },
+ "Salesforce Placeholder Operative Order ID": {
+  "non_null": 0,
+  "null": 23757,
+  "distinct": 0,
+  "top": []
+ },
+ "Salesforce Sales Order ID": {
+  "non_null": 22830,
+  "null": 927,
+  "distinct": 18680,
+  "top": [
+   [
+    "90594",
+    17
+   ],
+   [
+    "124592",
+    16
+   ],
+   [
+    "122282",
+    15
+   ],
+   [
+    "124304",
+    15
+   ],
+   [
+    "121282",
+    15
+   ],
+   [
+    "121723",
+    15
+   ]
+  ]
+ },
+ "Salesforce Ad Type": {
+  "non_null": 23032,
+  "null": 725,
+  "distinct": 19,
+  "top": [
+   [
+    "Cash - Guaranteed",
+    12280
+   ],
+   [
+    "Video",
+    5055
+   ],
+   [
+    "Placeholder",
+    1468
+   ],
+   [
+    "Cash - Non-guaranteed",
+    1322
+   ],
+   [
+    "Recap",
+    1168
+   ],
+   [
+    "ADU",
+    705
+   ]
+  ]
+ },
+ "Salesforce Record Type": {
+  "non_null": 23756,
+  "null": 1,
+  "distinct": 2,
+  "top": [
+   [
+    "Linear",
+    16231
+   ],
+   [
+    "Digital",
+    7525
+   ]
+  ]
+ },
+ "Salesforce  Historical Snapshot Filter": {
+  "non_null": 23756,
+  "null": 1,
+  "distinct": 1,
+  "top": [
+   [
+    "2026-10-16",
+    23756
+   ]
+  ]
+ },
+ "Salesforce Workflow Status": {
+  "non_null": 22827,
+  "null": 930,
+  "distinct": 15,
+  "top": [
+   [
+    "ORD",
+    11025
+   ],
+   [
+    "PLN",
+    4095
+   ],
+   [
+    "client_proposal_approval",
+    3642
+   ],
+   [
+    "active_order",
+    1830
+   ],
+   [
+    "proposal_creation",
+    1410
+   ],
+   [
+    "HOL",
+    184
+   ]
+  ]
+ },
+ "Salesforce Deal Type": {
+  "non_null": 7525,
+  "null": 16232,
+  "distinct": 12,
+  "top": [
+   [
+    "N/A",
+    5695
+   ],
+   [
+    "Client Direct",
+    517
+   ],
+   [
+    "Programmatic Guaranteed",
+    488
+   ],
+   [
+    "MM",
+    472
+   ],
+   [
+    "Direct Response",
+    253
+   ],
+   [
+    "Linear Led",
+    31
+   ]
+  ]
+ },
+ "Buyer_AE": {
+  "non_null": 23032,
+  "null": 725,
+  "distinct": 135,
+  "top": [
+   [
+    "Marc Shrank",
+    1043
+   ],
+   [
+    "Megan Yox",
+    949
+   ],
+   [
+    "Ali ORourke",
+    868
+   ],
+   [
+    "Dominick Salamone",
+    845
+   ],
+   [
+    "Floriana Sheykina",
+    840
+   ],
+   [
+    "Maddi Carr",
+    792
+   ]
+  ]
+ },
+ "Client_AE": {
+  "non_null": 22097,
+  "null": 1660,
+  "distinct": 118,
+  "top": [
+   [
+    "Plen Smith",
+    1741
+   ],
+   [
+    "Michael Schomaker",
+    1263
+   ],
+   [
+    "Rachel Mihm",
+    909
+   ],
+   [
+    "Maddi Carr",
+    832
+   ],
+   [
+    "Will Heckmann",
+    820
+   ],
+   [
+    "Cody Clifton",
+    759
+   ]
+  ]
+ },
+ "Planning_AE": {
+  "non_null": 21948,
+  "null": 1809,
+  "distinct": 119,
+  "top": [
+   [
+    "Marc Shrank",
+    1035
+   ],
+   [
+    "Floriana Sheykina",
+    851
+   ],
+   [
+    "Maddi Carr",
+    813
+   ],
+   [
+    "Megan Yox",
+    735
+   ],
+   [
+    "Ali ORourke",
+    691
+   ],
+   [
+    "Ali Brenner",
+    671
+   ]
+  ]
+ },
+ "Salesforce Net Projections": {
+  "non_null": 23757,
+  "null": 0,
+  "distinct": 13724,
+  "top": [
+   [
+    "0",
+    5004
+   ],
+   [
+    "100000",
+    212
+   ],
+   [
+    "50000",
+    138
+   ],
+   [
+    "125000",
+    112
+   ],
+   [
+    "200000",
+    108
+   ],
+   [
+    "150000",
+    102
+   ]
+  ]
+ },
+ "Salesforce Net Weighted Projections": {
+  "non_null": 23757,
+  "null": 0,
+  "distinct": 11646,
+  "top": [
+   [
+    "0",
+    8733
+   ],
+   [
+    "100000",
+    108
+   ],
+   [
+    "50000",
+    71
+   ],
+   [
+    "300000",
+    53
+   ],
+   [
+    "150000",
+    52
+   ],
+   [
+    "200000",
+    51
+   ]
+  ]
+ },
+ "Salesforce Linear Total Amount": {
+  "non_null": 23757,
+  "null": 0,
+  "distinct": 9535,
+  "top": [
+   [
+    "0",
+    12062
+   ],
+   [
+    "85000",
+    111
+   ],
+   [
+    "106250",
+    82
+   ],
+   [
+    "170000",
+    72
+   ],
+   [
+    "42500",
+    58
+   ],
+   [
+    "255000",
+    55
+   ]
+  ]
+ }
+}

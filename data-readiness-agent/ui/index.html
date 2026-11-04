@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CARL Data Readiness</title>
+<style>
+:root{
+  --bg:#f6f7f9; --panel:#fff; --ink:#15181d; --muted:#667085; --line:#e4e7ec; --soft:#f2f4f7;
+  --accent:#3b5bdb; --accent-ink:#fff;
+  --green:#127a4b; --green-bg:#e4f5ec; --amber:#92580a; --amber-bg:#fdf1d8; --red:#b3261e; --red-bg:#fde8e6; --grey:#555d6b; --grey-bg:#eceff3; --blue:#1d4ed8; --blue-bg:#e6edff;
+  --bar-prod:#2f9e6b; --bar-stale:#e0a526; --bar-dev:#c9ced6;
+  --radius:10px;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#0f1115; --panel:#171a21; --ink:#e8eaee; --muted:#98a1b3; --line:#2a2f3a; --soft:#1e222b;
+    --accent:#7c93ff; --accent-ink:#0f1115;
+    --green:#5fd49b; --green-bg:#12301f; --amber:#f0c36a; --amber-bg:#3a2d10; --red:#ff8a80; --red-bg:#3b1816; --grey:#aab2c0; --grey-bg:#242934; --blue:#8fb0ff; --blue-bg:#1b2745;
+    --bar-prod:#3dbb84; --bar-stale:#d9a63a; --bar-dev:#3a4150;
+  }
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--accent)}
+header{display:flex;align-items:center;gap:16px;padding:12px 20px;background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap}
+header h1{font-size:16px;margin:0;font-weight:650}
+header .sub{color:var(--muted);font-size:12px}
+.pills{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto;align-items:center}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 380px;height:calc(100% - 58px)}
+main{overflow:auto;padding:16px 20px 40px}
+aside{border-left:1px solid var(--line);background:var(--panel);display:flex;flex-direction:column;min-height:0}
+@media (max-width:1100px){
+  .layout{grid-template-columns:1fr}
+  aside{position:fixed;right:0;top:58px;bottom:0;width:min(420px,100%);transform:translateX(100%);transition:transform .2s;z-index:5;box-shadow:-8px 0 24px rgba(0,0,0,.15)}
+  aside.open{transform:none}
+}
+.only-narrow{display:none}
+@media (max-width:1100px){.only-narrow{display:inline-flex}}
+nav.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:16px;flex-wrap:wrap}
+nav.tabs button{background:none;border:0;padding:9px 14px;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;font-weight:550}
+nav.tabs button.on{color:var(--ink);border-bottom-color:var(--accent)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px}
+.card h2{font-size:13px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin:0 0 12px;font-weight:650}
+.grid{display:grid;gap:14px}
+.kpis{grid-template-columns:repeat(auto-fit,minmax(170px,1fr));margin-bottom:14px}
+.kpi .n{font-size:26px;font-weight:700;letter-spacing:-.02em}
+.kpi .l{color:var(--muted);font-size:12px}
+.kpi .d{font-size:12px;color:var(--muted);margin-top:2px}
+.two{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr)}
+@media (max-width:1300px){.two{grid-template-columns:1fr}}
+.chip{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11.5px;font-weight:600;white-space:nowrap}
+.c-green{background:var(--green-bg);color:var(--green)} .c-amber{background:var(--amber-bg);color:var(--amber)}
+.c-red{background:var(--red-bg);color:var(--red)} .c-grey{background:var(--grey-bg);color:var(--grey)} .c-blue{background:var(--blue-bg);color:var(--blue)}
+.pill{font-size:12px;border:1px solid var(--line);background:var(--soft);padding:3px 10px;border-radius:999px;color:var(--muted)}
+.pill b{color:var(--ink)} .pill.warn{background:var(--amber-bg);color:var(--amber);border-color:transparent} .pill.warn b{color:var(--amber)}
+.btn{border:1px solid var(--line);background:var(--panel);padding:6px 12px;border-radius:8px;cursor:pointer;font-weight:550}
+.btn:hover{background:var(--soft)} .btn.primary{background:var(--accent);color:var(--accent-ink);border-color:transparent}
+.btn.primary:hover{filter:brightness(1.08)} .btn.sm{padding:3px 9px;font-size:12px}
+.btn:disabled{opacity:.5;cursor:default}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:650;white-space:nowrap;position:sticky;top:0;background:var(--panel)}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+tr.click{cursor:pointer} tr.click:hover td{background:var(--soft)}
+tr.detail td{background:var(--soft);padding:14px 16px}
+.muted{color:var(--muted)} .small{font-size:12px}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+.bar{display:flex;height:10px;border-radius:5px;overflow:hidden;background:var(--bar-dev);min-width:80px}
+.bar span{display:block;height:100%}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--muted);margin-bottom:10px;flex-wrap:wrap}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.srcbar{display:grid;grid-template-columns:150px 1fr 70px;gap:10px;align-items:center;margin:7px 0;font-size:13px}
+.srcbar .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ol.findings{margin:0;padding:0;list-style:none;counter-reset:f}
+ol.findings li{counter-increment:f;display:grid;grid-template-columns:24px 1fr auto;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+ol.findings li:last-child{border:0}
+ol.findings li::before{content:counter(f);color:var(--muted);font-weight:700}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
+.filters input,.filters select,textarea,.field input{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px}
+.filters input[type=search]{min-width:220px}
+.scroll{max-height:560px;overflow:auto;border:1px solid var(--line);border-radius:8px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.fchip{border:1px solid var(--line);background:var(--panel);padding:4px 10px;border-radius:999px;cursor:pointer;font-size:12.5px}
+.fchip.on{background:var(--accent);color:var(--accent-ink);border-color:transparent}
+.crit{display:grid;grid-template-columns:44px 1fr auto;gap:10px;padding:6px 0;border-bottom:1px dashed var(--line);align-items:start}
+.crit:last-child{border:0}
+textarea{width:100%;min-height:140px;resize:vertical;font:12.5px ui-monospace,Menlo,monospace}
+.tri{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--panel);margin-bottom:10px}
+.tri h3{margin:0 0 4px;font-size:14px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.tri .nx{margin:2px 0 6px}
+.tri ul{margin:4px 0 0;padding-left:18px;font-size:12.5px}
+.field{display:flex;flex-direction:column;gap:4px;margin-bottom:12px}
+.field input{width:140px}
+.banner{background:var(--amber-bg);color:var(--amber);border-radius:8px;padding:10px 12px;font-size:13px;margin-bottom:14px}
+.delta{margin-top:10px;font-size:13px}
+/* chat */
+aside header{padding:12px 16px;border-bottom:1px solid var(--line);flex-direction:column;align-items:flex-start;gap:2px;background:var(--panel)}
+aside header b{font-size:14px}
+#msgs{flex:1;overflow:auto;padding:14px 16px;display:flex;flex-direction:column;gap:12px;min-height:0}
+.msg{max-width:100%}
+.msg.u{align-self:flex-end;background:var(--accent);color:var(--accent-ink);padding:8px 12px;border-radius:12px 12px 2px 12px;max-width:88%}
+.msg.a{background:var(--soft);padding:12px 14px;border-radius:12px 12px 12px 2px}
+.msg.a .hl{font-weight:650;margin-bottom:6px}
+.msg.a ul{margin:6px 0;padding-left:18px} .msg.a li{margin:3px 0}
+.msg.a table{font-size:12px;margin:8px 0;display:block;overflow:auto;max-height:260px}
+.msg.a th{background:var(--soft)}
+.msg .cav{color:var(--muted);font-size:12px;margin-top:6px}
+.msg details{margin-top:8px;font-size:12px;color:var(--muted)}
+.msg details summary{cursor:pointer}
+.tool{font-family:ui-monospace,Menlo,monospace;font-size:11.5px;margin:3px 0;word-break:break-word}
+.sugg{display:flex;gap:6px;flex-wrap:wrap;padding:0 16px 8px}
+.sugg button{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:4px 10px;font-size:12px;cursor:pointer}
+.sugg button:hover{background:var(--soft)}
+form#ask{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--line)}
+form#ask input{flex:1;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.honest{font-size:11.5px;color:var(--muted)}
+.empty{color:var(--muted);padding:20px;text-align:center}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>CARL data readiness</h1>
+    <div class="sub">Evidence-based readiness of data sources for agents. Real inputs only.</div>
+  </div>
+  <div class="pills" id="pills"></div>
+  <button class="btn only-narrow" id="toggleChat">Ask agent</button>
+</header>
+
+<div class="layout">
+<main>
+  <nav class="tabs" id="tabs"></nav>
+  <div id="view"></div>
+</main>
+<aside id="chat">
+  <header>
+    <b>Ask the agent</b>
+    <span class="honest">Answers come from tool calls over the real evidence. It is a rule-based router, not a language model, so it cannot make things up. Open "Evidence trail" under any answer to see what it ran.</span>
+  </header>
+  <div id="msgs"></div>
+  <div class="sugg" id="sugg"></div>
+  <form id="ask"><input id="q" placeholder="e.g. Is FreeWheel ready?" autocomplete="off" maxlength="500"><button class="btn primary" id="send">Ask</button></form>
+</aside>
+</div>
+
+<script>
+"use strict";
+// ---------- tiny DOM helpers (all data goes through textContent, never innerHTML) ----------
+function h(tag, attrs, ...kids){
+  const e = document.createElement(tag);
+  if (attrs) for (const [k,v] of Object.entries(attrs)) {
+    if (k === "class") e.className = v;
+    else if (k.startsWith("on")) e.addEventListener(k.slice(2), v);
+    else if (v !== false && v != null) e.setAttribute(k, v === true ? "" : v);
+  }
+  for (const k of kids.flat(Infinity)) { if (k == null || k === false) continue; e.append(k.nodeType ? k : document.createTextNode(String(k))); }
+  return e;
+}
+const $ = (s) => document.querySelector(s);
+function mount(el, ...kids){ el.replaceChildren(...kids.flat(Infinity).filter(Boolean)); }
+async function api(path, body){
+  if (window.STATIC_API) return window.STATIC_API(path, body);   // static prototype: data layer is embedded
+  const opt = body === undefined ? {} : {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body)};
+  const r = await fetch(path, opt);
+  const j = await r.json();
+  if (!r.ok) throw new Error(j.error || r.statusText);
+  return j;
+}
+const chip = (t, cls) => h("span", {class:"chip " + cls}, t);
+const STAGE_CLS = {"in prod":"c-green","partly in prod":"c-amber","dev only":"c-red","not present":"c-grey"};
+const GATE_CLS = {"CLEARED":"c-green","CAUTION":"c-amber","BLOCK":"c-red"};
+const STATUS_CLS = {pass:"c-green", partial:"c-amber", fail:"c-red", na:"c-grey", unverified:"c-blue"};
+const STATUS_TXT = {pass:"PASS", partial:"PARTIAL", fail:"FAIL", na:"n/a", unverified:"UNVERIFIED"};
+const TRI_CLS = {in_prod:"c-green", dev_only:"c-amber", requested_no_table:"c-blue", done_no_table:"c-amber", possible_rename:"c-amber", new_request:"c-red", invalid:"c-grey"};
+const TRI_TXT = {in_prod:"IN PROD", dev_only:"DEV ONLY", requested_no_table:"ON BACKLOG", done_no_table:"DONE, NO TABLE", possible_rename:"POSSIBLE RENAME", new_request:"NEW REQUEST", invalid:"INVALID"};
+const fmt = (n) => Number(n).toLocaleString();
+
+let S = null;            // server state
+let tab = "overview";
+const TABS = [["overview","Overview"],["sources","Sources"],["jira","Jira vs lake"],["triage","Triage"],["rubric","Rubric"]];
+
+// ---------- header ----------
+function renderHeader(){
+  mount($("#pills"),
+    S.inputs.map(i => h("span", {class:"pill" + (i.age_days > 7 ? " warn" : "")}, i.name + ": ", h("b", null, i.as_of), ` (${i.age_days}d old)`)),
+    window.STATIC_MODE ? h("span", {class:"pill warn", title:"Open readiness_prototype.html anywhere; no server needed. Run the local server for live reloads and saving."}, "Static prototype: ", h("b", null, "read-only snapshot")) : null,
+    h("span", {class:"pill warn"}, "Rubric: ", h("b", null, S.rubric_status)),
+    window.STATIC_MODE ? null : h("button", {class:"btn sm", onclick: reload, title:"Re-read the data files from disk"}, "Reload data"));
+}
+async function reload(){ S = (await api("/api/reload", {})).state; renderAll(); }
+
+function renderTabs(){
+  mount($("#tabs"), TABS.map(([id, label]) => h("button", {class: id === tab ? "on" : "", onclick: () => { tab = id; renderAll(); }}, label)));
+}
+
+// ---------- overview ----------
+const FINDING_Q = {
+  "dev-only-layers":"Which tables are dev only?", "one_time_loads":"How are loads scheduled?",
+  "testing_no_table":"Where does Jira disagree with the lake?", "done_after_snapshot":"Where does Jira disagree with the lake?",
+  "live_but_open":"What is blocked?", "done_no_table_found":"Where does Jira disagree with the lake?", "done_but_dev_only":"Where does Jira disagree with the lake?"
+};
+function kpi(n, l, d){ return h("div", {class:"card kpi"}, h("div", {class:"n"}, n), h("div", {class:"l"}, l), d ? h("div", {class:"d"}, d) : null); }
+
+function sourceBars(){
+  const agg = {};
+  for (const r of S.rows) {
+    const a = agg[r.source] ||= {fresh:0, stale:0, notprod:0, tables:0};
+    a.fresh += r.counts.fresh_in_prod; a.stale += r.counts.in_prod - r.counts.fresh_in_prod;
+    a.notprod += r.counts.tables - r.counts.in_prod; a.tables += r.counts.tables;
+  }
+  const items = Object.entries(agg).filter(([,a]) => a.tables).sort((a,b) => b[1].tables - a[1].tables).slice(0, 16);
+  const max = Math.max(...items.map(([,a]) => a.tables), 1);
+  return [
+    h("div", {class:"legend"},
+      h("span", null, h("i", {style:"background:var(--bar-prod)"}), "In prod, fresh"),
+      h("span", null, h("i", {style:"background:var(--bar-stale)"}), "In prod, stale"),
+      h("span", null, h("i", {style:"background:var(--bar-dev)"}), "Not in prod")),
+    items.map(([name, a]) => h("div", {class:"srcbar", title:`${a.tables} tables`},
+      h("div", {class:"nm"}, name),
+      h("div", {class:"bar", style:`width:${Math.max(a.tables / max * 100, 6)}%`},
+        h("span", {style:`flex:${a.fresh};background:var(--bar-prod)`}),
+        h("span", {style:`flex:${a.stale};background:var(--bar-stale)`}),
+        h("span", {style:`flex:${a.notprod};background:var(--bar-dev)`})),
+      h("div", {class:"small muted"}, `${fmt(a.fresh + a.stale)}/${fmt(a.tables)}`)))
+  ];
+}
+
+function viewOverview(){
+  const t = S.totals, j = S.jira;
+  return [
+    h("div", {class:"grid kpis"},
+      kpi(fmt(t.in_prod), "scored tables in prod", `of ${fmt(t.tables)} (${fmt(t.in_dev)} in dev)`),
+      kpi(fmt(t.dev_only), "tables only in dev", "no prod copy"),
+      kpi(`${t.prod_recurring}/${t.prod_with_history}`, "prod tables with recurring load", "not evidenced is not the same as absent"),
+      kpi(`${j.matched}/${j.reconciled}`, "table stories matched to the catalog", `${j.unparsed} stories name no table`),
+      kpi(`${j.blocked_with_prod_table}/${j.blocked_total}`, "Blocked stories already live in prod", "stale ticket or unaccepted")),
+    h("div", {class:"grid two"},
+      h("div", {class:"card"}, h("h2", null, "What the evidence says"),
+        h("ol", {class:"findings"}, S.findings.map(f =>
+          h("li", null, h("div", null, f.text),
+            FINDING_Q[f.id] ? h("button", {class:"btn sm", onclick: () => ask(FINDING_Q[f.id])}, "Ask agent") : null)))),
+      h("div", {class:"grid"},
+        h("div", {class:"card"}, h("h2", null, "Tables by source (count)"), sourceBars()),
+        h("div", {class:"card"}, h("h2", null, "What nobody can measure yet"),
+          h("div", {class:"small muted", style:"margin-bottom:8px"}, "These rubric criteria have no data source, so they are shown as UNVERIFIED everywhere."),
+          S.gaps.map(g => h("div", {class:"crit"}, h("b", {class:"mono"}, g.id), h("div", null, g.title, h("div", {class:"small muted"}, "Needs: " + g.needs)), chip(g.layer, "c-grey"))),
+          h("div", {class:"small", style:"margin-top:8px"}, `Golden/eval dataset name search over ${fmt(t.tables)} tables: `, h("b", null, S.golden_name_matches.length + " found"), "."))))
+  ];
+}
+
+// ---------- sources ----------
+let srcFilter = {layer:"", q:""}, openRow = null, tblFilter = {prod:"", q:""};
+function viewSources(){
+  const rows = S.rows.filter(r => (!srcFilter.layer || r.layer === srcFilter.layer) && (!srcFilter.q || r.source.toLowerCase().includes(srcFilter.q.toLowerCase())));
+  const body = h("tbody");
+  for (const r of rows) {
+    const c = r.counts, key = r.source + "|" + r.layer, open = openRow === key;
+    body.append(h("tr", {class:"click", onclick: () => { openRow = open ? null : key; tblFilter = {prod:"", q:""}; renderView(); }},
+      h("td", null, h("b", null, r.source)), h("td", null, r.layer),
+      h("td", {class:"num"}, fmt(c.tables)), h("td", {class:"num"}, fmt(c.in_dev)), h("td", {class:"num"}, fmt(c.in_prod)),
+      h("td", null, chip(r.stage, STAGE_CLS[r.stage])),
+      h("td", null, c.tables ? chip(r.gate.verdict, GATE_CLS[r.gate.verdict]) : "-"),
+      h("td", {class:"small muted"}, r.flags.join("; ") || "-"),
+      h("td", {class:"small"}, r.jira ? `${r.jira.found_in_dev} / ${r.jira.found_in_prod} of ${r.jira.requested_tables}` : "-")));
+    if (open) body.append(h("tr", {class:"detail"}, h("td", {colspan:9}, detailPanel(r))));
+  }
+  return [
+    h("div", {class:"filters"},
+      h("input", {type:"search", placeholder:"Filter sources", value:srcFilter.q, oninput: (e) => { srcFilter.q = e.target.value; renderView(); $("#view input[type=search]").focus(); setCaret(e.target); }}),
+      h("select", {onchange: (e) => { srcFilter.layer = e.target.value; renderView(); }},
+        [["","All layers"],["bronze","Bronze"],["silver","Silver"],["gold","Gold"]].map(([v,l]) => h("option", {value:v, selected: srcFilter.layer === v}, l))),
+      h("span", {class:"small muted"}, `${rows.length} source/layer groups. Click a row for criteria and tables. The agent-use gate is derived from the proposed rubric.`)),
+    h("div", {class:"card", style:"padding:0"}, h("div", {class:"scroll", style:"max-height:none;border:0"},
+      h("table", null, h("thead", null, h("tr", null,
+        ["Source","Layer"].map(x => h("th", null, x)), ["Tables","In dev","In prod"].map(x => h("th", {class:"num"}, x)),
+        ["Stage","Agent-use gate","Flags","Jira-requested found dev / prod"].map(x => h("th", null, x)))), body)))
+  ];
+}
+function setCaret(el){ const v = el.value; const n = $("#view input[type=search]"); if (n) { n.value = v; n.setSelectionRange(v.length, v.length); } }
+
+function detailPanel(r){
+  const wrap = h("div");
+  wrap.append(h("div", {style:"margin-bottom:10px"}, h("b", null, "Gate: "), chip(r.gate.verdict, GATE_CLS[r.gate.verdict]), " ", h("span", {class:"small"}, r.gate.reason)));
+  r.criteria.forEach(c => wrap.append(h("div", {class:"crit"},
+    h("b", {class:"mono"}, c.id),
+    h("div", null, c.title, h("div", {class:"small muted"}, c.needs ? "Needs: " + c.needs : c.detail)),
+    chip(STATUS_TXT[c.status], STATUS_CLS[c.status]))));
+  if (r.jira) wrap.append(h("div", {class:"small", style:"margin-top:8px"}, "Jira stories: ",
+    Object.entries(r.jira.story_classes).map(([k,n]) => `${n} ${k.replaceAll("_"," ")}`).join(", ")));
+  if (r.counts.tables) {
+    const holder = h("div", {style:"margin-top:12px"});
+    wrap.append(h("div", {class:"filters", style:"margin-top:12px"},
+      h("input", {type:"search", placeholder:"Search table names", oninput: (e) => { tblFilter.q = e.target.value; loadTables(r, holder); }}),
+      h("select", {onchange: (e) => { tblFilter.prod = e.target.value; loadTables(r, holder); }},
+        [["","All tables"],["yes","In prod"],["no","Not in prod"]].map(([v,l]) => h("option", {value:v}, l)))), holder);
+    loadTables(r, holder);
+  }
+  return wrap;
+}
+async function loadTables(r, holder){
+  const qs = new URLSearchParams({source:r.source, layer:r.layer, q:tblFilter.q, prod:tblFilter.prod});
+  const j = await api("/api/tables?" + qs);
+  if (!j.rows.length) return mount(holder, h("div", {class:"empty"}, "No tables match."));
+  mount(holder, h("div", {class:"scroll"}, h("table", null,
+    h("thead", null, h("tr", null, ["Table","Dev","Prod","Prod updated","Fresh","Loads (30d commit days)","Jira"].map(x => h("th", null, x)))),
+    h("tbody", null, j.rows.map(t => h("tr", null,
+      h("td", {class:"mono"}, t.name),
+      h("td", null, t.in_dev ? "Y" : "-"), h("td", null, t.in_prod ? "Y" : "-"),
+      h("td", {class:"small"}, t.prod_updated || "-"),
+      h("td", null, t.in_prod ? chip(t.fresh ? "fresh" : "stale", t.fresh ? "c-green" : "c-amber") : "-"),
+      h("td", {class:"small"}, t.versions == null ? (t.in_prod ? "no history" : "-") : `${t.commit_days_30d} day(s), ${t.versions} snapshot(s)`),
+      h("td", {class:"small"}, t.stories.map(k => jiraLink(k)))))))),
+    h("div", {class:"small muted", style:"margin-top:6px"}, `${fmt(j.total)} tables${j.truncated ? " (showing first 300)" : ""}`));
+}
+function jiraLink(k){ return [h("a", {href:`https://${S.jira_site}/browse/${k}`, target:"_blank", rel:"noopener noreferrer"}, k), " "]; }
+
+// ---------- jira vs lake ----------
+let jf = {classification:"", source:"", q:""};
+async function viewJira(){
+  const box = h("div");
+  const qs = new URLSearchParams(jf);
+  const j = await api("/api/recon?" + qs);
+  const classes = S.jira.classes;
+  mount(box,
+    h("div", {class:"small muted", style:"margin-bottom:10px"},
+      `${S.jira.stories_total} stories. ${S.jira.reconciled} name a table and layer; ${S.jira.matched} matched a catalog table. A no-match is a lead to check (naming heuristic), not a verdict.`),
+    h("div", {class:"chips"},
+      h("button", {class:"fchip" + (!jf.classification ? " on" : ""), onclick: () => { jf.classification = ""; renderView(); }}, "All"),
+      classes.map(c => h("button", {class:"fchip" + (jf.classification === c.id ? " on" : ""), title:c.label, onclick: () => { jf.classification = jf.classification === c.id ? "" : c.id; renderView(); }}, `${c.short} (${c.count})`))),
+    h("div", {class:"filters"},
+      h("input", {type:"search", placeholder:"Search key, title or table", value:jf.q, onchange: (e) => { jf.q = e.target.value; renderView(); }}),
+      h("select", {onchange: (e) => { jf.source = e.target.value; renderView(); }},
+        [["", "All sources"], ...S.sources.map(s => [s, s]), ["unmapped","unmapped"]].map(([v,l]) => h("option", {value:v, selected: jf.source === v}, l)))),
+    j.rows.length ? h("div", {class:"card", style:"padding:0"}, h("div", {class:"scroll", style:"max-height:none;border:0"}, h("table", null,
+      h("thead", null, h("tr", null, ["Story","Status","Layer","What the lake says","Tables / hints"].map(x => h("th", null, x)))),
+      h("tbody", null, j.rows.map(r => h("tr", null,
+        h("td", null, jiraLink(r.key), h("div", {class:"small"}, r.summary)),
+        h("td", null, chip(r.status, r.status === "Blocked" ? "c-red" : r.status === "Done" ? "c-green" : "c-grey")),
+        h("td", null, r.layer),
+        h("td", {class:"small"}, r.note),
+        h("td", {class:"small mono"}, r.tables.length ? r.tables.join(", ") : (r.hints.length ? ["hint only: ", r.hints.join(", ")] : "-")))))))) : h("div", {class:"empty"}, "No stories match."),
+    j.truncated ? h("div", {class:"small muted"}, "Showing first 400.") : null);
+  return box;
+}
+
+// ---------- triage ----------
+let triResults = null, triText = "";
+function viewTriage(){
+  const ta = h("textarea", {placeholder:"One table name per line, e.g.\nDCI_RATECARD_HEADER\nDEALBLDR.DCI_RATECLASS\nSALESFORCE.SF_CASECOMMENT", oninput: (e) => triText = e.target.value}); ta.value = triText;
+  const out = h("div", {id:"triOut"});
+  const run = async () => {
+    const names = triText.split("\n").map(s => s.trim()).filter(Boolean);
+    if (!names.length) return;
+    try { triResults = (await api("/api/triage", {names})).results; } catch (e) { triResults = null; mount(out, h("div", {class:"banner"}, e.message)); return; }
+    renderTriResults(out);
+  };
+  if (triResults) renderTriResults(out);
+  return [
+    h("div", {class:"card"},
+      h("h2", null, "Table-request triage"),
+      h("div", {class:"small muted", style:"margin-bottom:10px"},
+        "Paste the tables someone wants for a launch. For each, the agent checks the catalog (all layers, dev and prod) and Jira, then says whether it is already live, needs promotion, is already requested, looks like a rename, or is a genuinely new bronze backlog item."),
+      ta,
+      h("div", {style:"margin-top:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap"},
+        h("button", {class:"btn primary", onclick: run}, "Triage"),
+        h("button", {class:"btn", onclick: () => exportTri(), disabled: !triResults}, "Export CSV"),
+        h("span", {class:"small muted"}, `Catalog is ${S.inputs[0].age_days} days old; anything recent may not show yet.`))),
+    h("div", {style:"margin-top:14px"}, out)
+  ];
+}
+function renderTriResults(out){
+  const cnt = {};
+  triResults.forEach(r => cnt[r.code] = (cnt[r.code] || 0) + 1);
+  mount(out,
+    h("div", {class:"chips"}, Object.entries(cnt).map(([k,n]) => chip(`${TRI_TXT[k]} ${n}`, TRI_CLS[k]))),
+    triResults.map(r => h("div", {class:"tri"},
+      h("h3", null, h("span", {class:"mono"}, r.input), chip(TRI_TXT[r.code], TRI_CLS[r.code])),
+      h("div", null, r.title),
+      h("div", {class:"nx small muted"}, r.next),
+      (r.tables && r.tables.length) ? h("ul", null, r.tables.map(t => h("li", null, h("span", {class:"mono"}, t.fqn), ` : dev ${t.in_dev ? "Y" : "N"}, prod ${t.in_prod ? "Y" : "N"}${t.prod_updated ? ", prod updated " + t.prod_updated : ""}`))) : null,
+      (r.stories && r.stories.length) ? h("ul", null, r.stories.map(s => h("li", null, jiraLink(s.key), `(${s.status}) ${s.summary}`))) : null,
+      (r.close_names && r.close_names.length) ? h("div", {class:"small", style:"margin-top:6px"}, "Closest existing names (hint only): ", h("span", {class:"mono"}, r.close_names.join(", "))) : null,
+      (r.related_sources && r.related_sources.length && r.code === "new_request") ? h("div", {class:"small", style:"margin-top:6px"}, "Related existing tables by source: " + r.related_sources.map(x => `${x.source} (${x.tables})`).join(", ")) : null)));
+}
+function exportTri(){
+  if (!triResults) return;
+  const q = (s) => '"' + String(s ?? "").replaceAll('"', '""') + '"';
+  const rows = [["input","recommendation","title","next_step","tables","jira_stories"].map(q).join(",")];
+  triResults.forEach(r => rows.push([r.input, r.code, r.title, r.next, (r.tables || []).map(t => t.fqn).join("|"), (r.stories || []).map(s => s.key).join("|")].map(q).join(",")));
+  const a = h("a", {href: URL.createObjectURL(new Blob([rows.join("\n")], {type:"text/csv"})), download:"triage_results.csv"});
+  document.body.append(a); a.click(); a.remove();
+}
+
+// ---------- rubric ----------
+let draft = null, deltaMsg = null;
+function viewRubric(){
+  const th = S.thresholds;
+  draft ||= {fresh: th.fresh_window_days, rec: th.recurring_min_commit_days_30d};
+  const O = window.STATIC_OPTIONS;   // static prototype offers a fixed grid of precomputed thresholds
+  const pick = (opts, cur, set) => h("select", {onchange: (e) => set(+e.target.value)}, opts.map(v => h("option", {value:v, selected: v === cur}, v)));
+  const fresh = O ? pick(O.fresh, draft.fresh, (v) => draft.fresh = v) : h("input", {type:"number", min:1, max:365, value:draft.fresh, oninput: (e) => draft.fresh = +e.target.value});
+  const rec = O ? pick(O.rec, draft.rec, (v) => draft.rec = v) : h("input", {type:"number", min:1, max:30, value:draft.rec, oninput: (e) => draft.rec = +e.target.value});
+  const apply = async () => {
+    try {
+      const r = await api("/api/rubric", {fresh_window_days: draft.fresh, recurring_min_commit_days_30d: draft.rec});
+      S = r.state; const b = r.delta.before, a = r.delta.after;
+      deltaMsg = `Stale prod tables: ${b.stale_in_prod} to ${a.stale_in_prod}. Prod tables with recurring load: ${b.prod_recurring} to ${a.prod_recurring}.`;
+    } catch (e) { deltaMsg = "Error: " + e.message; }
+    renderAll();
+  };
+  const reset = () => { draft = {fresh: th.baseline.fresh_window_days, rec: th.baseline.recurring_min_commit_days_30d}; apply(); };
+  const save = async () => { try { S = (await api("/api/rubric/save", {})).state; deltaMsg = "Saved to config/rubric.json."; } catch (e) { deltaMsg = "Error: " + e.message; } renderAll(); };
+  const byLayer = {bronze:[], silver:[], gold:[]};
+  S.criteria.forEach(c => byLayer[c.layer].push(c));
+  return [
+    h("div", {class:"banner"}, h("b", null, S.rubric_status + ". "), S.rubric_note),
+    h("div", {class:"grid two"},
+      h("div", {class:"card"}, h("h2", null, "Thresholds (recomputes everything)"),
+        h("div", {class:"field"}, h("label", null, "Freshness window (days between a prod table's last update and the catalog snapshot)"), fresh),
+        h("div", {class:"field"}, h("label", null, "Recurring load: minimum distinct commit days in the last 30"), rec),
+        h("div", {style:"display:flex;gap:8px;flex-wrap:wrap"},
+          h("button", {class:"btn primary", onclick: apply}, "Apply"),
+          h("button", {class:"btn", onclick: reset}, "Reset to saved"),
+          window.STATIC_MODE ? null : h("button", {class:"btn", onclick: save}, "Save to config")),
+        deltaMsg ? h("div", {class:"delta"}, deltaMsg) : null,
+        h("div", {class:"small muted", style:"margin-top:10px"}, (window.STATIC_MODE ? "This prototype ships precomputed results for a grid of thresholds, so you can see how the findings move. Run the local server to use any value and to save to config/rubric.json." : "Apply changes this session only. Save writes the two thresholds to config/rubric.json. Criteria, sources and exclusion rules are edited in that file."))),
+      h("div", {class:"card"}, h("h2", null, "Criteria"),
+        Object.entries(byLayer).map(([l, cs]) => [h("div", {style:"font-weight:650;margin:10px 0 4px"}, l[0].toUpperCase() + l.slice(1)),
+          cs.map(c => h("div", {class:"crit"}, h("b", {class:"mono"}, c.id),
+            h("div", null, c.title, c.needs ? h("div", {class:"small muted"}, "Needs: " + c.needs) : null),
+            chip(c.evidence === "none" ? "no evidence" : c.evidence.replace("_"," "), c.evidence === "none" ? "c-blue" : "c-green")))])))
+  ];
+}
+
+// ---------- routing / render ----------
+async function renderView(){
+  const v = $("#view");
+  if (tab === "overview") mount(v, viewOverview());
+  else if (tab === "sources") mount(v, viewSources());
+  else if (tab === "jira") mount(v, await viewJira());
+  else if (tab === "triage") mount(v, viewTriage());
+  else if (tab === "rubric") mount(v, viewRubric());
+}
+function renderAll(){ renderHeader(); renderTabs(); renderView(); }
+
+// ---------- chat ----------
+function renderAnswer(a){
+  const box = h("div", {class:"msg a"});
+  box.append(h("div", {class:"hl"}, a.headline));
+  if (a.bullets && a.bullets.length) box.append(h("ul", null, a.bullets.map(b => h("li", null, b))));
+  if (a.table) box.append(h("table", null,
+    h("thead", null, h("tr", null, a.table.cols.map(c => h("th", null, c)))),
+    h("tbody", null, a.table.rows.map(r => h("tr", null, r.map(x => h("td", null, String(x))))))));
+  if (a.caveat) box.append(h("div", {class:"cav"}, "Caveat: " + a.caveat));
+  if (a.tools && a.tools.length) box.append(h("details", null, h("summary", null, `Evidence trail (${a.tools.length} tool call${a.tools.length > 1 ? "s" : ""})`),
+    a.tools.map(t => h("div", {class:"tool"}, `${t.tool}(${JSON.stringify(t.args)}) -> ${t.result}`))));
+  const fu = [...(a.followups || []), ...(a.suggestions || [])];
+  if (fu.length) box.append(h("div", {class:"sugg", style:"padding:8px 0 0"}, fu.slice(0, 6).map(f => h("button", {onclick: () => ask(f)}, f))));
+  return box;
+}
+async function ask(question){
+  if (window.innerWidth <= 1100) $("#chat").classList.add("open");
+  const msgs = $("#msgs");
+  msgs.append(h("div", {class:"msg u"}, question));
+  const pending = h("div", {class:"msg a muted"}, "Thinking...");
+  msgs.append(pending); msgs.scrollTop = msgs.scrollHeight;
+  try { pending.replaceWith(renderAnswer(await api("/api/ask", {question}))); }
+  catch (e) { pending.replaceWith(h("div", {class:"msg a"}, "Error: " + e.message)); }
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+(async function init(){
+  $("#ask").addEventListener("submit", (e) => { e.preventDefault(); const q = $("#q").value.trim(); if (q) { $("#q").value = ""; ask(q); } });
+  $("#toggleChat").addEventListener("click", () => $("#chat").classList.toggle("open"));
+  try {
+    S = await api("/api/state");
+    const sg = (await api("/api/suggestions")).suggestions;
+    mount($("#sugg"), sg.slice(0, 6).map(s => h("button", {onclick: () => ask(s)}, s)));
+    mount($("#msgs"), h("div", {class:"msg a"},
+      h("div", {class:"hl"}, "Ask me about data readiness."),
+      h("div", null, "I can answer from the evidence on the left: which sources are safe for an agent to use, what is blocked, where Jira disagrees with the lake, what cannot be measured, and whether a specific table exists.")));
+    renderAll();
+  } catch (e) {
+    mount($("#view"), h("div", {class:"banner"}, "Could not load data: " + e.message));
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,4438 @@
+[
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_account_ae_combo",
+  "versions": 1,
+  "last": "2026-10-13 19:48",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   19
+  ],
+  "recent_ist": [
+   "10-13 19:48"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_acct",
+  "versions": 1,
+  "last": "2026-10-13 19:44",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   19
+  ],
+  "recent_ist": [
+   "10-13 19:44"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_advertiser_prod",
+  "versions": 1,
+  "last": "2026-10-13 18:23",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:23"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_agencies",
+  "versions": 1,
+  "last": "2026-10-13 19:48",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   19
+  ],
+  "recent_ist": [
+   "10-13 19:48"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_at_demo",
+  "versions": 1,
+  "last": "2026-10-13 20:00",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   20
+  ],
+  "recent_ist": [
+   "10-13 20:00"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_at_foresite",
+  "versions": 1,
+  "last": "2026-10-13 20:00",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   20
+  ],
+  "recent_ist": [
+   "10-13 20:00"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_at_foresite_group",
+  "versions": 1,
+  "last": "2026-10-13 20:00",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   20
+  ],
+  "recent_ist": [
+   "10-13 20:00"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_bt_ut_rc_rev_area_map",
+  "versions": 1,
+  "last": "2026-10-13 18:10",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:10"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_buy",
+  "versions": 1,
+  "last": "2026-10-13 18:18",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:18"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_calendar_qtr",
+  "versions": 1,
+  "last": "2026-10-13 18:33",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:33"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_calendar_week",
+  "versions": 1,
+  "last": "2026-10-13 18:24",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:24"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_dashboard_acct_pacing2",
+  "versions": 1,
+  "last": "2026-10-13 19:47",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   19
+  ],
+  "recent_ist": [
+   "10-13 19:47"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_dashboard_curr_revenue",
+  "versions": 1,
+  "last": "2026-10-13 19:50",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   19
+  ],
+  "recent_ist": [
+   "10-13 19:50"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_dashboard_curr_revenue_tc",
+  "versions": 1,
+  "last": "2026-10-13 20:00",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   20
+  ],
+  "recent_ist": [
+   "10-13 20:00"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_dashboard_working_rev",
+  "versions": 1,
+  "last": "2026-10-13 19:50",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   19
+  ],
+  "recent_ist": [
+   "10-13 19:50"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_dci_net",
+  "versions": 1,
+  "last": "2026-10-13 18:13",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:13"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_exhibition_asset_stg",
+  "versions": 1,
+  "last": "2026-09-12 05:40",
+  "first_version": "2026-09-12",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_exhibition_stg",
+  "versions": 1,
+  "last": "2026-09-12 05:38",
+  "first_version": "2026-09-12",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_ge_inventory_type",
+  "versions": 1,
+  "last": "2026-10-13 18:10",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:10"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_ge_user",
+  "versions": 1,
+  "last": "2026-10-13 19:47",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   19
+  ],
+  "recent_ist": [
+   "10-13 19:47"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_inventory_cat_s",
+  "versions": 1,
+  "last": "2026-10-13 18:10",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:10"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_market",
+  "versions": 1,
+  "last": "2026-10-13 18:24",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:24"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_master_sell_map",
+  "versions": 1,
+  "last": "2026-10-13 18:24",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:24"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_master_sell_names",
+  "versions": 1,
+  "last": "2026-10-13 18:22",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:22"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_msa_episode_cs_trans",
+  "versions": 1,
+  "last": "2026-09-12 05:39",
+  "first_version": "2026-09-12",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_net_account",
+  "versions": 1,
+  "last": "2026-10-13 19:47",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   19
+  ],
+  "recent_ist": [
+   "10-13 19:47"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_nielsen_sell_map",
+  "versions": 1,
+  "last": "2026-10-13 18:17",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:17"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_pg_episode_stg",
+  "versions": 1,
+  "last": "2026-09-12 05:39",
+  "first_version": "2026-09-12",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_pg_prg_eps_stg",
+  "versions": 1,
+  "last": "2026-09-12 05:43",
+  "first_version": "2026-09-12",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_pg_program_stg",
+  "versions": 1,
+  "last": "2026-09-12 05:43",
+  "first_version": "2026-09-12",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_pg_property_stg",
+  "versions": 1,
+  "last": "2026-09-12 05:40",
+  "first_version": "2026-09-12",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_pg_series_stg",
+  "versions": 1,
+  "last": "2026-09-12 05:40",
+  "first_version": "2026-09-12",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_pg_version_stg",
+  "versions": 1,
+  "last": "2026-09-12 05:40",
+  "first_version": "2026-09-12",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_pr_names",
+  "versions": 1,
+  "last": "2026-10-13 18:18",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:18"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_pricing_import_hdr",
+  "versions": 1,
+  "last": "2026-10-13 18:21",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:21"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_psp_alt_sell_title",
+  "versions": 1,
+  "last": "2026-10-13 18:21",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:21"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_psp_overlap_sell_title",
+  "versions": 1,
+  "last": "2026-10-13 18:11",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:11"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_psp_sell_title_exp_dtl_stg",
+  "versions": 1,
+  "last": "2026-10-13 18:21",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:21"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_psp_sports_sell_title",
+  "versions": 1,
+  "last": "2026-10-13 18:23",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:23"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_ratecard_demopph",
+  "versions": 1,
+  "last": "2026-10-13 18:23",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:23"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_ratecard_demovpvh",
+  "versions": 1,
+  "last": "2026-10-13 17:40",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   17
+  ],
+  "recent_ist": [
+   "10-13 17:40"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_ratecard_est_method",
+  "versions": 1,
+  "last": "2026-10-13 18:23",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:23"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_ratecard_header",
+  "versions": 1,
+  "last": "2026-10-13 18:25",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:25"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_ratecard_playparts",
+  "versions": 1,
+  "last": "2026-10-13 18:27",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:27"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_ratecard_ratings",
+  "versions": 1,
+  "last": "2026-10-13 17:35",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   17
+  ],
+  "recent_ist": [
+   "10-13 17:35"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_sales_group",
+  "versions": 1,
+  "last": "2026-10-13 19:48",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   19
+  ],
+  "recent_ist": [
+   "10-13 19:48"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_sell_division",
+  "versions": 1,
+  "last": "2026-10-13 19:48",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   19
+  ],
+  "recent_ist": [
+   "10-13 19:48"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_sell_property_category",
+  "versions": 1,
+  "last": "2026-10-13 19:48",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   19
+  ],
+  "recent_ist": [
+   "10-13 19:48"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_super_deal",
+  "versions": 1,
+  "last": "2026-10-13 18:22",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:22"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_super_deal_deals",
+  "versions": 1,
+  "last": "2026-10-13 18:16",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:16"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dci_upfront_demos",
+  "versions": 1,
+  "last": "2026-10-13 18:26",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:26"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dealbldr_dci_deal_demo_target",
+  "versions": 1,
+  "last": "2026-10-13 18:15",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:15"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dealbldr_dci_deal_demos",
+  "versions": 1,
+  "last": "2026-10-13 18:26",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:26"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dealbldr_dci_deal_header",
+  "versions": 1,
+  "last": "2026-10-13 17:38",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   17
+  ],
+  "recent_ist": [
+   "10-13 17:38"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dealbldr_dci_deal_methodologies",
+  "versions": 1,
+  "last": "2026-10-13 18:26",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:26"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dealbldr_dci_deal_revision",
+  "versions": 1,
+  "last": "2026-10-13 18:14",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:14"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dealbldr_dci_deal_summary_data",
+  "versions": 1,
+  "last": "2026-10-13 17:39",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   17
+  ],
+  "recent_ist": [
+   "10-13 17:39"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dealbldr_dci_mega_agency",
+  "versions": 1,
+  "last": "2026-10-13 19:47",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   19
+  ],
+  "recent_ist": [
+   "10-13 19:47"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dealbldr_dci_order_header",
+  "versions": 1,
+  "last": "2026-10-13 18:55",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:55"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dealbldr_dci_order_line",
+  "versions": 1,
+  "last": "2026-10-13 17:37",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   17
+  ],
+  "recent_ist": [
+   "10-13 17:37"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dealbldr_dci_order_line_impressions",
+  "versions": 1,
+  "last": "2026-07-15 20:22",
+  "first_version": "2026-07-15",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dealbldr_dci_order_line_sell",
+  "versions": 1,
+  "last": "2026-10-13 17:35",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   17
+  ],
+  "recent_ist": [
+   "10-13 17:35"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dealbldr_dci_order_line_sell_weeks",
+  "versions": 1,
+  "last": "2026-10-13 17:34",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   17
+  ],
+  "recent_ist": [
+   "10-13 17:34"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dealbldr_dci_order_sloa_revision",
+  "versions": 9,
+  "last": "2026-10-13 18:29",
+  "first_version": "2026-07-20",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:29"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dealbldr_dci_pricing_demovpvh",
+  "versions": 1,
+  "last": "2026-10-13 18:25",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:25"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dealbldr_dci_pricing_net_setup",
+  "versions": 1,
+  "last": "2026-10-13 18:19",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:19"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dealbldr_dci_pricing_rating",
+  "versions": 1,
+  "last": "2026-10-13 18:19",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:19"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dealbldr_dci_rateclass",
+  "versions": 1,
+  "last": "2026-10-13 18:29",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:29"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dealbldr_dci_sell_constraints",
+  "versions": 1,
+  "last": "2026-10-13 17:34",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   17
+  ],
+  "recent_ist": [
+   "10-13 17:34"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dealbldr_ice_abs_account",
+  "versions": 1,
+  "last": "2026-10-13 18:30",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:30"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dealbldr_ice_account_transfer",
+  "versions": 1,
+  "last": "2026-10-13 18:30",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:30"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dealbldr_ice_deal",
+  "versions": 3,
+  "last": "2026-10-13 18:31",
+  "first_version": "2026-08-07",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:31"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dealbldr_ice_net_account",
+  "versions": 1,
+  "last": "2026-10-13 18:29",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:29"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dealbldr_idl_advertisers",
+  "versions": 1,
+  "last": "2026-10-13 19:48",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   19
+  ],
+  "recent_ist": [
+   "10-13 19:48"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dealbldr_idl_agencies",
+  "versions": 1,
+  "last": "2026-10-13 19:47",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   19
+  ],
+  "recent_ist": [
+   "10-13 19:47"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dealbldr_idl_bt_ut_rc_map",
+  "versions": 1,
+  "last": "2026-10-13 18:21",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:21"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dealbldr_idl_clone_clypd_dp_map",
+  "versions": 1,
+  "last": "2026-10-13 18:25",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:25"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dealbldr_idl_clone_dna_lkp",
+  "versions": 1,
+  "last": "2026-10-13 18:26",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:26"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dealbldr_idl_clone_net_dp_house_mix",
+  "versions": 1,
+  "last": "2026-10-13 18:26",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:26"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dealbldr_idl_clone_package_exclusions",
+  "versions": 1,
+  "last": "2026-10-13 18:26",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:26"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dealbldr_idl_clone_prem_nyq",
+  "versions": 1,
+  "last": "2026-10-13 18:27",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:27"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dealbldr_idl_deal_type",
+  "versions": 1,
+  "last": "2026-10-13 18:27",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:27"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dealbldr_idl_hh_demo_map",
+  "versions": 1,
+  "last": "2026-10-13 18:27",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:27"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dealbldr_idl_inventory_bucket_type",
+  "versions": 1,
+  "last": "2026-10-13 18:28",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:28"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dealbldr_idl_order_inventory",
+  "versions": 1,
+  "last": "2026-10-13 18:39",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:39"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_dealbldr_idl_x_inventory_r",
+  "versions": 1,
+  "last": "2026-10-13 18:30",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:30"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_ipr_psp_overlap_sell_title",
+  "versions": 1,
+  "last": "2026-10-13 20:47",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   20
+  ],
+  "recent_ist": [
+   "10-13 20:47"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_msa_constraint_types",
+  "versions": 1,
+  "last": "2026-10-13 18:17",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:17"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_msa_de_deal_hdr",
+  "versions": 1,
+  "last": "2026-10-13 18:12",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:12"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_msa_de_hdr",
+  "versions": 1,
+  "last": "2026-10-13 18:18",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:18"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_msa_de_units",
+  "versions": 1,
+  "last": "2026-10-13 17:36",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   17
+  ],
+  "recent_ist": [
+   "10-13 17:36"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_msa_ge_advertisers",
+  "versions": 1,
+  "last": "2026-10-13 19:48",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   19
+  ],
+  "recent_ist": [
+   "10-13 19:48"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_msa_ge_agencies",
+  "versions": 1,
+  "last": "2026-10-13 19:47",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   19
+  ],
+  "recent_ist": [
+   "10-13 19:47"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_msa_ge_air_byte",
+  "versions": 1,
+  "last": "2026-10-13 18:30",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:30"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_msa_ge_brand",
+  "versions": 1,
+  "last": "2026-10-13 18:32",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:32"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_msa_ge_buy",
+  "versions": 1,
+  "last": "2026-10-13 18:31",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:31"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_msa_ge_calendar_days",
+  "versions": 1,
+  "last": "2026-10-13 18:12",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:12"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_msa_ge_calendar_qtrs",
+  "versions": 1,
+  "last": "2026-10-13 18:32",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:32"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_msa_ge_calendar_years",
+  "versions": 1,
+  "last": "2026-10-13 18:11",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:11"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_msa_ge_calendars",
+  "versions": 1,
+  "last": "2026-10-13 18:10",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:10"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_msa_ge_copylens",
+  "versions": 1,
+  "last": "2026-10-13 18:13",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:13"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_msa_ge_daypart",
+  "versions": 1,
+  "last": "2026-10-13 18:14",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:14"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_msa_ge_daypart_defn",
+  "versions": 1,
+  "last": "2026-10-13 18:13",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:13"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_msa_ge_daypart_dtl",
+  "versions": 1,
+  "last": "2026-10-13 18:13",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:13"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_msa_ge_demos",
+  "versions": 1,
+  "last": "2026-10-13 18:31",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:31"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_msa_ge_inventory_type",
+  "versions": 1,
+  "last": "2026-10-13 18:10",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:10"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_msa_ge_net",
+  "versions": 1,
+  "last": "2026-10-13 19:48",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   19
+  ],
+  "recent_ist": [
+   "10-13 19:48"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_msa_ge_net_broadcast_time",
+  "versions": 1,
+  "last": "2026-10-13 18:14",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:14"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_msa_ge_net_daypart",
+  "versions": 1,
+  "last": "2026-10-13 18:12",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:12"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_msa_ge_net_group",
+  "versions": 1,
+  "last": "2026-10-13 18:32",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:32"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_msa_ge_net_group_map",
+  "versions": 1,
+  "last": "2026-10-13 18:32",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:32"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_msa_ge_primary_prod",
+  "versions": 1,
+  "last": "2026-10-13 18:13",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:13"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_msa_ge_prod",
+  "versions": 1,
+  "last": "2026-10-13 18:25",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:25"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_msa_ge_rateclass",
+  "versions": 1,
+  "last": "2026-10-13 18:33",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:33"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_msa_ge_rateclass_buy_map",
+  "versions": 1,
+  "last": "2026-10-13 18:21",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:21"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_msa_ge_rateclass_inventory_map",
+  "versions": 1,
+  "last": "2026-10-13 18:19",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:19"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_msa_ge_rateclass_unit_type_map",
+  "versions": 1,
+  "last": "2026-10-13 18:20",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:20"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_msa_ge_unit_type",
+  "versions": 1,
+  "last": "2026-10-13 18:32",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:32"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_msa_ge_user",
+  "versions": 1,
+  "last": "2026-10-13 19:48",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   19
+  ],
+  "recent_ist": [
+   "10-13 19:48"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_msa_log_break_chunks",
+  "versions": 1,
+  "last": "2026-10-13 17:37",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   17
+  ],
+  "recent_ist": [
+   "10-13 17:37"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_msa_log_break_sid",
+  "versions": 1,
+  "last": "2026-10-13 18:18",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:18"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_msa_log_chunk_spots",
+  "versions": 1,
+  "last": "2026-10-13 17:38",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   17
+  ],
+  "recent_ist": [
+   "10-13 17:38"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_msa_log_programs",
+  "versions": 1,
+  "last": "2026-09-12 05:41",
+  "first_version": "2026-09-12",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_msa_p_fmt_hdr",
+  "versions": 1,
+  "last": "2026-09-12 05:39",
+  "first_version": "2026-09-12",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_msa_p_programs",
+  "versions": 1,
+  "last": "2026-09-12 05:43",
+  "first_version": "2026-09-12",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_msa_p_sch",
+  "versions": 1,
+  "last": "2026-10-13 17:33",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   17
+  ],
+  "recent_ist": [
+   "10-13 17:33"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_msa_ps_feed",
+  "versions": 1,
+  "last": "2026-10-13 18:12",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:12"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_msa_r_composite_demo_bld_from_atom",
+  "versions": 1,
+  "last": "2026-10-13 18:34",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:34"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_msa_recon_spots_new",
+  "versions": 1,
+  "last": "2026-10-13 18:18",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:18"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_msa_s_obj",
+  "versions": 1,
+  "last": "2026-10-13 17:34",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   17
+  ],
+  "recent_ist": [
+   "10-13 17:34"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_msa_s_obj_defn_summary",
+  "versions": 1,
+  "last": "2026-10-13 18:33",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:33"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_msa_s_obj_group",
+  "versions": 1,
+  "last": "2026-10-13 18:11",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:11"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_posting_stw_calendar_weeks",
+  "versions": 1,
+  "last": "2026-10-13 18:14",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:14"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_posting_stw_deal",
+  "versions": 1,
+  "last": "2026-10-13 18:15",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:15"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_posting_stw_deal_demo",
+  "versions": 1,
+  "last": "2026-10-13 18:18",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:18"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_posting_stw_deal_methodology_stg",
+  "versions": 1,
+  "last": "2026-10-13 18:16",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:16"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_posting_stw_demo",
+  "versions": 1,
+  "last": "2026-10-13 18:15",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:15"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_posting_stw_demo_composition",
+  "versions": 1,
+  "last": "2026-10-13 18:15",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:15"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_posting_stw_impression",
+  "versions": 1,
+  "last": "2026-10-13 17:40",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   17
+  ],
+  "recent_ist": [
+   "10-13 17:40"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_posting_stw_network",
+  "versions": 1,
+  "last": "2026-10-13 18:16",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:16"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_posting_stw_unit",
+  "versions": 1,
+  "last": "2026-10-13 18:21",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:21"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_bronze",
+  "table": "ideal_posting_stw_unit_impression",
+  "versions": 1,
+  "last": "2026-10-13 18:34",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:34"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_digital_accounts",
+  "versions": 1,
+  "last": "2026-08-01 08:42",
+  "first_version": "2026-08-01",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_digital_discount_profiles",
+  "versions": 1,
+  "last": "2026-08-01 08:42",
+  "first_version": "2026-08-01",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_digital_organization",
+  "versions": 1,
+  "last": "2026-08-01 08:42",
+  "first_version": "2026-08-01",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_digital_production_system",
+  "versions": 1,
+  "last": "2026-08-20 04:38",
+  "first_version": "2026-08-20",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_digital_products",
+  "versions": 1,
+  "last": "2026-08-01 08:42",
+  "first_version": "2026-08-01",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_digital_sales_line_item_targeting",
+  "versions": 1,
+  "last": "2026-08-01 08:42",
+  "first_version": "2026-08-01",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_digital_sales_order",
+  "versions": 1,
+  "last": "2026-08-01 08:42",
+  "first_version": "2026-08-01",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_digital_sales_order_accounts_map",
+  "versions": 1,
+  "last": "2026-08-01 08:42",
+  "first_version": "2026-08-01",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_digital_sales_order_contacts_map",
+  "versions": 1,
+  "last": "2026-08-01 08:42",
+  "first_version": "2026-08-01",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_digital_sales_order_custom_field",
+  "versions": 1,
+  "last": "2026-08-01 08:42",
+  "first_version": "2026-08-01",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_digital_sales_order_line_items",
+  "versions": 1,
+  "last": "2026-08-01 08:42",
+  "first_version": "2026-08-01",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_digital_sales_order_users_map",
+  "versions": 1,
+  "last": "2026-08-01 08:42",
+  "first_version": "2026-08-01",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_digital_sales_stages",
+  "versions": 1,
+  "last": "2026-08-01 08:42",
+  "first_version": "2026-08-01",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_digital_serving_ref_accounts",
+  "versions": 1,
+  "last": "2026-08-01 08:42",
+  "first_version": "2026-08-01",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_digital_serving_ref_custom_field_definition",
+  "versions": 1,
+  "last": "2026-08-01 08:42",
+  "first_version": "2026-08-01",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_digital_serving_ref_discount_profiles",
+  "versions": 1,
+  "last": "2026-08-01 08:42",
+  "first_version": "2026-08-01",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_digital_serving_ref_organization",
+  "versions": 1,
+  "last": "2026-08-01 08:42",
+  "first_version": "2026-08-01",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_digital_serving_ref_product",
+  "versions": 1,
+  "last": "2026-08-01 08:43",
+  "first_version": "2026-08-01",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_digital_serving_ref_sales_stage",
+  "versions": 1,
+  "last": "2026-08-01 08:43",
+  "first_version": "2026-08-01",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_digital_serving_ref_targeting",
+  "versions": 1,
+  "last": "2026-08-01 08:43",
+  "first_version": "2026-08-01",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_digital_serving_ref_targeting_option",
+  "versions": 1,
+  "last": "2026-08-01 08:43",
+  "first_version": "2026-08-01",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_digital_serving_ref_users",
+  "versions": 1,
+  "last": "2026-08-01 08:43",
+  "first_version": "2026-08-01",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_digital_serving_sales_line_item_targeting",
+  "versions": 1,
+  "last": "2026-08-01 08:43",
+  "first_version": "2026-08-01",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_digital_serving_sales_order",
+  "versions": 1,
+  "last": "2026-08-01 08:43",
+  "first_version": "2026-08-01",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_digital_serving_sales_order_custom_field",
+  "versions": 1,
+  "last": "2026-08-01 08:43",
+  "first_version": "2026-08-01",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_digital_serving_sales_order_line_items",
+  "versions": 1,
+  "last": "2026-08-01 08:43",
+  "first_version": "2026-08-01",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_digital_sli_grouped_targeting",
+  "versions": 1,
+  "last": "2026-08-01 08:43",
+  "first_version": "2026-08-01",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_digital_sli_targeting_expression",
+  "versions": 1,
+  "last": "2026-08-01 08:43",
+  "first_version": "2026-08-01",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_digital_sli_text_targeting",
+  "versions": 1,
+  "last": "2026-08-01 08:43",
+  "first_version": "2026-08-01",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_digital_targeting",
+  "versions": 1,
+  "last": "2026-08-01 08:43",
+  "first_version": "2026-08-01",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_digital_targeting_options",
+  "versions": 1,
+  "last": "2026-08-01 08:43",
+  "first_version": "2026-08-01",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_digital_users",
+  "versions": 1,
+  "last": "2026-08-01 08:43",
+  "first_version": "2026-08-01",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_last_sync_and_row_count",
+  "versions": 1,
+  "last": "2026-10-13 17:57",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   17
+  ],
+  "recent_ist": [
+   "10-13 17:57"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_advertiser_prod",
+  "versions": 1,
+  "last": "2026-10-13 07:36",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   7
+  ],
+  "recent_ist": [
+   "10-13 07:36"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_advertisers",
+  "versions": 1,
+  "last": "2026-10-13 19:39",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   19
+  ],
+  "recent_ist": [
+   "10-13 19:39"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_agencies",
+  "versions": 1,
+  "last": "2026-10-13 07:37",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   7
+  ],
+  "recent_ist": [
+   "10-13 07:37"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_at_demo",
+  "versions": 1,
+  "last": "2026-10-11 14:54",
+  "first_version": "2026-10-11",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   14
+  ],
+  "recent_ist": [
+   "10-11 14:54"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_at_foresite",
+  "versions": 1,
+  "last": "2026-10-11 11:19",
+  "first_version": "2026-10-11",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   11
+  ],
+  "recent_ist": [
+   "10-11 11:19"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_at_foresite_group",
+  "versions": 1,
+  "last": "2026-10-11 11:19",
+  "first_version": "2026-10-11",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   11
+  ],
+  "recent_ist": [
+   "10-11 11:19"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_break_chunks",
+  "versions": 1,
+  "last": "2026-10-13 19:04",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   19
+  ],
+  "recent_ist": [
+   "10-13 19:04"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_break_sid",
+  "versions": 1,
+  "last": "2026-10-13 07:49",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   7
+  ],
+  "recent_ist": [
+   "10-13 07:49"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_bt_ut_rc_rev_area_map",
+  "versions": 1,
+  "last": "2026-10-04 07:23",
+  "first_version": "2026-10-04",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   7
+  ],
+  "recent_ist": [
+   "10-04 07:23"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_calendar_qtr",
+  "versions": 1,
+  "last": "2026-10-04 07:14",
+  "first_version": "2026-10-04",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   7
+  ],
+  "recent_ist": [
+   "10-04 07:14"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_calendar_week",
+  "versions": 1,
+  "last": "2026-10-04 07:13",
+  "first_version": "2026-10-04",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   7
+  ],
+  "recent_ist": [
+   "10-04 07:13"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_chunk_spots",
+  "versions": 1,
+  "last": "2026-10-13 19:10",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   19
+  ],
+  "recent_ist": [
+   "10-13 19:10"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_clone_clypd_dp_map",
+  "versions": 1,
+  "last": "2026-10-11 23:10",
+  "first_version": "2026-10-11",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   23
+  ],
+  "recent_ist": [
+   "10-11 23:10"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_clone_dna_lkp",
+  "versions": 1,
+  "last": "2026-10-04 07:13",
+  "first_version": "2026-10-04",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   7
+  ],
+  "recent_ist": [
+   "10-04 07:13"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_copylens",
+  "versions": 1,
+  "last": "2026-10-08 23:34",
+  "first_version": "2026-10-08",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   23
+  ],
+  "recent_ist": [
+   "10-08 23:34"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_dashboard_curr_revenue_tc",
+  "versions": 1,
+  "last": "2026-10-13 19:06",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   19
+  ],
+  "recent_ist": [
+   "10-13 19:06"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_deal_demos",
+  "versions": 1,
+  "last": "2026-10-13 19:08",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   19
+  ],
+  "recent_ist": [
+   "10-13 19:08"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_deal_hdr",
+  "versions": 1,
+  "last": "2026-10-13 19:13",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   19
+  ],
+  "recent_ist": [
+   "10-13 19:13"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_deal_header",
+  "versions": 1,
+  "last": "2026-10-13 19:20",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   19
+  ],
+  "recent_ist": [
+   "10-13 19:20"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_deal_revision",
+  "versions": 1,
+  "last": "2026-10-13 19:18",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   19
+  ],
+  "recent_ist": [
+   "10-13 19:18"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_deal_summary_data",
+  "versions": 1,
+  "last": "2026-10-13 20:10",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   20
+  ],
+  "recent_ist": [
+   "10-13 20:10"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_ge_agencies",
+  "versions": 1,
+  "last": "2026-10-13 19:04",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   19
+  ],
+  "recent_ist": [
+   "10-13 19:04"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_ge_air_byte",
+  "versions": 1,
+  "last": "2026-10-04 07:12",
+  "first_version": "2026-10-04",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   7
+  ],
+  "recent_ist": [
+   "10-04 07:12"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_ge_brand",
+  "versions": 1,
+  "last": "2026-10-13 10:35",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   10
+  ],
+  "recent_ist": [
+   "10-13 10:35"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_ge_buy",
+  "versions": 1,
+  "last": "2026-10-13 19:10",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   19
+  ],
+  "recent_ist": [
+   "10-13 19:10"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_ge_calendar_qtrs",
+  "versions": 1,
+  "last": "2026-10-04 07:13",
+  "first_version": "2026-10-04",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   7
+  ],
+  "recent_ist": [
+   "10-04 07:13"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_ge_daypart_defn",
+  "versions": 1,
+  "last": "2026-10-11 11:20",
+  "first_version": "2026-10-11",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   11
+  ],
+  "recent_ist": [
+   "10-11 11:20"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_ge_daypart_dtl",
+  "versions": 1,
+  "last": "2026-10-11 11:20",
+  "first_version": "2026-10-11",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   11
+  ],
+  "recent_ist": [
+   "10-11 11:20"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_ge_demos",
+  "versions": 1,
+  "last": "2026-10-09 04:16",
+  "first_version": "2026-10-09",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   4
+  ],
+  "recent_ist": [
+   "10-09 04:16"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_ge_ge_daypart",
+  "versions": 1,
+  "last": "2026-10-11 11:19",
+  "first_version": "2026-10-11",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   11
+  ],
+  "recent_ist": [
+   "10-11 11:19"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_ge_ge_net_broadcast_time",
+  "versions": 1,
+  "last": "2026-09-01 19:29",
+  "first_version": "2026-09-01",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_ge_net",
+  "versions": 1,
+  "last": "2026-10-04 07:10",
+  "first_version": "2026-10-04",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   7
+  ],
+  "recent_ist": [
+   "10-04 07:10"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_ge_net_daypart",
+  "versions": 1,
+  "last": "2026-10-11 11:20",
+  "first_version": "2026-10-11",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   11
+  ],
+  "recent_ist": [
+   "10-11 11:20"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_ge_net_group",
+  "versions": 1,
+  "last": "2026-10-04 07:13",
+  "first_version": "2026-10-04",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   7
+  ],
+  "recent_ist": [
+   "10-04 07:13"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_ge_net_group_map",
+  "versions": 1,
+  "last": "2026-10-04 07:14",
+  "first_version": "2026-10-04",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   7
+  ],
+  "recent_ist": [
+   "10-04 07:14"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_ge_prod",
+  "versions": 1,
+  "last": "2026-10-04 07:16",
+  "first_version": "2026-10-04",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   7
+  ],
+  "recent_ist": [
+   "10-04 07:16"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_ge_unit_type",
+  "versions": 1,
+  "last": "2026-10-13 19:13",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   19
+  ],
+  "recent_ist": [
+   "10-13 19:13"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_ge_user",
+  "versions": 1,
+  "last": "2026-10-13 03:32",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   3
+  ],
+  "recent_ist": [
+   "10-13 03:32"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_ice_deal",
+  "versions": 1,
+  "last": "2026-10-13 19:15",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   19
+  ],
+  "recent_ist": [
+   "10-13 19:15"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_idl_agencies",
+  "versions": 1,
+  "last": "2026-10-13 07:36",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   7
+  ],
+  "recent_ist": [
+   "10-13 07:36"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_idl_clone_clypd_dp_map",
+  "versions": 1,
+  "last": "2026-08-01 08:44",
+  "first_version": "2026-08-01",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_idl_clone_prem_nyq",
+  "versions": 1,
+  "last": "2026-10-04 07:14",
+  "first_version": "2026-10-04",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   7
+  ],
+  "recent_ist": [
+   "10-04 07:14"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_idl_deal_type",
+  "versions": 1,
+  "last": "2026-10-04 07:11",
+  "first_version": "2026-10-04",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   7
+  ],
+  "recent_ist": [
+   "10-04 07:11"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_idl_hh_demo_map",
+  "versions": 1,
+  "last": "2026-10-13 14:22",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   14
+  ],
+  "recent_ist": [
+   "10-13 14:22"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_inventory_bucket_type",
+  "versions": 1,
+  "last": "2026-10-04 07:12",
+  "first_version": "2026-10-04",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   7
+  ],
+  "recent_ist": [
+   "10-04 07:12"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_inventory_cat_s",
+  "versions": 1,
+  "last": "2026-10-04 07:15",
+  "first_version": "2026-10-04",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   7
+  ],
+  "recent_ist": [
+   "10-04 07:15"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_inventory_type",
+  "versions": 1,
+  "last": "2026-10-04 07:19",
+  "first_version": "2026-10-04",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   7
+  ],
+  "recent_ist": [
+   "10-04 07:19"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_market_type",
+  "versions": 1,
+  "last": "2026-10-04 07:12",
+  "first_version": "2026-10-04",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   7
+  ],
+  "recent_ist": [
+   "10-04 07:12"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_master_sell_map",
+  "versions": 1,
+  "last": "2026-10-12 23:44",
+  "first_version": "2026-10-12",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   23
+  ],
+  "recent_ist": [
+   "10-12 23:44"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_master_sell_names",
+  "versions": 1,
+  "last": "2026-10-13 03:03",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   3
+  ],
+  "recent_ist": [
+   "10-13 03:03"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_mega_agency",
+  "versions": 1,
+  "last": "2026-10-04 07:13",
+  "first_version": "2026-10-04",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   7
+  ],
+  "recent_ist": [
+   "10-04 07:13"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_net",
+  "versions": 1,
+  "last": "2026-10-04 07:22",
+  "first_version": "2026-10-04",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   7
+  ],
+  "recent_ist": [
+   "10-04 07:22"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_order_header",
+  "versions": 1,
+  "last": "2026-10-13 19:27",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   19
+  ],
+  "recent_ist": [
+   "10-13 19:27"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_order_inventory",
+  "versions": 1,
+  "last": "2026-10-13 19:12",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   19
+  ],
+  "recent_ist": [
+   "10-13 19:12"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_order_line",
+  "versions": 1,
+  "last": "2026-10-13 19:24",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   19
+  ],
+  "recent_ist": [
+   "10-13 19:24"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_order_line_sell",
+  "versions": 1,
+  "last": "2026-10-13 19:12",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   19
+  ],
+  "recent_ist": [
+   "10-13 19:12"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_order_line_sell_weeks",
+  "versions": 1,
+  "last": "2026-10-13 19:23",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   19
+  ],
+  "recent_ist": [
+   "10-13 19:23"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_p_sch",
+  "versions": 1,
+  "last": "2026-10-13 11:26",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   11
+  ],
+  "recent_ist": [
+   "10-13 11:26"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_pr_names",
+  "versions": 1,
+  "last": "2026-10-13 03:43",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   3
+  ],
+  "recent_ist": [
+   "10-13 03:43"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_primary_prod",
+  "versions": 1,
+  "last": "2026-10-13 07:51",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   7
+  ],
+  "recent_ist": [
+   "10-13 07:51"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_ps_feed",
+  "versions": 1,
+  "last": "2026-10-04 07:14",
+  "first_version": "2026-10-04",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   7
+  ],
+  "recent_ist": [
+   "10-04 07:14"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_psp_overlap_sell_title",
+  "versions": 1,
+  "last": "2026-10-13 07:52",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   7
+  ],
+  "recent_ist": [
+   "10-13 07:52"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_r_composite_demo_bld_from_atom",
+  "versions": 1,
+  "last": "2026-10-08 23:17",
+  "first_version": "2026-10-08",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   23
+  ],
+  "recent_ist": [
+   "10-08 23:17"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_ratecard_demopph",
+  "versions": 1,
+  "last": "2026-10-13 07:37",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   7
+  ],
+  "recent_ist": [
+   "10-13 07:37"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_ratecard_demovpvh",
+  "versions": 1,
+  "last": "2026-10-13 07:34",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   7
+  ],
+  "recent_ist": [
+   "10-13 07:34"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_ratecard_est_method",
+  "versions": 1,
+  "last": "2026-10-04 07:20",
+  "first_version": "2026-10-04",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   7
+  ],
+  "recent_ist": [
+   "10-04 07:20"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_ratecard_header",
+  "versions": 1,
+  "last": "2026-10-13 07:42",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   7
+  ],
+  "recent_ist": [
+   "10-13 07:42"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_ratecard_playparts",
+  "versions": 1,
+  "last": "2026-10-13 19:26",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   19
+  ],
+  "recent_ist": [
+   "10-13 19:26"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_ratecard_ratings",
+  "versions": 1,
+  "last": "2026-10-13 18:06",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   18
+  ],
+  "recent_ist": [
+   "10-13 18:06"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_rateclass",
+  "versions": 1,
+  "last": "2026-10-04 07:14",
+  "first_version": "2026-10-04",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   7
+  ],
+  "recent_ist": [
+   "10-04 07:14"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_s_obj",
+  "versions": 1,
+  "last": "2026-10-13 07:37",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   7
+  ],
+  "recent_ist": [
+   "10-13 07:37"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_s_obj_group",
+  "versions": 1,
+  "last": "2026-10-13 14:22",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   14
+  ],
+  "recent_ist": [
+   "10-13 14:22"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_sell_constraints",
+  "versions": 1,
+  "last": "2026-10-13 19:26",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   19
+  ],
+  "recent_ist": [
+   "10-13 19:26"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_sell_division",
+  "versions": 1,
+  "last": "2026-10-04 07:19",
+  "first_version": "2026-10-04",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   7
+  ],
+  "recent_ist": [
+   "10-04 07:19"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_sell_property_category",
+  "versions": 1,
+  "last": "2026-10-09 13:44",
+  "first_version": "2026-10-09",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   13
+  ],
+  "recent_ist": [
+   "10-09 13:44"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_serving_adu",
+  "versions": 1,
+  "last": "2026-10-11 17:03",
+  "first_version": "2026-10-11",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   17
+  ],
+  "recent_ist": [
+   "10-11 17:03"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_serving_adv_booked_units",
+  "versions": 1,
+  "last": "2026-10-13 10:31",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   10
+  ],
+  "recent_ist": [
+   "10-13 10:31"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_serving_advertisers",
+  "versions": 1,
+  "last": "2026-10-13 20:50",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   20
+  ],
+  "recent_ist": [
+   "10-13 20:50"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_serving_agency",
+  "versions": 1,
+  "last": "2026-10-13 20:56",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   20
+  ],
+  "recent_ist": [
+   "10-13 20:56"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_serving_calendar_week",
+  "versions": 1,
+  "last": "2026-10-01 07:10",
+  "first_version": "2026-10-01",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   7
+  ],
+  "recent_ist": [
+   "10-01 07:10"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_serving_clone_dna_lkp",
+  "versions": 1,
+  "last": "2026-08-31 23:44",
+  "first_version": "2026-08-31",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_serving_constraint_type",
+  "versions": 1,
+  "last": "2026-10-13 20:57",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   20
+  ],
+  "recent_ist": [
+   "10-13 20:57"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_serving_daypart",
+  "versions": 1,
+  "last": "2026-10-13 20:49",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   20
+  ],
+  "recent_ist": [
+   "10-13 20:49"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_serving_daypart_mix",
+  "versions": 1,
+  "last": "2026-10-13 17:58",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   17
+  ],
+  "recent_ist": [
+   "10-13 17:58"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_serving_deal_type",
+  "versions": 1,
+  "last": "2026-09-04 23:23",
+  "first_version": "2026-09-04",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_serving_deals",
+  "versions": 1,
+  "last": "2026-10-13 20:16",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   20
+  ],
+  "recent_ist": [
+   "10-13 20:16"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_serving_est_methodology",
+  "versions": 1,
+  "last": "2026-09-04 06:20",
+  "first_version": "2026-09-04",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_serving_ge_brand",
+  "versions": 1,
+  "last": "2026-10-13 10:26",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   10
+  ],
+  "recent_ist": [
+   "10-13 10:26"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_serving_ge_demos",
+  "versions": 1,
+  "last": "2026-10-09 04:05",
+  "first_version": "2026-10-09",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   4
+  ],
+  "recent_ist": [
+   "10-09 04:05"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_serving_ge_network",
+  "versions": 1,
+  "last": "2026-09-24 22:56",
+  "first_version": "2026-09-24",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   22
+  ],
+  "recent_ist": [
+   "09-24 22:56"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_serving_ge_unit_type",
+  "versions": 1,
+  "last": "2026-09-04 23:22",
+  "first_version": "2026-09-04",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_serving_industry",
+  "versions": 1,
+  "last": "2026-09-30 00:38",
+  "first_version": "2026-09-30",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   0
+  ],
+  "recent_ist": [
+   "09-30 00:38"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_serving_inventory",
+  "versions": 1,
+  "last": "2026-10-13 17:57",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   17
+  ],
+  "recent_ist": [
+   "10-13 17:57"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_serving_line_sell_constraints",
+  "versions": 1,
+  "last": "2026-10-13 20:54",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   20
+  ],
+  "recent_ist": [
+   "10-13 20:54"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_serving_market_type",
+  "versions": 1,
+  "last": "2026-09-05 06:35",
+  "first_version": "2026-09-05",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_serving_order_line",
+  "versions": 1,
+  "last": "2026-10-13 20:33",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   20
+  ],
+  "recent_ist": [
+   "10-13 20:33"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_serving_order_line_sell",
+  "versions": 1,
+  "last": "2026-10-13 20:39",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   20
+  ],
+  "recent_ist": [
+   "10-13 20:39"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_serving_order_line_sell_weeks",
+  "versions": 1,
+  "last": "2026-10-13 20:45",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   20
+  ],
+  "recent_ist": [
+   "10-13 20:45"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_serving_orders",
+  "versions": 1,
+  "last": "2026-10-13 20:22",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   20
+  ],
+  "recent_ist": [
+   "10-13 20:22"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_serving_product_category",
+  "versions": 1,
+  "last": "2026-10-09 12:56",
+  "first_version": "2026-10-09",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   12
+  ],
+  "recent_ist": [
+   "10-09 12:56"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_serving_ratecard",
+  "versions": 1,
+  "last": "2026-10-13 20:47",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   20
+  ],
+  "recent_ist": [
+   "10-13 20:47"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_serving_ratecard_forecast",
+  "versions": 1,
+  "last": "2026-10-13 17:59",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   17
+  ],
+  "recent_ist": [
+   "10-13 17:59"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_serving_ratecard_playparts",
+  "versions": 1,
+  "last": "2026-10-13 20:48",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   20
+  ],
+  "recent_ist": [
+   "10-13 20:48"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_serving_ratecard_ratings",
+  "versions": 1,
+  "last": "2026-10-13 17:54",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   17
+  ],
+  "recent_ist": [
+   "10-13 17:54"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_serving_ros_titles",
+  "versions": 1,
+  "last": "2026-08-31 22:35",
+  "first_version": "2026-08-31",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_serving_selling_title",
+  "versions": 1,
+  "last": "2026-10-13 02:56",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   2
+  ],
+  "recent_ist": [
+   "10-13 02:56"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_serving_selling_title_network_map",
+  "versions": 1,
+  "last": "2026-10-13 02:56",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   2
+  ],
+  "recent_ist": [
+   "10-13 02:56"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_serving_vertical",
+  "versions": 1,
+  "last": "2026-09-01 00:10",
+  "first_version": "2026-09-01",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_sf_contract",
+  "versions": 1,
+  "last": "2026-10-12 23:49",
+  "first_version": "2026-10-12",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   23
+  ],
+  "recent_ist": [
+   "10-12 23:49"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_stw_deal_demo",
+  "versions": 1,
+  "last": "2026-10-11 14:58",
+  "first_version": "2026-10-11",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   14
+  ],
+  "recent_ist": [
+   "10-11 14:58"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_stw_impression",
+  "versions": 1,
+  "last": "2026-10-11 16:49",
+  "first_version": "2026-10-11",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   16
+  ],
+  "recent_ist": [
+   "10-11 16:49"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_stw_network",
+  "versions": 1,
+  "last": "2026-09-01 20:27",
+  "first_version": "2026-09-01",
+  "commits_30d": 0,
+  "days_with_commits_30d": 0,
+  "median_gap_h": null,
+  "top_hours_ist": [],
+  "recent_ist": []
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_stw_unit",
+  "versions": 1,
+  "last": "2026-10-11 14:57",
+  "first_version": "2026-10-11",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   14
+  ],
+  "recent_ist": [
+   "10-11 14:57"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_stw_unit_impression",
+  "versions": 1,
+  "last": "2026-10-11 15:15",
+  "first_version": "2026-10-11",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   15
+  ],
+  "recent_ist": [
+   "10-11 15:15"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_units",
+  "versions": 1,
+  "last": "2026-10-13 19:08",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   19
+  ],
+  "recent_ist": [
+   "10-13 19:08"
+  ]
+ },
+ {
+  "db": "linear_digital_revenue_silver",
+  "table": "ideal_linear_x_inventory_r",
+  "versions": 1,
+  "last": "2026-10-13 19:08",
+  "first_version": "2026-10-13",
+  "commits_30d": 1,
+  "days_with_commits_30d": 1,
+  "median_gap_h": null,
+  "top_hours_ist": [
+   19
+  ],
+  "recent_ist": [
+   "10-13 19:08"
+  ]
+ }
+]

@@ -1,0 +1,170 @@
+
+===== 1. Executive Summary
+CARL UC1 - Total Ad Revenue Pacing Dashboard | 
+Executive Readiness Review | Prepared 28 September 2026 | 
+PROGRAM OVERVIEW | 
+Initiative | UC1 - Total Ad Revenue Pacing Dashboard (CARL Analytics Hub / QuickSight)
+PRD Author | Nathan Hernandez-Adams, Ping Feng, Daya Thakur
+PRD Date / Version | June 2026 | v1.0 (Draft) - last edited 24 Aug 2026
+Executive Sponsors | Allison Carr (Allie) - GSVP Platform Monetization; Jenn Blue
+Technical POCs | Jason Chalmers; Felipe Roura
+Product / Delivery | Ping Feng; Daya Thakur; Nathan Hernandez-Adams
+Business SMEs | Arlene Rose; Mike Hodge
+Engineering | Adam Christensen; Jack Velez
+Executive Escalation | Nage Sethu (SVP Technology, CALS) - review requested 28 Sep 2026
+BUSINESS OBJECTIVE | 
+Goal | Single trusted executive view of Booked Revenue + Pipeline + Forecast aligned to Finance methodology, replacing the weekly Excel deliverable.
+Problem | Sales and Finance run parallel reporting. No drill-down, no on-demand slicing, weekly-only cadence, recurring 'whose number is right?' reconciliation.
+Primary Users | Executive Ad Sales Leadership (Allie Carr, Jenn Blue+); Sales VPs; Ad Sales Finance; Pricing & Planning
+READINESS ASSESSMENT (AS OF TODAY) | 
+Phase 1A - Booked + Pipeline | ~65-70% ready. Design and requirements complete; blocked on iDeal mapping, BU definition, allocation automation, grain/SCD decisions.
+Phase 1B - Forecast + Sports | ~20-25% ready. Requirements complete; blocked on Finance forecast feed (schema/cadence/access) and Sports methodology decision.
+Phase 2 - Expanded Access | Not started. AE-level RLS, multi-version forecasting, embedded Teams/SharePoint views, rate-card analysis.
+KEY MESSAGE FOR LEADERSHIP | 
+Bottom Line | Remaining risk is concentrated in business-rule, ownership and Finance dependencies - not in CARL platform capability. The converged model and foundational ingestion exist; execution is gated by a defined set of decisions.
+Top 3 Asks | 1) Unblock iDeal field mapping  2) Secure a stable Finance forecast feed commitment  3) Lock BU definition and North Star grain/SCD decisions
+
+===== 2. Phase 1A Status
+# | Requirement / Capability | Scope Detail | Owner | Status | Gap as of Today | Decision Required | Next Step
+1 | Booked Revenue - Digital (Op1) | gross_cost where sales_stage = closed_won; net_cost for Net. Schemas DAAP_RPT / FINAL_OPERATIVE_WBD. | Adam Christensen | In Progress | Canonical net field unconfirmed: net_cost vs net_parent_cost. | Confirm canonical net revenue field. | Engineering confirmation and documentation in field guide.
+2 | Booked Revenue - Linear (iDeal) | Gross = MicroStrategy Revenue (Invoiced/Current Booked); Net = Gross x (1 - agency commission %). | Adam Christensen | Blocked | Field mapping incomplete across booked revenue, GRPs, EQ30, demo guarantees, ADUs. | Finalize canonical iDeal field mappings. | Engineering mapping workshop with Ashley, Arlene, Eddie; sign-off required.
+3 | Pipeline (Salesforce / Metropolis) | forecasted_value where status_group = Pipeline (rank B/C/D); daily controlled snapshot. | Jon Rabar (logic) / CARL (build) | In Progress | Post-Metropolis filter logic and F-rank treatment unconfirmed. | Confirm status_group / projection_rank filter conditions. | Working session with Jon Rabar; document canonical filter.
+4 | Weighted Pipeline | Unweighted x Probability% (A=100 / B=95 / C=60 / D=15 / F=0). | Jon Rabar | Open | SF pre-baked weighted_scheduled_pipeline vs derived method not selected. | Select one canonical weighted pipeline method. | Decision and documentation before pipeline metrics are trusted.
+5 | Converged Dataset Model | Conformed dimensions, raw measures, coded metrics, system fields, build QA columns. | Jason Chalmers | Delivered | None - mockup delivered 25/26 Sep 2026 (UC1_Converged_Q426_27_carl.xlsx). | Business + Finance sign-off on model. | Walkthrough in working session; QC via test reports.
+6 | Bronze / Silver / Gold Architecture | Bronze raw immutable; Silver conformed + SCD2; Gold L2 converged union with TTN explosion. | CARL Data Engineering | In Progress | Gold layer cannot be finalized until grain and SCD2 decisions lock. | Lock North Star Decision #1 and #2. | Architecture review and formal decision record.
+7 | Grain Decision (North Star #1) | Booked: order_id + line_item_id + period + BU + snapshot_date. Pipeline: opportunity_id equivalent. | Ad Analytics + CARL | Open | BU in natural key is an addition to Decision #1 as drafted; not locked. | Approve final grain including BU in natural key. | Architecture decision meeting; publish decision record.
+8 | SCD Type 2 Decision (North Star #2) | Effective-dating on Holdco / Agency / Advertiser for mid-year consolidations. | Ad Analytics + CARL | Open | Not locked; required to prevent silent revision of historical revenue. | Approve SCD2 approach on client hierarchy. | Architecture decision meeting; publish decision record.
+9 | Business Unit (BU) Definition | BU does not exist in source systems - must be derived. Must match ZZ file; James Meyers mapping tables. | Jason Chalmers + Felipe Roura | Blocked | Canonical leadership rollup axis undefined (Streaming/USN/Sports/News vs Group vs Vertical). | Lock BU hierarchy and leadership rollup axis. | Joint session Jason + Felipe; align to ZZ file and Finance rollups.
+10 | TTN / Turner Allocation Logic | Explode generic orderables (TTN, DCI ENT, Turner Sports/Ent) across BUs by historical delivery %. | Jason Chalmers | Blocked | Currently manual Excel. Predictive and actualized allocation both required. | Approve automation approach in CARL. | Design CARL-managed allocation service; version-control split logic.
+11 | Reference Data Migration | Holdco/Agency/Advertiser (~500 entries), LeftSide rules (10 buckets), BU splits from SharePoint. | CARL + Ad Analytics | Open | Mapping tables still in LeftSide_Final.xlsx and SharePoint; not version-controlled. | Approve migration of mapping tables to CARL-managed. | Migrate to CARL tables with SCD2 effective dating.
+12 | Daily Snapshots + 24-Month History | Daily snapshot frequency across 24-month window for point-in-time YoY and DoD/WoW/MoM movement. | CARL Data Engineering | In Progress | SF daily snapshot table build dependent on grain decision lock. | Lock grain to unblock snapshot table build. | Build SF daily snapshot table post-decision.
+13 | Sales Hierarchy Dimensions | AE / Sales Rep, Reporting VP, Sales Team; inactive AE historical attribution. | Jason Chalmers + Business | Open | Sales team data availability in iDeal not confirmed; hierarchy not validated. | Confirm sales hierarchy source and mapping. | Validate fields in converged dataset; confirm with Arlene / Mike.
+14 | Revenue Class Rules | ADU / makegood / trade / bonus must NOT count toward paid revenue or sell-through. | Ad Analytics + CARL | Open | Classification accuracy not yet validated in the converged dataset. | Approve revenue class rule set. | Implement and validate in Silver layer; add to data quality checks.
+15 | Validation vs Looker + Finance Excel | Booked + pipeline totals within <1% variance for an agreed historical period. | Jason Chalmers + Finance | Not Started | Cannot begin until iDeal mapping and BU logic resolve. | Agree historical validation period and tolerance. | Define UAT plan and reconciliation approach.
+16 | Sales + Finance Adoption Sign-Off | Both functions validate and adopt the dashboard as their working view. | Allison Carr + Felipe Roura | Not Started | No sign-off process defined; acceptance criteria not formalized. | Define Phase 1A acceptance criteria and sign-off owners. | Executive agreement in the Nage readiness review.
+
+===== 3. Phase 1B Status
+# | Requirement / Capability | Scope Detail | Owner | Status | Gap as of Today | Decision Required | Next Step
+1 | Finance WRR / SAP Forecast Feed | Oracle EPM (ADS_DIG, ADS_DTC, ADS_NETS, CON_OTH). Scheduled S3 drop or direct connection. | Felipe Roura + Finance + CARL | Blocked | CRITICAL BLOCKER. Current state: Excel flat file, shifting columns, hardcoded values, irregular timing. | Finance to commit to stable schema and fixed cadence (bi-weekly or monthly). | Finance + CARL feed design session; agree ingestion path and SLA.
+2 | Forecast Category Taxonomy | Entertainment: Daypart Code + Revenue Code + Reporting String. Sports / Digital: TBD. | Felipe Roura | Missing | Join keys and identifiers undefined for Sports and Digital. | Define forecast category taxonomy and primary identifiers. | Finance to publish taxonomy; CARL to map to L2 Gold grain.
+3 | Forecast Methodology Alignment | OTB, open, pipeline, forecast, digital hedge (current and prior year). | Felipe Roura / Erin McCay | Missing | Methodology alignment between operational and financial views not completed. | Agree which nuances are documented vs reconciled. | Methodology alignment workshop; publish methodology notes.
+4 | Pacing % and Left-to-Go Metrics | Pacing % = Booked / Forecast. Left-to-Go = Forecast - Booked. | CARL + Finance | Not Started | Derived metrics cannot be built without the forecast feed. | Dependent on forecast feed decision. | Build after forecast feed is stable and validated.
+5 | Sports Digital Revenue (OTB + Pipeline) | Currently weekly manual Excel by Keith (Sports Yield) from 4 Looker pulls plus judgment adjustments. | Keith Figa + Jack Velez | Missing | Sports Digital does not land in CARL; cannot be queried alongside Non-Sports Digital and Linear. | Choose Option A (bridge ingestion) vs Option B (phased rebuild) vs combined. | Sports discovery session; Finance read-pattern preference required.
+6 | Sports Pipeline (Off-System) | Sports pipeline tracked outside Salesforce; dashboard pipeline will understate Sports. | Keith Figa + Jack Velez | Missing | No source identified; gap not yet documented or bridged. | Decide bridge into dashboard vs acknowledge and document gap. | Discovery to define bridge approach or formal gap statement.
+7 | Sports Taxonomy Standardisation | Property / Selling Title / Sports Property not standardised across Linear vs Digital. | Jack Velez | Open | Taxonomy requires Jack Velez sign-off before Sports dimensions can be built. | Approve standardised Sports taxonomy. | Taxonomy review and sign-off.
+8 | Indirect Revenue Adjustments | WBD Stream Sports, TTN, Programmatic, House adjustments plus sellout trims. | Keith Figa + CARL | Missing | Adjustments are judgment-based in Excel; not defined or built into CARL ETL Silver. | Define and codify indirect revenue adjustment rules. | Build into Silver layer with reason codes and audit trail.
+9 | Sub-Segment Matching Tables | Grand totals tie but Finance sub-segments do not; Sports pipeline and Digital Sports OTB flagged. | Felipe Roura | Open | Owner and access for the matching tables still TBD. | Identify owner and grant access to matching tables. | Felipe to identify owner; CARL to onboard tables.
+10 | Forecast Data Governance | Highly Sensitive classification with SOX considerations; read-only, Finance-owned. | Finance + CARL Security | Open | Access model and audit log retention not finalised. | Approve access model aligned to Finance governance. | Define access controls and audit logging before ingestion.
+11 | MicroStrategy Replication | All existing MicroStrategy functionality replicated or accounted for before migration finalised. | Finance + CARL | Open | Detailed tools, timeline and expected changes not documented. | Agree replication scope and deprecation timeline. | Produce MicroStrategy functionality inventory and parity plan.
+
+===== 4. Delivered vs Missing
+Area | What Was Asked | What Has Been Delivered | Status | What Is Still Missing | Owner | Evidence / Source
+Requirements | Document executive vision, users, metrics, dimensions, risks. | Full PRD authored covering overview, problem, goals, users, functional and non-functional requirements, risks, milestones, open questions. | Delivered | PRD still in Draft status; requires formal approval. | Nathan Hernandez-Adams | Confluence: UC1 Total Ad Revenue Pacing Dashboard (June 2026, v1.0)
+Report Inventory | Define Phase 1 report and view inventory. | 20 reports defined across Executive, Sales & Pipeline, Operational, Lookup and Team views. | Delivered | Dashboard specs and wireframes not produced. | Jason Chalmers | Email: Re: CARL - UC1 Approach Follow-Up (28 Aug 2026)
+Converged Dataset | Provide a dataset combining SF / Op1 / iDeal. | UC1_Converged_Q426_27_carl.xlsx delivered with sources, field guide, 3 input streams, converged output, coded metrics and QA columns. | Delivered | QC of logic, test reports and business sign-off outstanding. | Jason Chalmers | Email: CARL UC1 - Dataset (26 Sep 2026)
+Field Specification | Define fields and metrics required in UC1. | UC1_Fields_for_CARL workbook with raw vs derived classification, per-system availability and v1 need flags. | Delivered | Gap-flagged fields still unresolved, particularly iDeal. | Ping Feng / Mike Hodge | File: Copy of UC1_Fields_for_CARL.xlsx
+Source Ingestion | Ingest Op1, FreeWheel, Salesforce, iDeal into CARL. | Op1 Bronze (81 tables) and FreeWheel Bronze (64 tables) delivered and QA signed off; Metropolis Phase 1 QA in progress. | In Progress | iDeal ingestion and mapping incomplete; FreeWheel API framework in progress. | CARL Data Engineering | File: CARL_Master_Tracker_Sep2026.xlsx - Q4 Roadmap tab
+Data Architecture | Define Bronze / Silver / Gold model. | Layered architecture defined with conformed dimensions, SCD2 intent and Gold union at agreed grain. | In Progress | Grain and SCD2 decisions not locked; Gold cannot be finalised. | Ad Analytics + CARL | Confluence PRD section 5.2
+Allocation Requirements | Document allocation needs for digital and sports. | Allocation and sports process documentation resurfaced and shared with the CARL team. | Delivered | Automation not built; still manual Excel. | Jason Chalmers | Email: Re: CARL - Allocation Requirements (2 Sep 2026)
+Business Logic | Agree converged vs system field treatment and pipeline logic. | Converged design principles agreed: expose system fields, add converged fields, no pre-filtering, iDeal working as pipeline source with SF enrichment. | Delivered | Premiere / Traditional / DDL classification and sales division still to be added. | Jason Chalmers / Mike Hodge | Email: RE: CARL Total Ad Revenue Pacing Working Session Part Tres (22 Sep 2026)
+Forecast Layer | Ingest Finance WRR / SAP forecast. | Requirements, source systems and data elements documented. | Blocked | No feed, no stable schema, no agreed cadence, no access. | Felipe Roura + Finance | Confluence PRD section 5.1.4
+Sports Layer | Bring Sports Digital OTB and pipeline into CARL. | Current state documented; Option A and Option B approaches defined. | Missing | No approach decision; no ingestion; pipeline remains off-system. | Keith Figa + Jack Velez | Confluence PRD section 5.4
+Validation | Validate against Looker and Finance Excel within <1% variance. | Target tolerance and benchmark defined (99% accuracy). | Not Started | Validation period, UAT plan and reconciliation approach undefined. | Jason Chalmers + Finance | Confluence PRD section 7
+Executive Readiness | Sales and Finance adopt dashboard as working view. | Readiness review requested with Jason and Allie to address gaps. | Not Started | Acceptance criteria, sign-off owners and go-live plan not defined. | Nage Sethu / Allison Carr | Email: Current Status on CARL - meeting (28 Sep 2026)
+
+===== 5. Open Decisions
+# | Decision Required | Owner | Phase | Why It Matters | Status | Escalation Needed | Next Step
+1 | iDeal field mapping - booked revenue (Gross & Net), GRPs, EQ30, demo guarantees, ADUs | Adam Christensen | 1A | Critical-path blocker. Linear booked revenue is unreliable until all fields are confirmed. | Blocked | Yes - Nage | Mapping workshop with Ashley, Arlene, Eddie; publish signed-off mapping.
+2 | BU definition and canonical leadership rollup axis | Jason Chalmers + Felipe Roura | 1A | BU does not exist in source systems. Executive and Finance rollups cannot be built without it. | Blocked | Yes - Nage / Allie | Joint session; align to ZZ file and James Meyers mapping tables.
+3 | TTN / Turner allocation logic - automated replacement of Excel | Jason Chalmers | 1A | Predictive and actualized allocation both required for BU rollout accuracy. | Blocked | Yes | Approve automation design; build CARL-managed allocation service.
+4 | North Star Decision #1 - grain (with BU in natural key) | Ad Analytics + CARL | 1A | Gates the SF daily snapshot table build and all downstream data model work. | Open | Yes | Architecture decision meeting; publish decision record.
+5 | North Star Decision #2 - SCD Type 2 on Holdco / Agency / Advertiser | Ad Analytics + CARL | 1A | Required for mid-year agency consolidations; prevents silent revision of history. | Open | Yes | Architecture decision meeting; publish decision record.
+6 | Pipeline filter logic post-Metropolis (status_group / projection_rank) | Jon Rabar (general), Jack Velez (Sports) | 1A | F-rank logic may have changed. Pipeline metrics cannot be trusted until confirmed. | Open | No | Confirm filter conditions and document canonical logic.
+7 | Pipeline weight % and canonical weighted pipeline method | Jon Rabar | 1A | SF pre-baked value vs derived calculation must be reconciled to one method. | Open | No | Select and document canonical method.
+8 | Op1 canonical net revenue field - net_cost vs net_parent_cost | Adam Christensen | 1A | Affects the definition of Booked Revenue (Net) for Digital. | Open | No | Confirm field and update field guide.
+9 | Forecast feed - access, stable schema, fixed delivery cadence | Felipe Roura / Erin McCay + CARL | 1B | CRITICAL BLOCKER. Phase 1B cannot be built until Finance commits. | Blocked | Yes - Nage / Allie | Finance + CARL feed design session; secure written commitment.
+10 | Forecast category taxonomy and primary identifiers | Felipe Roura | 1B | Determines how the forecast feed joins to L2 Converged Gold. | Missing | Yes | Finance to publish taxonomy for Entertainment, Sports and Digital.
+11 | Sports Digital approach - Option A vs Option B vs combined | Jason Chalmers + Keith Figa + CARL | 1B | Determines whether Sports Digital is bridged quickly or rebuilt properly. | Missing | Yes | Sports discovery session; capture Finance read-pattern preference.
+12 | Sports pipeline off-system - bridge or accept documented gap | Keith Figa + Jack Velez | 1B | Dashboard pipeline will understate Sports until resolved. | Missing | Yes | Discovery to define bridge or publish acknowledged gap.
+13 | Sub-segment matching tables - owner and access | Felipe Roura | 1B | Grand totals tie but Finance sub-segments do not. | Open | No | Identify owner; grant CARL access; onboard tables.
+14 | MicroStrategy functionality replication requirements | Finance + CARL | 1B | Finance requires full replication or accounting before migration is finalised. | Open | Yes | Produce functionality inventory, parity plan and timeline.
+15 | Phase 1A acceptance criteria and sign-off owners | Allison Carr + Felipe Roura | 1A | Without defined acceptance criteria, adoption and go-live cannot be declared. | Not Started | Yes - Nage | Agree criteria and sign-off process in the readiness review.
+
+===== 6. Risk Register
+# | Risk | Impact | Severity | Owner | Mitigation | Status
+1 | iDeal mapping incomplete | Linear booked revenue unreliable; blocks half of Booked Revenue (Gross and Net). | Critical | Adam Christensen | Dedicated mapping workshop; prioritise as critical path; publish signed-off mapping. | Blocked
+2 | Finance forecast feed structurally unstable | Phase 1B cannot be built; pacing and left-to-go metrics unavailable. | Critical | Felipe Roura + Finance | Secure written commitment on schema and cadence; agree S3 or direct connection path. | Blocked
+3 | Dual Salesforce instances during Metropolis migration | Same opportunity may exist in legacy WM SF and Metropolis; double counting risk. | High | CARL Data Engineering | Build deduplication logic; validate against controlled daily snapshot. | In Progress
+4 | Sports pipeline tracked off-system | Dashboard pipeline appears lower than Sports teams' internal reporting. | High | Keith Figa + Jack Velez | Decide bridge vs rebuild; if neither, publish documented and agreed gap statement. | Open
+5 | TTN allocation accuracy | Historical delivery % may not match actual for new or shifting inventory. | High | Jason Chalmers | Automate allocation with version control; run predictive and actualized processes. | Open
+6 | BU splits manual and not version-controlled | Executive rollups cannot be reproduced or audited; SharePoint dependency. | High | Jason Chalmers + CARL | Migrate BU split mappings into CARL-managed tables with effective dating. | Open
+7 | Sub-segment matching tables incomplete | Finance sub-segments do not tie even when grand totals agree. | Medium | Felipe Roura | Identify owner and access; onboard matching tables into CARL. | Open
+8 | MicroStrategy dependency | Finance blocks migration until all existing functionality is replicated or accounted for. | Medium | Finance + CARL | Produce functionality inventory and parity plan with timeline. | Open
+9 | Widening operational vs financial gap | Each round of skipped unification makes future convergence harder. | Medium | Allison Carr + Felipe Roura | Document legitimate differences as methodology notes; align definitions now. | Open
+10 | PRD remains in Draft | Scope and acceptance criteria are not formally baselined. | Medium | Nathan Hernandez-Adams | Move PRD to Approved with sponsor sign-off following the readiness review. | Open
+11 | No defined Phase 1A sign-off process | Adoption cannot be declared; risk of indefinite validation cycles. | High | Allison Carr + Felipe Roura | Define acceptance criteria, validation period and named sign-off owners. | Not Started
+
+===== 7. Timeline
+Date | Event | Driven By | Outcome | Evidence / Source
+Feb 2026 | Ad Sales Finance modeling executive vision and Finance dashboard design sessions | Finance / Ad Analytics | Foundational vision work that preceded the UC1 PRD. | Confluence related content: Ad Sales Finance Modeling - Executive Vision (13 Feb 2026)
+Jun 2026 | UC1 PRD authored - Total Ad Revenue Pacing Dashboard v1.0 | Nathan Hernandez-Adams | Sponsors Allie Carr and Jenn Blue; Technical POCs Jason Chalmers and Felipe Roura. Scope, users, metrics, risks documented. | Confluence: UC1 Total Ad Revenue Pacing Dashboard
+01 Jul 2026 | Op1 Bronze (81 tables) and FreeWheel Bronze (64 tables) delivered | CARL Data Engineering (Diana) | Prod complete; QA signed off 10 Jul. Foundational ingestion for UC1 in place. | CARL_Master_Tracker_Sep2026.xlsx - Q4 Roadmap
+30 Jul 2026 | Metropolis Phase 1 - Oracle DB to Bronze (UC1 Opportunity Pipeline) | CARL Data Engineering (Avinaag) | QA in progress; ingesting via Oracle rather than direct Salesforce. | CARL_Master_Tracker_Sep2026.xlsx - Q4 Roadmap
+24 Aug 2026 | PRD last edited | Nathan Hernandez-Adams | Document remains in Draft status. | Confluence page history
+26 Aug 2026 | UC1 approach discussion | Jason Chalmers | Raised whether short-term workarounds exist to unblock Phase 1. | Email: Re: CARL - UC1 Approach Follow-Up
+28 Aug 2026 | Jason defines minimum viable Phase 1 scope and report inventory | Jason Chalmers | SF / Op1 / iDeal dataset would unblock ~75% of Phase 1. 20 reports identified. Ping to re-project with Arlene. | Email: Re: CARL - UC1 Approach Follow-Up
+02 Sep 2026 | Allocation and digital sports process documentation resurfaced | Jason Chalmers | Allocation capability confirmed as required to align to financial documents. | Email: Re: CARL - Allocation Requirements
+21 Sep 2026 | Linear pipeline data structure review | Jason Chalmers + Mike Hodge | Pipeline logic agreed: iDeal working as source, Salesforce enrichment on every row, deals without SF opportunity still count. | Email: RE: CARL Total Ad Revenue Pacing Working Session Part Tres
+22 Sep 2026 | Total Ad Revenue Pacing working session (Part Tres) | Jason Chalmers + Mike Hodge + Arlene Rose | Converged vs system field principle agreed; no pre-filtering; DCI to Salesforce projection mapping clarified. | Email: RE: CARL Total Ad Revenue Pacing Working Session Part Tres
+21 Sep 2026 | UC1_Fields_for_CARL field specification updated | Ping Feng / Mike Hodge | Field-level raw vs derived classification with per-system availability and v1 need flags. | File: Copy of UC1_Fields_for_CARL.xlsx
+25 Sep 2026 | Converged dataset snapshot taken | Jason Chalmers | Q4 2026 onward snapshot built from Looker and QuickSight sources. | File: UC1_Converged_Q426_27_carl.xlsx
+26 Sep 2026 | UC1 converged dataset mockup shared | Jason Chalmers | Sources, field guide, 3 input streams, converged output and coded metrics delivered. Test reports to follow; walkthrough planned. | Email: CARL UC1 - Dataset
+28 Sep 2026 | CARL readiness review requested | Nage Sethu | Review requested with Jason and Allie to address readiness and fill gaps; Namrata to facilitate, India-friendly timing. | Email: Current Status on CARL - meeting
+Q3 2026 | Phase 1A target (per PRD) | CARL + Ad Analytics | AT RISK - key dependencies remain open as of 28 Sep 2026. | Confluence PRD section 9
+Q4 2026 | Phase 1B target (per PRD) | Finance + CARL | AT RISK - dependent on forecast feed and Sports logic decisions. | Confluence PRD section 9
+TBD | Phase 2 - expanded access and scenarios | CARL + Ad Analytics | AE-level RLS, multi-version forecasting, embedded views, rate-card analysis. | Confluence PRD section 9
+
+===== 8. Report Inventory
+# | Category | Report / View | Phase | Primary User | Dependency | Status
+1 | Executive | Weekly Movement | 1A | Exec Ad Sales Leadership | Daily snapshots; BU definition | In Progress
+2 | Executive | UF Pacing (Converged Upfront + Upfront Operations) | 1A | Exec Ad Sales Leadership | iDeal mapping; UF Year converged field | In Progress
+3 | Executive | Leadership View (Booked + Pipeline core) | 1A | Exec Ad Sales Leadership | BU definition; allocation logic | In Progress
+4 | Sales & Pipeline | Pipeline Health | 1A | Sales VPs | Pipeline filter logic | In Progress
+5 | Sales & Pipeline | Pipeline Movement (DoD / WoW / MoM) | 1A | Sales VPs | Daily snapshots; grain decision | In Progress
+6 | Sales & Pipeline | Revenue & Bookings | 1A | Sales VPs | iDeal mapping; Op1 net field | In Progress
+7 | Sales & Pipeline | New Business / New Logos | 1A | Sales VPs | Advertiser hierarchy; SCD2 | In Progress
+8 | Sales & Pipeline | Holes (YoY / QoQ) | 1A | Sales VPs | 24-month history; point-in-time YoY | In Progress
+9 | Operational | Weekly Sales Packet | 1A | Sales Ops / Finance | Converged dataset sign-off | In Progress
+10 | Operational | Client Success Workload | 1A | Sales Ops | Sales hierarchy dimensions | In Progress
+11 | Operational | Mapping & Account Lookup | 1A | Sales Ops | Reference data migration | In Progress
+12 | Operational | Data Health | 1A | CARL + Sales Ops | Data quality checks; observability | In Progress
+13 | Sales Lookup | Advertiser Profile | 1A | Sales VPs / AEs | Advertiser clean mapping; SCD2 | In Progress
+14 | Sales Lookup | Agency Profile | 1A | Sales VPs / AEs | Agency clean mapping; SCD2 | In Progress
+15 | Sales Lookup | Holdco Profile | 1A | Sales VPs / AEs | Holdco mapping; LeftSide rules | In Progress
+16 | Sales Lookup | Order / Deal Lookup | 1A | Sales VPs / AEs | Source deeplinks; order_id mapping | In Progress
+17 | Team Views | AE Home | 1A | AEs / Sales VPs | Sales hierarchy; RLS deferred to Phase 2 | In Progress
+18 | Team Views | Team Scorecard | 1A | Sales VPs | Sales team dimension | In Progress
+19 | Team Views | AE / Salesperson Overview | 1A | Sales VPs | Inactive AE historical attribution | In Progress
+20 | Team Views | AE Activity & Coverage | 1A | Sales VPs | Sales hierarchy dimensions | In Progress
+21 | Forecast | Forecast vs Booked Comparison | 1B | Finance Leadership | Forecast feed | Blocked
+22 | Forecast | Pacing %  | 1B | Finance / Exec | Forecast feed | Blocked
+23 | Forecast | Left-to-Go | 1B | Finance / Exec | Forecast feed | Blocked
+24 | Forecast | STLY / STLQ Comparison | 1B | Finance Leadership | 24-month history; forecast feed | Blocked
+25 | Sports | Sports Digital OTB | 1B | Finance / Sports Yield | Sports approach decision | Blocked
+26 | Sports | Sports Pipeline | 1B | Sports Leadership | Off-system pipeline bridge | Blocked
+
+===== 9. Nage Review Agenda
+Bucket | Discussion Point | Owner to Speak | Decision Sought | Time
+1. Original Executive Ask | Restate the UC1 vision: single trusted Sales + Finance view of booked, pipeline and forecast; retire the weekly Excel deliverable. | Allison Carr | Reconfirm UC1 as the executive system of record and confirm MVP vs full-vision scope. | 10 min
+1. Original Executive Ask | Confirm Phase 1A acceptance criteria and who signs off for Sales and for Finance. | Allison Carr + Felipe Roura | Named sign-off owners and agreed acceptance criteria. | 5 min
+2. What Business Requested | Walk the Phase 1 report inventory (20 views) and the SF / Op1 / iDeal dataset ask. | Jason Chalmers | Confirm the report inventory is still the correct Phase 1A scope. | 10 min
+2. What Business Requested | Business rules: converged vs system fields, no pre-filtering, pipeline sourcing from iDeal working with SF enrichment. | Jason Chalmers + Mike Hodge | Ratify business logic as the build baseline. | 10 min
+3. What CARL Delivered | Foundation: Op1 and FreeWheel Bronze delivered and QA signed off; Metropolis in QA. | CARL Data Engineering | Acknowledge delivered foundation; confirm remaining ingestion plan. | 5 min
+3. What CARL Delivered | Converged dataset mockup, field guide, metric definitions and coded metrics. | Jason Chalmers | Agree QC approach and date for business sign-off on the model. | 10 min
+4. Readiness Gaps | iDeal field mapping - critical path blocker for Linear booked revenue. | Adam Christensen | Named owner, workshop date and completion target. | 10 min
+4. Readiness Gaps | BU definition and canonical leadership rollup axis. | Jason Chalmers + Felipe Roura | Lock BU hierarchy or assign owner with a date. | 10 min
+4. Readiness Gaps | TTN allocation automation to replace the current Excel process. | Jason Chalmers | Approve automation approach and sequencing. | 5 min
+4. Readiness Gaps | North Star Decisions #1 (grain) and #2 (SCD Type 2). | Ad Analytics + CARL | Lock both decisions or schedule a decision meeting within the week. | 10 min
+4. Readiness Gaps | Finance forecast feed - schema, cadence and access. Phase 1B critical blocker. | Felipe Roura | Written Finance commitment on feed format and cadence. | 10 min
+4. Readiness Gaps | Sports Digital and Sports pipeline - Option A bridge vs Option B rebuild. | Keith Figa + Jack Velez | Select an approach or formally document the accepted gap. | 10 min
+Close | Confirm owners, dates and escalation path for every open decision. | Nage Sethu | Agreed action log with named owners and dates. | 5 min

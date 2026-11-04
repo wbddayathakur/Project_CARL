@@ -1,0 +1,123 @@
+erDiagram
+  dim_broadcast_calendar }|--o{ ngr_fct_avg_audience_month : "broadcast_month_key"
+  dim_network ||--o{ ngr_fct_avg_audience_month : "network_key"
+  dim_demo ||--o{ ngr_fct_avg_audience_month : "demo_code"
+  dim_daypart ||--o{ ngr_fct_avg_audience_month : "daypart_key"
+  dim_viewing_stream ||--o{ ngr_fct_avg_audience_month : "stream_code"
+  dim_telecast ||--o{ ngr_fct_program_telecast : "telecast_key"
+  dim_demo ||--o{ ngr_fct_program_telecast : "demo_code"
+  dim_viewing_stream ||--o{ ngr_fct_program_telecast : "stream_code"
+  dim_network ||--o{ ngr_fct_reach_freq_timespent_month : "network_key"
+  dim_demo ||--o{ ngr_fct_reach_freq_timespent_month : "demo_code"
+  dim_viewing_stream ||--o{ ngr_fct_reach_freq_timespent_month : "stream_code"
+  dim_network ||--o{ ngr_fct_universe_estimate_month : "network_key"
+  dim_demo ||--o{ ngr_fct_universe_estimate_month : "demo_code"
+  dim_network |o--o{ ngr_fct_audience_profile_quarter : "network_key, null for benchmark"
+  dim_broadcast_calendar }|--o{ ngr_fct_audience_profile_quarter : "broadcast_quarter_key"
+  dim_network ||--o{ ngr_fct_median_age_month : "network_key"
+
+  ngr_fct_avg_audience_month {
+    int broadcast_month_key FK
+    bigint network_key FK
+    string demo_code FK
+    bigint daypart_key FK
+    string stream_code FK
+    string viewing_methodology
+    decimal avg_audience_000 "duration-weighted"
+    decimal aa_minutes_numerator "for Cube re-weighting"
+    int minutes
+    decimal put_total_000
+    decimal put_asco_000
+    decimal coverage_rating
+    decimal ue_cov_000
+    decimal male_avg_audience_000
+    decimal female_avg_audience_000
+    boolean is_complete
+  }
+  ngr_fct_program_telecast {
+    bigint telecast_key FK
+    string demo_code FK
+    string stream_code FK
+    int telecast_count
+    int premiere_count
+    decimal avg_audience_000
+    decimal coverage_rating
+    decimal gross_impressions_000
+    string day_of_week_name
+  }
+  ngr_fct_reach_freq_timespent_month {
+    int broadcast_month_key FK
+    bigint network_key FK
+    string demo_code FK
+    bigint daypart_key FK
+    string stream_code FK
+    decimal reach_000 "from person-level data at this grain"
+    decimal universe_000
+    decimal reach_pct
+    decimal avg_frequency_days
+    decimal avg_time_spent_min
+    int respondent_count
+  }
+  ngr_fct_universe_estimate_month {
+    int broadcast_month_key FK
+    bigint network_key FK
+    string demo_code FK
+    decimal ue_cov_000
+    decimal ue_nat_000
+  }
+  ngr_fct_median_age_month {
+    int broadcast_month_key FK
+    bigint network_key FK
+    bigint daypart_key FK
+    string stream_code FK
+    decimal median_age_p2 "interpolated over age bands"
+  }
+  ngr_fct_audience_profile_quarter {
+    int broadcast_quarter_key FK
+    bigint network_key FK
+    boolean is_asc_benchmark
+    bigint daypart_key FK
+    string marketbreak "23 attributes"
+    string marketbreak_value
+    decimal viewers_000
+    decimal viewers_with_trait_000
+    decimal comp_pct
+    int respondent_count
+  }
+  dim_viewing_stream {
+    string stream_code PK
+    string time_shifted_viewing_type "Live, Live+SD, Live+3, Live+7"
+    string nielsen_data_type "program or ACM"
+    boolean is_commercial
+    int days_credited
+  }
+  dim_network {
+    bigint network_key PK
+    date effective_from PK
+    string network_name
+    string display_name "from ref_network_wbd_attributes"
+    string owner_tier_group
+    boolean is_asco
+    boolean is_spanish_language
+  }
+  dim_demo {
+    string demo_code PK
+    boolean is_nextgen_demo
+    boolean is_exec_portfolio_demo
+  }
+  dim_daypart {
+    bigint daypart_key PK
+    string daypart_set
+    string daypart_name
+  }
+  dim_broadcast_calendar {
+    int date_key PK
+    int broadcast_month_key
+    int broadcast_quarter_key
+    int ue_quarter_key
+  }
+  dim_telecast {
+    bigint telecast_key PK
+    bigint program_key FK
+    boolean is_premiere
+  }

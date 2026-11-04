@@ -1,0 +1,1490 @@
+database,layer,table,in_dev,in_prod,dev_last_updated,prod_last_updated
+adsales_iceberg_silver_dev,silver,ideal_dealbldr_dci_order_header,Y,,2026-05-05 08:09,
+adsales_iceberg_silver_dev,silver,order,Y,,2026-05-11 21:52,
+adsales_iceberg_silver_dev,silver,standard_banner_clean,Y,,2026-09-10 18:37,
+adsales_iceberg_uat,unknown,abs_account,Y,,2026-02-12 20:56,
+adsales_iceberg_uat,unknown,account_transfer,Y,,2026-02-06 03:56,
+adsales_iceberg_uat,unknown,advertiser,Y,,2026-02-10 02:33,
+adsales_iceberg_uat,unknown,ae_revenue,Y,,2026-02-06 01:34,
+adsales_iceberg_uat,unknown,agency,Y,,2025-12-17 19:54,
+adsales_iceberg_uat,unknown,billing_cycle,Y,,2025-11-13 14:34,
+adsales_iceberg_uat,unknown,brand,Y,,2025-12-08 20:48,
+adsales_iceberg_uat,unknown,buy_type,Y,,2025-11-13 15:05,
+adsales_iceberg_uat,unknown,contact,Y,,2025-11-14 15:35,
+adsales_iceberg_uat,unknown,contract,Y,,2025-11-10 21:04,
+adsales_iceberg_uat,unknown,deal,Y,,2026-02-05 18:56,
+adsales_iceberg_uat,unknown,deal_option,Y,,2026-02-05 21:02,
+adsales_iceberg_uat,unknown,deal_type,Y,,2025-11-13 15:15,
+adsales_iceberg_uat,unknown,demo,Y,,2025-11-13 15:10,
+adsales_iceberg_uat,unknown,division,Y,,2025-11-13 15:00,
+adsales_iceberg_uat,unknown,market_type,Y,,2025-11-13 18:19,
+adsales_iceberg_uat,unknown,measurement_currency,Y,,2025-11-19 19:38,
+adsales_iceberg_uat,unknown,net_account,Y,,2026-02-12 18:33,
+adsales_iceberg_uat,unknown,network,Y,,2025-11-26 11:40,
+adsales_iceberg_uat,unknown,network_pc_map,Y,,2025-11-18 20:22,
+adsales_iceberg_uat,unknown,office,Y,,2025-11-13 15:40,
+adsales_iceberg_uat,unknown,order,Y,,2026-02-06 19:56,
+adsales_iceberg_uat,unknown,parent_agency,Y,,2026-02-12 01:47,
+adsales_iceberg_uat,unknown,product,Y,,2025-11-13 15:50,
+adsales_iceberg_uat,unknown,property_category,Y,,2025-11-13 15:44,
+adsales_iceberg_uat,unknown,region,Y,,2025-11-13 15:57,
+adsales_iceberg_uat,unknown,sales_team,Y,,2025-11-10 21:33,
+adsales_iceberg_uat,unknown,sales_team_member,Y,,2025-11-10 21:39,
+adsales_iceberg_uat,unknown,user,Y,,2025-12-08 22:28,
+big_mit_bronze,bronze,intab,Y,Y,2026-10-07 05:45,2026-10-07 05:45
+big_mit_bronze,bronze,program_descriptor,Y,Y,2026-10-07 05:45,2026-10-07 05:46
+big_mit_bronze,bronze,program_descriptor_serial,Y,Y,2026-10-07 05:46,2026-10-07 05:46
+big_mit_bronze,bronze,program_viewing,Y,Y,2026-10-07 05:37,2026-10-07 05:37
+big_mit_bronze,bronze,program_viewing_quarterhour,Y,Y,2026-10-07 05:40,2026-10-07 05:40
+big_mit_bronze,bronze,program_viewing_sellingdemos,Y,Y,2026-10-07 05:31,2026-10-07 05:31
+big_mit_bronze,bronze,timeperiod_quarterhour,Y,Y,2026-10-07 05:44,2026-10-07 05:44
+big_mit_bronze,bronze,universe_estimate,Y,Y,2026-10-07 05:47,2026-10-07 05:47
+carl_dwhprd_gold_dev,gold,account_dim,Y,,2026-10-07 15:18,
+carl_dwhprd_gold_dev,gold,acct_cov_team_dim,Y,,2026-10-07 15:09,
+carl_dwhprd_gold_dev,gold,acct_cov_team_member_dim,Y,,2026-10-07 14:42,
+carl_dwhprd_gold_dev,gold,action_type_dim,Y,,2026-10-07 14:37,
+carl_dwhprd_gold_dev,gold,actual_air_daypart_dim,Y,,2026-10-06 17:28,
+carl_dwhprd_gold_dev,gold,advertiser_dim,Y,,2026-10-06 17:29,
+carl_dwhprd_gold_dev,gold,ae_fraction_fact,Y,,2026-10-07 14:43,
+carl_dwhprd_gold_dev,gold,affiliate_dim,Y,,2026-10-07 15:15,
+carl_dwhprd_gold_dev,gold,affiliate_fact,Y,,2026-10-07 15:14,
+carl_dwhprd_gold_dev,gold,agency_dim,Y,,2026-10-07 15:17,
+carl_dwhprd_gold_dev,gold,agency_group_dim,Y,,2026-10-07 15:20,
+carl_dwhprd_gold_dev,gold,airings_fact,Y,,2026-10-07 16:28,
+carl_dwhprd_gold_dev,gold,bi_to_bts_recon_fact,Y,,2026-10-07 15:07,
+carl_dwhprd_gold_dev,gold,billing_period_dim,Y,,2026-10-07 15:15,
+carl_dwhprd_gold_dev,gold,brand_dim,Y,,2026-10-07 16:07,
+carl_dwhprd_gold_dev,gold,budget_category_dim,Y,,2026-10-07 15:37,
+carl_dwhprd_gold_dev,gold,business_type_dim,Y,,2026-10-07 15:19,
+carl_dwhprd_gold_dev,gold,buy_in_response_dim,Y,,2026-10-07 15:37,
+carl_dwhprd_gold_dev,gold,buy_type_dim,Y,,2026-10-06 17:28,
+carl_dwhprd_gold_dev,gold,buying_agency_dim,Y,,2026-10-06 17:31,
+carl_dwhprd_gold_dev,gold,calendar_month_dim,Y,,2026-10-07 15:18,
+carl_dwhprd_gold_dev,gold,calendar_qtr_dim,Y,,2026-10-07 15:18,
+carl_dwhprd_gold_dev,gold,calendar_year_dim,Y,,2026-10-07 15:14,
+carl_dwhprd_gold_dev,gold,campaign_delivery_type_dim,Y,,2026-10-07 15:20,
+carl_dwhprd_gold_dev,gold,campaign_dim,Y,,2026-10-07 15:19,
+carl_dwhprd_gold_dev,gold,campaign_fact,Y,,2026-10-07 15:19,
+carl_dwhprd_gold_dev,gold,campaign_status_dim,Y,,2026-10-07 15:17,
+carl_dwhprd_gold_dev,gold,channel_dim,Y,,2026-10-07 15:19,
+carl_dwhprd_gold_dev,gold,client_dim,Y,,2026-10-07 15:19,
+carl_dwhprd_gold_dev,gold,client_group_dim,Y,,2026-10-07 15:20,
+carl_dwhprd_gold_dev,gold,common_property_dim,Y,,2026-10-07 15:25,
+carl_dwhprd_gold_dev,gold,contract_dim,Y,,2026-10-07 15:15,
+carl_dwhprd_gold_dev,gold,corp_genre_dim,Y,,2026-10-07 15:08,
+carl_dwhprd_gold_dev,gold,corp_subgenre_dim,Y,,2026-10-07 15:08,
+carl_dwhprd_gold_dev,gold,corporate_daypart_dim,Y,,2026-10-07 15:08,
+carl_dwhprd_gold_dev,gold,country_dim,Y,,2026-10-07 15:18,
+carl_dwhprd_gold_dev,gold,currency_dim,Y,,2026-10-07 15:13,
+carl_dwhprd_gold_dev,gold,customer_dim,Y,,2026-10-07 15:14,
+carl_dwhprd_gold_dev,gold,day_dim,Y,,2026-10-07 16:23,
+carl_dwhprd_gold_dev,gold,dc_episode_dim,Y,,2026-10-07 16:24,
+carl_dwhprd_gold_dev,gold,dc_season_dim,Y,,2026-10-07 16:23,
+carl_dwhprd_gold_dev,gold,dc_show_dim,Y,,2026-10-07 16:24,
+carl_dwhprd_gold_dev,gold,deal_current_status_dim,Y,,2026-10-07 15:09,
+carl_dwhprd_gold_dev,gold,deal_dim,Y,,2026-10-06 17:31,
+carl_dwhprd_gold_dev,gold,deal_io_part_prog_dim,Y,,2026-10-07 15:31,
+carl_dwhprd_gold_dev,gold,deal_partner_dim,Y,,2026-10-07 15:15,
+carl_dwhprd_gold_dev,gold,deal_prog_eps_status_dim,Y,,2026-10-07 15:30,
+carl_dwhprd_gold_dev,gold,deal_program_dim,Y,,2026-10-07 15:37,
+carl_dwhprd_gold_dev,gold,deal_program_episode_dim,Y,,2026-10-07 15:30,
+carl_dwhprd_gold_dev,gold,deal_project_dim,Y,,2026-08-31 15:03,
+carl_dwhprd_gold_dev,gold,deal_revenue_snapshot_dim,Y,,2026-10-06 17:29,
+carl_dwhprd_gold_dev,gold,deal_revenue_status_dim,Y,,2026-10-07 15:09,
+carl_dwhprd_gold_dev,gold,deal_status_dim,Y,,2026-10-07 15:37,
+carl_dwhprd_gold_dev,gold,deal_type_dim,Y,,2026-10-07 15:37,
+carl_dwhprd_gold_dev,gold,demographics_dim,Y,,2026-10-07 15:08,
+carl_dwhprd_gold_dev,gold,digital_fact,Y,,2026-10-07 14:37,
+carl_dwhprd_gold_dev,gold,digital_item_adserver_dim,Y,,2026-10-07 14:36,
+carl_dwhprd_gold_dev,gold,digital_line_adserver_dim,Y,,2026-10-07 14:37,
+carl_dwhprd_gold_dev,gold,distribution_channel_dim,Y,,2026-10-07 16:24,
+carl_dwhprd_gold_dev,gold,distribution_channel_hist_dim,Y,,2026-10-07 15:09,
+carl_dwhprd_gold_dev,gold,entity_dim,Y,,2026-10-07 16:23,
+carl_dwhprd_gold_dev,gold,episode_dim,Y,,2026-10-07 15:26,
+carl_dwhprd_gold_dev,gold,episode_version_dim,Y,,2026-10-07 15:32,
+carl_dwhprd_gold_dev,gold,ext_src_affiliate_fact,Y,,2026-10-07 15:17,
+carl_dwhprd_gold_dev,gold,fa_offer_status_dim,Y,,2026-10-07 15:37,
+carl_dwhprd_gold_dev,gold,format_dim,Y,,2026-10-07 14:37,
+carl_dwhprd_gold_dev,gold,grid_title_dim,Y,,2026-10-07 15:18,
+carl_dwhprd_gold_dev,gold,guar_est_methodology_dim,Y,,2026-10-07 15:09,
+carl_dwhprd_gold_dev,gold,holding_company_dim,Y,,2026-10-07 15:18,
+carl_dwhprd_gold_dev,gold,internal_offer_dim,Y,,2026-10-07 15:37,
+carl_dwhprd_gold_dev,gold,internal_offer_type_dim,Y,,2026-10-07 15:29,
+carl_dwhprd_gold_dev,gold,inv_process_status_dim,Y,,2026-10-07 15:14,
+carl_dwhprd_gold_dev,gold,inventory_fact,Y,,2026-10-07 15:33,
+carl_dwhprd_gold_dev,gold,inventory_status_dim,Y,,2026-10-07 15:32,
+carl_dwhprd_gold_dev,gold,inventory_type_dim,Y,,2026-10-07 15:18,
+carl_dwhprd_gold_dev,gold,invoice_dim,Y,,2026-10-06 17:30,
+carl_dwhprd_gold_dev,gold,invoice_revenue_fact,Y,,2026-10-06 17:57,
+carl_dwhprd_gold_dev,gold,invoice_type_dim,Y,,2026-10-07 15:14,
+carl_dwhprd_gold_dev,gold,isci_code_dim,Y,,2026-10-07 15:09,
+carl_dwhprd_gold_dev,gold,log_status_dim,Y,,2026-10-07 15:09,
+carl_dwhprd_gold_dev,gold,market_dim,Y,,2026-10-06 17:30,
+carl_dwhprd_gold_dev,gold,network_dim,Y,,2026-10-06 17:29,
+carl_dwhprd_gold_dev,gold,order_dim,Y,,2026-10-07 15:18,
+carl_dwhprd_gold_dev,gold,order_line_dim,Y,,2026-10-07 16:08,
+carl_dwhprd_gold_dev,gold,order_line_sell_dim,Y,,2026-10-07 16:09,
+carl_dwhprd_gold_dev,gold,order_status_dim,Y,,2026-10-07 16:07,
+carl_dwhprd_gold_dev,gold,package_dim,Y,,2026-10-07 15:15,
+carl_dwhprd_gold_dev,gold,planning_agency_dim,Y,,2026-10-07 15:10,
+carl_dwhprd_gold_dev,gold,pressure_type_dim,Y,,2026-10-07 15:08,
+carl_dwhprd_gold_dev,gold,product_dim,Y,,2026-10-06 17:30,
+carl_dwhprd_gold_dev,gold,program_airing_dim,Y,,2026-10-07 15:28,
+carl_dwhprd_gold_dev,gold,program_avg_daypart_dim,Y,,2026-10-07 15:08,
+carl_dwhprd_gold_dev,gold,program_dim,Y,,2026-10-07 15:16,
+carl_dwhprd_gold_dev,gold,projected_working_revenue_fact,Y,,2026-10-07 15:09,
+carl_dwhprd_gold_dev,gold,property_category_dim,Y,,2026-08-24 14:43,
+carl_dwhprd_gold_dev,gold,property_dim,Y,,2026-10-07 15:15,
+carl_dwhprd_gold_dev,gold,rate_type_dim,Y,,2026-10-07 15:15,
+carl_dwhprd_gold_dev,gold,rateclass_dim,Y,,2026-10-07 15:18,
+carl_dwhprd_gold_dev,gold,region_dim,Y,,2026-10-07 16:23,
+carl_dwhprd_gold_dev,gold,repackage_type_dim,Y,,2026-10-07 15:09,
+carl_dwhprd_gold_dev,gold,req_rights_episode_fact,Y,,2026-10-07 15:38,
+carl_dwhprd_gold_dev,gold,revenue_area_dim,Y,,2026-10-06 17:30,
+carl_dwhprd_gold_dev,gold,revenue_area_mapping_dim,Y,,2026-10-07 15:21,
+carl_dwhprd_gold_dev,gold,revenue_eff_bcast_month_dim,Y,,2026-10-07 16:07,
+carl_dwhprd_gold_dev,gold,revenue_eff_bcast_qtr_dim,Y,,2026-10-07 15:18,
+carl_dwhprd_gold_dev,gold,revenue_eff_bcast_year_dim,Y,,2026-10-07 16:07,
+carl_dwhprd_gold_dev,gold,revenue_eff_cal_month_dim,Y,,2026-08-24 14:42,
+carl_dwhprd_gold_dev,gold,revenue_eff_cal_qtr_dim,Y,,2026-10-07 15:17,
+carl_dwhprd_gold_dev,gold,revenue_eff_cal_year_dim,Y,,2026-10-06 17:28,
+carl_dwhprd_gold_dev,gold,revenue_effective_day_dim,Y,,2026-10-07 15:18,
+carl_dwhprd_gold_dev,gold,revenue_type_dim,Y,,2026-10-07 15:14,
+carl_dwhprd_gold_dev,gold,sales_office_team_dim,Y,,2026-10-07 14:41,
+carl_dwhprd_gold_dev,gold,sales_rep_dim,Y,,2026-10-07 15:19,
+carl_dwhprd_gold_dev,gold,sales_rep_fraction_fact,Y,,2026-10-07 15:20,
+carl_dwhprd_gold_dev,gold,sales_team_dim,Y,,2026-10-07 15:20,
+carl_dwhprd_gold_dev,gold,sales_team_member_dim,Y,,2026-10-07 14:42,
+carl_dwhprd_gold_dev,gold,sap_company_code_dim,Y,,2026-10-07 15:15,
+carl_dwhprd_gold_dev,gold,sap_exchange_rate,Y,,2026-10-07 15:14,
+carl_dwhprd_gold_dev,gold,sap_geography_dim,Y,,2026-10-07 15:14,
+carl_dwhprd_gold_dev,gold,sap_platform_dim,Y,,2026-10-07 15:15,
+carl_dwhprd_gold_dev,gold,sap_profit_center_dim,Y,,2026-10-07 15:14,
+carl_dwhprd_gold_dev,gold,sap_region_dim,Y,,2026-10-07 15:14,
+carl_dwhprd_gold_dev,gold,season_dim,Y,,2026-10-07 15:27,
+carl_dwhprd_gold_dev,gold,section_dim,Y,,2026-10-07 14:37,
+carl_dwhprd_gold_dev,gold,selling_title_daypart_dim,Y,,2026-10-07 15:10,
+carl_dwhprd_gold_dev,gold,selling_title_dim,Y,,2026-10-07 15:18,
+carl_dwhprd_gold_dev,gold,show_dim,Y,,2026-10-07 15:26,
+carl_dwhprd_gold_dev,gold,show_genre_concat_dim,Y,,2026-10-07 15:09,
+carl_dwhprd_gold_dev,gold,site_dim,Y,,2026-10-07 14:36,
+carl_dwhprd_gold_dev,gold,source_system_dim,Y,,2026-10-07 15:14,
+carl_dwhprd_gold_dev,gold,source_system_region_dim,Y,,2026-10-07 15:17,
+carl_dwhprd_gold_dev,gold,spot_booking_status_dim,Y,,2026-10-07 14:36,
+carl_dwhprd_gold_dev,gold,super_deal_dim,Y,,2026-10-07 15:20,
+carl_dwhprd_gold_dev,gold,super_deal_status_dim,Y,,2026-10-07 15:21,
+carl_dwhprd_gold_dev,gold,team_member_role_dim,Y,,2026-10-07 15:38,
+carl_dwhprd_gold_dev,gold,territory_dim,Y,,2026-10-07 15:36,
+carl_dwhprd_gold_dev,gold,time_dim,Y,,2026-10-07 16:24,
+carl_dwhprd_gold_dev,gold,unit_end_time_dim,Y,,2026-10-07 15:08,
+carl_dwhprd_gold_dev,gold,unit_length_dim,Y,,2026-10-07 15:21,
+carl_dwhprd_gold_dev,gold,unit_sched_bcast_month_dim,Y,,2026-10-07 15:10,
+carl_dwhprd_gold_dev,gold,unit_sched_bcast_qtr_dim,Y,,2026-10-07 15:11,
+carl_dwhprd_gold_dev,gold,unit_sched_bcast_year_dim,Y,,2026-10-07 15:23,
+carl_dwhprd_gold_dev,gold,unit_sched_bday_dim,Y,,2026-10-06 17:28,
+carl_dwhprd_gold_dev,gold,unit_sched_cal_month_dim,Y,,2026-10-06 17:27,
+carl_dwhprd_gold_dev,gold,unit_sched_cal_qtr_dim,Y,,2026-10-07 15:32,
+carl_dwhprd_gold_dev,gold,unit_sched_cal_year_dim,Y,,2026-10-07 15:19,
+carl_dwhprd_gold_dev,gold,unit_start_time_dim,Y,,2026-10-07 15:09,
+carl_dwhprd_gold_dev,gold,unit_type_dim,Y,,2026-10-07 15:18,
+carl_dwhprd_gold_dev,gold,unit_type_group_dim,Y,,2026-10-07 15:18,
+carl_dwhprd_gold_dev,gold,vendor_dim,Y,,2026-10-07 15:38,
+carl_inflight_bronze,bronze,log_programs,Y,,2026-05-22 17:59,
+carl_ke_poc_bronze_dev,bronze,videoamp_ddl_pacing__actual_and_forecasted_impressions_for_pbi,Y,,2026-05-22 01:27,
+carl_ke_poc_bronze_dev,bronze,videoamp_ddl_pacing__daily_actual_viewership_data_for_pbi,Y,,2026-05-22 01:27,
+carl_ke_poc_bronze_dev,bronze,videoamp_ddl_pacing__daily_forecasted_impressions_for_pbi,Y,,2026-05-22 01:28,
+carl_ke_poc_bronze_dev,bronze,videoamp_ddl_pacing__st_data_for_pbi,Y,,2026-05-22 01:28,
+carl_ke_poc_gold_dev,gold,fact_delivery_pct_certified,Y,,2026-05-06 02:55,
+carl_ke_poc_gold_dev,gold,fact_impressions_certified,Y,,2026-05-06 18:36,
+carl_ke_poc_silver_dev,silver,videoamp_ddl_pacing__actual_and_forecasted_impressions_for_pbi,Y,,2026-05-06 18:35,
+carl_ke_poc_silver_dev,silver,videoamp_ddl_pacing__daily_actual_viewership_data_for_pbi,Y,,2026-05-06 18:36,
+carl_ke_poc_silver_dev,silver,videoamp_ddl_pacing__daily_forecasted_impressions_for_pbi,Y,,2026-05-06 18:36,
+carl_ke_poc_silver_dev,silver,videoamp_ddl_pacing__st_data_for_pbi,Y,,2026-05-06 18:36,
+carl_poc_gold_dev,gold,actual_air_daypart_dim,Y,,2026-06-12 17:44,
+carl_poc_gold_dev,gold,adsalesdwh_invoice_dim,Y,,2026-05-28 15:36,
+carl_poc_gold_dev,gold,advertiser_dim,Y,,2026-06-12 17:43,
+carl_poc_gold_dev,gold,buy_type_dim,Y,,2026-08-07 14:37,
+carl_poc_gold_dev,gold,buying_agency_dim,Y,,2026-06-12 17:42,
+carl_poc_gold_dev,gold,deal_dim,Y,,2026-05-29 14:04,
+carl_poc_gold_dev,gold,deal_revenue_snapshot_dim,Y,,2026-08-07 14:37,
+carl_poc_gold_dev,gold,dq_results,Y,,2026-08-07 14:53,
+carl_poc_gold_dev,gold,ideal_dci_acct,Y,,2026-05-28 12:41,
+carl_poc_gold_dev,gold,ingestion_audit_log,Y,,2026-08-07 14:47,
+carl_poc_gold_dev,gold,inventory_fact,Y,,2026-08-07 14:47,
+carl_poc_gold_dev,gold,inventory_type_dim,Y,,2026-08-07 14:38,
+carl_poc_gold_dev,gold,invoice_dim,Y,,2026-06-12 17:44,
+carl_poc_gold_dev,gold,invoice_revenue_fact,Y,,2026-05-29 13:59,
+carl_poc_gold_dev,gold,lumos_table_registry,Y,,2026-07-14 19:52,
+carl_poc_gold_dev,gold,market_dim,Y,,2026-08-07 14:37,
+carl_poc_gold_dev,gold,network_dim,Y,,2026-08-07 14:37,
+carl_poc_gold_dev,gold,order_dim,Y,,2026-08-07 14:38,
+carl_poc_gold_dev,gold,product_dim,Y,,2026-06-12 17:42,
+carl_poc_gold_dev,gold,property_category_dim,Y,,2026-08-07 14:38,
+carl_poc_gold_dev,gold,revenue_area_dim,Y,,2026-06-12 17:43,
+carl_poc_gold_dev,gold,revenue_eff_bcast_qtr_dim,Y,,2026-08-07 14:38,
+carl_poc_gold_dev,gold,revenue_eff_cal_month_dim,Y,,2026-08-07 14:38,
+carl_poc_gold_dev,gold,revenue_eff_cal_qtr_dim,Y,,2026-08-07 14:38,
+carl_poc_gold_dev,gold,revenue_eff_cal_year_dim,Y,,2026-06-12 17:44,
+carl_poc_gold_dev,gold,revenue_effective_day_dim,Y,,2026-08-07 14:38,
+carl_poc_gold_dev,gold,selling_title_dim,Y,,2026-08-07 14:47,
+carl_poc_gold_dev,gold,unit_sched_bcast_month_dim,Y,,2026-08-07 14:47,
+carl_poc_gold_dev,gold,unit_sched_bcast_qtr_dim,Y,,2026-08-07 14:46,
+carl_poc_gold_dev,gold,unit_sched_bday_dim,Y,,2026-06-12 17:42,
+carl_poc_gold_dev,gold,unit_sched_cal_month_dim,Y,,2026-06-12 17:44,
+carl_poc_gold_dev,gold,unit_type_dim,Y,,2026-08-07 14:38,
+carl_poc_gold_dev,gold,unit_type_group_dim,Y,,2026-08-07 14:36,
+cleanroom_catalog,unknown,unique_table,Y,,2025-12-02 14:20,
+cmp_sample,unknown,video_ad_custom_rpt_advertiser,Y,,2026-04-10 18:17,
+cmp_sample,unknown,video_ad_custom_rpt_agency_advertiser_map,Y,,2026-04-10 16:19,
+cmp_test,unknown,digirev_qa_df_bronze_vw_placement_targeting_flat,Y,,2026-06-29 14:37,
+cmp_test,unknown,digirev_qa_df_gold_api_exposed_placement_agg_forecast,Y,,2026-06-29 13:05,
+cmp_test,unknown,digirev_qa_df_gold_api_exposed_placement_allocation,Y,,2026-06-29 14:37,
+cmp_test,unknown,digirev_qa_df_gold_api_exposed_placement_daily_forecast,Y,,2026-06-29 13:05,
+cmp_test,unknown,digirev_qa_df_gold_vw_active_placement_allocation_status,Y,,2026-06-29 13:09,
+cmp_test,unknown,digirev_qa_df_gold_vw_campaign_avails,Y,,2026-06-29 13:10,
+cmp_test,unknown,digirev_qa_df_gold_vw_campaign_dummy_forecast_v5,Y,,2026-06-29 13:06,
+cmp_test,unknown,digirev_qa_df_gold_vw_campaign_placement_actual_delivered_net,Y,,2026-06-29 13:11,
+cmp_test,unknown,digirev_qa_df_gold_vw_campaign_placement_forecast_v5,Y,,2026-06-29 13:07,
+cmp_test,unknown,digirev_qa_df_gold_vw_campaign_placement_sitesection_allocation_v5,Y,,2026-06-29 15:35,
+cmp_test,unknown,digirev_qa_df_gold_vw_campaign_sitesection_allocation_status,Y,,2026-06-29 15:42,
+cmp_test,unknown,digirev_qa_df_gold_vw_inventory,Y,,2026-06-29 15:54,
+cmp_test,unknown,digirev_qa_df_silver_capacity,Y,,2026-06-29 15:05,
+cmp_test,unknown,digirev_qa_df_silver_dim_placement,Y,,2026-06-29 13:05,
+cmp_test,unknown,digirev_qa_df_silver_fact_placement,Y,,2026-06-29 13:06,
+cmp_test,unknown,digirev_qa_df_silver_fw_dummy_placement,Y,,2026-06-29 13:07,
+cmp_test,unknown,digirev_qa_df_silver_placement_match_rate_day,Y,,2026-06-29 13:09,
+cmp_test,unknown,digirev_qa_df_silver_vw_capacity,Y,,2026-06-29 15:43,
+cmp_test,unknown,digirev_qa_df_silver_vw_fw_dummy_placement_with_brands,Y,,2026-06-29 13:21,
+cmp_test,unknown,digirev_qa_df_silver_vw_placement_match_rate_day,Y,,2026-06-29 15:54,
+cmp_test,unknown,fw_rev_videoasset_dy_sellable_forecast_v,Y,,2026-04-13 20:44,
+cmp_test,unknown,fw_rev_videoasset_dy_sellable_v,Y,,2026-04-13 20:58,
+cmp_test,unknown,fw_tracked_audience_ra_dg_v,Y,,2026-04-13 22:00,
+cmp_test,unknown,gam_prop_con_dy,Y,,2026-04-13 20:18,
+cmp_test,unknown,gam_rev_dy,Y,,2026-04-13 21:55,
+cmp_test,unknown,gam_rev_mo,Y,,2026-04-13 21:48,
+cmp_test,unknown,o1ods_oo_product,Y,,2026-06-23 16:59,
+cmp_test,unknown,oper_invoice_line_item_v,Y,,2026-04-13 20:12,
+cmp_test,unknown,oper_invoice_v,Y,,2026-04-13 20:15,
+cmp_test,unknown,oper_product_embedded_targeting_map_v,Y,,2026-04-12 19:55,
+cmp_test,unknown,oper_product_rate_card_properties_v,Y,,2026-04-12 19:47,
+cmp_test,unknown,oper_production_line_item_v,Y,,2026-04-13 15:32,
+cmp_test,unknown,oper_products_v,Y,,2026-04-12 19:40,
+cmp_test,unknown,oper_sales_line_item_booked_delivered_v,Y,,2026-04-13 15:50,
+cmp_test,unknown,oper_sales_line_item_targeting_v,Y,,2026-04-12 20:50,
+cmp_test,unknown,oper_sales_order_custom_field_v,Y,,2026-04-13 16:22,
+cmp_test,unknown,oper_sales_order_line_item_custom_field_v,Y,,2026-04-13 16:18,
+cmp_test,unknown,oper_sales_order_line_items_v,Y,,2026-04-11 23:46,
+cmp_test,unknown,oper_sales_order_v,Y,,2026-04-11 21:19,
+cmp_test,unknown,oper_sli_grouped_targeting_v,Y,,2026-04-13 14:49,
+cmp_test,unknown,oper_targeting_options_v,Y,,2026-04-12 20:36,
+cmp_test,unknown,user_ad_stream_base,Y,,2026-04-13 22:34,
+cmp_test,unknown,video_ad_api_advertisers,Y,,2026-04-11 23:16,
+cmp_test,unknown,video_ad_api_audience_definition_v,Y,,2026-04-13 14:59,
+cmp_test,unknown,video_ad_api_campaigns,Y,,2026-04-11 23:27,
+cmp_test,unknown,video_ad_api_insertion_orders,Y,,2026-04-13 20:08,
+cmp_test,unknown,video_ad_api_inventory_package_v,Y,,2026-04-13 16:15,
+cmp_test,unknown,video_ad_api_list_segment_v,Y,,2026-04-13 15:17,
+cmp_test,unknown,video_ad_api_master_campaign_report,Y,,2026-04-12 00:02,
+cmp_test,unknown,video_ad_api_matched_audience_items_v,Y,,2026-04-13 14:53,
+cmp_test,unknown,video_ad_custom_rpt_adunit,Y,,2026-04-11 23:52,
+cmp_test,unknown,video_ad_custom_rpt_advertiser,Y,,2026-04-11 23:23,
+cmp_test,unknown,video_ad_custom_rpt_advertiser_test,Y,,2026-04-16 20:28,
+cmp_test,unknown,video_ad_custom_rpt_agency,Y,,2026-04-11 23:34,
+cmp_test,unknown,video_ad_custom_rpt_agency_advertiser_map,Y,,2026-04-11 23:39,
+cmp_test,unknown,video_ad_custom_rpt_campaign_io_map,Y,,2026-04-13 16:26,
+cmp_test,unknown,video_ad_custom_rpt_io,Y,,2026-04-13 20:03,
+cmp_test,unknown,video_ad_custom_rpt_io_placement_map,Y,,2026-04-13 16:30,
+cmp_test,unknown,video_ad_custom_rpt_placement,Y,,2026-04-11 23:58,
+cmp_test,unknown,video_ad_custom_rpt_site,Y,,2026-04-13 11:16,
+cmp_test,unknown,video_ad_custom_rpt_sitegroup,Y,,2026-04-13 11:21,
+cmp_test,unknown,video_ad_custom_rpt_sitegroup_group_map,Y,,2026-04-13 11:31,
+cmp_test,unknown,video_ad_custom_rpt_sitesection,Y,,2026-04-13 11:24,
+cmp_test,unknown,video_ad_custom_rpt_sitesection_group_map,Y,,2026-04-13 11:38,
+cmp_test,unknown,video_ad_custom_rpt_videoasset,Y,,2026-04-13 11:43,
+cmp_test,unknown,video_ad_custom_rpt_videoasset_series_map,Y,,2026-04-13 12:40,
+cmp_test,unknown,video_ad_custom_rpt_videoasset_v,Y,,2026-04-13 14:39,
+cmp_test,unknown,video_ad_custom_rpt_videogroup,Y,,2026-04-13 11:56,
+cmp_test,unknown,video_ad_custom_rpt_videoseries,Y,,2026-04-13 11:59,
+cmp_test,unknown,video_ad_placements,Y,,2026-04-11 20:35,
+cmp_test,unknown,video_ad_placements_v,Y,,2026-04-11 21:00,
+ddl_forecasting_bronze,bronze,ddl_forecasts_daily_tracking_videoamp,Y,Y,2026-10-05 21:54,2026-10-04 01:41
+ddl_forecasting_silver,silver,ddl_forecasts_daily_tracking_videoamp,Y,Y,2026-09-10 01:54,2026-09-29 20:58
+default,unknown,sample_advertiser_load,Y,,2025-10-27 20:47,
+dq_metrics,unknown,dq_check_result,Y,,2026-10-07 16:54,
+dq_sftp_db,unknown,dq_results_checks,Y,,2026-06-18 12:44,
+dq_sftp_db,unknown,operative1_sftp_audit,Y,,2026-06-18 14:14,
+freewheel_bronze,bronze,ads_engagement_fw_rev_videoasset_dy_sellable_forecast,Y,,2026-10-06 18:41,
+freewheel_bronze,bronze,d_ad_unit,Y,,2026-10-07 17:32,
+freewheel_bronze,bronze,d_ad_unit_type,Y,,2026-10-07 17:32,
+freewheel_bronze,bronze,d_advertiser,Y,,2026-10-07 17:32,
+freewheel_bronze,bronze,d_agency,Y,,2026-10-07 17:32,
+freewheel_bronze,bronze,d_audience_item,Y,,2026-10-07 17:32,
+freewheel_bronze,bronze,d_campaign,Y,,2026-10-07 17:32,
+freewheel_bronze,bronze,d_cbp,Y,,2026-10-07 17:32,
+freewheel_bronze,bronze,d_content_owner,Y,,2026-10-07 17:32,
+freewheel_bronze,bronze,d_creative,Y,,2026-09-30 17:38,
+freewheel_bronze,bronze,d_deal,Y,,2026-10-07 17:32,
+freewheel_bronze,bronze,d_delivered_browser,Y,,2026-10-07 17:32,
+freewheel_bronze,bronze,d_delivered_country,Y,,2026-10-07 17:32,
+freewheel_bronze,bronze,d_delivered_device,Y,,2026-10-07 17:32,
+freewheel_bronze,bronze,d_delivered_os,Y,,2026-10-07 17:32,
+freewheel_bronze,bronze,d_direct_sold_creative,Y,,2026-10-07 17:32,
+freewheel_bronze,bronze,d_direct_sold_creative_instance,Y,,2026-10-07 17:32,
+freewheel_bronze,bronze,d_direct_sold_creative_rendition,Y,,2026-10-07 17:32,
+freewheel_bronze,bronze,d_distributor,Y,,2026-10-07 17:32,
+freewheel_bronze,bronze,d_dsp,Y,,2026-10-07 17:32,
+freewheel_bronze,bronze,d_global_advertiser,Y,,2026-10-07 17:32,
+freewheel_bronze,bronze,d_global_brand,Y,,2026-10-07 17:32,
+freewheel_bronze,bronze,d_insertion_order,Y,,2026-10-07 17:32,
+freewheel_bronze,bronze,d_inventory_package,Y,,2026-10-07 17:32,
+freewheel_bronze,bronze,d_key_value,Y,,2026-10-07 17:32,
+freewheel_bronze,bronze,d_listings,Y,,2026-10-07 17:32,
+freewheel_bronze,bronze,d_mrm_rule,Y,,2026-10-07 17:32,
+freewheel_bronze,bronze,d_placement,Y,,2026-10-07 17:32,
+freewheel_bronze,bronze,d_programmatic_buyer,Y,,2026-10-07 17:32,
+freewheel_bronze,bronze,d_programmatic_creative,Y,,2026-10-07 05:31,
+freewheel_bronze,bronze,d_programmatic_failed_filtered_reason,Y,,2026-10-07 17:32,
+freewheel_bronze,bronze,d_purchased_order,Y,,2026-10-07 17:32,
+freewheel_bronze,bronze,d_site,Y,,2026-10-07 17:32,
+freewheel_bronze,bronze,d_site_group,Y,,2026-10-07 17:32,
+freewheel_bronze,bronze,d_site_group_to_site_group,Y,,2026-10-07 17:32,
+freewheel_bronze,bronze,d_site_section,Y,,2026-10-07 17:32,
+freewheel_bronze,bronze,d_site_section_to_site_group,Y,,2026-10-07 17:32,
+freewheel_bronze,bronze,d_site_to_site_group,Y,,2026-10-07 17:32,
+freewheel_bronze,bronze,d_sold_order,Y,,2026-10-07 17:32,
+freewheel_bronze,bronze,d_standard_channel,Y,,2026-10-07 17:33,
+freewheel_bronze,bronze,d_standard_content_brand,Y,,2026-10-07 17:33,
+freewheel_bronze,bronze,d_standard_content_channel,Y,,2026-10-07 17:33,
+freewheel_bronze,bronze,d_standard_content_credential_status,Y,,2026-10-07 17:33,
+freewheel_bronze,bronze,d_standard_content_daypart,Y,,2026-10-07 17:33,
+freewheel_bronze,bronze,d_standard_content_duration,Y,,2026-10-07 17:33,
+freewheel_bronze,bronze,d_standard_content_territory,Y,,2026-10-07 17:33,
+freewheel_bronze,bronze,d_standard_device_type,Y,,2026-10-07 17:33,
+freewheel_bronze,bronze,d_standard_endpoint_name,Y,,2026-10-07 17:32,
+freewheel_bronze,bronze,d_standard_endpoint_owner,Y,,2026-10-07 17:33,
+freewheel_bronze,bronze,d_standard_environment,Y,,2026-10-07 17:33,
+freewheel_bronze,bronze,d_standard_genre,Y,,2026-10-07 17:33,
+freewheel_bronze,bronze,d_standard_language,Y,,2026-10-07 17:33,
+freewheel_bronze,bronze,d_standard_os,Y,,2026-10-07 17:33,
+freewheel_bronze,bronze,d_standard_programmer,Y,,2026-10-07 17:33,
+freewheel_bronze,bronze,d_standard_stream_type,Y,,2026-10-07 17:33,
+freewheel_bronze,bronze,d_standard_tv_rating,Y,,2026-10-07 17:33,
+freewheel_bronze,bronze,d_trading_desk,Y,,2026-10-07 17:33,
+freewheel_bronze,bronze,d_video,Y,,2026-10-07 17:33,
+freewheel_bronze,bronze,d_video_group,Y,,2026-10-07 17:33,
+freewheel_bronze,bronze,d_video_group_to_video_group,Y,,2026-10-07 17:33,
+freewheel_bronze,bronze,d_video_series,Y,,2026-10-07 17:33,
+freewheel_bronze,bronze,d_video_series_to_video_group,Y,,2026-10-07 17:33,
+freewheel_bronze,bronze,d_video_to_video_group,Y,,2026-10-07 17:32,
+freewheel_bronze,bronze,f_demand_portfolio_hourly,Y,,2026-10-07 15:44,
+freewheel_bronze,bronze,f_direct_sold_ni_hourly,Y,,2026-10-07 15:37,
+freewheel_bronze,bronze,f_direct_sold_ni_hourly_v2,Y,,2026-10-06 00:09,
+freewheel_bronze,bronze,f_inventory_mkpl_hourly,Y,,2026-10-07 15:46,
+freewheel_bronze,bronze,f_inventory_ni_hourly,Y,,2026-10-07 15:49,
+freewheel_bronze,bronze,f_programmatic_mkpl_hourly,Y,,2026-10-07 15:49,
+freewheel_bronze,bronze,f_programmatic_ni_hourly,Y,,2026-10-07 15:50,
+freewheel_bronze,bronze,h_deal_ffdr,Y,,2026-10-07 17:33,
+freewheel_bronze,bronze,h_deal_osi,Y,,2026-10-07 17:33,
+freewheel_bronze,bronze,h_placement_ffdr,Y,,2026-10-07 17:33,
+freewheel_bronze,bronze,h_placement_osi,Y,,2026-10-07 17:33,
+freewheel_bronze,bronze,h_purchased_order_ffdr,Y,,2026-10-07 17:33,
+freewheel_bronze,bronze,h_purchased_order_osi,Y,,2026-10-07 17:33,
+freewheel_bronze,bronze,h_sold_order_ffdr,Y,,2026-10-07 17:33,
+freewheel_bronze,bronze,h_sold_order_osi,Y,,2026-10-07 17:33,
+freewheel_bronze,bronze,v4_logs,Y,,2026-10-07 15:53,
+global_channel_insights_bronze,bronze,global_channel_dashboard,Y,Y,2026-06-12 21:27,2026-07-15 21:11
+global_channel_insights_silver,silver,global_channel_attribute,Y,Y,2026-05-08 04:53,2026-05-06 22:51
+h18_gold,gold,digital_advertiser_revenue_by_month_example,Y,,2026-08-07 03:40,
+h18_silver_new,silver,dim_account,Y,,2026-08-07 06:56,
+h18_silver_new,silver,dim_currency,Y,,2026-08-07 06:56,
+h18_silver_new,silver,dim_product,Y,,2026-08-07 06:56,
+h18_silver_new,silver,dim_sales_order,Y,,2026-08-07 06:57,
+h18_silver_new,silver,fact_sales_order_line_item,Y,,2026-08-07 06:59,
+impact_bronze,bronze,campaign,Y,,2026-07-27 23:25,
+impact_bronze,bronze,videoamp_measurement_report,Y,,2026-07-27 23:59,
+impact_bronze,bronze,videoamp_request,Y,,2026-07-27 23:41,
+ingestion_control,unknown,carl_load_registry,Y,Y,2026-10-06 18:49,2026-10-07 17:36
+ingestion_control,unknown,carl_load_registry_bronze_to_silver_freewheel_fact,Y,,2026-10-07 01:21,
+ingestion_control,unknown,carl_load_registry_bts_scd_test,Y,,2026-08-30 22:39,
+ingestion_control,unknown,carl_load_registry_ds_aws_usadsales_dim_fact,Y,,2026-10-07 12:04,
+ingestion_control,unknown,carl_load_registry_gabbi_bronze_load,Y,,2026-10-07 12:58,
+ingestion_control,unknown,carl_load_registry_lookback_test,Y,,2026-08-26 20:37,
+ingestion_control,unknown,carl_load_registry_scd_infra_test,Y,,2026-09-02 11:36,
+ingestion_control,unknown,landing_ingestion_records,Y,Y,2026-10-07 15:01,2026-10-07 14:51
+ingestion_control,unknown,landing_ingestion_records_old,Y,,2026-06-29 19:58,
+ingestion_control,unknown,landing_validation_results,Y,Y,2026-10-07 15:01,2026-10-07 14:51
+ingestion_control,unknown,landing_validation_results_old,Y,,2026-06-29 19:58,
+intnl_bronze,bronze,ampd_category,Y,,2026-10-01 21:44,
+intnl_bronze,bronze,ampd_top_titles,Y,,2026-10-01 21:44,
+intnl_bronze,bronze,apac_ads_trends,Y,,2026-10-01 21:44,
+intnl_bronze,bronze,avb_bottomup,Y,,2026-10-01 21:58,
+intnl_bronze,bronze,avb_market_overview,Y,,2026-10-01 21:58,
+intnl_gold,gold,ampd_category,Y,,2026-10-01 21:51,
+intnl_gold,gold,ampd_top_titles,Y,,2026-10-01 21:51,
+intnl_gold,gold,apac_ads_trends,Y,,2026-10-01 21:51,
+intnl_gold,gold,avb_bottomup_financials,Y,,2026-10-01 22:02,
+intnl_gold,gold,avb_bottomup_subscribers,Y,,2026-10-01 22:02,
+intnl_gold,gold,avb_market_overview_financial_metrics,Y,,2026-10-01 22:02,
+intnl_gold,gold,avb_market_overview_non_financial_metrics,Y,,2026-10-01 22:02,
+intnl_silver,silver,ampd_category,Y,,2026-10-01 21:50,
+intnl_silver,silver,ampd_top_titles,Y,,2026-10-01 21:50,
+intnl_silver,silver,apac_ads_trends,Y,,2026-10-01 21:50,
+intnl_silver,silver,avb_bottomup_financials,Y,,2026-10-01 22:00,
+intnl_silver,silver,avb_bottomup_subscribers,Y,,2026-10-01 22:00,
+intnl_silver,silver,avb_market_overview_financial_metrics,Y,,2026-10-01 22:00,
+intnl_silver,silver,avb_market_overview_non_financial_metrics,Y,,2026-10-01 22:00,
+linear_digital_revenue_bronze,bronze,automate_sell_schedue_tmp_test,Y,,2026-06-18 20:51,
+linear_digital_revenue_bronze,bronze,dci_deal_summary_chgdt_probe,Y,,2026-09-03 11:41,
+linear_digital_revenue_bronze,bronze,etl_date_dim,Y,Y,2026-10-06 20:10,2026-10-06 20:06
+linear_digital_revenue_bronze,bronze,ge_primary_prod,Y,,2026-08-02 20:46,
+linear_digital_revenue_bronze,bronze,ge_prod,Y,Y,2026-08-14 20:48,2026-08-14 20:19
+linear_digital_revenue_bronze,bronze,ideal_dci_account_ae_combo,Y,Y,2026-10-06 19:48,2026-10-07 13:48
+linear_digital_revenue_bronze,bronze,ideal_dci_acct,Y,Y,2026-10-06 19:43,2026-10-07 13:45
+linear_digital_revenue_bronze,bronze,ideal_dci_advertiser_prod,Y,Y,2026-10-07 16:22,2026-10-07 14:04
+linear_digital_revenue_bronze,bronze,ideal_dci_agencies,Y,Y,2026-10-06 19:49,2026-10-07 13:49
+linear_digital_revenue_bronze,bronze,ideal_dci_at_demo,Y,Y,2026-10-06 20:01,2026-10-07 14:00
+linear_digital_revenue_bronze,bronze,ideal_dci_at_foresite,Y,Y,2026-10-06 20:01,2026-10-07 14:00
+linear_digital_revenue_bronze,bronze,ideal_dci_at_foresite_group,Y,Y,2026-10-06 20:01,2026-10-07 14:00
+linear_digital_revenue_bronze,bronze,ideal_dci_bt_ut_rc_rev_area_map,Y,Y,2026-10-07 16:34,2026-10-07 14:04
+linear_digital_revenue_bronze,bronze,ideal_dci_buy,Y,Y,2026-10-07 16:37,2026-10-07 14:21
+linear_digital_revenue_bronze,bronze,ideal_dci_calendar_qtr,Y,Y,2026-10-07 16:32,2026-10-07 14:14
+linear_digital_revenue_bronze,bronze,ideal_dci_calendar_week,Y,Y,2026-10-07 16:22,2026-10-07 14:04
+linear_digital_revenue_bronze,bronze,ideal_dci_dashboard_acct_pacing2,Y,Y,2026-10-06 19:46,2026-10-07 13:47
+linear_digital_revenue_bronze,bronze,ideal_dci_dashboard_curr_revenue,Y,Y,2026-10-06 19:51,2026-10-07 13:51
+linear_digital_revenue_bronze,bronze,ideal_dci_dashboard_curr_revenue_tc,Y,Y,2026-10-06 20:01,2026-10-07 14:00
+linear_digital_revenue_bronze,bronze,ideal_dci_dashboard_curr_revenue_test,Y,,2026-03-26 00:59,
+linear_digital_revenue_bronze,bronze,ideal_dci_dashboard_working_rev,Y,Y,2026-10-06 19:52,2026-10-07 13:51
+linear_digital_revenue_bronze,bronze,ideal_dci_dashboard_working_rev_test,Y,,2026-03-26 00:59,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_account_ae_combo,Y,,2026-05-14 15:37,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_acct,Y,,2026-04-23 19:16,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_advertiser_prod,Y,,2026-04-23 19:16,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_ae_support_member,Y,,2026-06-07 01:55,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_agencies,Y,,2026-04-23 19:16,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_bv_net_map,Y,,2026-05-14 18:09,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_calendar_qtr,Y,,2026-05-07 15:57,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_calendar_week,Y,,2026-04-23 19:16,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_deal_approval_event,Y,,2026-05-20 16:22,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_deal_header,Y,,2026-04-07 10:22,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_dp_lu,Y,,2026-05-14 17:27,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_ge_user,Y,,2026-05-15 10:37,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_genre,Y,,2026-05-13 19:34,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_gm_rateload_process_log,Y,,2026-05-20 16:23,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_gm_rateload_sid_weeks,Y,,2026-05-20 16:23,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_gm_rateload_srce_rsn_tc,Y,,2026-05-20 16:23,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_inv_schedule_entity,Y,,2026-04-07 11:12,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_lb_type,Y,,2026-05-13 19:34,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_market,Y,,2026-04-23 19:16,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_master_sell_map,Y,,2026-04-23 19:16,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_master_sell_names,Y,,2026-04-23 19:16,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_net,Y,Y,2026-10-07 16:35,2026-10-07 14:17
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_net_account,Y,,2026-04-23 19:16,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_net_parameter,Y,,2026-05-14 17:57,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_nielsen_sell_map,Y,,2026-05-15 09:31,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_nielsen_series_map,Y,,2026-05-15 10:37,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_order_line,Y,,2026-04-07 12:11,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_order_line_sell,Y,,2026-04-07 12:52,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_parameters,Y,,2026-05-14 17:27,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_pr_names,Y,,2026-04-23 19:16,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_pr_type,Y,,2026-05-13 19:34,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_price_break_period,Y,,2026-05-14 18:09,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_pricing_added_value,Y,,2026-05-20 16:24,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_pricing_av_comment,Y,,2026-05-20 16:24,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_pricing_bucket,Y,,2026-05-20 16:24,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_pricing_bucket_range,Y,,2026-05-20 16:24,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_pricing_change,Y,,2026-05-20 16:23,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_pricing_change_arch,Y,,2026-05-20 16:22,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_pricing_change_byte,Y,,2026-05-20 16:24,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_pricing_demo_type,Y,,2026-05-20 16:24,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_pricing_demovpvh,Y,,2026-05-20 16:21,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_pricing_demovpvh_work,Y,,2026-06-08 21:37,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_pricing_distribution,Y,,2026-05-20 16:24,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_pricing_dp_bump,Y,,2026-05-20 16:24,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_pricing_dp_bump_arch,Y,,2026-05-20 16:23,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_pricing_dp_demo,Y,,2026-05-20 16:24,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_pricing_dp_demovpvh,Y,,2026-05-20 12:52,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_pricing_dp_rating,Y,,2026-05-20 16:23,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_pricing_dp_td_demo_arch,Y,,2026-06-09 10:04,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_pricing_dp_td_rating_arch,Y,,2026-05-20 16:23,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_pricing_estimate_type,Y,,2026-05-20 16:24,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_pricing_frozen_demovpvh,Y,,2026-05-20 16:23,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_pricing_frozen_demovpvh_arch,Y,,2026-05-20 16:23,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_pricing_import_hdr,Y,,2026-05-20 16:23,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_pricing_input_type,Y,,2026-05-20 16:24,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_pricing_it_pd_mg_map,Y,,2026-05-20 16:24,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_pricing_log,Y,,2026-05-20 16:22,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_pricing_meth_group,Y,,2026-05-20 16:24,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_pricing_meth_group_dtl,Y,,2026-05-20 16:24,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_pricing_model_index,Y,,2026-05-20 16:24,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_pricing_model_pr,Y,,2026-05-20 16:23,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_pricing_model_range_dp,Y,,2026-05-20 16:24,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_pricing_net_meth_group,Y,,2026-05-20 16:24,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_pricing_net_setup,Y,,2026-05-20 16:24,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_pricing_rating,Y,,2026-05-20 16:23,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_pricing_rating_work,Y,,2026-05-20 16:22,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_pricing_rdvpvh_work,Y,,2026-06-11 21:01,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_pricing_rr_work,Y,,2026-05-20 16:23,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_pricing_sales_bump,Y,,2026-05-20 16:24,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_pricing_sales_bump_arch,Y,,2026-05-20 16:24,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_pricing_summary_demo,Y,,2026-05-20 16:24,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_pricing_tc_bump,Y,,2026-05-20 16:24,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_pricing_tc_bump_arch,Y,,2026-05-20 16:23,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_pricing_td_demovpvh,Y,,2026-05-20 16:23,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_pricing_td_rating,Y,,2026-05-20 16:24,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_pricing_total_day,Y,,2026-05-20 16:24,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_psp_alt_sell_title,Y,,2026-05-14 17:27,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_psp_base_sell_title,Y,,2026-05-14 18:10,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_psp_big_ticket_movies,Y,,2026-05-15 10:37,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_psp_export_schedule_stg,Y,,2026-05-14 15:37,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_psp_overlap_sell_title,Y,,2026-05-14 17:04,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_psp_pricing_log,Y,,2026-05-14 17:04,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_psp_property_category_map,Y,,2026-05-15 09:31,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_psp_sell_title_exp_dtl_stg,Y,,2026-05-15 09:17,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_psp_sell_title_export_dtl,Y,,2026-05-15 19:52,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_psp_sell_title_export_log,Y,,2026-05-15 09:31,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_psp_sports_sell_title,Y,,2026-05-14 15:37,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_ratecard_demopph,Y,,2026-05-14 15:37,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_ratecard_demovpvh,Y,,2026-05-08 12:25,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_ratecard_est_method,Y,,2026-04-23 19:16,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_ratecard_est_method_map,Y,,2026-05-14 18:10,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_ratecard_header,Y,,2026-04-23 19:16,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_ratecard_liv_factor,Y,,2026-05-15 10:37,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_ratecard_liv_factor_audit,Y,,2026-05-15 10:37,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_ratecard_playparts,Y,,2026-04-23 19:16,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_ratecard_preempts,Y,,2026-05-14 17:04,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_ratecard_ratings,Y,,2026-05-14 15:39,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_role,Y,,2026-06-07 01:55,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_s_sch_alt_arch,Y,,2026-05-14 17:27,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_sell_division,Y,,2026-04-23 19:18,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_sell_property_category,Y,,2026-04-23 19:18,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_sell_sub_property_category,Y,,2026-05-15 10:37,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_sp_members,Y,,2026-05-14 17:04,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_sp_names,Y,,2026-05-14 17:27,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_split_partner_team,Y,,2026-05-13 19:34,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_sports_sell_capacity,Y,,2026-05-15 10:37,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_sports_title_rename_hs,Y,,2026-05-15 09:32,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_star_estimates_export_stg,Y,,2026-06-09 12:58,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_star_ue_export_stg,Y,,2026-05-14 17:04,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_sub_property_category_map,Y,,2026-05-15 10:37,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_sub_sub_property_category,Y,,2026-05-13 19:34,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_super_program,Y,,2026-05-13 19:34,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_tc_names,Y,,2026-05-13 19:34,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_telecastid_prgid_xref,Y,,2026-05-14 17:04,
+linear_digital_revenue_bronze,bronze,ideal_dci_dci_user_application_role,Y,,2026-06-07 01:55,
+linear_digital_revenue_bronze,bronze,ideal_dci_exhibition_asset_stg,Y,Y,2026-10-07 13:40,2026-09-12 05:40
+linear_digital_revenue_bronze,bronze,ideal_dci_exhibition_stg,Y,Y,2026-10-07 13:39,2026-09-12 05:38
+linear_digital_revenue_bronze,bronze,ideal_dci_ge_inventory_type,Y,Y,2026-10-07 16:33,2026-10-07 14:04
+linear_digital_revenue_bronze,bronze,ideal_dci_ge_user,Y,Y,2026-10-06 19:47,2026-10-07 13:48
+linear_digital_revenue_bronze,bronze,ideal_dci_inventory_cat_s,Y,Y,2026-10-07 16:33,2026-10-07 14:15
+linear_digital_revenue_bronze,bronze,ideal_dci_market,Y,Y,2026-10-07 16:24,2026-10-07 14:04
+linear_digital_revenue_bronze,bronze,ideal_dci_master_sell_map,Y,Y,2026-10-07 16:24,2026-10-07 14:04
+linear_digital_revenue_bronze,bronze,ideal_dci_master_sell_names,Y,Y,2026-10-07 16:24,2026-10-07 14:05
+linear_digital_revenue_bronze,bronze,ideal_dci_msa_episode_cs_trans,Y,Y,2026-10-07 13:40,2026-09-12 05:39
+linear_digital_revenue_bronze,bronze,ideal_dci_net_account,Y,Y,2026-10-06 19:46,2026-10-07 13:48
+linear_digital_revenue_bronze,bronze,ideal_dci_nielsen_sell_map,Y,Y,2026-10-07 16:36,2026-10-07 14:23
+linear_digital_revenue_bronze,bronze,ideal_dci_pg_episode_stg,Y,Y,2026-10-07 13:40,2026-09-12 05:39
+linear_digital_revenue_bronze,bronze,ideal_dci_pg_prg_eps_stg,Y,Y,2026-10-07 13:39,2026-09-12 05:43
+linear_digital_revenue_bronze,bronze,ideal_dci_pg_program_stg,Y,Y,2026-10-07 13:39,2026-09-12 05:43
+linear_digital_revenue_bronze,bronze,ideal_dci_pg_property_stg,Y,Y,2026-10-07 13:39,2026-09-12 05:40
+linear_digital_revenue_bronze,bronze,ideal_dci_pg_series_stg,Y,Y,2026-10-07 13:38,2026-09-12 05:40
+linear_digital_revenue_bronze,bronze,ideal_dci_pg_version_stg,Y,Y,2026-10-07 13:39,2026-09-12 05:40
+linear_digital_revenue_bronze,bronze,ideal_dci_pr_names,Y,Y,2026-10-07 16:37,2026-10-07 14:22
+linear_digital_revenue_bronze,bronze,ideal_dci_pricing_import_hdr,Y,,2026-10-07 16:39,
+linear_digital_revenue_bronze,bronze,ideal_dci_psp_alt_sell_title,Y,,2026-10-07 16:39,
+linear_digital_revenue_bronze,bronze,ideal_dci_psp_big_ticket_movies,Y,,2026-06-24 19:38,
+linear_digital_revenue_bronze,bronze,ideal_dci_psp_overlap_sell_title,Y,Y,2026-10-07 16:33,2026-10-07 14:15
+linear_digital_revenue_bronze,bronze,ideal_dci_psp_sell_title_exp_dtl_stg,Y,,2026-10-07 16:40,
+linear_digital_revenue_bronze,bronze,ideal_dci_psp_sports_sell_title,Y,,2026-10-07 14:33,
+linear_digital_revenue_bronze,bronze,ideal_dci_ratecard_demopph,Y,Y,2026-10-07 16:25,2026-10-07 14:04
+linear_digital_revenue_bronze,bronze,ideal_dci_ratecard_demovpvh,Y,Y,2026-10-05 20:43,2026-10-07 13:37
+linear_digital_revenue_bronze,bronze,ideal_dci_ratecard_est_method,Y,Y,2026-10-07 16:25,2026-10-07 14:05
+linear_digital_revenue_bronze,bronze,ideal_dci_ratecard_header,Y,Y,2026-10-07 16:25,2026-10-07 14:05
+linear_digital_revenue_bronze,bronze,ideal_dci_ratecard_header_load_test,Y,,2026-08-18 15:17,
+linear_digital_revenue_bronze,bronze,ideal_dci_ratecard_playparts,Y,Y,2026-10-07 16:25,2026-10-07 14:05
+linear_digital_revenue_bronze,bronze,ideal_dci_ratecard_ratings,Y,Y,2026-10-06 18:34,2026-10-07 17:33
+linear_digital_revenue_bronze,bronze,ideal_dci_ratecard_ratings_bkp,Y,,2026-07-29 13:56,
+linear_digital_revenue_bronze,bronze,ideal_dci_ratecard_ratings_load_test,Y,,2026-07-27 18:33,
+linear_digital_revenue_bronze,bronze,ideal_dci_sales_group,Y,Y,2026-10-06 19:48,2026-10-07 13:49
+linear_digital_revenue_bronze,bronze,ideal_dci_sell_division,Y,Y,2026-10-06 19:49,2026-10-07 13:49
+linear_digital_revenue_bronze,bronze,ideal_dci_sell_property_category,Y,Y,2026-10-06 19:48,2026-10-07 13:49
+linear_digital_revenue_bronze,bronze,ideal_dci_super_deal,Y,,2026-10-07 16:40,
+linear_digital_revenue_bronze,bronze,ideal_dci_super_deal_deals,Y,Y,2026-10-07 16:37,2026-10-07 14:20
+linear_digital_revenue_bronze,bronze,ideal_dci_upfront_demos,Y,Y,2026-10-07 16:26,2026-10-07 14:06
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_automate_sell_schedue_tmp,Y,,2026-05-20 16:18,
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_dci_de_units,Y,,2026-09-19 11:49,
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_dci_deal_demo_target,Y,Y,2026-10-07 16:37,2026-10-07 14:20
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_dci_deal_demos,Y,Y,2026-10-07 16:27,2026-10-07 14:07
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_dci_deal_header,Y,Y,2026-10-06 18:34,2026-10-07 17:37
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_dci_deal_header_bkp,Y,,2026-07-29 13:56,
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_dci_deal_header_load_test,Y,,2026-07-27 18:33,
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_dci_deal_header_tmp,Y,,2026-07-20 01:56,
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_dci_deal_methodologies,Y,Y,2026-10-07 16:26,2026-10-07 14:07
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_dci_deal_revision,Y,Y,2026-10-07 16:35,2026-10-07 14:17
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_dci_deal_summary_data,Y,Y,2026-09-28 16:55,2026-10-06 18:36
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_dci_deal_summary_data_bkp,Y,,2026-07-29 14:05,
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_dci_deal_summary_data_merge_test,Y,,2026-07-31 11:46,
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_dci_deal_summary_data_test,Y,,2026-09-03 19:56,
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_dci_mega_agency,Y,Y,2026-10-06 19:46,2026-10-07 13:48
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_dci_order_constraints,Y,,2026-04-23 19:15,
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_dci_order_header,Y,Y,2026-10-06 20:11,2026-10-07 14:44
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_dci_order_line,Y,Y,2026-10-06 18:35,2026-10-07 17:34
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_dci_order_line_impressions,Y,Y,2026-10-06 18:36,2026-07-15 20:22
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_dci_order_line_load_test,Y,,2026-07-27 18:34,
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_dci_order_line_sell,Y,Y,2026-10-06 18:38,2026-10-07 17:33
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_dci_order_line_sell_load_test,Y,,2026-07-28 19:00,
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_dci_order_line_sell_weeks,Y,Y,2026-10-06 18:47,2026-10-07 17:34
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_dci_order_line_sell_weeks_bkp,Y,,2026-07-29 13:56,
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_dci_order_line_sell_weeks_load_test,Y,,2026-07-27 18:36,
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_dci_order_sloa_revision,Y,Y,2026-10-07 16:23,2026-10-07 14:08
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_dci_pricing_demovpvh,Y,,2026-10-07 16:44,
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_dci_pricing_net_setup,Y,,2026-10-07 16:38,
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_dci_pricing_rating,Y,,2026-10-07 16:39,
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_dci_rateclass,Y,Y,2026-10-07 16:22,2026-10-07 14:08
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_dci_sell_constraints,Y,Y,2026-10-06 18:43,2026-10-07 17:35
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_dci_sell_constraints_load_test,Y,,2026-07-27 18:36,
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_ice_abs_account,Y,Y,2026-10-07 16:22,2026-10-07 14:09
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_ice_account_transfer,Y,,2026-10-07 16:22,
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_ice_deal,Y,Y,2026-10-07 16:22,2026-10-07 14:09
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_ice_net_account,Y,Y,2026-10-07 16:22,2026-10-07 14:09
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_idl_advertisers,Y,Y,2026-10-06 19:48,2026-10-07 13:49
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_idl_agencies,Y,Y,2026-10-06 19:47,2026-10-07 13:48
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_idl_bt_ut_rc_map,Y,,2026-10-07 16:39,
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_idl_clone_clypd_dp_map,Y,Y,2026-10-07 16:26,2026-10-07 14:06
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_idl_clone_dna_lkp,Y,Y,2026-10-07 16:26,2026-10-07 14:06
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_idl_clone_net_dp_house_mix,Y,Y,2026-10-07 16:27,2026-10-07 14:08
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_idl_clone_package_exclusions,Y,Y,2026-10-07 16:27,2026-10-07 14:06
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_idl_clone_prem_nyq,Y,Y,2026-10-07 16:27,2026-10-07 14:06
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_idl_deal_lock,Y,,2026-05-14 19:33,
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_idl_deal_sponsorship,Y,,2026-05-13 19:33,
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_idl_deal_sponsorship_dtl,Y,,2026-05-13 19:33,
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_idl_deal_type,Y,Y,2026-10-07 16:27,2026-10-07 14:07
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_idl_hh_demo_map,Y,Y,2026-10-07 16:28,2026-10-07 14:07
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_idl_inventory_bucket_type,Y,Y,2026-10-07 16:28,2026-10-07 14:08
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_idl_order_inventory,Y,Y,2026-10-07 16:32,2026-10-07 14:18
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_idl_sales_rep,Y,,2026-05-13 19:33,
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_idl_sd_blackout,Y,,2026-06-07 01:55,
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_idl_sim_automation_lines,Y,,2026-05-14 17:27,
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_idl_sim_automation_lines_arch,Y,,2026-05-14 15:36,
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_idl_sim_automation_log,Y,,2026-05-14 15:37,
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_idl_sim_automation_map,Y,,2026-05-14 17:57,
+linear_digital_revenue_bronze,bronze,ideal_dealbldr_idl_x_inventory_r,Y,Y,2026-10-07 16:22,2026-10-07 14:11
+linear_digital_revenue_bronze,bronze,ideal_ge_ge_calendar_months,Y,,2026-05-20 16:25,
+linear_digital_revenue_bronze,bronze,ideal_ge_ge_calendar_qtrs,Y,,2026-05-20 16:25,
+linear_digital_revenue_bronze,bronze,ideal_ge_ge_calendar_weeks,Y,,2026-05-20 16:25,
+linear_digital_revenue_bronze,bronze,ideal_ge_ge_daypart,Y,,2026-05-20 16:25,
+linear_digital_revenue_bronze,bronze,ideal_ge_ge_demos,Y,,2026-05-20 16:24,
+linear_digital_revenue_bronze,bronze,ideal_ge_ge_function,Y,,2026-05-20 16:25,
+linear_digital_revenue_bronze,bronze,ideal_ge_ge_module_access,Y,,2026-05-20 16:24,
+linear_digital_revenue_bronze,bronze,ideal_ge_ge_net,Y,,2026-05-20 16:25,
+linear_digital_revenue_bronze,bronze,ideal_ge_ge_net_broadcast_time,Y,,2026-05-20 16:25,
+linear_digital_revenue_bronze,bronze,ideal_ge_ge_net_group_map,Y,,2026-05-20 16:25,
+linear_digital_revenue_bronze,bronze,ideal_ipr_ipr_calendar_qtr,Y,,2026-06-06 01:48,
+linear_digital_revenue_bronze,bronze,ideal_ipr_ipr_episode_hist,Y,,2026-06-06 01:48,
+linear_digital_revenue_bronze,bronze,ideal_ipr_ipr_event_dtl,Y,,2026-06-06 01:42,
+linear_digital_revenue_bronze,bronze,ideal_ipr_ipr_grid_title_hist,Y,,2026-06-06 01:48,
+linear_digital_revenue_bronze,bronze,ideal_ipr_ipr_net,Y,,2026-06-06 01:48,
+linear_digital_revenue_bronze,bronze,ideal_ipr_ipr_net_base_air_day,Y,,2026-06-06 01:48,
+linear_digital_revenue_bronze,bronze,ideal_ipr_ipr_net_instance_parameter,Y,,2026-06-06 01:48,
+linear_digital_revenue_bronze,bronze,ideal_ipr_ipr_net_qtr_parameter,Y,,2026-06-06 01:48,
+linear_digital_revenue_bronze,bronze,ideal_ipr_ipr_net_quarter_validation,Y,,2026-06-06 01:48,
+linear_digital_revenue_bronze,bronze,ideal_ipr_ipr_off_sched,Y,,2026-06-06 01:44,
+linear_digital_revenue_bronze,bronze,ideal_ipr_ipr_parameters,Y,,2026-06-06 01:48,
+linear_digital_revenue_bronze,bronze,ideal_ipr_ipr_pds_episode_map,Y,,2026-06-06 01:48,
+linear_digital_revenue_bronze,bronze,ideal_ipr_ipr_property_hist,Y,,2026-06-06 01:48,
+linear_digital_revenue_bronze,bronze,ideal_ipr_ipr_validation_type,Y,,2026-06-06 01:48,
+linear_digital_revenue_bronze,bronze,ideal_ipr_ipr_version_hist,Y,,2026-06-06 01:46,
+linear_digital_revenue_bronze,bronze,ideal_ipr_psp_alt_sell_title,Y,,2026-06-06 01:48,
+linear_digital_revenue_bronze,bronze,ideal_ipr_psp_net_base_air_day,Y,,2026-06-06 01:48,
+linear_digital_revenue_bronze,bronze,ideal_ipr_psp_overlap_sell_title,Y,Y,2026-10-06 21:18,2026-10-06 20:47
+linear_digital_revenue_bronze,bronze,ideal_ipr_psp_pp_times,Y,,2026-06-06 01:48,
+linear_digital_revenue_bronze,bronze,ideal_ipr_psp_sell_title_changes,Y,,2026-06-06 01:47,
+linear_digital_revenue_bronze,bronze,ideal_ipr_psp_sell_title_export,Y,,2026-06-06 01:48,
+linear_digital_revenue_bronze,bronze,ideal_ipr_psp_sell_title_place_holder,Y,,2026-06-06 01:48,
+linear_digital_revenue_bronze,bronze,ideal_ipr_psp_series_placeholder_map,Y,,2026-06-06 01:48,
+linear_digital_revenue_bronze,bronze,ideal_ipr_psp_sports_sell_capacity,Y,,2026-06-06 01:48,
+linear_digital_revenue_bronze,bronze,ideal_ipr_psp_sports_sell_title,Y,,2026-06-06 01:48,
+linear_digital_revenue_bronze,bronze,ideal_ipr_temp_psp_schedule_report_tbl,Y,,2026-06-06 23:36,
+linear_digital_revenue_bronze,bronze,ideal_ipr_temp_timings,Y,,2026-06-06 01:48,
+linear_digital_revenue_bronze,bronze,ideal_linear_ge_buy,Y,,2026-07-06 14:26,
+linear_digital_revenue_bronze,bronze,ideal_msa_constraint_types,Y,Y,2026-10-07 16:36,2026-10-07 14:19
+linear_digital_revenue_bronze,bronze,ideal_msa_de_deal_hdr,Y,Y,2026-10-07 16:33,2026-10-07 14:17
+linear_digital_revenue_bronze,bronze,ideal_msa_de_hdr,Y,Y,2026-10-07 16:37,2026-10-07 14:21
+linear_digital_revenue_bronze,bronze,ideal_msa_de_units,Y,Y,2026-10-06 18:35,2026-10-07 17:35
+linear_digital_revenue_bronze,bronze,ideal_msa_de_units_lookback_test,Y,,2026-08-26 20:37,
+linear_digital_revenue_bronze,bronze,ideal_msa_e_eps_master,Y,,2026-05-15 09:18,
+linear_digital_revenue_bronze,bronze,ideal_msa_ge_advertisers,Y,Y,2026-10-06 19:48,2026-10-07 13:49
+linear_digital_revenue_bronze,bronze,ideal_msa_ge_agencies,Y,Y,2026-10-06 19:46,2026-10-07 13:48
+linear_digital_revenue_bronze,bronze,ideal_msa_ge_air_byte,Y,Y,2026-10-07 16:24,2026-10-07 14:10
+linear_digital_revenue_bronze,bronze,ideal_msa_ge_brand,Y,Y,2026-10-07 16:24,2026-10-07 14:11
+linear_digital_revenue_bronze,bronze,ideal_msa_ge_buy,Y,Y,2026-10-07 16:28,2026-10-07 14:11
+linear_digital_revenue_bronze,bronze,ideal_msa_ge_calendar_days,Y,Y,2026-10-07 16:31,2026-10-07 14:17
+linear_digital_revenue_bronze,bronze,ideal_msa_ge_calendar_qtrs,Y,Y,2026-10-07 16:31,2026-10-07 14:13
+linear_digital_revenue_bronze,bronze,ideal_msa_ge_calendar_years,Y,Y,2026-10-07 16:32,2026-10-07 14:16
+linear_digital_revenue_bronze,bronze,ideal_msa_ge_calendars,Y,Y,2026-10-07 16:30,2026-10-07 14:16
+linear_digital_revenue_bronze,bronze,ideal_msa_ge_copylens,Y,Y,2026-10-07 16:32,2026-10-07 14:16
+linear_digital_revenue_bronze,bronze,ideal_msa_ge_daypart,Y,Y,2026-10-07 16:36,2026-10-07 14:19
+linear_digital_revenue_bronze,bronze,ideal_msa_ge_daypart_defn,Y,Y,2026-10-07 16:35,2026-10-07 14:18
+linear_digital_revenue_bronze,bronze,ideal_msa_ge_daypart_dtl,Y,Y,2026-10-07 16:25,2026-10-07 14:21
+linear_digital_revenue_bronze,bronze,ideal_msa_ge_demos,Y,Y,2026-10-07 16:29,2026-10-07 14:12
+linear_digital_revenue_bronze,bronze,ideal_msa_ge_depts,Y,,2026-05-13 19:34,
+linear_digital_revenue_bronze,bronze,ideal_msa_ge_inventory_type,Y,Y,2026-10-07 16:31,2026-10-07 14:16
+linear_digital_revenue_bronze,bronze,ideal_msa_ge_net,Y,Y,2026-10-06 19:48,2026-10-07 13:49
+linear_digital_revenue_bronze,bronze,ideal_msa_ge_net_broadcast_time,Y,Y,2026-10-07 16:36,2026-10-07 14:20
+linear_digital_revenue_bronze,bronze,ideal_msa_ge_net_daypart,Y,Y,2026-10-07 16:36,2026-10-07 14:20
+linear_digital_revenue_bronze,bronze,ideal_msa_ge_net_group,Y,Y,2026-10-07 16:29,2026-10-07 14:12
+linear_digital_revenue_bronze,bronze,ideal_msa_ge_net_group_map,Y,Y,2026-10-07 16:30,2026-10-07 14:13
+linear_digital_revenue_bronze,bronze,ideal_msa_ge_office,Y,,2026-05-13 19:34,
+linear_digital_revenue_bronze,bronze,ideal_msa_ge_primary_prod,Y,Y,2026-10-07 16:34,2026-10-07 14:18
+linear_digital_revenue_bronze,bronze,ideal_msa_ge_prod,Y,Y,2026-10-07 16:31,2026-10-07 14:04
+linear_digital_revenue_bronze,bronze,ideal_msa_ge_rateclass,Y,Y,2026-10-07 16:30,2026-10-07 14:13
+linear_digital_revenue_bronze,bronze,ideal_msa_ge_rateclass_buy_map,Y,,2026-10-07 16:39,
+linear_digital_revenue_bronze,bronze,ideal_msa_ge_rateclass_inventory_map,Y,,2026-10-07 16:38,
+linear_digital_revenue_bronze,bronze,ideal_msa_ge_rateclass_unit_type_map,Y,,2026-10-07 16:38,
+linear_digital_revenue_bronze,bronze,ideal_msa_ge_unit_type,Y,Y,2026-10-07 16:29,2026-10-07 14:13
+linear_digital_revenue_bronze,bronze,ideal_msa_ge_user,Y,Y,2026-10-06 19:48,2026-10-07 13:49
+linear_digital_revenue_bronze,bronze,ideal_msa_invoice_payee,Y,,2026-05-13 19:34,
+linear_digital_revenue_bronze,bronze,ideal_msa_invoice_std_com,Y,,2026-05-13 19:34,
+linear_digital_revenue_bronze,bronze,ideal_msa_log_break_chunks,Y,Y,2026-10-06 18:49,2026-10-07 17:36
+linear_digital_revenue_bronze,bronze,ideal_msa_log_break_sid,Y,Y,2026-10-07 16:37,2026-10-07 14:22
+linear_digital_revenue_bronze,bronze,ideal_msa_log_chunk_spots,Y,Y,2026-10-06 18:40,2026-10-07 13:36
+linear_digital_revenue_bronze,bronze,ideal_msa_log_hdr,Y,,2026-05-15 09:18,
+linear_digital_revenue_bronze,bronze,ideal_msa_log_prog_elements,Y,,2026-10-01 20:43,
+linear_digital_revenue_bronze,bronze,ideal_msa_log_programs,Y,Y,2026-10-07 13:43,2026-09-12 05:41
+linear_digital_revenue_bronze,bronze,ideal_msa_p_fmt_hdr,Y,Y,2026-10-07 13:40,2026-09-12 05:39
+linear_digital_revenue_bronze,bronze,ideal_msa_p_programs,Y,Y,2026-10-07 13:41,2026-09-12 05:43
+linear_digital_revenue_bronze,bronze,ideal_msa_p_sch,Y,Y,2026-10-06 18:41,2026-10-07 17:35
+linear_digital_revenue_bronze,bronze,ideal_msa_p_sch_off,Y,,2026-05-14 15:40,
+linear_digital_revenue_bronze,bronze,ideal_msa_pg_episode_stg,Y,,2026-05-20 12:53,
+linear_digital_revenue_bronze,bronze,ideal_msa_pg_program_stg,Y,,2026-05-20 16:18,
+linear_digital_revenue_bronze,bronze,ideal_msa_pg_property_stg,Y,,2026-05-20 16:18,
+linear_digital_revenue_bronze,bronze,ideal_msa_ps_air_byte,Y,,2026-05-14 17:57,
+linear_digital_revenue_bronze,bronze,ideal_msa_ps_feed,Y,Y,2026-10-07 16:35,2026-10-07 14:18
+linear_digital_revenue_bronze,bronze,ideal_msa_ps_release_ids,Y,,2026-05-14 17:05,
+linear_digital_revenue_bronze,bronze,ideal_msa_ps_release_summary,Y,,2026-05-14 17:05,
+linear_digital_revenue_bronze,bronze,ideal_msa_ps_sch_type,Y,,2026-05-14 18:10,
+linear_digital_revenue_bronze,bronze,ideal_msa_r_composite_demo_bld_from_atom,Y,Y,2026-10-07 16:30,2026-10-07 14:14
+linear_digital_revenue_bronze,bronze,ideal_msa_recon_spots,Y,,2026-09-30 18:43,
+linear_digital_revenue_bronze,bronze,ideal_msa_recon_spots_new,Y,Y,2026-10-07 16:39,2026-10-07 14:22
+linear_digital_revenue_bronze,bronze,ideal_msa_recon_spots_planned,Y,,2026-09-30 19:21,
+linear_digital_revenue_bronze,bronze,ideal_msa_release_notification,Y,,2026-05-14 15:40,
+linear_digital_revenue_bronze,bronze,ideal_msa_s_obj,Y,Y,2026-10-06 18:41,2026-10-07 17:34
+linear_digital_revenue_bronze,bronze,ideal_msa_s_obj_defn_summary,Y,Y,2026-10-07 16:30,2026-10-07 14:14
+linear_digital_revenue_bronze,bronze,ideal_msa_s_obj_group,Y,Y,2026-10-07 16:34,2026-10-07 14:15
+linear_digital_revenue_bronze,bronze,ideal_msa_s_obj_version,Y,,2026-05-14 17:05,
+linear_digital_revenue_bronze,bronze,ideal_msa_s_obj_version_dtl,Y,,2026-05-14 17:05,
+linear_digital_revenue_bronze,bronze,ideal_msa_s_sch,Y,,2026-05-13 19:34,
+linear_digital_revenue_bronze,bronze,ideal_msa_s_sch_alt,Y,,2026-05-14 17:57,
+linear_digital_revenue_bronze,bronze,ideal_msa_s_sch_off,Y,,2026-05-14 15:41,
+linear_digital_revenue_bronze,bronze,ideal_msa_s_sch_play,Y,,2026-06-09 19:41,
+linear_digital_revenue_bronze,bronze,ideal_posting_stw_calendar_weeks,Y,Y,2026-10-06 19:21,2026-10-07 14:10
+linear_digital_revenue_bronze,bronze,ideal_posting_stw_deal,Y,Y,2026-10-06 19:22,2026-09-24 04:04
+linear_digital_revenue_bronze,bronze,ideal_posting_stw_deal_demo,Y,Y,2026-10-06 19:22,2026-10-07 14:10
+linear_digital_revenue_bronze,bronze,ideal_posting_stw_deal_methodology_stg,Y,Y,2026-10-06 19:22,2026-09-24 04:04
+linear_digital_revenue_bronze,bronze,ideal_posting_stw_demo,Y,Y,2026-10-06 19:22,2026-09-24 04:04
+linear_digital_revenue_bronze,bronze,ideal_posting_stw_demo_composition,Y,Y,2026-10-06 19:21,2026-10-07 14:10
+linear_digital_revenue_bronze,bronze,ideal_posting_stw_impression,Y,Y,2026-09-29 19:22,2026-10-07 13:43
+linear_digital_revenue_bronze,bronze,ideal_posting_stw_network,Y,Y,2026-10-06 19:22,2026-10-07 14:10
+linear_digital_revenue_bronze,bronze,ideal_posting_stw_unit,Y,Y,2026-10-06 19:27,2026-10-07 14:14
+linear_digital_revenue_bronze,bronze,ideal_posting_stw_unit_impression,Y,Y,2026-10-06 19:42,2026-10-07 14:29
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_adver_agency_methodology,Y,,2026-06-07 03:02,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_advertiser,Y,,2026-06-07 03:01,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_agency,Y,,2026-06-07 03:01,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_agency_methodology,Y,,2026-06-07 03:02,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_app_config,Y,,2026-06-07 03:02,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_brand,Y,,2026-06-07 03:01,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_bulletin_board,Y,,2026-06-07 03:02,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_calendar_mon,Y,,2026-06-07 03:02,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_calendar_qtr,Y,,2026-06-07 03:02,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_code_table,Y,,2026-06-07 03:01,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_code_value,Y,,2026-06-07 03:01,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_control,Y,,2026-06-07 03:02,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_current_methodology,Y,,2026-06-07 03:02,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_current_methodology_map,Y,,2026-06-07 03:02,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_deal,Y,,2026-06-07 03:02,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_deal_methodology,Y,,2026-06-07 03:02,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_deal_methodology_stg,Y,,2026-06-07 03:02,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_deal_network,Y,,2026-06-07 03:02,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_demo,Y,,2026-06-07 03:01,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_epost_bulletin,Y,,2026-06-07 03:03,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_filter_name,Y,,2026-06-07 03:03,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_forecast,Y,,2026-06-07 03:02,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_forecast_est_map,Y,,2026-06-07 03:02,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_forecasting_factor,Y,,2026-06-07 03:03,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_hh_option,Y,,2026-06-07 03:02,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_liab_write_off_approvers,Y,,2026-06-07 03:03,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_liab_write_off_cc_list,Y,,2026-06-07 03:03,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_liab_write_off_deal_hdr,Y,,2026-06-07 03:03,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_liab_write_off_status,Y,,2026-06-07 03:03,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_liability_ctl,Y,,2026-06-07 03:03,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_liability_status,Y,,2026-06-07 03:03,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_liability_status_code,Y,,2026-06-07 03:03,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_liability_write_off_audit,Y,,2026-06-07 03:03,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_liability_write_off_type,Y,,2026-06-07 03:03,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_net_gid_map,Y,,2026-06-07 03:01,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_net_group,Y,,2026-06-07 03:01,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_net_group_demo,Y,,2026-06-07 03:01,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_net_parameter,Y,,2026-06-07 03:03,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_net_year,Y,,2026-06-07 03:03,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_network,Y,,2026-06-07 03:01,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_network_assign,Y,,2026-06-07 03:01,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_network_at_load_status,Y,,2026-06-07 03:03,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_network_bd_load_status,Y,,2026-06-07 03:03,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_network_load_status,Y,,2026-06-07 03:03,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_network_methodology,Y,,2026-06-07 03:02,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_office,Y,,2026-06-07 03:01,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_order,Y,,2026-06-07 03:02,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_ratecard,Y,,2026-06-07 03:02,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_ratecard_est_method,Y,,2026-06-07 03:02,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_ratecard_tcdp,Y,,2026-06-07 03:02,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_region,Y,,2026-06-07 03:01,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_reporting_filter_r,Y,,2026-06-07 03:04,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_reporting_hdr,Y,,2026-06-07 03:03,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_sales_team,Y,,2026-06-07 03:01,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_sched_dt_nielsen_dt_map,Y,,2026-06-07 03:03,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_unit_type,Y,,2026-06-07 03:02,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_user,Y,,2026-06-07 03:01,
+linear_digital_revenue_bronze,bronze,ideal_stw_stw_vpvh_option,Y,,2026-06-07 03:02,
+linear_digital_revenue_bronze,bronze,ideal_upfront_demos,Y,,2026-04-07 12:55,
+linear_digital_revenue_bronze,bronze,legacy_mb_archived_id_mapping,Y,,2026-07-25 03:15,
+linear_digital_revenue_bronze,bronze,legacy_sf_account,Y,,2026-07-25 03:15,
+linear_digital_revenue_bronze,bronze,legacy_sf_opportunity,Y,,2026-07-25 03:14,
+linear_digital_revenue_bronze,bronze,legacy_sf_recordtype,Y,,2026-07-25 03:14,
+linear_digital_revenue_bronze,bronze,legacy_sf_third_party_report__c,Y,,2026-07-25 03:14,
+linear_digital_revenue_bronze,bronze,metro_linear_adsales_sf_abs_account_transfer,Y,Y,2026-10-06 19:51,2026-10-06 19:50
+linear_digital_revenue_bronze,bronze,metro_sf_abs_account__c,Y,Y,2026-10-06 20:02,2026-10-06 19:59
+linear_digital_revenue_bronze,bronze,metro_sf_abs_ae__c,Y,Y,2026-10-06 20:02,2026-10-06 19:59
+linear_digital_revenue_bronze,bronze,metro_sf_abs_transfer_request__c,Y,Y,2026-10-06 20:02,2026-10-06 19:59
+linear_digital_revenue_bronze,bronze,metro_sf_account,Y,Y,2026-10-06 19:48,2026-10-06 19:47
+linear_digital_revenue_bronze,bronze,metro_sf_ad_type__c,Y,Y,2026-10-06 20:02,2026-10-06 19:59
+linear_digital_revenue_bronze,bronze,metro_sf_ad_unit_inventory_type__c,Y,Y,2026-10-06 20:02,2026-10-06 19:59
+linear_digital_revenue_bronze,bronze,metro_sf_ae_revenue__c,Y,Y,2026-10-06 20:04,2026-10-06 20:01
+linear_digital_revenue_bronze,bronze,metro_sf_contact,Y,Y,2026-10-06 20:04,2026-10-06 20:01
+linear_digital_revenue_bronze,bronze,metro_sf_contract,Y,Y,2026-10-06 20:07,2026-10-06 20:03
+linear_digital_revenue_bronze,bronze,metro_sf_feeditem,Y,Y,2026-10-06 20:05,2026-10-06 20:01
+linear_digital_revenue_bronze,bronze,metro_sf_industry_segment__c,Y,Y,2026-10-06 20:05,2026-10-06 20:01
+linear_digital_revenue_bronze,bronze,metro_sf_linear_order__c,Y,Y,2026-10-06 20:05,2026-10-06 20:02
+linear_digital_revenue_bronze,bronze,metro_sf_linear_reference_data__c,Y,Y,2026-10-06 20:05,2026-10-06 20:01
+linear_digital_revenue_bronze,bronze,metro_sf_network__c,Y,Y,2026-10-06 20:05,2026-10-06 20:02
+linear_digital_revenue_bronze,bronze,metro_sf_opportunity,Y,Y,2026-10-06 20:06,2026-10-06 20:02
+linear_digital_revenue_bronze,bronze,metro_sf_opportunity_fields_and_data__c,Y,Y,2026-10-06 20:06,2026-10-06 20:02
+linear_digital_revenue_bronze,bronze,metro_sf_product2,Y,Y,2026-10-06 20:06,2026-10-06 20:02
+linear_digital_revenue_bronze,bronze,metro_sf_property_category__c,Y,Y,2026-10-06 20:06,2026-10-06 20:02
+linear_digital_revenue_bronze,bronze,metro_sf_recordtype,Y,Y,2026-10-06 20:06,2026-10-06 20:02
+linear_digital_revenue_bronze,bronze,metro_sf_site_month_breakout__c,Y,Y,2026-10-06 20:06,2026-10-06 20:03
+linear_digital_revenue_bronze,bronze,metro_sf_third_party_report__c,Y,Y,2026-10-06 20:07,2026-10-06 20:03
+linear_digital_revenue_bronze,bronze,metro_sf_transfer_request_item__c,Y,Y,2026-10-06 20:02,2026-10-06 19:59
+linear_digital_revenue_bronze,bronze,metro_sf_user,Y,Y,2026-10-06 19:48,2026-10-06 19:47
+linear_digital_revenue_bronze,bronze,metro_wkg_wrr_las_sf_abs_account_curr,Y,Y,2026-10-06 19:53,2026-10-06 19:51
+linear_digital_revenue_bronze,bronze,metro_wkg_wrr_las_sf_abs_pacing_curr,Y,Y,2026-10-06 19:50,2026-10-06 19:49
+linear_digital_revenue_bronze,bronze,metro_wkg_wrr_las_sf_abs_transfer_curr,Y,Y,2026-10-06 19:51,2026-10-06 19:49
+linear_digital_revenue_bronze,bronze,metro_wkg_wrr_las_sf_abs_working_curr,Y,Y,2026-10-06 19:50,2026-10-06 19:49
+linear_digital_revenue_bronze,bronze,metro_wkg_wrr_sf_abs_ae__c_curr,Y,Y,2026-10-06 19:51,2026-10-06 19:50
+linear_digital_revenue_bronze,bronze,metro_wkg_wrr_sf_comp_adsales_user,Y,Y,2026-10-06 19:48,2026-10-06 19:48
+linear_digital_revenue_bronze,bronze,metro_wkg_wrr_sf_comp_ae_evp,Y,Y,2026-10-06 19:48,2026-10-06 19:48
+linear_digital_revenue_bronze,bronze,metro_wkg_wrr_sf_comp_ae_svp,Y,Y,2026-10-06 19:49,2026-10-06 19:48
+linear_digital_revenue_bronze,bronze,metro_wkg_wrr_sf_comp_ae_vp,Y,Y,2026-10-06 19:49,2026-10-06 19:48
+linear_digital_revenue_bronze,bronze,metro_wkg_wrr_sf_opp_net_account_id_curr,Y,Y,2026-10-06 19:51,2026-10-06 19:50
+linear_digital_revenue_bronze,bronze,metro_wkg_wrr_sf_opp_net_account_id_hist,Y,Y,2026-10-06 19:51,2026-10-06 19:50
+linear_digital_revenue_bronze,bronze,metro_wrr_combined_revenue,Y,Y,2026-10-06 20:10,2026-10-06 20:06
+linear_digital_revenue_bronze,bronze,metro_wrr_ldr2_linear,Y,Y,2026-10-07 16:36,2026-10-07 16:38
+linear_digital_revenue_bronze,bronze,o1ods_oo_product_package_map,Y,,2026-06-22 19:36,
+linear_digital_revenue_bronze,bronze,o1ods_oo_product_rate_card_property,Y,,2026-06-22 19:36,
+linear_digital_revenue_bronze,bronze,o1ods_oo_production_system,Y,Y,2026-10-06 20:02,2026-10-06 19:59
+linear_digital_revenue_bronze,bronze,o1ods_oo_targeting_template_defaults,Y,,2026-06-22 19:36,
+linear_digital_revenue_bronze,bronze,oo_sales_order,Y,Y,2026-10-06 20:00,2026-10-06 19:58
+linear_digital_revenue_bronze,bronze,pg_program_stg_test,Y,,2026-06-18 18:29,
+linear_digital_revenue_bronze,bronze,pg_property_stg_test,Y,,2026-06-18 18:29,
+linear_digital_revenue_bronze,bronze,salesforce_sf_account,Y,Y,2026-06-12 21:27,2026-04-23 19:35
+linear_digital_revenue_bronze,bronze,salesforce_sf_contract,Y,Y,2026-07-24 19:16,2026-08-06 04:10
+linear_digital_revenue_bronze,bronze,salesforce_sf_user,Y,Y,2026-06-12 21:27,2026-04-23 19:35
+linear_digital_revenue_bronze,bronze,salesforce_wkg_wrr_sf_comp_adsales_user,Y,Y,2026-06-12 21:27,2026-04-23 19:35
+linear_digital_revenue_bronze,bronze,salesforce_wkg_wrr_sf_comp_ae_evp,Y,Y,2026-06-12 21:27,2026-04-23 19:35
+linear_digital_revenue_bronze,bronze,salesforce_wkg_wrr_sf_comp_ae_svp,Y,Y,2026-06-12 21:27,2026-04-23 19:35
+linear_digital_revenue_bronze,bronze,salesforce_wkg_wrr_sf_comp_ae_vp,Y,Y,2026-06-12 21:27,2026-04-23 19:35
+linear_digital_revenue_bronze,bronze,salesforce_wrr_ldr2_linear,Y,Y,2026-06-12 21:27,2026-04-23 19:37
+linear_digital_revenue_bronze,bronze,sf_test_idempotent_append,Y,,2026-06-23 21:01,
+linear_digital_revenue_bronze,bronze,test,Y,,2026-03-19 02:25,
+linear_digital_revenue_bronze,bronze,wrr_by_day_huge1,Y,Y,2026-10-06 19:57,2026-10-06 19:55
+linear_digital_revenue_bronze,bronze,wrr_by_month_huge,Y,Y,2026-10-06 20:00,2026-10-06 19:58
+linear_digital_revenue_bronze,bronze,wrr_by_month_large,Y,Y,2026-10-06 19:58,2026-10-06 19:56
+linear_digital_revenue_gold,gold,combined_revenue_sales_holes_totals,Y,Y,2026-10-06 20:20,2026-10-06 20:15
+linear_digital_revenue_gold,gold,dim_advertiser,Y,Y,2026-10-07 15:39,2026-10-07 17:15
+linear_digital_revenue_gold,gold,dim_agency,Y,Y,2026-10-07 15:40,2026-10-07 17:15
+linear_digital_revenue_gold,gold,dim_daypart,Y,Y,2026-10-07 06:40,2026-10-07 17:15
+linear_digital_revenue_gold,gold,dim_network,Y,Y,2026-10-07 15:38,2026-10-07 17:15
+linear_digital_revenue_gold,gold,dim_selling_title,Y,Y,2026-10-07 15:39,2026-10-07 17:15
+linear_digital_revenue_gold,gold,dim_teams,Y,Y,2026-10-06 20:20,2026-10-06 20:15
+linear_digital_revenue_gold,gold,dim_teams_v2,Y,,2026-04-16 18:13,
+linear_digital_revenue_gold,gold,fact_bv_test_revenue_do_not_promote,Y,,2026-05-15 21:46,
+linear_digital_revenue_gold,gold,fact_finance_pacing_market_track,Y,,2026-08-26 01:49,
+linear_digital_revenue_gold,gold,fact_finance_pacing_market_track_bi,Y,,2026-08-26 19:28,
+linear_digital_revenue_gold,gold,fact_inventory,Y,Y,2026-10-07 15:47,2026-08-20 04:40
+linear_digital_revenue_gold,gold,fact_media_plan_demo_mapping,Y,Y,2026-10-07 15:53,2026-10-03 00:58
+linear_digital_revenue_gold,gold,fact_media_plan_performance,Y,Y,2026-10-07 15:51,2026-10-07 17:18
+linear_digital_revenue_gold,gold,fact_pacing_revenue_budget_month,Y,Y,2026-10-06 20:20,2026-10-06 20:15
+linear_digital_revenue_gold,gold,fact_pacing_revenue_budget_month_20260502test,Y,,2026-05-03 05:41,
+linear_digital_revenue_gold,gold,fact_pacing_revenue_budget_month_20260504,Y,,2026-06-16 21:00,
+linear_digital_revenue_gold,gold,fact_pacing_revenue_budget_month_v2,Y,,2026-04-16 20:58,
+linear_digital_revenue_gold,gold,fact_ratecard_ratings_pricing,Y,Y,2026-10-07 15:47,2026-08-20 04:40
+linear_digital_revenue_gold,gold,gold_advertiser_network_daypart_performance,Y,Y,2026-10-07 15:54,2026-10-07 17:19
+linear_digital_revenue_gold,gold,gold_inventory_pricing_available_spots,Y,Y,2026-10-07 15:55,2026-08-20 04:40
+linear_digital_revenue_gold,gold,gold_inventory_pricing_daypart_pressure,Y,Y,2026-10-07 15:55,2026-08-20 04:41
+linear_digital_revenue_gold,gold,gold_inventory_pricing_price_range,Y,Y,2026-10-07 15:55,2026-08-20 04:41
+linear_digital_revenue_gold,gold,gold_inventory_pricing_unit_price,Y,Y,2026-10-07 15:55,2026-08-20 04:41
+linear_digital_revenue_gold,gold,gold_inventory_pricing_yoy_change,Y,Y,2026-10-07 15:55,2026-08-20 04:41
+linear_digital_revenue_gold,gold,gold_plan_comparison,Y,Y,2026-10-07 15:54,2026-10-07 17:19
+linear_digital_revenue_gold,gold,gold_plan_demo_mapping,Y,Y,2026-10-07 15:54,2026-10-03 00:58
+linear_digital_revenue_gold,gold,job_watermarks,Y,,2026-10-07 15:53,
+linear_digital_revenue_gold,gold,test_fact_media_plan_performance,Y,,2026-09-09 13:33,
+linear_digital_revenue_gold,gold,test_gold_plan_comparison,Y,,2026-09-11 13:52,
+linear_digital_revenue_gold,gold,ump_job_audit,Y,,2026-10-07 15:55,
+linear_digital_revenue_gold,gold,unit_impression,Y,,2026-09-22 22:05,
+linear_digital_revenue_silver,silver,combined_revenue_sales_holes_totals,Y,Y,2026-10-06 20:17,2026-10-06 20:13
+linear_digital_revenue_silver,silver,dev_test_ideal_linear_bronze,Y,,2026-09-30 16:58,
+linear_digital_revenue_silver,silver,dev_test_ideal_linear_bronze_3nf,Y,,2026-09-30 15:50,
+linear_digital_revenue_silver,silver,dev_test_ideal_linear_bronze_clypd,Y,,2026-09-03 21:18,
+linear_digital_revenue_silver,silver,dev_test_ideal_linear_canonical,Y,,2026-09-30 16:54,
+linear_digital_revenue_silver,silver,dev_test_ideal_linear_canonical_3nf,Y,,2026-09-30 15:53,
+linear_digital_revenue_silver,silver,dev_test_ideal_linear_canonical_clypd,Y,,2026-09-03 21:02,
+linear_digital_revenue_silver,silver,dev_test_ideal_linear_serving,Y,,2026-09-30 16:02,
+linear_digital_revenue_silver,silver,dev_test_ideal_linear_serving_nf1,Y,,2026-09-30 16:03,
+linear_digital_revenue_silver,silver,dev_test_ideal_linear_serving_nf2,Y,,2026-09-30 16:03,
+linear_digital_revenue_silver,silver,dev_test_ideal_linear_serving_nf3,Y,,2026-09-30 16:04,
+linear_digital_revenue_silver,silver,digital_rate_card,Y,,2026-09-29 16:13,
+linear_digital_revenue_silver,silver,digital_rate_card_reference,Y,,2026-09-29 16:13,
+linear_digital_revenue_silver,silver,dim_agency,Y,Y,2026-10-06 20:13,2026-10-06 20:09
+linear_digital_revenue_silver,silver,dim_agency_delete,Y,,2026-05-12 16:59,
+linear_digital_revenue_silver,silver,dim_daypart,Y,,2026-05-25 22:19,
+linear_digital_revenue_silver,silver,dim_month,Y,Y,2026-06-08 18:31,2026-03-25 20:43
+linear_digital_revenue_silver,silver,dim_net_account,Y,Y,2026-10-06 20:13,2026-10-06 20:09
+linear_digital_revenue_silver,silver,dim_net_account_ae_combo,Y,Y,2026-10-06 20:15,2026-10-06 20:10
+linear_digital_revenue_silver,silver,dim_net_account_ae_combo_test,Y,,2026-05-15 22:19,
+linear_digital_revenue_silver,silver,dim_network,Y,,2026-05-25 22:19,
+linear_digital_revenue_silver,silver,dim_sales_users,Y,,2026-04-22 05:21,
+linear_digital_revenue_silver,silver,dim_sales_users_20260502,Y,,2026-05-05 17:24,
+linear_digital_revenue_silver,silver,dim_teams,Y,Y,2026-10-06 20:12,2026-10-06 20:09
+linear_digital_revenue_silver,silver,dim_teams_20260707,Y,,2026-07-08 02:52,
+linear_digital_revenue_silver,silver,dim_teams_20260717,Y,,2026-07-17 20:37,
+linear_digital_revenue_silver,silver,dim_teams_v2,Y,,2026-04-16 18:11,
+linear_digital_revenue_silver,silver,fact_executive_revenue_month,Y,Y,2026-10-06 20:18,2026-10-06 20:13
+linear_digital_revenue_silver,silver,fact_pacing_revenue_budget_month,Y,Y,2026-10-06 20:17,2026-10-06 20:12
+linear_digital_revenue_silver,silver,fact_pacing_revenue_budget_month_20260502test,Y,,2026-05-03 03:21,
+linear_digital_revenue_silver,silver,fact_pacing_revenue_budget_month_20260504,Y,,2026-06-16 06:24,
+linear_digital_revenue_silver,silver,ideal_digital_accounts,Y,Y,2026-09-27 09:26,2026-08-01 08:42
+linear_digital_revenue_silver,silver,ideal_digital_avails_calculator,Y,,2026-09-07 14:40,
+linear_digital_revenue_silver,silver,ideal_digital_discount_profiles,Y,Y,2026-09-27 09:08,2026-08-01 08:42
+linear_digital_revenue_silver,silver,ideal_digital_organization,Y,Y,2026-09-27 09:08,2026-08-01 08:42
+linear_digital_revenue_silver,silver,ideal_digital_placement_forecast,Y,,2026-09-07 14:44,
+linear_digital_revenue_silver,silver,ideal_digital_product_package_map,Y,,2026-09-27 09:10,
+linear_digital_revenue_silver,silver,ideal_digital_production_system,Y,Y,2026-08-20 16:17,2026-08-20 04:38
+linear_digital_revenue_silver,silver,ideal_digital_products,Y,Y,2026-09-27 09:09,2026-08-01 08:42
+linear_digital_revenue_silver,silver,ideal_digital_rate_card,Y,,2026-09-14 19:34,
+linear_digital_revenue_silver,silver,ideal_digital_rate_card_audience,Y,,2026-09-07 14:44,
+linear_digital_revenue_silver,silver,ideal_digital_rate_card_history,Y,,2026-09-07 14:44,
+linear_digital_revenue_silver,silver,ideal_digital_rate_card_package,Y,,2026-09-07 17:18,
+linear_digital_revenue_silver,silver,ideal_digital_rate_card_reference,Y,,2026-09-14 19:34,
+linear_digital_revenue_silver,silver,ideal_digital_sales_line_item_targeting,Y,Y,2026-09-27 09:24,2026-08-01 08:42
+linear_digital_revenue_silver,silver,ideal_digital_sales_line_item_targeting_v,Y,,2026-06-06 00:54,
+linear_digital_revenue_silver,silver,ideal_digital_sales_order,Y,Y,2026-08-30 07:35,2026-08-01 08:42
+linear_digital_revenue_silver,silver,ideal_digital_sales_order_accounts_map,Y,Y,2026-09-27 09:25,2026-08-01 08:42
+linear_digital_revenue_silver,silver,ideal_digital_sales_order_contacts_map,Y,Y,2026-09-27 09:25,2026-08-01 08:42
+linear_digital_revenue_silver,silver,ideal_digital_sales_order_custom_field,Y,Y,2026-08-20 20:55,2026-08-01 08:42
+linear_digital_revenue_silver,silver,ideal_digital_sales_order_line_items,Y,Y,2026-08-30 07:36,2026-08-01 08:42
+linear_digital_revenue_silver,silver,ideal_digital_sales_order_users_map,Y,Y,2026-09-27 09:07,2026-08-01 08:42
+linear_digital_revenue_silver,silver,ideal_digital_sales_stages,Y,Y,2026-09-27 09:09,2026-08-01 08:42
+linear_digital_revenue_silver,silver,ideal_digital_serving_avails_calculator,Y,,2026-09-11 22:03,
+linear_digital_revenue_silver,silver,ideal_digital_serving_placement_forecast,Y,,2026-09-11 22:03,
+linear_digital_revenue_silver,silver,ideal_digital_serving_product_package_map,Y,,2026-09-11 17:26,
+linear_digital_revenue_silver,silver,ideal_digital_serving_rate_card,Y,,2026-09-11 22:03,
+linear_digital_revenue_silver,silver,ideal_digital_serving_rate_card_audience,Y,,2026-09-11 22:03,
+linear_digital_revenue_silver,silver,ideal_digital_serving_rate_card_history,Y,,2026-09-11 22:03,
+linear_digital_revenue_silver,silver,ideal_digital_serving_rate_card_package,Y,,2026-09-11 22:03,
+linear_digital_revenue_silver,silver,ideal_digital_serving_ref_accounts,Y,Y,2026-08-20 19:49,2026-08-01 08:42
+linear_digital_revenue_silver,silver,ideal_digital_serving_ref_custom_field_definition,Y,Y,2026-08-20 19:52,2026-08-01 08:42
+linear_digital_revenue_silver,silver,ideal_digital_serving_ref_discount_profiles,Y,Y,2026-08-20 19:51,2026-08-01 08:42
+linear_digital_revenue_silver,silver,ideal_digital_serving_ref_organization,Y,Y,2026-08-20 19:50,2026-08-01 08:42
+linear_digital_revenue_silver,silver,ideal_digital_serving_ref_product,Y,Y,2026-08-20 19:51,2026-08-01 08:43
+linear_digital_revenue_silver,silver,ideal_digital_serving_ref_sales_stage,Y,Y,2026-08-20 19:50,2026-08-01 08:43
+linear_digital_revenue_silver,silver,ideal_digital_serving_ref_targeting,Y,Y,2026-08-20 19:51,2026-08-01 08:43
+linear_digital_revenue_silver,silver,ideal_digital_serving_ref_targeting_option,Y,Y,2026-09-11 22:38,2026-08-01 08:43
+linear_digital_revenue_silver,silver,ideal_digital_serving_ref_users,Y,Y,2026-08-20 19:50,2026-08-01 08:43
+linear_digital_revenue_silver,silver,ideal_digital_serving_sales_line_item_targeting,Y,Y,2026-08-20 19:52,2026-08-01 08:43
+linear_digital_revenue_silver,silver,ideal_digital_serving_sales_order,Y,Y,2026-08-20 19:52,2026-08-01 08:43
+linear_digital_revenue_silver,silver,ideal_digital_serving_sales_order_accounts_map,Y,,2026-06-06 02:01,
+linear_digital_revenue_silver,silver,ideal_digital_serving_sales_order_contacts_map,Y,,2026-06-06 02:01,
+linear_digital_revenue_silver,silver,ideal_digital_serving_sales_order_custom_field,Y,Y,2026-08-20 19:53,2026-08-01 08:43
+linear_digital_revenue_silver,silver,ideal_digital_serving_sales_order_line_items,Y,Y,2026-08-20 19:52,2026-08-01 08:43
+linear_digital_revenue_silver,silver,ideal_digital_serving_sales_order_user_map,Y,,2026-06-06 02:53,
+linear_digital_revenue_silver,silver,ideal_digital_serving_sli_grouped_targeting,Y,,2026-06-06 02:11,
+linear_digital_revenue_silver,silver,ideal_digital_serving_sli_targeting_expression,Y,,2026-06-06 02:11,
+linear_digital_revenue_silver,silver,ideal_digital_serving_sli_text_targeting,Y,,2026-06-06 02:11,
+linear_digital_revenue_silver,silver,ideal_digital_serving_targeting,Y,,2026-06-06 02:11,
+linear_digital_revenue_silver,silver,ideal_digital_serving_targeting_options,Y,,2026-06-06 02:11,
+linear_digital_revenue_silver,silver,ideal_digital_serving_targeting_template_defaults,Y,,2026-09-11 22:25,
+linear_digital_revenue_silver,silver,ideal_digital_sli_grouped_targeting,Y,Y,2026-09-27 09:01,2026-08-01 08:43
+linear_digital_revenue_silver,silver,ideal_digital_sli_targeting_expression,Y,Y,2026-09-27 09:22,2026-08-01 08:43
+linear_digital_revenue_silver,silver,ideal_digital_sli_text_targeting,Y,Y,2026-09-27 09:22,2026-08-01 08:43
+linear_digital_revenue_silver,silver,ideal_digital_targeting,Y,Y,2026-09-27 09:03,2026-08-01 08:43
+linear_digital_revenue_silver,silver,ideal_digital_targeting_options,Y,Y,2026-10-04 09:02,2026-08-01 08:43
+linear_digital_revenue_silver,silver,ideal_digital_targeting_template_defaults,Y,,2026-09-03 18:58,
+linear_digital_revenue_silver,silver,ideal_digital_users,Y,Y,2026-09-27 09:09,2026-08-01 08:43
+linear_digital_revenue_silver,silver,ideal_last_sync_and_row_count,Y,Y,2026-10-07 16:22,2026-10-07 13:02
+linear_digital_revenue_silver,silver,ideal_linear_advertiser_prod,Y,Y,2026-09-20 09:35,2026-10-07 07:11
+linear_digital_revenue_silver,silver,ideal_linear_advertisers,Y,Y,2026-10-07 15:23,2026-10-07 15:31
+linear_digital_revenue_silver,silver,ideal_linear_agencies,Y,Y,2026-09-20 09:28,2026-10-07 07:18
+linear_digital_revenue_silver,silver,ideal_linear_at_demo,Y,Y,2026-09-22 20:02,2026-10-04 11:33
+linear_digital_revenue_silver,silver,ideal_linear_at_foresite,Y,Y,2026-09-20 09:45,2026-10-04 11:33
+linear_digital_revenue_silver,silver,ideal_linear_at_foresite_group,Y,Y,2026-09-20 09:45,2026-10-04 11:33
+linear_digital_revenue_silver,silver,ideal_linear_break_chunks,Y,Y,2026-10-06 21:52,2026-10-07 15:03
+linear_digital_revenue_silver,silver,ideal_linear_break_sid,Y,Y,2026-09-20 09:36,2026-10-07 11:25
+linear_digital_revenue_silver,silver,ideal_linear_bronze_rhn_test,Y,,2026-08-12 18:54,
+linear_digital_revenue_silver,silver,ideal_linear_bt_ut_rc_rev_area_map,Y,Y,2026-09-18 23:13,2026-10-04 07:23
+linear_digital_revenue_silver,silver,ideal_linear_calendar_qtr,Y,Y,2026-09-18 23:06,2026-10-04 07:14
+linear_digital_revenue_silver,silver,ideal_linear_calendar_week,Y,Y,2026-10-07 15:34,2026-10-04 07:13
+linear_digital_revenue_silver,silver,ideal_linear_canonical_rhn_test,Y,,2026-08-12 18:54,
+linear_digital_revenue_silver,silver,ideal_linear_canonical_test_table,Y,,2026-08-10 14:44,
+linear_digital_revenue_silver,silver,ideal_linear_chunk_spots,Y,Y,2026-10-06 22:23,2026-10-07 15:04
+linear_digital_revenue_silver,silver,ideal_linear_clone_clypd_dp_map,Y,Y,2026-10-07 15:34,2026-10-04 09:51
+linear_digital_revenue_silver,silver,ideal_linear_clone_dna_lkp,Y,Y,2026-10-07 15:23,2026-10-04 07:13
+linear_digital_revenue_silver,silver,ideal_linear_copylens,Y,Y,2026-09-20 09:41,2026-10-07 03:33
+linear_digital_revenue_silver,silver,ideal_linear_dashboard_curr_revenue_tc,Y,Y,2026-10-07 13:39,2026-10-07 15:12
+linear_digital_revenue_silver,silver,ideal_linear_deal_demos,Y,Y,2026-10-07 15:32,2026-10-07 15:13
+linear_digital_revenue_silver,silver,ideal_linear_deal_hdr,Y,Y,2026-09-22 20:04,2026-10-07 15:25
+linear_digital_revenue_silver,silver,ideal_linear_deal_header,Y,Y,2026-10-07 15:31,2026-10-07 15:08
+linear_digital_revenue_silver,silver,ideal_linear_deal_revision,Y,Y,2026-09-22 20:07,2026-10-07 15:21
+linear_digital_revenue_silver,silver,ideal_linear_deal_summary_data,Y,Y,2026-10-07 17:07,2026-10-06 20:01
+linear_digital_revenue_silver,silver,ideal_linear_ge_agencies,Y,Y,2026-10-07 15:20,2026-10-07 13:15
+linear_digital_revenue_silver,silver,ideal_linear_ge_air_byte,Y,Y,2026-09-18 23:06,2026-10-04 07:12
+linear_digital_revenue_silver,silver,ideal_linear_ge_brand,Y,Y,2026-10-07 15:20,2026-10-07 09:17
+linear_digital_revenue_silver,silver,ideal_linear_ge_buy,Y,Y,2026-10-07 15:33,2026-10-07 15:22
+linear_digital_revenue_silver,silver,ideal_linear_ge_calendar_qtrs,Y,Y,2026-09-18 23:06,2026-10-04 07:13
+linear_digital_revenue_silver,silver,ideal_linear_ge_daypart_defn,Y,Y,2026-09-18 23:14,2026-09-01 18:40
+linear_digital_revenue_silver,silver,ideal_linear_ge_daypart_dtl,Y,Y,2026-09-18 23:14,2026-09-01 19:13
+linear_digital_revenue_silver,silver,ideal_linear_ge_demos,Y,Y,2026-10-07 15:21,2026-10-04 07:16
+linear_digital_revenue_silver,silver,ideal_linear_ge_ge_daypart,Y,Y,2026-09-18 23:14,2026-09-01 18:24
+linear_digital_revenue_silver,silver,ideal_linear_ge_ge_net_broadcast_time,Y,Y,2026-09-18 23:15,2026-09-01 19:29
+linear_digital_revenue_silver,silver,ideal_linear_ge_net,Y,Y,2026-10-07 15:30,2026-10-04 07:10
+linear_digital_revenue_silver,silver,ideal_linear_ge_net_daypart,Y,Y,2026-09-18 23:14,2026-09-01 18:57
+linear_digital_revenue_silver,silver,ideal_linear_ge_net_group,Y,Y,2026-10-07 15:30,2026-10-04 07:13
+linear_digital_revenue_silver,silver,ideal_linear_ge_net_group_map,Y,Y,2026-09-18 23:01,2026-10-04 07:14
+linear_digital_revenue_silver,silver,ideal_linear_ge_prod,Y,Y,2026-10-07 15:23,2026-10-04 07:16
+linear_digital_revenue_silver,silver,ideal_linear_ge_unit_type,Y,Y,2026-10-07 15:21,2026-10-07 15:18
+linear_digital_revenue_silver,silver,ideal_linear_ge_user,Y,Y,2026-09-18 23:01,2026-10-07 07:05
+linear_digital_revenue_silver,silver,ideal_linear_hh_demo_map,Y,,2026-06-13 15:37,
+linear_digital_revenue_silver,silver,ideal_linear_ice_deal,Y,Y,2026-10-07 15:33,2026-10-07 15:26
+linear_digital_revenue_silver,silver,ideal_linear_idl_agencies,Y,Y,2026-09-18 23:03,2026-10-07 07:17
+linear_digital_revenue_silver,silver,ideal_linear_idl_clone_clypd_dp_map,,Y,,2026-08-01 08:44
+linear_digital_revenue_silver,silver,ideal_linear_idl_clone_prem_nyq,Y,Y,2026-09-18 23:02,2026-10-04 07:14
+linear_digital_revenue_silver,silver,ideal_linear_idl_deal_type,Y,Y,2026-10-07 15:21,2026-10-04 07:11
+linear_digital_revenue_silver,silver,ideal_linear_idl_hh_demo_map,Y,Y,2026-10-07 15:34,2026-10-06 22:09
+linear_digital_revenue_silver,silver,ideal_linear_inventory_bucket_type,Y,Y,2026-09-18 23:05,2026-10-04 07:12
+linear_digital_revenue_silver,silver,ideal_linear_inventory_cat_s,Y,Y,2026-09-18 23:13,2026-10-04 07:15
+linear_digital_revenue_silver,silver,ideal_linear_inventory_type,Y,Y,2026-09-18 23:13,2026-10-04 07:19
+linear_digital_revenue_silver,silver,ideal_linear_market_type,Y,Y,2026-10-07 15:22,2026-10-04 07:12
+linear_digital_revenue_silver,silver,ideal_linear_master_sell_map,Y,Y,2026-09-18 23:04,2026-10-07 11:10
+linear_digital_revenue_silver,silver,ideal_linear_master_sell_names,Y,Y,2026-10-07 15:22,2026-10-04 07:15
+linear_digital_revenue_silver,silver,ideal_linear_mega_agency,Y,Y,2026-09-18 23:04,2026-10-04 07:13
+linear_digital_revenue_silver,silver,ideal_linear_net,Y,Y,2026-09-18 23:09,2026-10-04 07:22
+linear_digital_revenue_silver,silver,ideal_linear_order_header,Y,Y,2026-10-07 06:34,2026-10-07 17:07
+linear_digital_revenue_silver,silver,ideal_linear_order_inventory,Y,Y,2026-09-22 20:09,2026-10-07 15:19
+linear_digital_revenue_silver,silver,ideal_linear_order_line,Y,Y,2026-10-07 15:26,2026-10-07 17:06
+linear_digital_revenue_silver,silver,ideal_linear_order_line_sell,Y,Y,2026-10-07 15:28,2026-10-07 17:07
+linear_digital_revenue_silver,silver,ideal_linear_order_line_sell_weeks,Y,Y,2026-10-07 15:29,2026-10-07 17:06
+linear_digital_revenue_silver,silver,ideal_linear_p_sch,Y,Y,2026-10-06 21:49,2026-10-07 15:23
+linear_digital_revenue_silver,silver,ideal_linear_pr_names,Y,Y,2026-09-23 04:31,2026-10-07 11:07
+linear_digital_revenue_silver,silver,ideal_linear_primary_prod,Y,Y,2026-09-20 09:43,2026-10-07 07:29
+linear_digital_revenue_silver,silver,ideal_linear_ps_feed,Y,Y,2026-09-18 23:09,2026-10-04 07:14
+linear_digital_revenue_silver,silver,ideal_linear_psp_overlap_sell_title,Y,Y,2026-09-20 09:34,2026-10-07 03:32
+linear_digital_revenue_silver,silver,ideal_linear_r_composite_demo_bld_from_atom,Y,Y,2026-09-20 09:25,2026-10-04 07:11
+linear_digital_revenue_silver,silver,ideal_linear_ratecard_demopph,Y,Y,2026-09-20 09:26,2026-10-07 11:16
+linear_digital_revenue_silver,silver,ideal_linear_ratecard_demovpvh,Y,Y,2026-10-05 21:46,2026-10-07 11:12
+linear_digital_revenue_silver,silver,ideal_linear_ratecard_est_method,Y,Y,2026-10-07 15:23,2026-10-04 07:20
+linear_digital_revenue_silver,silver,ideal_linear_ratecard_header,Y,Y,2026-09-20 09:24,2026-10-07 11:09
+linear_digital_revenue_silver,silver,ideal_linear_ratecard_playparts,Y,Y,2026-10-07 15:30,2026-10-07 17:07
+linear_digital_revenue_silver,silver,ideal_linear_ratecard_ratings,Y,Y,2026-10-07 15:32,2026-10-07 17:08
+linear_digital_revenue_silver,silver,ideal_linear_rateclass,Y,Y,2026-09-18 23:12,2026-10-04 07:14
+linear_digital_revenue_silver,silver,ideal_linear_s_obj,Y,Y,2026-10-06 22:28,2026-10-07 11:12
+linear_digital_revenue_silver,silver,ideal_linear_s_obj_group,Y,Y,2026-10-07 15:33,2026-10-07 11:16
+linear_digital_revenue_silver,silver,ideal_linear_sell_constraints,Y,Y,2026-10-07 06:35,2026-10-07 17:06
+linear_digital_revenue_silver,silver,ideal_linear_sell_division,Y,Y,2026-10-07 15:24,2026-10-04 07:19
+linear_digital_revenue_silver,silver,ideal_linear_sell_property_category,Y,Y,2026-10-07 15:24,2026-10-04 07:16
+linear_digital_revenue_silver,silver,ideal_linear_serving_adu,Y,Y,2026-10-07 06:29,2026-10-04 21:35
+linear_digital_revenue_silver,silver,ideal_linear_serving_adv_booked_units,Y,Y,2026-10-07 15:15,2026-10-07 09:13
+linear_digital_revenue_silver,silver,ideal_linear_serving_advertisers,Y,Y,2026-10-07 15:09,2026-10-07 13:04
+linear_digital_revenue_silver,silver,ideal_linear_serving_agency,Y,Y,2026-10-07 15:10,2026-10-07 09:07
+linear_digital_revenue_silver,silver,ideal_linear_serving_broadcast_week_3nf,Y,,2026-10-06 18:27,
+linear_digital_revenue_silver,silver,ideal_linear_serving_buying_ae,Y,,2026-10-07 15:17,
+linear_digital_revenue_silver,silver,ideal_linear_serving_calendar_week,Y,Y,2026-10-07 15:17,2026-10-01 07:10
+linear_digital_revenue_silver,silver,ideal_linear_serving_clone_dna_lkp,Y,Y,2026-10-07 15:16,2026-08-31 23:44
+linear_digital_revenue_silver,silver,ideal_linear_serving_constraint_type,Y,Y,2026-10-07 15:12,2026-10-07 17:00
+linear_digital_revenue_silver,silver,ideal_linear_serving_daypart,Y,Y,2026-10-07 06:23,2026-10-07 16:34
+linear_digital_revenue_silver,silver,ideal_linear_serving_daypart_mix,Y,Y,2026-10-07 15:14,2026-10-07 17:01
+linear_digital_revenue_silver,silver,ideal_linear_serving_deal_type,Y,Y,2026-10-07 15:12,2026-09-04 23:23
+linear_digital_revenue_silver,silver,ideal_linear_serving_deals,Y,Y,2026-10-07 15:00,2026-10-06 21:24
+linear_digital_revenue_silver,silver,ideal_linear_serving_est_methodology,Y,Y,2026-10-07 15:16,2026-09-04 06:20
+linear_digital_revenue_silver,silver,ideal_linear_serving_ge_brand,Y,Y,2026-10-07 15:11,2026-10-07 09:10
+linear_digital_revenue_silver,silver,ideal_linear_serving_ge_demos,Y,Y,2026-10-07 15:10,2026-10-04 04:15
+linear_digital_revenue_silver,silver,ideal_linear_serving_ge_network,Y,Y,2026-10-07 14:56,2026-09-24 22:56
+linear_digital_revenue_silver,silver,ideal_linear_serving_ge_network_3nf,Y,,2026-10-06 18:27,
+linear_digital_revenue_silver,silver,ideal_linear_serving_ge_unit_type,Y,Y,2026-10-07 15:11,2026-09-04 23:22
+linear_digital_revenue_silver,silver,ideal_linear_serving_industry,Y,Y,2026-10-07 15:15,2026-09-30 00:38
+linear_digital_revenue_silver,silver,ideal_linear_serving_inventory,Y,Y,2026-10-07 15:13,2026-10-07 17:01
+linear_digital_revenue_silver,silver,ideal_linear_serving_inventory_3nf,Y,,2026-10-06 18:27,
+linear_digital_revenue_silver,silver,ideal_linear_serving_line_sell_constraints,Y,Y,2026-10-07 06:25,2026-10-07 16:54
+linear_digital_revenue_silver,silver,ideal_linear_serving_market_type,Y,Y,2026-10-07 15:10,2026-09-05 06:35
+linear_digital_revenue_silver,silver,ideal_linear_serving_net_group_3nf,Y,,2026-10-06 18:28,
+linear_digital_revenue_silver,silver,ideal_linear_serving_network_3nf,Y,,2026-10-06 18:28,
+linear_digital_revenue_silver,silver,ideal_linear_serving_order_line,Y,Y,2026-10-07 15:02,2026-10-07 16:44
+linear_digital_revenue_silver,silver,ideal_linear_serving_order_line_sell,Y,Y,2026-10-07 15:05,2026-10-07 16:49
+linear_digital_revenue_silver,silver,ideal_linear_serving_order_line_sell_weeks,Y,Y,2026-10-07 15:07,2026-10-07 16:51
+linear_digital_revenue_silver,silver,ideal_linear_serving_orders,Y,Y,2026-10-07 06:23,2026-10-07 16:37
+linear_digital_revenue_silver,silver,ideal_linear_serving_payee_address_3nf,Y,,2026-10-06 18:28,
+linear_digital_revenue_silver,silver,ideal_linear_serving_product_category,Y,Y,2026-10-07 15:16,2026-08-31 22:27
+linear_digital_revenue_silver,silver,ideal_linear_serving_ratecard,Y,Y,2026-10-07 06:28,2026-10-07 17:03
+linear_digital_revenue_silver,silver,ideal_linear_serving_ratecard_forecast,Y,Y,2026-10-07 15:14,2026-10-07 17:02
+linear_digital_revenue_silver,silver,ideal_linear_serving_ratecard_playparts,Y,Y,2026-10-07 14:56,2026-10-07 16:35
+linear_digital_revenue_silver,silver,ideal_linear_serving_ratecard_ratings,Y,Y,2026-10-07 15:11,2026-10-07 16:57
+linear_digital_revenue_silver,silver,ideal_linear_serving_rhn_test,Y,,2026-08-12 18:54,
+linear_digital_revenue_silver,silver,ideal_linear_serving_ros_titles,Y,Y,2026-10-07 15:17,2026-08-31 22:35
+linear_digital_revenue_silver,silver,ideal_linear_serving_selling_title,Y,Y,2026-10-07 15:12,2026-09-22 09:22
+linear_digital_revenue_silver,silver,ideal_linear_serving_selling_title_3nf,Y,,2026-10-06 18:26,
+linear_digital_revenue_silver,silver,ideal_linear_serving_selling_title_network_map,Y,Y,2026-10-07 15:13,2026-10-07 13:09
+linear_digital_revenue_silver,silver,ideal_linear_serving_selling_title_obj_group,Y,,2026-10-07 06:28,
+linear_digital_revenue_silver,silver,ideal_linear_serving_vertical,Y,Y,2026-10-07 15:15,2026-09-01 00:10
+linear_digital_revenue_silver,silver,ideal_linear_sf_contract,Y,Y,2026-09-23 03:56,2026-10-06 23:31
+linear_digital_revenue_silver,silver,ideal_linear_stw_calendar_weeks,Y,,2026-09-10 16:59,
+linear_digital_revenue_silver,silver,ideal_linear_stw_deal,Y,,2026-09-23 23:05,
+linear_digital_revenue_silver,silver,ideal_linear_stw_deal_demo,Y,Y,2026-09-22 22:07,2026-10-04 11:36
+linear_digital_revenue_silver,silver,ideal_linear_stw_deal_methodology_stg,Y,,2026-09-23 23:05,
+linear_digital_revenue_silver,silver,ideal_linear_stw_demo,Y,,2026-09-23 23:06,
+linear_digital_revenue_silver,silver,ideal_linear_stw_demo_composition,Y,,2026-09-20 09:50,
+linear_digital_revenue_silver,silver,ideal_linear_stw_impression,Y,Y,2026-10-06 20:31,2026-10-04 13:19
+linear_digital_revenue_silver,silver,ideal_linear_stw_network,Y,Y,2026-09-21 17:57,2026-09-01 20:27
+linear_digital_revenue_silver,silver,ideal_linear_stw_unit,Y,Y,2026-09-22 22:06,2026-10-04 11:36
+linear_digital_revenue_silver,silver,ideal_linear_stw_unit_impression,Y,Y,2026-09-22 22:49,2026-10-04 11:52
+linear_digital_revenue_silver,silver,ideal_linear_units,Y,Y,2026-10-06 22:27,2026-10-07 15:22
+linear_digital_revenue_silver,silver,ideal_linear_x_inventory_r,Y,Y,2026-09-20 09:30,2026-10-07 15:20
+linear_digital_revenue_silver,silver,ideal_msa_ge_unit_type,Y,,2026-05-29 00:13,
+linear_digital_revenue_silver,silver,ideal_tables_row_count,Y,,2026-07-21 16:32,
+linear_digital_revenue_silver,silver,impression_dimensions,Y,,2026-10-01 00:35,
+linear_digital_revenue_silver,silver,impression_fact,Y,,2026-10-05 09:32,
+linear_digital_revenue_silver,silver,job_watermarks,Y,Y,2026-10-07 17:07,2026-10-07 17:08
+linear_digital_revenue_silver,silver,linear_rate_card,Y,,2026-09-22 15:23,
+linear_digital_revenue_silver,silver,poc_customer_details,Y,,2026-08-21 15:25,
+linear_digital_revenue_silver,silver,poc_package_details,Y,,2026-08-21 15:26,
+linear_digital_revenue_silver,silver,test_bronze_product,Y,,2026-08-10 17:03,
+linear_digital_revenue_silver,silver,test_canonical_customer_orders,Y,Y,2026-07-09 20:01,2026-08-01 08:46
+linear_digital_revenue_silver,silver,test_canonical_product,Y,,2026-08-10 18:55,
+linear_digital_revenue_silver,silver,test_customer_orders,Y,,2026-07-08 20:02,
+linear_digital_revenue_silver,silver,test_ideal_linear_market_type,Y,Y,2026-07-13 18:06,2026-08-01 08:46
+linear_digital_revenue_silver,silver,test_ideal_linear_ratecard_playparts,Y,,2026-07-08 13:24,
+linear_digital_revenue_silver,silver,test_ideal_linear_serving_market_type,Y,Y,2026-07-16 18:33,2026-08-01 08:46
+linear_digital_revenue_silver,silver,test_ideal_linear_serving_ratecard_playparts,Y,,2026-07-08 13:28,
+linear_digital_revenue_silver,silver,test_serving_customer,Y,Y,2026-07-16 19:41,2026-08-01 08:46
+linear_digital_revenue_silver,silver,test_serving_customer_orders,Y,Y,2026-07-16 19:42,2026-08-01 08:46
+linear_digital_revenue_silver,silver,test_serving_orders,Y,Y,2026-07-16 19:42,2026-08-01 08:46
+linear_digital_revenue_silver,silver,test_serving_product,Y,,2026-08-10 19:33,
+linear_digital_revenue_silver,silver,ui_ideal_dealbldr_dci_orders,Y,,2026-05-12 20:16,
+linear_digital_revenue_silver,silver,ump_job_audit,Y,Y,2026-10-07 17:07,2026-10-07 17:13
+linear_forecasting_bronze,bronze,dim_forecast_run,Y,,2026-10-01 17:43,
+linear_forecasting_gold,gold,fct_forecast_current,Y,,2026-10-01 17:43,
+linear_forecasting_silver,silver,dim_broadcast_date,Y,,2026-10-01 17:43,
+linear_forecasting_silver,silver,dim_demo,Y,,2026-10-01 17:44,
+linear_forecasting_silver,silver,dim_network,Y,,2026-10-01 17:43,
+linear_forecasting_silver,silver,fct_lf_training,Y,,2026-10-01 17:44,
+linear_forecasting_silver,silver,int_schedule_program_qh,Y,,2026-10-01 17:43,
+linear_forecasting_silver,silver,int_viewership_telecast_qh,Y,,2026-10-01 17:44,
+marketshare_bronze,bronze,dimadintelattribute,Y,Y,2026-10-01 09:05,2026-10-01 09:05
+marketshare_bronze,bronze,dimadvertiserbrand,Y,Y,2026-10-01 09:06,2026-10-01 09:06
+marketshare_bronze,bronze,dimdaypart,Y,Y,2026-10-01 09:06,2026-10-01 09:06
+marketshare_bronze,bronze,dimmediatype,Y,Y,2026-10-01 09:06,2026-10-01 09:06
+marketshare_bronze,bronze,dimnetwork,Y,Y,2026-10-01 09:07,2026-10-01 09:06
+marketshare_bronze,bronze,dimnetworkprogramnamemapping,Y,Y,2026-10-01 09:07,2026-10-01 09:07
+marketshare_bronze,bronze,dimprogramdescriptor,Y,Y,2026-10-01 09:07,2026-10-01 09:07
+marketshare_bronze,bronze,dimtimeshiftedviewing,Y,Y,2026-10-01 09:09,2026-10-01 09:09
+marketshare_bronze,bronze,factadintel,Y,Y,2026-10-01 09:13,2026-10-01 09:13
+marketshare_bronze,bronze,factprogram,Y,Y,2026-10-01 09:24,2026-10-01 09:25
+neo_audit,audit,dq_results,Y,,2026-10-07 17:18,
+neo_bronze,bronze,adjuster_impressions,Y,,2026-10-06 19:32,
+neo_bronze,bronze,advertisers,Y,,2026-10-06 19:35,
+neo_bronze,bronze,agencies,Y,,2026-10-06 19:35,
+neo_bronze,bronze,campaigns,Y,,2026-10-06 19:35,
+neo_bronze,bronze,clearline_creative_impressions,Y,,2026-10-07 16:54,
+neo_bronze,bronze,creative_deal,Y,,2026-10-06 19:35,
+neo_bronze,bronze,creatives,Y,,2026-10-06 19:35,
+neo_bronze,bronze,deals,Y,,2026-10-06 19:34,
+neo_bronze,bronze,deals_external,Y,,2026-10-06 19:35,
+neo_bronze,bronze,demand_tag_deal,Y,,2026-10-06 19:35,
+neo_bronze,bronze,demand_tags,Y,,2026-10-06 19:35,
+neo_bronze,bronze,neo_intraday_ad_stream,Y,,2026-10-07 16:54,
+neo_gold,gold,rpt_advertiser_summary,Y,,2026-10-07 17:09,
+neo_gold,gold,rpt_content_performance,Y,,2026-10-07 17:14,
+neo_gold,gold,rpt_creative_delivery,Y,,2026-10-07 17:14,
+neo_gold,gold,rpt_deal_daily_metrics,Y,,2026-10-07 17:09,
+neo_gold,gold,rpt_deal_delivery_enrichment,Y,,2026-10-07 17:15,
+neo_gold,gold,rpt_discrepancy,Y,,2026-10-06 21:12,
+neo_gold,gold,rpt_package_performance,Y,,2026-10-07 17:15,
+neo_silver,silver,dim_advertisers,Y,,2026-10-07 17:01,
+neo_silver,silver,dim_campaigns,Y,,2026-10-07 17:01,
+neo_silver,silver,dim_deals,Y,,2026-10-07 17:01,
+neo_silver,silver,dim_networks,Y,,2026-10-07 17:03,
+neo_silver,silver,dim_placements,Y,,2026-10-07 17:02,
+neo_silver,silver,fct_creative_impressions_ng,Y,,2026-10-07 17:05,
+neo_silver,silver,fct_deal_impressions,Y,,2026-10-07 17:25,
+nrld_bronze,bronze,advertisement,Y,,2026-10-07 17:32,
+nrld_bronze,bronze,advertisement_event,Y,,2026-10-07 17:32,
+nrld_bronze,bronze,code_description_mapping,Y,,2026-10-07 17:32,
+nrld_bronze,bronze,dtvr_household_person_program_coded_viewing_event,Y,,2026-10-07 17:36,
+nrld_bronze,bronze,market_break_universe_estimates_with_adjustment_factor,Y,,2026-10-07 17:32,
+nrld_bronze,bronze,mdr_national_data_availability,Y,,2026-10-07 17:32,
+nrld_bronze,bronze,originator_lineup,Y,,2026-10-07 17:32,
+nrld_bronze,bronze,tv_household_person_characteristics,Y,,2026-10-07 17:36,
+nrld_bronze,bronze,tv_household_person_program_coded_viewing_event,Y,,2026-10-07 05:21,
+nrld_bronze,bronze,tv_household_person_weight,Y,,2026-10-07 17:36,
+nrld_bronze,bronze,tv_household_weight,Y,,2026-10-07 17:37,
+nrld_bronze,bronze,universe_estimate,Y,,2026-10-07 17:37,
+operative1_bronze,bronze,sales_order_accounts_map,,Y,,2026-10-06 19:58
+operative1_bronze,bronze,sales_order_contacts_map,,Y,,2026-10-06 19:58
+operative1_bronze,bronze,sales_order_users_map,,Y,,2026-10-06 19:58
+operative1_bronze,bronze,sli_targeting_expression,,Y,,2026-10-06 19:59
+operative1_bronze,bronze,sli_text_targeting,,Y,,2026-10-06 19:58
+operative1_bronze,bronze,targeting,,Y,,2026-10-06 19:59
+operative1_bronze,bronze,targeting_option,,Y,,2026-06-30 19:55
+operative1_bronze,bronze,targeting_options,,Y,,2026-10-06 19:59
+operative_bronze,bronze,access_groups,Y,Y,2026-10-07 15:47,2026-10-07 15:49
+operative_bronze,bronze,access_groups_products_map,Y,Y,2026-10-07 15:44,2026-10-07 15:45
+operative_bronze,bronze,access_groups_users_map,Y,Y,2026-10-07 15:48,2026-10-07 15:46
+operative_bronze,bronze,accounts,Y,Y,2026-10-07 15:37,2026-10-07 15:37
+operative_bronze,bronze,accounts_custom_field,Y,Y,2026-10-07 15:44,2026-10-07 15:45
+operative_bronze,bronze,ad_slot,Y,Y,2026-10-07 15:47,2026-10-07 15:46
+operative_bronze,bronze,billing_period,Y,Y,2026-10-07 15:49,2026-10-07 15:48
+operative_bronze,bronze,billing_terms,Y,Y,2026-10-07 15:49,2026-10-07 15:51
+operative_bronze,bronze,catalog_hierarchy,Y,Y,2026-10-07 15:50,2026-10-07 15:49
+operative_bronze,bronze,contacts,Y,Y,2026-10-07 15:46,2026-10-07 15:47
+operative_bronze,bronze,contacts_custom_field,Y,Y,2026-10-07 15:43,2026-10-07 15:46
+operative_bronze,bronze,contracts,Y,Y,2026-10-07 15:50,2026-10-07 15:51
+operative_bronze,bronze,contracts_accounts_map,Y,Y,2026-10-07 15:50,2026-10-07 15:52
+operative_bronze,bronze,creative_specs,Y,Y,2026-10-07 15:51,2026-10-07 15:51
+operative_bronze,bronze,currency,Y,Y,2026-10-07 15:38,2026-10-07 15:41
+operative_bronze,bronze,currency_exchange_rate,Y,Y,2026-10-07 15:43,2026-10-07 15:42
+operative_bronze,bronze,currency_exchange_rate_forecast,Y,Y,2026-10-07 15:41,2026-10-07 15:42
+operative_bronze,bronze,discount_profiles,Y,Y,2026-10-07 15:48,2026-10-07 15:50
+operative_bronze,bronze,invoice,Y,Y,2026-10-07 15:40,2026-10-07 15:40
+operative_bronze,bronze,invoice_line_item,Y,Y,2026-10-07 15:38,2026-10-07 15:38
+operative_bronze,bronze,metric_delivery_source_profile_map,Y,Y,2026-10-07 15:47,2026-10-07 15:49
+operative_bronze,bronze,order_line_item_discount_details,Y,Y,2026-10-07 15:42,2026-10-07 15:45
+operative_bronze,bronze,organization,Y,Y,2026-10-07 15:43,2026-10-07 15:43
+operative_bronze,bronze,preset_schedule,Y,Y,2026-10-07 15:46,2026-10-07 15:47
+operative_bronze,bronze,primary_delivery,Y,Y,2026-10-07 15:44,2026-10-07 15:44
+operative_bronze,bronze,product_ad_slot_map,Y,Y,2026-10-07 15:44,2026-10-07 15:46
+operative_bronze,bronze,product_cost_method_price,Y,Y,2026-10-07 15:45,2026-10-07 15:44
+operative_bronze,bronze,product_custom_field,Y,Y,2026-10-07 15:36,2026-10-07 15:39
+operative_bronze,bronze,product_embedded_group_targeting,Y,Y,2026-10-07 15:42,2026-10-07 15:43
+operative_bronze,bronze,product_embedded_targeting_map,Y,Y,2026-10-07 15:39,2026-10-07 15:40
+operative_bronze,bronze,product_embedded_text_targeting,Y,Y,2026-10-07 15:40,2026-10-07 15:42
+operative_bronze,bronze,product_location_map,Y,Y,2026-10-07 15:45,2026-10-07 15:48
+operative_bronze,bronze,product_package_map,Y,Y,2026-10-07 15:39,2026-10-07 15:39
+operative_bronze,bronze,product_rate_card_properties,Y,Y,2026-10-07 15:37,2026-10-07 15:38
+operative_bronze,bronze,production_line_item,Y,Y,2026-10-07 15:33,2026-10-07 15:34
+operative_bronze,bronze,production_line_item_po,Y,Y,2026-10-07 15:41,2026-10-07 15:45
+operative_bronze,bronze,production_line_item_targets,Y,Y,2026-10-07 05:44,2026-10-07 05:45
+operative_bronze,bronze,production_line_item_text_targets,Y,Y,2026-10-07 05:46,2026-10-07 05:46
+operative_bronze,bronze,production_system,Y,Y,2026-10-07 15:47,2026-10-07 15:50
+operative_bronze,bronze,products,Y,Y,2026-10-07 15:41,2026-10-07 15:40
+operative_bronze,bronze,ps_advertiser,Y,Y,2026-10-07 15:46,2026-10-07 15:47
+operative_bronze,bronze,ps_advertiser_accounts_map,Y,Y,2026-10-07 15:45,2026-10-07 15:47
+operative_bronze,bronze,publisher_system_ad,Y,Y,2026-10-07 15:42,2026-10-07 15:43
+operative_bronze,bronze,publisher_system_ad_prod_line_item_map,Y,Y,2026-10-07 15:33,2026-10-07 15:38
+operative_bronze,bronze,rate_card,Y,Y,2026-10-07 15:48,2026-10-07 15:49
+operative_bronze,bronze,rate_card_pricing_period,Y,Y,2026-10-07 15:49,2026-10-07 15:51
+operative_bronze,bronze,rate_card_restriction_map,Y,Y,2026-10-07 15:52,2026-10-07 15:51
+operative_bronze,bronze,sales_line_item_booked_delivered,Y,Y,2026-10-07 15:37,2026-10-07 15:37
+operative_bronze,bronze,sales_line_item_targeting,Y,Y,2026-10-07 15:36,2026-10-07 15:37
+operative_bronze,bronze,sales_order,Y,Y,2026-10-07 15:35,2026-10-07 15:39
+operative_bronze,bronze,sales_order_accounts_contacts_team_map,Y,Y,2026-10-07 15:43,2026-10-07 15:43
+operative_bronze,bronze,sales_order_accounts_map,Y,Y,2026-10-07 15:42,2026-10-07 15:45
+operative_bronze,bronze,sales_order_approvals,Y,Y,2026-10-07 15:35,2026-10-07 15:38
+operative_bronze,bronze,sales_order_contacts_map,Y,Y,2026-10-07 15:44,2026-10-07 15:47
+operative_bronze,bronze,sales_order_custom_field,Y,Y,2026-10-07 15:33,2026-10-07 15:35
+operative_bronze,bronze,sales_order_line_item_custom_field,Y,Y,2026-10-07 15:36,2026-10-07 15:37
+operative_bronze,bronze,sales_order_line_items,Y,Y,2026-10-07 15:33,2026-10-07 15:36
+operative_bronze,bronze,sales_order_line_items_reservation,Y,Y,2026-10-07 15:42,2026-10-07 15:43
+operative_bronze,bronze,sales_order_programmatic_guaranteed,Y,Y,2026-10-07 15:50,2026-10-07 15:53
+operative_bronze,bronze,sales_order_type,Y,Y,2026-10-07 15:49,2026-10-07 15:52
+operative_bronze,bronze,sales_order_users_map,Y,Y,2026-10-07 15:38,2026-10-07 15:39
+operative_bronze,bronze,sales_stages,Y,Y,2026-10-07 15:50,2026-10-07 15:50
+operative_bronze,bronze,sli_grouped_targeting,Y,Y,2026-10-07 15:35,2026-10-07 15:34
+operative_bronze,bronze,sli_programmatic_guaranteed,Y,Y,2026-10-07 15:51,2026-10-07 15:49
+operative_bronze,bronze,sli_targeting_expression,Y,Y,2026-10-07 15:43,2026-10-07 15:47
+operative_bronze,bronze,sli_text_targeting,Y,Y,2026-10-07 15:32,2026-10-07 15:37
+operative_bronze,bronze,tag_map,Y,Y,2026-10-07 15:48,2026-10-07 15:48
+operative_bronze,bronze,tags,Y,Y,2026-10-07 15:52,2026-10-07 15:51
+operative_bronze,bronze,targeting,Y,Y,2026-10-07 15:39,2026-10-07 15:40
+operative_bronze,bronze,targeting_options,Y,Y,2026-10-07 15:33,2026-10-07 15:34
+operative_bronze,bronze,targeting_premiums,Y,Y,2026-10-07 15:38,2026-10-07 15:41
+operative_bronze,bronze,targeting_premiums_rate_card_map,Y,Y,2026-10-07 15:40,2026-10-07 15:42
+operative_bronze,bronze,targeting_templates,Y,Y,2026-10-07 15:39,2026-10-07 15:39
+operative_bronze,bronze,targeting_templates_defaults,Y,Y,2026-10-07 15:49,2026-10-07 15:48
+operative_bronze,bronze,targeting_text_map,Y,Y,2026-10-07 15:44,2026-10-07 15:45
+operative_bronze,bronze,terms_conditions,Y,Y,2026-10-07 15:48,2026-10-07 15:50
+operative_bronze,bronze,third_party_system_ad,Y,Y,2026-10-07 15:40,2026-10-07 15:43
+operative_bronze,bronze,ticket,Y,Y,2026-10-07 15:38,2026-10-07 15:40
+operative_bronze,bronze,ticket_assignee,Y,Y,2026-10-07 15:36,2026-10-07 15:38
+operative_bronze,bronze,user_organization_map,Y,Y,2026-10-07 15:45,2026-10-07 15:48
+operative_bronze,bronze,users,Y,Y,2026-10-07 15:45,2026-10-07 15:49
+quicksight_usage_bronze,bronze,cloudtrail_quicksight_events,Y,Y,2026-10-07 16:46,2026-10-07 06:46
+quicksight_usage_bronze,bronze,cloudwatch_quicksight_metrics,Y,Y,2026-10-07 15:45,2026-10-07 06:46
+quicksight_usage_bronze,bronze,iam_group_users,Y,Y,2026-10-07 17:33,2026-10-07 17:34
+quicksight_usage_bronze,bronze,identity_center_users,Y,Y,2026-10-07 17:32,2026-10-07 17:33
+quicksight_usage_bronze,bronze,quicksight_resources,Y,Y,2026-10-07 15:47,2026-10-07 06:46
+quicksight_usage_gold,gold,quicksight_metrics,Y,Y,2026-10-07 16:50,2026-10-07 16:49
+quicksight_usage_silver,silver,cloudtrail_quicksight_events,Y,Y,2026-10-07 16:48,2026-10-07 16:48
+quicksight_usage_silver,silver,cloudwatch_quicksight_metrics,Y,Y,2026-10-07 16:47,2026-10-07 16:47
+quicksight_usage_silver,silver,iam_group_users,Y,Y,2026-10-07 16:48,2026-10-07 16:48
+quicksight_usage_silver,silver,identity_center_users,Y,Y,2026-10-07 16:48,2026-10-07 16:48
+test_catalog,unknown,bts_dla_bronze_btsview_sde_contractstatus,Y,,2026-08-30 22:16,
+test_catalog,unknown,bts_dla_bronze_btsviewadvertisers,Y,,2026-08-30 22:08,
+test_catalog,unknown,bts_dla_bronze_btsviewagents,Y,,2026-08-30 22:08,
+test_catalog,unknown,bts_dla_bronze_btsviewbillingstatusmonthly,Y,,2026-08-30 22:09,
+test_catalog,unknown,bts_dla_bronze_btsviewcampaigns,Y,,2026-08-30 22:11,
+test_catalog,unknown,bts_dla_bronze_btsviewdigital,Y,,2026-08-30 22:11,
+test_catalog,unknown,bts_dla_bronze_btsviewproducts,Y,,2026-08-30 22:11,
+test_catalog,unknown,bts_dla_bronze_btsviewproducttypes,Y,,2026-08-30 22:12,
+test_catalog,unknown,bts_dla_bronze_sales_dataextract_audit,Y,,2026-08-30 22:03,
+test_catalog,unknown,bts_dla_bronze_sales_dataextract_breaks,Y,,2026-08-30 22:21,
+test_catalog,unknown,bts_dla_bronze_sales_dataextract_campaigns,Y,,2026-08-30 22:03,
+test_catalog,unknown,bts_dla_bronze_sales_dataextract_campaigns_reps,Y,,2026-08-30 22:03,
+test_catalog,unknown,bts_dla_bronze_sales_dataextract_digital,Y,,2026-08-30 22:03,
+test_catalog,unknown,bts_dla_bronze_sales_dataextract_invoicedet,Y,,2026-08-30 22:05,
+test_catalog,unknown,bts_dla_bronze_sales_dataextract_invoices,Y,,2026-08-30 22:05,
+test_catalog,unknown,bts_dla_bronze_sales_dataextract_spots,Y,,2026-08-30 22:39,
+test_catalog,unknown,bts_dla_bronze_sales_deal,Y,,2026-08-30 22:05,
+test_catalog,unknown,bts_dla_bronze_sales_fin_close_monthly_audit,Y,,2026-08-30 22:06,
+test_catalog,unknown,bts_dla_bronze_sales_revenue_batch,Y,,2026-08-30 22:06,
+test_catalog,unknown,bts_dla_bronze_sales_revenue_batch_data,Y,,2026-08-30 22:10,
+test_catalog,unknown,bts_dla_bronze_territory_defaults,Y,,2026-08-30 22:07,
+test_catalog,unknown,bts_invoices_src_dla,Y,,2026-09-04 13:08,
+test_catalog,unknown,dq_check_result,Y,,2026-07-07 14:54,
+test_catalog,unknown,ideal_posting_stw_raw_nielsen_data_arch,Y,,2026-09-22 16:37,
+test_catalog,unknown,impression_fact,Y,,2026-09-19 23:22,
+test_catalog,unknown,infra_test_ideal_dci_ratecard_demovpvh,Y,,2026-09-02 11:36,
+test_catalog,unknown,infra_test_ideal_dci_ratecard_ratings,Y,,2026-09-02 11:32,
+test_catalog,unknown,load_audit_dev,Y,,2026-06-15 00:18,
+test_catalog,unknown,unit_impression,Y,,2026-09-20 00:10,
+ump_linear_de_silver,silver,daypart,Y,,2026-04-29 15:46,
+ump_linear_de_silver,silver,daypart1,Y,,2026-05-07 16:50,
+ump_linear_de_silver,silver,daypart2,Y,,2026-05-07 16:50,
+ump_linear_de_silver,silver,daypart3,Y,,2026-05-07 16:50,
+ump_linear_de_silver,silver,deals,Y,,2026-05-05 19:44,
+usaffdwh_silver,silver,account_exec_dim,Y,,2026-10-06 10:51,
+usaffdwh_silver,silver,agreement_dim,Y,,2026-10-06 10:51,
+usaffdwh_silver,silver,agreement_status_dim,Y,,2026-10-06 10:51,
+usaffdwh_silver,silver,amendment_dim,Y,,2026-10-06 10:51,
+usaffdwh_silver,silver,auth_type_dim,Y,,2026-10-06 10:51,
+usaffdwh_silver,silver,day_dim,Y,,2026-10-06 10:51,
+usaffdwh_silver,silver,decoder_dim,Y,,2026-10-06 10:51,
+usaffdwh_silver,silver,decoder_type_dim,Y,,2026-10-06 10:51,
+usaffdwh_silver,silver,decoder_ua_dim,Y,,2026-10-06 10:51,
+usaffdwh_silver,silver,distribution_type_dim,Y,,2026-10-06 10:51,
+usaffdwh_silver,silver,dma_dim,Y,,2026-10-06 10:51,
+usaffdwh_silver,silver,feed_code_dim,Y,,2026-10-06 10:51,
+usaffdwh_silver,silver,invoice_detail_fact,Y,,2026-10-06 10:51,
+usaffdwh_silver,silver,network_dim,Y,,2026-10-06 10:51,
+usaffdwh_silver,silver,org_dim,Y,,2026-10-06 10:51,
+usaffdwh_silver,silver,sales_office_dim,Y,,2026-10-06 10:51,
+usaffdwh_silver,silver,satellite_dim,Y,,2026-10-06 10:51,
+usaffdwh_silver,silver,site_dim,Y,,2026-10-06 10:51,
+usaffdwh_silver,silver,site_net_dist_status_dim,Y,,2026-10-06 10:51,
+usaffdwh_silver,silver,site_network_dist_dim,Y,,2026-10-06 10:51,
+usaffdwh_silver,silver,site_network_dist_fact,Y,,2026-10-06 10:51,
+usaffdwh_silver,silver,source_info_dim,Y,,2026-10-06 10:51,
+usaffdwh_silver,silver,special_acct_dim,Y,,2026-10-06 10:51,
+usaffdwh_silver,silver,special_acct_fact,Y,,2026-10-06 10:51,
+usaffdwh_silver,silver,special_org_dim,Y,,2026-10-06 10:51,
+usaffdwh_silver,silver,system_dim,Y,,2026-10-06 10:51,
+usaffdwh_silver,silver,system_network_dist_dim,Y,,2026-10-06 10:51,
+usaffdwh_silver,silver,tier_code_dim,Y,,2026-10-06 10:51,
+venus_gold,gold,digital_impressions_combined,Y,,2026-10-06 21:38,
+venus_silver_canonical,silver,advertiser,Y,,2026-10-07 17:32,
+venus_silver_canonical,silver,agency,Y,,2026-10-07 17:34,
+venus_silver_canonical,silver,brand,Y,,2026-10-07 17:33,
+venus_silver_canonical,silver,brand_dev_test,Y,,2026-08-13 13:39,
+venus_silver_canonical,silver,buy_type,Y,,2026-10-07 17:33,
+venus_silver_canonical,silver,dci_de_units,Y,,2026-09-27 23:37,
+venus_silver_canonical,silver,de_units,Y,,2026-09-21 22:55,
+venus_silver_canonical,silver,deal_summary_data,Y,,2026-10-06 00:27,
+venus_silver_canonical,silver,digital_impressions,Y,,2026-10-06 21:33,
+venus_silver_canonical,silver,digital_impressions_oct5,Y,,2026-10-05 17:43,
+venus_silver_canonical,silver,digital_liability_delivery_daily,Y,,2026-09-23 17:22,
+venus_silver_canonical,silver,digital_liability_guaranteed_vs_delivered,Y,,2026-09-23 17:23,
+venus_silver_canonical,silver,digital_liability_load_control,Y,,2026-09-23 17:24,
+venus_silver_canonical,silver,digital_liability_temp_deal_sli,Y,,2026-09-23 17:22,
+venus_silver_canonical,silver,digital_liability_temp_direct_daily,Y,,2026-10-01 16:42,
+venus_silver_canonical,silver,digital_liability_temp_line_state,Y,,2026-09-23 17:19,
+venus_silver_canonical,silver,digital_liability_temp_placement_sli,Y,,2026-09-23 17:22,
+venus_silver_canonical,silver,digital_liability_temp_prog_daily,Y,,2026-09-30 21:52,
+venus_silver_canonical,silver,dummy_freewheel_event,Y,,2026-09-30 12:28,
+venus_silver_canonical,silver,dummy_gam,Y,,2026-09-30 12:28,
+venus_silver_canonical,silver,dummy_operative_performance,Y,,2026-09-30 12:26,
+venus_silver_canonical,silver,dummy_third_party_adjuster,Y,,2026-09-30 12:29,
+venus_silver_canonical,silver,ge_net_broadcast_time,Y,,2026-09-25 20:35,
+venus_silver_canonical,silver,log_break_chunks,Y,,2026-09-23 22:09,
+venus_silver_canonical,silver,log_chunk_spots,Y,,2026-09-23 20:09,
+venus_silver_canonical,silver,log_prog_elements,Y,,2026-10-01 22:52,
+venus_silver_canonical,silver,log_programs,Y,,2026-09-24 15:57,
+venus_silver_canonical,silver,market_type,Y,,2026-10-07 17:34,
+venus_silver_canonical,silver,network,Y,,2026-09-09 20:22,
+venus_silver_canonical,silver,order,Y,,2026-10-05 21:55,
+venus_silver_canonical,silver,order_line,Y,,2026-09-11 15:03,
+venus_silver_canonical,silver,order_line_sell,Y,,2026-10-05 14:03,
+venus_silver_canonical,silver,order_line_sell_weeks,Y,,2026-10-05 12:21,
+venus_silver_canonical,silver,p_programs,Y,,2026-09-25 16:35,
+venus_silver_canonical,silver,pricing_demo_vpvh,Y,,2026-10-07 13:56,
+venus_silver_canonical,silver,pricing_rating,Y,,2026-10-06 14:07,
+venus_silver_canonical,silver,program_average_names,Y,,2026-10-07 16:31,
+venus_silver_canonical,silver,property_category,Y,,2026-10-07 16:32,
+venus_silver_canonical,silver,ratecard_demo_persons_per_household,Y,,2026-10-07 13:58,
+venus_silver_canonical,silver,ratecard_demo_vpvh,Y,,2026-09-28 18:52,
+venus_silver_canonical,silver,ratecard_estimation,Y,,2026-10-07 13:38,
+venus_silver_canonical,silver,ratecard_header,Y,,2026-10-07 17:35,
+venus_silver_canonical,silver,ratecard_play_parts,Y,,2026-10-07 17:33,
+venus_silver_canonical,silver,ratecard_ratings,Y,,2026-10-07 13:37,
+venus_silver_canonical,silver,recon_spots,Y,,2026-09-23 23:16,
+venus_silver_canonical,silver,recon_spots_planned,Y,,2026-09-23 21:41,
+venus_silver_canonical,silver,selling_title,Y,,2026-10-07 17:33,
+venus_silver_canonical,silver,selling_title_network,Y,,2026-10-07 13:56,
+venus_silver_canonical,silver,unit_impression_actuals,Y,,2026-10-02 02:44,
+venus_silver_canonical,silver,unit_type,Y,,2026-10-07 17:33,
+venus_silver_serving,silver,advertiser,Y,,2026-10-07 01:48,
+venus_silver_serving,silver,agency,Y,,2026-10-07 01:01,
+venus_silver_serving,silver,brand,Y,,2026-10-07 17:36,
+venus_silver_serving,silver,buy_type,Y,,2026-10-07 17:36,
+venus_silver_serving,silver,external_mapping,Y,,2026-10-06 22:57,
+venus_silver_serving,silver,impression_dimensions,Y,,2026-10-06 19:35,
+venus_silver_serving,silver,job_audit,Y,,2026-10-07 17:36,
+venus_silver_serving,silver,job_watermark,Y,,2026-10-07 17:36,
+venus_silver_serving,silver,line_status,Y,,2026-08-25 16:36,
+venus_silver_serving,silver,market_type,Y,,2026-10-07 17:35,
+venus_silver_serving,silver,network,Y,,2026-09-04 18:41,
+venus_silver_serving,silver,order,Y,,2026-09-04 00:11,
+venus_silver_serving,silver,order_broadcast_period,Y,,2026-09-04 00:12,
+venus_silver_serving,silver,order_line,Y,,2026-09-10 12:54,
+venus_silver_serving,silver,order_line_brand,Y,,2026-09-10 12:50,
+venus_silver_serving,silver,order_line_constraints,Y,,2026-09-30 18:39,
+venus_silver_serving,silver,order_status,Y,,2026-09-11 16:53,
+venus_silver_serving,silver,order_unit,Y,,2026-10-06 01:12,
+venus_silver_serving,silver,pricing_demo_vpvh,Y,,2026-10-06 14:30,
+venus_silver_serving,silver,pricing_rating,Y,,2026-10-06 15:03,
+venus_silver_serving,silver,program_average_names,Y,,2026-10-06 22:02,
+venus_silver_serving,silver,property_category,Y,,2026-09-01 14:31,
+venus_silver_serving,silver,ratecard_demo_persons_per_household,Y,,2026-10-07 03:36,
+venus_silver_serving,silver,ratecard_estimation,Y,,2026-10-07 02:34,
+venus_silver_serving,silver,ratecard_header,Y,,2026-10-07 03:27,
+venus_silver_serving,silver,ratecard_play_parts,Y,,2026-10-06 22:27,
+venus_silver_serving,silver,ratecard_ratings,Y,,2026-10-06 22:00,
+venus_silver_serving,silver,selling_title,Y,,2026-10-07 00:27,
+venus_silver_serving,silver,selling_title_network,Y,,2026-10-06 22:01,
+venus_silver_serving,silver,unit_impressions,Y,,2026-10-02 04:04,
+venus_silver_serving,silver,unit_type,Y,,2026-10-07 17:36,
+wbd_adtech_ump_raw_poc,bronze,deal,Y,,2026-04-20 13:00,
+wbd_adtech_ump_raw_poc,bronze,deal_test,Y,,2026-04-23 14:34,
+wbd_adtech_ump_raw_poc,bronze,deal_test1,Y,,2026-05-07 21:06,

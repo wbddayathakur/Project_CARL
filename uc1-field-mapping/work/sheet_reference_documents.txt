@@ -1,0 +1,6 @@
+A1	None	'UC1_Intake_Draft_(arlene copy)'
+B1	None	'Has Sports Titles List and notes to bring over'
+C1	None	'https://warnermedia-my.sharepoint.com/:x:/g/personal/Arlene_Rose_wbd_com/IQCrSmSB0Yp8RqJrnKqX8sBNAU6nfF2tLeIhV9ldscZMYUg?e=HsWTQG'
+A2	None	'Miro Board with Data Model'
+B2	None	'new... '
+C2	None	'https://miro.com/app/board/uXjVHmOBTS0=/?focusWidget=3458764683932195768'
