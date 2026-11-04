@@ -1,0 +1,927 @@
+meta:
+  bootstrapped_from: /Users/dthakur/Library/CloudStorage/OneDrive-WarnerBros.Discovery/Documents/Copilot/Created/CARL_Program_Roadmap_v3.html
+  note: Human-owned roadmap fields. The weekly agent reads this and never writes over it. Jira owns name/status/owner/tickets/points.
+  fields:
+    p: 'program code: DF | DP | MM | GA | XP'
+    sub: sub-project within the program
+    s: committed start (YYYY-MM-DD)
+    t: committed target (YYYY-MM-DD)
+    fc: revised forecast, when the target has slipped
+    a: actual completion
+    pri: P0 | P1 | P2
+    note: why — shown on hover in the page
+    rm: true for a roadmap commitment with no Jira epic
+    n_override: display name, when the Jira summary is wrong for exec reading
+  resolutions_applied: 2026-10-15 — confirmed against live Jira
+epics:
+  '2':
+    p: DF
+    sub: Platform operations
+    pri: —
+    rm: false
+  '5':
+    p: DP
+    sub: Ad Sales
+    pri: —
+    rm: false
+  '6':
+    p: DP
+    sub: Ad Sales
+    pri: —
+    rm: false
+  '11':
+    p: MM
+    sub: Looker / Power BI → Quick
+    pri: P0
+    rm: false
+    s: '2026-09-30'
+    t: '2026-12-15'
+  '25':
+    p: DF
+    sub: Platform operations
+    pri: —
+    rm: false
+  '28':
+    p: DF
+    sub: Platform operations
+    pri: —
+    rm: false
+  '56':
+    p: DF
+    sub: Iceberg · Canonical Silver / Gold
+    pri: —
+    rm: false
+  '127':
+    p: DF
+    sub: Platform operations
+    pri: —
+    rm: false
+  '197':
+    p: DP
+    sub: Ad Sales
+    pri: —
+    rm: false
+  '312':
+    p: DF
+    sub: Iceberg · Canonical Silver / Gold
+    pri: —
+    rm: false
+  '313':
+    p: DF
+    sub: Iceberg · Canonical Silver / Gold
+    pri: —
+    rm: false
+  '345':
+    p: DF
+    sub: Governance
+    pri: —
+    rm: false
+  '351':
+    p: DF
+    sub: Iceberg · Source ingestion (Bronze)
+    t: '2026-12-15'
+    pri: P0
+    rm: false
+    s: '2026-07-01'
+  '355':
+    p: DF
+    sub: Platform operations
+    pri: —
+    rm: false
+    s: '2026-03-15'
+    t: '2026-06-20'
+  '384':
+    p: DF
+    sub: Platform operations
+    t: '2026-11-30'
+    pri: P1
+    rm: false
+    s: '2026-04-20'
+  '424':
+    p: DF
+    sub: Cube · Semantic layer
+    pri: —
+    rm: false
+  '427':
+    p: MM
+    sub: Migration tooling
+    pri: —
+    rm: false
+  '462':
+    p: DF
+    sub: Platform operations
+    pri: —
+    rm: false
+    s: '2026-04-20'
+    t: '2026-12-15'
+  '490':
+    p: DF
+    sub: Iceberg · Source ingestion (Bronze)
+    pri: —
+    rm: false
+  '497':
+    p: DP
+    sub: Ad Sales
+    note: Roadmap shows Done (6/22); Jira epic still In Progress at 81%.
+    pri: P0
+    rm: false
+    s: '2026-05-08'
+    t: '2026-06-22'
+    a: '2026-10-13'
+  '529':
+    p: DF
+    sub: Platform operations
+    pri: —
+    rm: false
+  '538':
+    p: DF
+    sub: Governance
+    pri: —
+    rm: false
+    s: '2026-12-02'
+  '540':
+    p: DF
+    sub: Platform operations
+    pri: P1
+    rm: false
+    s: '2026-04-29'
+    t: '2026-11-30'
+  '546':
+    p: DF
+    sub: Platform operations
+    pri: —
+    rm: false
+  '547':
+    p: DF
+    sub: Cube · Semantic layer
+    pri: P0
+    rm: false
+    s: '2026-04-20'
+    t: '2026-12-20'
+  '549':
+    p: DP
+    sub: Research & Measurement
+    pri: —
+    rm: false
+  '580':
+    p: DF
+    sub: Governance
+    note: 'Confirmed 15 Oct: CARL-580 is a Story (not an Epic) and its status is Done. Dependency X-SNW,
+      which the roadmap shows as blocking DDL/Digital Forecasting, is therefore closed — confirm downstream
+      before leaving it on the page.'
+    pri: P0
+    rm: true
+    s: '2026-07-20'
+    n_override: Configure Catalog Federation — Snowflake to Glue
+  '597':
+    p: DF
+    sub: Iceberg · Source ingestion (Bronze)
+    pri: P0
+    rm: false
+    s: '2026-04-22'
+    t: '2026-05-02'
+    a: '2026-07-06'
+  '628':
+    p: DF
+    sub: Iceberg · Source ingestion (Bronze)
+    pri: —
+    rm: false
+  '631':
+    p: DP
+    sub: CNN
+    pri: —
+    rm: false
+  '634':
+    p: GA
+    sub: Affiliate data support
+    pri: P0
+    rm: false
+    note: 'Confirmed 15 Oct: Jira summary is ''[Cross Project Support] US Affiliate Support'' and Jira
+      files it under Cross-Project Support, not Global Affiliates. Kept under GA per the agreed programme
+      structure; see MicroStrategy Affiliate batches for the rest of the Affiliate load.'
+  '656':
+    p: DF
+    sub: Platform operations
+    note: Blocked.
+    pri: —
+    rm: false
+  '660':
+    p: DF
+    sub: Platform operations
+    pri: —
+    rm: false
+  '744':
+    a: '2026-07-01'
+    p: DF
+    sub: Iceberg · Source ingestion (Bronze)
+    t: '2026-07-01'
+    pri: P0
+    rm: false
+    s: '2026-05-18'
+  '746':
+    a: '2026-07-01'
+    p: DF
+    sub: Iceberg · Source ingestion (Bronze)
+    t: '2026-07-01'
+    pri: P0
+    rm: false
+    s: '2026-05-18'
+  '749':
+    p: DF
+    sub: Iceberg · Source ingestion (Bronze)
+    note: 'Verified: no Glue DB, no S3 data, no pipeline — four initiatives assume GAM exists.'
+    pri: P0
+    rm: false
+    s: '2026-10-01'
+  '767':
+    p: DF
+    sub: Platform operations
+    note: 0 of 110 SP — the playbook that operationalises intake.
+    pri: —
+    rm: false
+  '802':
+    p: DF
+    sub: Governance
+    pri: —
+    rm: false
+  '803':
+    p: DF
+    sub: Platform operations
+    note: 37.5% done — intake form is the control against ad-hoc demand.
+    pri: —
+    rm: false
+  '1160':
+    p: XP
+    sub: iDeal
+    pri: —
+    rm: false
+  '1186':
+    p: DF
+    sub: Iceberg · Source ingestion (Bronze)
+    pri: —
+    rm: false
+  '1364':
+    fc: '2026-10-22'
+    p: DP
+    sub: Finance
+    note: Slipped 9/30 → 10/22.
+    t: '2026-09-30'
+    pri: P0
+    rm: false
+    s: '2026-08-14'
+  '1380':
+    p: DF
+    sub: Iceberg · Source ingestion (Bronze)
+    note: Priority lowered P1 → P2; pending product requirement.
+    pri: P2
+    rm: false
+    s: '2026-07-06'
+  '1477':
+    p: DF
+    sub: Iceberg · Source ingestion (Bronze)
+    pri: P0
+    rm: false
+    s: '2026-07-06'
+    t: '2026-10-01'
+    a: '2026-11-03'
+  '1478':
+    p: DF
+    sub: Iceberg · Source ingestion (Bronze)
+    pri: P1
+    rm: false
+    s: '2026-07-23'
+    t: '2026-08-24'
+    a: '2026-08-28'
+  '1479':
+    p: DF
+    sub: Iceberg · Source ingestion (Bronze)
+    note: Standard weekly CSV template; slipped 9/30 → 10/22.
+    pri: P0
+    rm: false
+    s: '2026-10-12'
+    t: '2026-10-20'
+  '1480':
+    p: DF
+    sub: Iceberg · Source ingestion (Bronze)
+    pri: —
+    rm: false
+  '1693':
+    a: '2026-08-03'
+    p: MM
+    sub: Migration tooling
+    t: '2026-07-31'
+    pri: P0
+    rm: false
+    s: '2026-07-20'
+  '1756':
+    p: DF
+    sub: Iceberg · Source ingestion (Bronze)
+    note: Priority lowered P1 → P2; data never before in WBD.
+    pri: P2
+    rm: false
+    s: '2026-08-14'
+  '2727':
+    p: MM
+    sub: Finance
+    note: 98% of SP in UAT, past 9/30 target — awaiting business sign-off.
+    t: '2026-09-30'
+    pri: P0
+    rm: false
+    s: '2026-08-03'
+  '2772':
+    p: DF
+    sub: Iceberg · Source ingestion (Bronze)
+    note: One-time pull — not a maintained pipeline.
+    pri: —
+    rm: false
+  '2773':
+    a: '2026-08-28'
+    p: DF
+    sub: Iceberg · Source ingestion (Bronze)
+    t: '2026-08-30'
+    pri: P1
+    rm: false
+    s: '2026-08-14'
+  '2778':
+    p: DF
+    sub: Iceberg · Source ingestion (Bronze)
+    note: Ingests via Oracle, not direct Salesforce. Slipped 8/30 → 9/30.
+    pri: P0
+    rm: false
+    s: '2026-07-21'
+    t: '2026-09-21'
+    a: '2026-10-21'
+  '2887':
+    p: DF
+    sub: Iceberg · Canonical Silver / Gold
+    note: Shared Silver unowned across 5 consuming initiatives.
+    pri: P0
+    rm: false
+    s: '2026-08-31'
+    t: '2026-12-15'
+  '2888':
+    p: DF
+    sub: Iceberg · Canonical Silver / Gold
+    note: 81 Bronze tables, zero Silver/Gold, no Cube model.
+    pri: P0
+    rm: false
+    s: '2026-10-15'
+  '2898':
+    p: DF
+    sub: Iceberg · Source ingestion (Bronze)
+    note: Roadmap shows Done 9/30; Jira epic In UAT at 60%.
+    pri: P0
+    rm: false
+    s: '2026-07-02'
+    t: '2026-08-27'
+    a: '2026-09-24'
+  '2971':
+    p: MM
+    sub: International
+    note: 648 SP, 0% done — 'Pending reprojection'. Re-checked 4 Nov against live Jira.
+    pri: P0
+    rm: false
+    s: '2026-09-15'
+  '3490':
+    p: DP
+    sub: Ad Sales
+    t: '2026-11-09'
+    pri: P0
+    rm: false
+    s: '2026-10-20'
+  '3497':
+    p: DP
+    sub: Content Supply Chain
+    pri: P0
+    rm: false
+    s: '2026-08-14'
+    t: '2026-10-09'
+  '3499':
+    p: DF
+    sub: Iceberg · Source ingestion (Bronze)
+    pri: P1
+    rm: false
+    s: '2026-09-21'
+    t: '2026-10-06'
+  '3500':
+    p: DF
+    sub: Iceberg · Source ingestion (Bronze)
+    pri: P1
+    rm: false
+    s: '2026-09-16'
+    t: '2026-10-06'
+  '3501':
+    p: DF
+    sub: Iceberg · Source ingestion (Bronze)
+    pri: P0
+    rm: false
+    s: '2026-10-15'
+    t: '2027-01-31'
+  '3503':
+    p: DF
+    sub: Iceberg · Source ingestion (Bronze)
+    pri: P1
+    rm: false
+    s: '2026-10-01'
+    t: '2027-01-31'
+  '3504':
+    p: DF
+    sub: Iceberg · Source ingestion (Bronze)
+    pri: P1
+    rm: false
+  '3505':
+    p: DF
+    sub: Iceberg · Source ingestion (Bronze)
+    pri: P1
+    rm: false
+  '3553':
+    p: DF
+    sub: Governance
+    t: '2026-12-15'
+    pri: P0
+    rm: false
+    s: '2026-04-20'
+  '3562':
+    p: MM
+    sub: Migration tooling
+    t: '2026-12-31'
+    pri: P0
+    rm: false
+    s: '2026-09-15'
+  '3571':
+    p: MM
+    sub: Ad Sales
+    pri: P0
+    rm: false
+    s: '2026-09-15'
+    t: '2026-09-20'
+  '3638':
+    p: DP
+    sub: Ad Sales
+    note: Due 10/09 with 0 of 32 SP done.
+    pri: P0
+    rm: false
+    s: '2026-08-14'
+    t: '2026-10-16'
+  '3639':
+    p: DP
+    sub: Ad Sales
+    pri: P0
+    rm: false
+    s: '2026-08-14'
+    t: '2026-10-30'
+  '3694':
+    p: DP
+    sub: Neo
+    t: '2026-12-15'
+    pri: P0
+    rm: false
+    s: '2026-08-15'
+    note: Jira calls this "[Cross Project Support] Neo Data Layer Support". The page previously also linked
+      CARL-3962 for Neo, which does not exist. Programme assignment left as Data Products — move to XP
+      if Neo should be tracked as cross-project support.
+  '3704':
+    p: DF
+    sub: Iceberg · Source ingestion (Bronze)
+    note: Status Done but 0 SP marked done.
+    pri: —
+    rm: false
+  '3748':
+    p: DP
+    sub: Finance
+    note: 'Confirmed 15 Oct: Jira summary is ''Finance Ad Product Dashboard Modernization''. The status
+      tab''s ''Ad Product Looker Report Migration'' was CARL-3954, a different epic.'
+    pri: —
+    rm: false
+  '3749':
+    p: DP
+    sub: CNN
+    pri: P1
+    rm: false
+    s: '2026-09-30'
+    t: '2026-12-15'
+  '3750':
+    p: DF
+    sub: Iceberg · Source ingestion (Bronze)
+    pri: P0
+    rm: false
+    s: '2026-10-15'
+    t: '2027-01-31'
+  '3775':
+    p: DP
+    sub: Research & Measurement
+    pri: P0
+    rm: false
+    s: '2026-09-15'
+    t: '2026-12-15'
+  '3779':
+    p: DF
+    sub: Iceberg · Source ingestion (Bronze)
+    pri: P0
+    rm: false
+    s: '2026-09-02'
+    t: '2026-10-31'
+  '3783':
+    p: DF
+    sub: Cube · Semantic layer
+    note: Missed deadline; SOP alignment pending feedback.
+    pri: P0
+    rm: false
+    s: '2026-11-01'
+    t: '2026-11-01'
+  '3786':
+    p: MM
+    sub: Affiliate
+    note: 39 tickets, not story-pointed.
+    pri: P0
+    rm: false
+    s: '2026-09-30'
+    t: '2026-12-31'
+  '3787':
+    p: MM
+    sub: Affiliate
+    note: 19 tickets, not story-pointed.
+    pri: P0
+    rm: false
+    s: '2026-09-30'
+    t: '2026-12-31'
+  '3789':
+    p: MM
+    sub: Ad Sales
+    pri: P0
+    rm: false
+    s: '2026-09-15'
+    t: '2026-09-20'
+  '3790':
+    p: MM
+    sub: Ad Sales
+    note: 78 SP with no assignee.
+    pri: P0
+    rm: false
+    s: '2026-09-15'
+    t: '2026-09-20'
+  '3932':
+    p: DP
+    sub: Research & Measurement
+    note: 'Confirmed 15 Oct: one epic in Jira, In Triage. The duplicate row was in the mapping file, not
+      in Jira.'
+    pri: —
+    rm: false
+  '3954':
+    p: MM
+    sub: Looker / Power BI → Quick
+    note: SP breakdown not populated in export.
+    pri: P2
+    rm: false
+    s: '2026-12-01'
+    t: '2026-12-15'
+  '3955':
+    p: MM
+    sub: Looker / Power BI → Quick
+    note: Time Buy migration. Confirmed in Jira 15 Oct (In Triage, unassigned).
+    rm: false
+    pri: —
+    s: '2026-12-01'
+    t: '2026-12-15'
+  '3958':
+    p: XP
+    sub: AIP & NAL
+    note: 'Confirmed 15 Oct: Jira summary is ''[Cross Project Support] AIP & NAL''. The ''AID'' project
+      label in the mapping file was wrong.'
+    t: '2026-12-15'
+    pri: P0
+    rm: false
+    s: '2026-09-01'
+  '3960':
+    p: XP
+    sub: UMP
+    t: '2026-12-15'
+    pri: P0
+    rm: false
+    s: '2026-07-01'
+  '3961':
+    p: XP
+    sub: International
+    t: '2026-12-31'
+    pri: P0
+    rm: false
+    s: '2026-09-01'
+  '4001':
+    p: XP
+    sub: DDL Forecasting
+    pri: P0
+    rm: false
+  '4035':
+    p: DF
+    sub: Iceberg · Source ingestion (Bronze)
+    note: Created 1 Oct. iDeal → linear_digital_revenue_bronze for Venus.
+    rm: false
+    pri: —
+    s: '2026-10-01'
+    t: '2026-10-13'
+  '4050':
+    fc: '2026-10-15'
+    p: DP
+    sub: Ad Sales
+    note: Created 2 Oct. Was a roadmap-only row; a real epic now exists.
+    t: '2026-10-09'
+    pri: P0
+    rm: false
+    s: '2026-08-14'
+  '4086':
+    p: DP
+    sub: Ad Sales
+    note: Created 5 Oct. North Star Phase 2 Silver — UC1 scope grew after the export.
+    rm: false
+    pri: —
+  '4087':
+    p: DP
+    sub: Ad Sales
+    note: Created 5 Oct. North Star Phase 2 Gold — UC1 scope grew after the export.
+    rm: false
+    pri: —
+  '4097':
+    p: XP
+    sub: Linear Forecasting
+    note: Created 7 Oct. Separates Linear Forecasting from the combined DDL lane — closes gap 4 on the
+      Intake tab.
+    rm: false
+    pri: —
+  '4134':
+    p: MM
+    sub: Finance
+    note: Created 12 Oct. SOX and Accounting batch.
+    rm: false
+    pri: —
+  '4137':
+    p: XP
+    sub: Venus
+    note: Created 12 Oct.
+    rm: false
+    pri: —
+  '4138':
+    p: XP
+    sub: M&A · CAPI
+    note: Created 12 Oct. First estimate-bearing home for CAPI, previously triage-only under CARL-3505.
+    rm: false
+    pri: —
+  '4153':
+    p: DF
+    sub: Iceberg · Source ingestion (Bronze)
+    note: Created 12 Oct. Salesforce/Metropolis Phase 2 — supersedes roadmap row SF2.
+    rm: false
+    pri: —
+    s: '2026-07-21'
+    t: '2026-09-21'
+  '4154':
+    p: MM
+    sub: Affiliate
+    note: Created 12 Oct. Affiliate Batch 3.3.
+    rm: false
+    pri: —
+  '4155':
+    p: MM
+    sub: Affiliate
+    note: Created 12 Oct. Affiliate Batch 3.4.
+    rm: false
+    pri: —
+  '4156':
+    p: MM
+    sub: Affiliate
+    note: Created 12 Oct. Affiliate Batch 3.5.
+    rm: false
+    pri: —
+  '4157':
+    p: MM
+    sub: Affiliate
+    note: Created 12 Oct. Affiliate Batch 3.6.
+    rm: false
+    pri: —
+  '4158':
+    p: MM
+    sub: Affiliate
+    note: Created 12 Oct. Affiliate infrastructure work.
+    rm: false
+    pri: —
+  '4175':
+    p: DF
+    sub: Governance
+    note: Created 14 Oct. Platform gaps and governance implementation.
+    rm: false
+    pri: —
+  '4223':
+    p: XP
+    sub: Finance Forecasting
+    pri: P1
+    rm: false
+    note: 'Created 21 Oct, no Tech Capability parent. Repoints Finance Forecasting off the
+      Gerry-side Snowflake share onto CARL-governed datasets. Confirmed 26 Oct as
+      cross-project consumer alignment, alongside DDL and Linear Forecasting, even though
+      most of the 16 stories are DF governance and Silver/Gold work. All 16 children are
+      To Do and unestimated.'
+  '4289':
+    p: DF
+    sub: Iceberg · Source ingestion (Bronze)
+    pri: P2
+    rm: false
+    note: Created 26 Oct. No Tech Capability parent — belongs under CARL-3502 Measurement
+      Data alongside the other ComScore work. Unassigned and unestimated.
+  '4272':
+    p: DF
+    sub: Iceberg · Canonical Silver / Gold
+    pri: P1
+    rm: false
+    note: Created 23 Oct under CARL-633 Nielsen Data. Silver layer on top of the NRLD bronze
+      built in CARL-3779. Unassigned and unestimated.
+  3932-TB:
+    p: MM
+    rm: true
+    n_override: Time Buy Looker → Quick (superseded)
+    note: Superseded by CARL-3955, which exists in Jira (In Triage). Delete this row once the page has
+      been reviewed.
+  CDC:
+    p: DF
+    sub: Platform operations
+    note: Past 8/15 target.
+    t: '2026-08-15'
+    pri: P0
+    rm: true
+    n_override: iDeal CDC solution
+  CLR:
+    p: DF
+    sub: Iceberg · Source ingestion (Bronze)
+    pri: P0
+    rm: true
+    n_override: Clearline (Bronze)
+  IDS:
+    p: DF
+    sub: Iceberg · Canonical Silver / Gold
+    pri: P0
+    rm: true
+    n_override: iDeal Canonical Silver
+  RT:
+    p: DF
+    sub: Platform operations
+    note: Past 9/15 target.
+    t: '2026-09-15'
+    pri: P0
+    rm: true
+    n_override: Real-time transactional ingestion
+  SF2:
+    p: DF
+    sub: Iceberg · Source ingestion (Bronze)
+    note: Superseded by CARL-4153 'Ingest Salesforce Data [Phase2]' (In Progress, Surendarvarma Sritharan).
+      The 'Kiran??' DE-lead gap is closed.
+    pri: P1
+    rm: true
+    n_override: Metropolis Ph2 — API extraction (Bronze)
+  '3963':
+    p: MM
+    sub: International
+    pri: P1
+    rm: false
+    note: 'Confirmed 15 Oct: real Epic under CARL-1692 Lumos MicroStrategy, unassigned and unstarted.
+      International MSTR work (648 SP, now carried on CARL-2971) is unprojected on the roadmap.'
+  CARL-XP-IDEAL:
+    p: XP
+    sub: iDeal
+    pri: P0
+    rm: true
+    s: '2026-07-06'
+    n_override: iDeal cross-project support — no epic raised
+    note: 'Confirmed 15 Oct: the page linked CARL-3959, which does not exist in Jira. Every other cross-project
+      product has an epic; iDeal does not. Needs raising or dropping.'
+  '4292':
+    p: DF
+    sub: Iceberg · Source ingestion (Bronze)
+    pri: —
+    rm: false
+    note: Created after 26 Oct. Nielsen MIT panel history; placed with the other Nielsen Bronze epics.
+  '4293':
+    p: DF
+    sub: Iceberg · Source ingestion (Bronze)
+    pri: —
+    rm: false
+    note: Created after 26 Oct. AMRLD data into Iceberg; placed with Nielsen ingestion — confirm the source team.
+  '4302':
+    p: DF
+    sub: Iceberg · Source ingestion (Bronze)
+    pri: —
+    rm: false
+    note: Created after 26 Oct. Splits the iDeal CMP MWAA DAG by Oracle schema; sits with CMP (CARL-351).
+  '4315':
+    p: DF
+    sub: Iceberg · Canonical Silver / Gold
+    pri: —
+    rm: false
+    note: Created after 26 Oct. Phase 2 Silver for Linear & Digital Revenue; sibling of CARL-312.
+  '4316':
+    p: DF
+    sub: Iceberg · Canonical Silver / Gold
+    pri: —
+    rm: false
+    note: Created after 26 Oct. Phase 2 Gold for Linear & Digital Revenue; sibling of CARL-313.
+  '4317':
+    p: MM
+    sub: Ad Sales
+    pri: —
+    rm: false
+    note: Created after 26 Oct. Ad Sales MicroStrategy batch 2.4, follows 2.1-2.3.
+  '4332':
+    p: MM
+    sub: Ad Sales
+    pri: —
+    rm: false
+    note: Created after 26 Oct. Ad Sales MicroStrategy batch 2.5.
+  '4318':
+    p: MM
+    sub: Migration tooling
+    pri: —
+    rm: false
+    note: Created after 26 Oct. MicroStrategy Hive reports; Hive has no sub-project of its own yet.
+    s: '2026-11-01'
+    t: '2026-12-31'
+  '4420':
+    p: MM
+    sub: Migration tooling
+    pri: —
+    rm: false
+    note: Created after 26 Oct. IBM DataStage migration, US Ad Sales sequence; child of the DS-MIG programme (CARL-3562).
+    s: '2026-11-01'
+    t: '2026-12-31'
+  '4436':
+    p: MM
+    sub: Migration tooling
+    pri: —
+    rm: false
+    note: Created after 26 Oct. IBM DataStage migration, US Ad Sales sequence.
+    s: '2026-11-01'
+    t: '2026-12-31'
+  '4437':
+    p: MM
+    sub: Migration tooling
+    pri: —
+    rm: false
+    note: Created after 26 Oct. IBM DataStage migration, US Ad Sales sequence.
+    s: '2026-11-01'
+    t: '2026-12-31'
+  '4438':
+    p: MM
+    sub: Migration tooling
+    pri: —
+    rm: false
+    note: Created after 26 Oct. IBM DataStage migration, US Ad Sales sequence.
+    s: '2026-11-01'
+    t: '2026-12-31'
+  '4439':
+    p: MM
+    sub: Migration tooling
+    pri: —
+    rm: false
+    note: Created after 26 Oct. IBM DataStage migration, US Ad Sales sequence.
+    s: '2026-11-01'
+    t: '2026-12-31'
+  '4440':
+    p: MM
+    sub: Migration tooling
+    pri: —
+    rm: false
+    note: Created after 26 Oct. IBM DataStage migration, US Ad Sales sequence.
+    s: '2026-11-01'
+    t: '2026-12-31'
+  '4516':
+    p: MM
+    sub: Migration tooling
+    pri: —
+    rm: false
+    note: Created after 26 Oct. IBM DataStage migration, Hive sequence 1.
+    s: '2026-11-01'
+    t: '2026-12-31'
+  '4517':
+    p: MM
+    sub: Migration tooling
+    pri: —
+    rm: false
+    note: Created after 26 Oct. IBM DataStage migration, Hive sequence 2.
+    s: '2026-11-01'
+    t: '2026-12-31'
+  '4518':
+    p: MM
+    sub: Migration tooling
+    pri: —
+    rm: false
+    note: Created after 26 Oct. IBM DataStage migration, Hive sequence 3.
+    s: '2026-11-01'
+    t: '2026-12-31'
+  '4603':
+    p: DF
+    sub: Platform operations
+    pri: —
+    rm: false
+    note: Created after 26 Oct. Repo restructure under CARL Infrastructure; zero tickets so far.
+  '4615':
+    p: MM
+    sub: Migration tooling
+    pri: —
+    rm: false
+    note: Created after 26 Oct. Production readiness for Lumos MicroStrategy; sibling of CARL-1693.

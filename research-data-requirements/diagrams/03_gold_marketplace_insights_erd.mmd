@@ -1,0 +1,114 @@
+erDiagram
+  dim_telecast ||--|{ mi_fct_telecast_supply : "telecast_key"
+  dim_telecast |o--o{ mi_fct_telecast_demand : "telecast_key, null if unmatched"
+  dim_telecast ||--o{ mi_fct_telecast_adintel : "telecast_key"
+  dim_demo ||--o{ mi_fct_telecast_supply : "demo_code"
+  dim_network ||--o{ mi_fct_telecast_supply : "network_key"
+  dim_network ||--o{ mi_fct_telecast_demand : "network_key"
+  dim_network ||--o{ mi_fct_category_spend : "network_key"
+  dim_program_taxonomy ||--o{ mi_fct_telecast_supply : "program_key"
+  dim_broadcast_calendar ||--o{ mi_fct_telecast_supply : "date_key"
+  dim_broadcast_calendar ||--o{ mi_fct_telecast_demand : "date_key"
+  dim_broadcast_calendar ||--o{ mi_fct_category_spend : "date_key"
+  dim_daypart ||--o{ mi_fct_telecast_supply : "daypart_key"
+  dim_advertiser_brand ||--o{ mi_fct_telecast_adintel : "primary_advertiser_brand_key"
+
+  mi_fct_telecast_supply {
+    bigint telecast_key PK, FK
+    string demo_code PK, FK "18 broad demos + P55-64"
+    bigint network_key FK
+    bigint program_key FK
+    int date_key FK
+    bigint daypart_key FK
+    string viewing_methodology
+    double demo_audience "sum of demo cells"
+    double gross_impressions "commercial_sec / 30 x demo_audience"
+    double gross_impressions_000
+    string nielsen_genre_simple "denormalised"
+    string event_name "denormalised"
+    string program_group_summary "denormalised"
+    boolean is_wbd_prime "hour 20-23"
+    boolean is_wbd_mirror "hour 0-3"
+  }
+  mi_fct_telecast_demand {
+    bigint telecast_key FK
+    bigint network_key FK
+    int date_key FK
+    string buy_type
+    string adu
+    int spot_length_sec
+    string media_subtype
+    decimal gross_media_spend_usd
+    decimal upfront_spend_usd
+    decimal scatter_other_spend_usd
+    decimal dr_spend_usd
+    int spot_count
+    decimal eq30_spot_count
+    string match_status
+    string delivery_id
+  }
+  mi_fct_telecast_adintel {
+    bigint telecast_key PK, FK
+    bigint primary_advertiser_brand_key PK, FK
+    int ad_units
+    decimal ad_eq30_units
+    decimal ad_est_spend_usd
+    boolean is_primary_advertiser
+  }
+  mi_fct_category_spend {
+    bigint network_key FK
+    int date_key FK
+    string category
+    string subcategory
+    string buy_type
+    decimal gross_media_spend_usd
+    decimal eq30_spot_count
+  }
+  dim_telecast {
+    bigint telecast_key PK
+    string viewing_source
+    date broadcast_date
+    timestamp airing_ts
+    boolean is_premiere
+    boolean is_breakout
+  }
+  dim_network {
+    bigint network_key PK
+    date effective_from PK
+    string network_name "continuous; always aggregate on this"
+    string ownership_group
+    string media_type_desc
+    boolean is_reporting_network
+    boolean is_wbd
+  }
+  dim_program_taxonomy {
+    bigint program_key PK
+    string program_name
+    string program_type_cd
+    string program_subtype_cd
+    string program_group_summary
+    string nielsen_genre_simple "News, Sports, Entertainment"
+    string event_name "Olympics, Super Bowl, World Cup, Non-Event"
+  }
+  dim_demo {
+    string demo_code PK
+    string gender_cd
+    int age_min
+    int age_max
+  }
+  dim_broadcast_calendar {
+    int date_key PK
+    int broadcast_month_key
+    string broadcast_quarter_label "must equal DIMDATE.broadcastquarter"
+    int broadcast_year
+  }
+  dim_daypart {
+    bigint daypart_key PK
+    string daypart_set "WBD or NIELSEN"
+    string daypart_name
+  }
+  dim_advertiser_brand {
+    bigint advertiser_brand_key PK
+    string brand_desc
+    string category
+  }

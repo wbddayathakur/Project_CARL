@@ -1,0 +1,41 @@
+dimension_set_name,time_slice,medium,stream,is_household,audience,report_rows,requests,rows_unparsed_slice_end,min_slice_end_raw,max_slice_end_raw,min_reach,median_reach,max_reach,rows_reach_gt_imps
+medium,Broadcast Week,Cross-Screen Overlap,plus3,true,Universe (-1),4831,827,0,20240414,20260712,1.0,13354.504908160192,200327.0,0
+medium,Broadcast Week,Cross-Screen Overlap,plus3,false,(other audiences),41857,832,0,20240414,20260712,0.0,4719.414999538517,242457.0,0
+medium,Broadcast Week,Cross-Screen Total,plus3,true,Universe (-1),10477,1374,0,20240107,20260712,-666.0,6735798.69981439,2.6359237E7,0
+medium,Broadcast Week,Cross-Screen Total,live,true,Universe (-1),68,9,0,20241006,20250629,1160335.0,8686224.0,1.652105E7,0
+medium,Broadcast Week,Cross-Screen Total,live,false,(other audiences),68,9,0,20241006,20250629,238731.0,1240384.0,9122462.0,0
+medium,Broadcast Week,Cross-Screen Total,plus3,false,(other audiences),69776,1378,0,20240107,20260712,-666.0,2027592.0840767613,3.1328909E7,0
+medium,Broadcast Week,Digital Only,plus3,true,Universe (-1),6193,872,0,20240407,20260712,0.0,216743.30849465323,7247088.0,0
+medium,Broadcast Week,Digital Only,plus3,false,(other audiences),52625,877,0,20240407,20260712,0.0,121555.36754427028,1.8417472E7,0
+medium,Broadcast Week,Digital Total,live,true,Universe (-1),68,9,0,20241006,20250629,0.0,0.0,0.0,0
+medium,Broadcast Week,Digital Total,plus3,true,Universe (-1),10477,1374,0,20240107,20260712,-666.0,59427.44837562474,7247088.0,0
+medium,Broadcast Week,Digital Total,plus3,false,(other audiences),69776,1378,0,20240107,20260712,-666.0,79377.05100257903,1.8417472E7,0
+medium,Broadcast Week,Digital Total,live,false,(other audiences),68,9,0,20241006,20250629,0.0,0.0,0.0,0
+medium,Broadcast Week,Linear Only,live,true,Universe (-1),68,9,0,20241006,20250629,1160335.0,8686224.0,1.652105E7,0
+medium,Broadcast Week,Linear Only,plus3,true,Universe (-1),9087,1339,0,20240107,20260712,0.0,7551479.334856012,2.6359237E7,0
+medium,Broadcast Week,Linear Only,live,false,(other audiences),68,9,0,20241006,20250629,238731.0,1240384.0,9122462.0,0
+medium,Broadcast Week,Linear Only,plus3,false,(other audiences),58646,1343,0,20240107,20260712,0.0,2549903.7892695703,3.0499844E7,0
+medium,Broadcast Week,Linear Total,live,true,Universe (-1),68,9,0,20241006,20250629,1160335.0,8686224.0,1.652105E7,0
+medium,Broadcast Week,Linear Total,plus3,true,Universe (-1),10477,1374,0,20240107,20260712,-666.0,6601833.241917794,2.6359237E7,0
+medium,Broadcast Week,Linear Total,live,false,(other audiences),68,9,0,20241006,20250629,238731.0,1240384.0,9122462.0,0
+medium,Broadcast Week,Linear Total,plus3,false,(other audiences),69776,1378,0,20240107,20260712,-666.0,1871756.242701733,3.0567304E7,0
+medium,Report To Date,Cross-Screen Overlap,plus3,true,Universe (-1),967,960,124,20240630,20260927,1667.0,129387.72237196765,1415220.0,0
+medium,Report To Date,Cross-Screen Overlap,plus3,false,(other audiences),8223,965,124,20240630,20260927,33.0,44215.29676510376,1995416.0,0
+medium,Report To Date,Cross-Screen Total,plus3,true,Universe (-1),1547,1540,155,20240331,20260927,-666.0,2.149425117408441E7,5.0608669E7,0
+medium,Report To Date,Cross-Screen Total,live,true,Universe (-1),9,9,0,20241229,20250629,1.4782532E7,2.7422921E7,4.0582614E7,0
+medium,Report To Date,Cross-Screen Total,live,false,(other audiences),9,9,0,20241229,20250629,1731986.0,3750386.0,1.8479812E7,0
+medium,Report To Date,Cross-Screen Total,plus3,false,(other audiences),10614,1544,155,20240331,20260927,-666.0,8111564.85201933,7.916768E7,0
+medium,Report To Date,Digital Only,plus3,true,Universe (-1),1008,1001,129,20240630,20260927,0.0,666202.678587849,2.2715606E7,0
+medium,Report To Date,Digital Only,plus3,false,(other audiences),8502,1006,129,20240630,20260927,0.0,390542.2401091448,5.7802958E7,0
+medium,Report To Date,Digital Total,plus3,true,Universe (-1),1547,1540,155,20240331,20260927,0.0,326545.31337868475,2.2715606E7,0
+medium,Report To Date,Digital Total,live,true,Universe (-1),9,9,0,20241229,20250629,0.0,0.0,0.0,0
+medium,Report To Date,Digital Total,plus3,false,(other audiences),10614,1544,155,20240331,20260927,0.0,295366.63367070997,5.7802958E7,0
+medium,Report To Date,Digital Total,live,false,(other audiences),9,9,0,20241229,20250629,0.0,0.0,0.0,0
+medium,Report To Date,Linear Only,live,true,Universe (-1),9,9,0,20241229,20250629,1.4782532E7,2.7422921E7,4.0582614E7,0
+medium,Report To Date,Linear Only,plus3,true,Universe (-1),1505,1498,150,20240331,20260927,927.0,2.1005076010005172E7,4.9932758E7,0
+medium,Report To Date,Linear Only,plus3,false,(other audiences),10317,1502,150,20240331,20260927,75.0,7964742.015657909,7.8329954E7,0
+medium,Report To Date,Linear Only,live,false,(other audiences),9,9,0,20241229,20250629,1731986.0,3750386.0,1.8479812E7,0
+medium,Report To Date,Linear Total,plus3,true,Universe (-1),1547,1540,155,20240331,20260927,0.0,2.082257095607235E7,4.9932758E7,0
+medium,Report To Date,Linear Total,live,true,Universe (-1),9,9,0,20241229,20250629,1.4782532E7,2.7422921E7,4.0582614E7,0
+medium,Report To Date,Linear Total,live,false,(other audiences),9,9,0,20241229,20250629,1731986.0,3750386.0,1.8479812E7,0
+medium,Report To Date,Linear Total,plus3,false,(other audiences),10614,1544,155,20240331,20260927,0.0,7649024.604568551,7.8329954E7,0

@@ -1,0 +1,726 @@
+{
+ "Op1 Contracted Data Classification": {
+  "non_null": 13509,
+  "null": 575,
+  "distinct": 10,
+  "top": [
+   [
+    "Scatter",
+    7817
+   ],
+   [
+    "Upfront 26/27",
+    3932
+   ],
+   [
+    "Programmatic National Upfront 26/27",
+    731
+   ],
+   [
+    "Direct Response",
+    292
+   ],
+   [
+    "Upfront 25/26",
+    282
+   ],
+   [
+    "Programmatic National Scatter",
+    187
+   ]
+  ]
+ },
+ "Op1 Contracted Data Sales Stage": {
+  "non_null": 14084,
+  "null": 0,
+  "distinct": 14,
+  "top": [
+   [
+    "Verbal Commitment/HOLD",
+    3869
+   ],
+   [
+    "Closed Won",
+    2798
+   ],
+   [
+    "Closed Lost",
+    2376
+   ],
+   [
+    "Prospecting/Planning Costs",
+    2021
+   ],
+   [
+    "Proposal Low/Projection",
+    1817
+   ],
+   [
+    "Proposal/Working",
+    559
+   ]
+  ]
+ },
+ "Salesforce Opportunity Stage": {
+  "non_null": 13405,
+  "null": 679,
+  "distinct": 7,
+  "top": [
+   [
+    "Verbal Commitment/HOLD",
+    3870
+   ],
+   [
+    "Closed Won",
+    2804
+   ],
+   [
+    "Closed Lost",
+    2325
+   ],
+   [
+    "Prospecting/Planning Costs",
+    2019
+   ],
+   [
+    "Proposal Low/Projection",
+    1816
+   ],
+   [
+    "Proposal/Working",
+    552
+   ]
+  ]
+ },
+ "Op1 Contracted Data Site": {
+  "non_null": 14084,
+  "null": 0,
+  "distinct": 32,
+  "top": [
+   [
+    "HBO Max",
+    5397
+   ],
+   [
+    "CNN.com",
+    1738
+   ],
+   [
+    "Bleacher Report",
+    1279
+   ],
+   [
+    "The Turner Network",
+    1163
+   ],
+   [
+    "DCI ENT",
+    1144
+   ],
+   [
+    "Discovery+",
+    865
+   ]
+  ]
+ },
+ "Op1 Contracted Data Package Name": {
+  "non_null": 9327,
+  "null": 4757,
+  "distinct": 109,
+  "top": [
+   [
+    "WBD Stream P2+ Package",
+    1284
+   ],
+   [
+    "Stream+ P2+ Package",
+    953
+   ],
+   [
+    "HBO Max_Imp_All Platforms_Pre+Mid-Roll_NEW",
+    801
+   ],
+   [
+    "HBO Max_Pause Ad_Non-Kids_Imp_All Platforms_NEW",
+    709
+   ],
+   [
+    "HBO Max and Discovery+_Moments_Pre+Mid-Roll FW",
+    505
+   ],
+   [
+    "HBO Max_Title Sponsorship_Videos Imp_All Platforms_InFront FW",
+    382
+   ]
+  ]
+ },
+ "Op1 Contracted Data Product Name": {
+  "non_null": 14084,
+  "null": 0,
+  "distinct": 506,
+  "top": [
+   [
+    "HBO Max_Imp_All Platforms_Pre+Mid-Roll_No Co-View FW_NEW",
+    1161
+   ],
+   [
+    "DISC_FW_WBD STREAM_LDCI",
+    728
+   ],
+   [
+    "WBD Stream_Video_LWM FW",
+    671
+   ],
+   [
+    "CNN_CPM VIDEO ALL_FW",
+    446
+   ],
+   [
+    "HBO Max_Imp_CTV_Pre+Mid-Roll FW",
+    412
+   ],
+   [
+    "HBO Max_Imp_Desktop/Mobile_Pre+Mid-Roll FW",
+    389
+   ]
+  ]
+ },
+ "Op1 Contracted Data Market Type": {
+  "non_null": 14084,
+  "null": 0,
+  "distinct": 3,
+  "top": [
+   [
+    "Upfront",
+    6907
+   ],
+   [
+    "Scatter",
+    6898
+   ],
+   [
+    "DR",
+    279
+   ]
+  ]
+ },
+ "Op1 Contracted Data Sales Order ID": {
+  "non_null": 14084,
+  "null": 0,
+  "distinct": 2938,
+  "top": [
+   [
+    "119391",
+    72
+   ],
+   [
+    "124160",
+    68
+   ],
+   [
+    "124918",
+    56
+   ],
+   [
+    "122383",
+    53
+   ],
+   [
+    "124592",
+    52
+   ],
+   [
+    "120803",
+    48
+   ]
+  ]
+ },
+ "Op1 Contracted Data Order Name": {
+  "non_null": 14084,
+  "null": 0,
+  "distinct": 2937,
+  "top": [
+   [
+    "SC_AXM_Ross Stores_2H26-1H27_STREAM+",
+    72
+   ],
+   [
+    "SC28_HOLLAND AMERICA_ALLIED MEDIA_SOCIAL 2028",
+    68
+   ],
+   [
+    "SC_2027_Zenith Media_Popsicle_HBO Max_Social",
+    56
+   ],
+   [
+    "BUF2627_CLIENT DIRECT_WAYFAIR_ALL ENT",
+    53
+   ],
+   [
+    "SC_TRAVEL TEXAS_IBC_FY27_ALLENT",
+    52
+   ],
+   [
+    "SC_WPP_Nestle_Nespresso_1Q'27_HBO MAX_The Pitt S3",
+    48
+   ]
+  ]
+ },
+ "Op1 Contracted Data Agency": {
+  "non_null": 13991,
+  "null": 93,
+  "distinct": 419,
+  "top": [
+   [
+    "Client Direct",
+    668
+   ],
+   [
+    "Zenith Media Services, Inc",
+    428
+   ],
+   [
+    "Horizon Media, Inc.",
+    412
+   ],
+   [
+    "Dentsu America",
+    401
+   ],
+   [
+    "OMD",
+    390
+   ],
+   [
+    "SPARK FOUNDRY-CHI",
+    349
+   ]
+  ]
+ },
+ "Op1 Contracted Data Mega Agency": {
+  "non_null": 13174,
+  "null": 910,
+  "distinct": 57,
+  "top": [
+   [
+    "OTHER",
+    4454
+   ],
+   [
+    "PMX",
+    2637
+   ],
+   [
+    "OMNICOM",
+    1223
+   ],
+   [
+    "GROUPM",
+    988
+   ],
+   [
+    "MAGNA",
+    870
+   ],
+   [
+    "HORIZON",
+    468
+   ]
+  ]
+ },
+ "Op1 Contracted Data Advertiser": {
+  "non_null": 14084,
+  "null": 0,
+  "distinct": 945,
+  "top": [
+   [
+    "NEW BUSINESS ADV",
+    375
+   ],
+   [
+    "AbbVie Inc.",
+    224
+   ],
+   [
+    "GENERAL MOTORS",
+    160
+   ],
+   [
+    "Nestle USA Inc",
+    150
+   ],
+   [
+    "Capital One Financial Corporation",
+    143
+   ],
+   [
+    "Marriott Corporation",
+    124
+   ]
+  ]
+ },
+ "Op1 Contracted Data Calendar Quarter": {
+  "non_null": 14084,
+  "null": 0,
+  "distinct": 9,
+  "top": [
+   [
+    "2026-Q4",
+    6124
+   ],
+   [
+    "2027-Q1",
+    3625
+   ],
+   [
+    "2027-Q2",
+    2744
+   ],
+   [
+    "2027-Q3",
+    1140
+   ],
+   [
+    "2027-Q4",
+    361
+   ],
+   [
+    "2028-Q1",
+    36
+   ]
+  ]
+ },
+ "Op1 Contracted Data Opportunity ID": {
+  "non_null": 13466,
+  "null": 618,
+  "distinct": 2827,
+  "top": [
+   [
+    "006Vq00000bsXWLIA2",
+    72
+   ],
+   [
+    "006Vq00000mz8bJIAQ",
+    68
+   ],
+   [
+    "006Vq00000nwmKzIAI",
+    56
+   ],
+   [
+    "006Vq00000ja3S6IAI",
+    53
+   ],
+   [
+    "006Vq00000nYBL4IAO",
+    52
+   ],
+   [
+    "006Vq00000fHDajIAG",
+    48
+   ]
+  ]
+ },
+ "Op1 Contracted Data Workflow Status": {
+  "non_null": 14084,
+  "null": 0,
+  "distinct": 9,
+  "top": [
+   [
+    "client_proposal_approval",
+    7855
+   ],
+   [
+    "active_order",
+    2841
+   ],
+   [
+    "proposal_creation",
+    2120
+   ],
+   [
+    "final_order_creation",
+    458
+   ],
+   [
+    "closed_lost",
+    388
+   ],
+   [
+    "proposal_approvals",
+    286
+   ]
+  ]
+ },
+ "Op1 Contracted Data Sales Order Start Date": {
+  "non_null": 14084,
+  "null": 0,
+  "distinct": 333,
+  "top": [
+   [
+    "2027-01-01",
+    1269
+   ],
+   [
+    "2026-10-01",
+    1105
+   ],
+   [
+    "2027-02-15",
+    667
+   ],
+   [
+    "2026-09-28",
+    555
+   ],
+   [
+    "2026-11-01",
+    503
+   ],
+   [
+    "2026-12-28",
+    476
+   ]
+  ]
+ },
+ "Op1 Contracted Data Sales Order End Date": {
+  "non_null": 14084,
+  "null": 0,
+  "distinct": 242,
+  "top": [
+   [
+    "2026-12-31",
+    1511
+   ],
+   [
+    "2027-12-31",
+    987
+   ],
+   [
+    "2027-06-30",
+    681
+   ],
+   [
+    "2027-04-18",
+    596
+   ],
+   [
+    "2027-03-31",
+    593
+   ],
+   [
+    "2027-06-27",
+    591
+   ]
+  ]
+ },
+ "Op1 Contracted Data SSP": {
+  "non_null": 742,
+  "null": 13342,
+  "distinct": 4,
+  "top": [
+   [
+    "Magnite",
+    435
+   ],
+   [
+    "Freewheel SSP",
+    295
+   ],
+   [
+    "Amazon APS",
+    8
+   ],
+   [
+    "Google",
+    4
+   ]
+  ]
+ },
+ "Op1 Contracted Data Deal Type": {
+  "non_null": 14084,
+  "null": 0,
+  "distinct": 11,
+  "top": [
+   [
+    "N/A",
+    11418
+   ],
+   [
+    "Client Direct",
+    1038
+   ],
+   [
+    "MM",
+    761
+   ],
+   [
+    "Programmatic Guaranteed",
+    534
+   ],
+   [
+    "Direct Response",
+    225
+   ],
+   [
+    "Linear Led",
+    50
+   ]
+  ]
+ },
+ "Op1 Contracted Data Primary AE": {
+  "non_null": 14084,
+  "null": 0,
+  "distinct": 159,
+  "top": [
+   [
+    "Maddi Carr",
+    538
+   ],
+   [
+    "Melissa Donath",
+    405
+   ],
+   [
+    "Kelly Murphy",
+    386
+   ],
+   [
+    "Floriana Sheykina",
+    384
+   ],
+   [
+    "Erin Jeffers",
+    374
+   ],
+   [
+    "Plen Smith",
+    355
+   ]
+  ]
+ },
+ "Op1 Contracted Data Net Revenue": {
+  "non_null": 14084,
+  "null": 0,
+  "distinct": 7400,
+  "top": [
+   [
+    "$0",
+    746
+   ],
+   [
+    "$50,000",
+    152
+   ],
+   [
+    "$100,000",
+    151
+   ],
+   [
+    "$60,000",
+    148
+   ],
+   [
+    "$240,000",
+    113
+   ],
+   [
+    "$200,000",
+    100
+   ]
+  ]
+ },
+ "Op1 Contracted Data Gross Revenue": {
+  "non_null": 14081,
+  "null": 3,
+  "distinct": 7436,
+  "top": [
+   [
+    "$0",
+    743
+   ],
+   [
+    "$50,000",
+    150
+   ],
+   [
+    "$100,000",
+    147
+   ],
+   [
+    "$60,000",
+    145
+   ],
+   [
+    "$240,000",
+    113
+   ],
+   [
+    "$200,000",
+    100
+   ]
+  ]
+ },
+ "Op1 Contracted Data Contracted Quantity": {
+  "non_null": 14081,
+  "null": 3,
+  "distinct": 9312,
+  "top": [
+   [
+    "0",
+    508
+   ],
+   [
+    "1",
+    495
+   ],
+   [
+    "100",
+    325
+   ],
+   [
+    "200",
+    111
+   ],
+   [
+    "4,800,000",
+    82
+   ],
+   [
+    "1,200,000",
+    77
+   ]
+  ]
+ },
+ "Op1 Contracted Data Contracted Production Quantity": {
+  "non_null": 14081,
+  "null": 3,
+  "distinct": 9519,
+  "top": [
+   [
+    "1",
+    527
+   ],
+   [
+    "0",
+    441
+   ],
+   [
+    "100",
+    437
+   ],
+   [
+    "200",
+    89
+   ],
+   [
+    "25",
+    77
+   ],
+   [
+    "50",
+    75
+   ]
+  ]
+ }
+}

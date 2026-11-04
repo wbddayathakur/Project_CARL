@@ -1,0 +1,131 @@
+erDiagram
+  dim_network ||--o{ dim_telecast : "network_key"
+  dim_program_taxonomy ||--o{ dim_telecast : "program_key"
+  dim_telecast ||--|{ fct_mit_telecast_viewing : "telecast_key"
+  dim_viewing_stream ||--o{ fct_mit_telecast_viewing : "stream_code"
+  dim_network ||--o{ mit_timeperiod_qh_demo : "network_key"
+  dim_viewing_stream ||--o{ mit_timeperiod_qh_demo : "stream_code"
+  dim_network ||--o{ ref_network_crosswalk : "network_key"
+  ref_network_crosswalk ||--o{ fct_guideline_telecast_spend : "guideline_network to network_key"
+  match_telecast_guideline_mit ||--|{ fct_guideline_telecast_spend : "network_key + program_start_minute_key"
+  dim_telecast |o--o{ match_telecast_guideline_mit : "telecast_key, at most 1 per Guideline telecast"
+  dim_network ||--o{ fct_adintel_occurrence : "network_key"
+  dim_advertiser_brand ||--o{ fct_adintel_occurrence : "primary_advertiser_brand_key"
+  dim_network ||--o{ nrld_person_network_day : "network_key"
+
+  dim_telecast {
+    bigint telecast_key PK "hash of viewing_source, acn_program_code, trackage_id, telecast_number"
+    string viewing_source "BIG_MIT or PANEL"
+    bigint acn_program_code
+    string trackage_id
+    int telecast_number
+    bigint network_key FK
+    bigint program_key FK
+    string program_type_cd "string, keep leading zeros"
+    string program_subtype_cd
+    date broadcast_date "6a-6a, from _broadcast_datesk"
+    timestamp airing_ts
+    int duration_min
+    boolean is_premiere
+    boolean is_breakout
+    boolean is_live
+    int descriptor_variant_count
+  }
+  fct_mit_telecast_viewing {
+    bigint telecast_key PK, FK
+    string stream_code PK, FK "LIVE, LIVE_SD, LIVE_3, LIVE_7, C3, C7"
+    string viewing_source
+    bigint network_key FK
+    bigint program_key FK
+    int date_key FK
+    string time_shifted_viewing_type
+    string nielsen_data_type "program vs ACM"
+    double average_audience
+    double national_rating
+    double coverage_rating
+    double ue_nat
+    int commercial_program_duration_sec
+    double f2_5_delivery "one of 30 age-gender cell columns"
+    string viewing_methodology "Panel Only or Big Data + Panel"
+    boolean is_reporting_methodology
+  }
+  mit_timeperiod_qh_demo {
+    string viewing_source
+    bigint network_key FK
+    int date_key FK
+    int quarterhour_id
+    string stream_code FK
+    string cell_code "cells unpivoted"
+    double delivery
+    double put_cvg
+    double average_audience
+    double ue_cov
+    boolean is_preliminary
+  }
+  ref_network_crosswalk {
+    string source_system PK "GUIDELINE_TELECAST, GUIDELINE_ACCUTV, ADINTEL"
+    string source_network PK
+    date effective_from PK
+    bigint network_key FK
+    string mit_network_cd
+    boolean include_flag
+  }
+  fct_guideline_telecast_spend {
+    bigint guideline_line_key PK
+    string delivery_id "latest final delivery"
+    string guideline_network
+    bigint network_key FK
+    date broadcast_date
+    timestamp program_start_ts
+    string buy_type "Upfront, Scatter/Other, Direct Response"
+    string adu
+    int spot_length_sec
+    string media_subtype
+    decimal gross_media_spend_usd
+    decimal eq30_spot_count
+  }
+  match_telecast_guideline_mit {
+    bigint guideline_telecast_key PK
+    bigint network_key FK
+    date broadcast_date
+    timestamp program_start_ts
+    bigint telecast_key FK "null when not matched"
+    int match_offset_min "tolerance default 5"
+    string match_status "MATCHED, NO_CANDIDATE, NETWORK_UNMAPPED"
+    int candidate_count
+  }
+  fct_adintel_occurrence {
+    bigint adintel_occurrence_key PK
+    int date_key FK
+    bigint network_key FK
+    bigint media_type_key FK
+    bigint primary_advertiser_brand_key FK
+    bigint daypart_key FK
+    int units
+    int duration_sec
+    decimal spend_usd
+    decimal eq30_units "units x duration_sec / 30"
+    boolean is_static_segment
+  }
+  nrld_person_network_day {
+    string person "key provisional, NB-02"
+    string household
+    bigint network_key FK
+    date broadcast_date
+    bigint daypart_key FK
+    string stream_code FK
+    int minutes_viewed
+    int qualified_commercial_seconds
+  }
+  dim_network {
+    bigint network_key PK
+  }
+  dim_program_taxonomy {
+    bigint program_key PK
+  }
+  dim_viewing_stream {
+    string stream_code PK
+  }
+  dim_advertiser_brand {
+    bigint advertiser_brand_key PK
+  }

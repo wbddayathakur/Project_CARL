@@ -1,0 +1,123 @@
+# carl-roadmap-agent configuration.
+#
+# This and the files under registry/ are the only things you normally edit.
+# Credentials never live here — they come from the environment. See .env.example.
+
+run:
+  timezone: Asia/Kolkata
+  output_dir: out
+  # Keep a dated copy of the HTML before each overwrite. The published file is
+  # always the same path, so this is the only way to reconstruct a past week.
+  keep_history_days: 400
+
+jira:
+  base_url: https://wbdprod.atlassian.net
+  project: CARL
+  # Story points. Confirmed on this site by reading CARL-747: the standard
+  # `customfield_10016` is present but empty, and the populated field is 10004.
+  # "Estimated Story Points" (27101) is a different, unused field — do not swap.
+  story_points_field: customfield_10004
+  # Epics carry no points of their own here; every epic total is the sum of its
+  # children. Set false only if this project starts estimating at epic level.
+  roll_up_points_from_children: true
+  # Issue types treated as epics, and the types whose points roll into them.
+  epic_issue_types: [Epic]
+  child_issue_types: [Story, Task, Bug, Spike, Sub-task]
+  # Credentials: JIRA_USER (account email), JIRA_TOKEN (id.atlassian.com token).
+  auth_env_user: JIRA_USER
+  auth_env_token: JIRA_TOKEN
+  # If this file exists the run reads it instead of calling REST, which lets an
+  # interactive session source the same data through an authenticated Atlassian
+  # connector. Delete it — or leave it unset — and the scheduled run goes live.
+  cache_path: out/jira-cache.json
+
+confluence:
+  base_url: https://wbdprod.atlassian.net/wiki
+  space_key: PAYTV
+  # Pages the agent reads for narrative context. It never writes to Confluence —
+  # the deliverable is the HTML file, and one owner per artefact avoids two
+  # versions of the truth.
+  pages:
+    readiness: "7926775861"      # CARL - Product Tracking and Readiness
+    iceberg_cube: "7905280529"   # CARL - Iceberg and Cube
+    intake: "7907016729"         # CARL - Demand Intake
+    catalog_prd: "7863238871"    # CARL Data Catalog and Discoverability PRD
+  # Where PRD links are expected to live. The intake template defines the field;
+  # until requests actually carry one, traceability rows stay "To link" rather
+  # than guessing a page.
+  prd_link_label: "Confluence PRD Link"
+  auth_env_user: JIRA_USER
+  auth_env_token: JIRA_TOKEN
+
+# How Jira status becomes a progress bucket.
+#
+# `requirements` exists because of an explicit instruction: To Do and In Triage
+# are NOT idle work. The PM is holding those stories to gather requirements with
+# stakeholders, so they count as in progress for reporting. They are kept as a
+# separate bucket rather than merged into `build` so the exec view can still
+# distinguish "someone is writing code" from "someone is still defining it" —
+# collapsing them would hide which of the two a program is actually short of.
+buckets:
+  done:
+    - Done
+    - Closed
+    - Resolved
+  build:
+    - In Progress
+    - In UAT
+    - In QA Testing
+    - In Testing
+    - Ready for Testing
+    - Ready For UAT
+    - In Review
+    - Ready for review
+    - Ready to Deploy
+    - Blocked
+  requirements:
+    - To Do
+    - In Triage
+    - Pending Scope
+    - Open
+    - Backlog
+  # Anything here is excluded from totals entirely.
+  excluded:
+    - Archive
+    - Cancelled
+    - Won't Do
+
+  # Statuses that count as "in progress" in the headline percentage.
+  in_progress_buckets: [build, requirements]
+
+# The human-owned half of the roadmap: which programme and sub-project each
+# epic belongs to, committed dates, priority and the "why" notes. Seeded once
+# from the existing page by `bootstrap`, hand-edited after that, and never
+# overwritten by a refresh.
+registry:
+  epics: registry/epic-map.yaml
+
+# RAG rules, applied in order; first match wins.
+rag:
+  red:
+    - overdue_and_under: 25      # past target date with <25% of points done
+    - blocked_share_over: 40     # >40% of in-flight points sitting Blocked
+  amber:
+    - overdue: true
+    - due_within_days_and_under: [30, 50]
+    - unsized: true              # an epic with children but no points at all
+  # everything else is green
+
+# The published artefact. One file, one path, overwritten in place every week so
+# the link people have already shared never changes.
+output:
+  html_path: "/Users/dthakur/Library/CloudStorage/OneDrive-WarnerBros.Discovery/Documents/Copilot/Created/CARL_Program_Roadmap_v4 1.html"
+  # Written next to the HTML for anyone who wants the numbers without the page.
+  json_path: out/carl-roadmap.json
+  # Week-on-week movement is computed against this.
+  snapshot_dir: out/history
+
+# Optional inputs the agent reads if present and ignores if absent.
+signals:
+  # Outlook/Exchange is NOT reachable from this agent — see README, "Outlook".
+  # Until a Graph app registration exists, drop status notes here instead and
+  # they are picked up on the next run.
+  notes_path: signals/notes.yaml

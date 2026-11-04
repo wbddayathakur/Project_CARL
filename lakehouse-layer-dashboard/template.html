@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CARL Lakehouse — Bronze, Silver, Gold &amp; Cube</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --card: #fff; --ink: #1d2330; --muted: #6b7385; --line: #e3e6ec;
+    --bronze: #b0703a; --bronze-bg: #f7ece2;
+    --silver: #6f7d8c; --silver-bg: #eceff3;
+    --gold: #b38b12; --gold-bg: #f8f1d9;
+    --cube: #5b4bd6; --cube-bg: #ecebfb;
+    --other: #8b8f99; --other-bg: #eeeff1;
+    --ok: #1f8a5b; --warn: #c27c0e; --bad: #c2412d;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 14px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--ink); }
+  header { background: #141a26; color: #fff; padding: 18px 28px 0; position: sticky; top: 0; z-index: 5; }
+  header h1 { margin: 0; font-size: 20px; font-weight: 650; }
+  header .meta { color: #a9b1c2; font-size: 12px; margin-top: 4px; }
+  nav { display: flex; gap: 2px; margin-top: 14px; }
+  nav button { background: none; border: 0; color: #c4cad6; padding: 10px 16px; font-size: 14px; cursor: pointer; border-bottom: 3px solid transparent; }
+  nav button:hover { color: #fff; }
+  nav button.active { color: #fff; border-bottom-color: var(--accent, #fff); font-weight: 600; }
+  nav .count { opacity: .65; font-size: 12px; margin-left: 4px; }
+  main { padding: 22px 28px 60px; max-width: 1500px; margin: 0 auto; }
+  section.tab { display: none; } section.tab.active { display: block; }
+  h2 { font-size: 16px; margin: 26px 0 10px; } h2:first-child { margin-top: 0; }
+  h2 small { font-weight: 400; color: var(--muted); font-size: 12px; margin-left: 8px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+  .grid { display: grid; gap: 14px; }
+  .kpis { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+  .kpi .v { font-size: 26px; font-weight: 700; } .kpi .l { color: var(--muted); font-size: 12px; } .kpi .s { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .flow { display: grid; grid-template-columns: 1fr 28px 1fr 28px 1fr 28px 1fr; align-items: stretch; }
+  .flow .arrow { display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 22px; }
+  .layer-card { border-top: 4px solid var(--c); cursor: pointer; transition: box-shadow .15s; }
+  .layer-card:hover { box-shadow: 0 4px 14px rgba(0,0,0,.08); }
+  .layer-card h3 { margin: 0 0 2px; color: var(--c); font-size: 15px; text-transform: uppercase; letter-spacing: .06em; }
+  .layer-card .big { font-size: 34px; font-weight: 700; }
+  .layer-card .what { color: var(--muted); font-size: 12px; min-height: 34px; }
+  .layer-card dl { display: grid; grid-template-columns: 1fr auto; gap: 3px 10px; margin: 10px 0 0; font-size: 13px; }
+  .layer-card dt { color: var(--muted); } .layer-card dd { margin: 0; font-weight: 600; text-align: right; }
+  .two { grid-template-columns: 1.3fr 1fr; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 7px 9px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); background: #fafbfc; position: sticky; top: 0; cursor: pointer; user-select: none; white-space: nowrap; }
+  th.sorted::after { content: " ▾"; } th.sorted.asc::after { content: " ▴"; }
+  tr.click { cursor: pointer; } tr.click:hover td { background: #f7f8fb; }
+  tr.sel td { background: #eef3ff !important; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .scroll { max-height: 560px; overflow: auto; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+  .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; }
+  .muted { color: var(--muted); }
+  .chip { display: inline-block; padding: 1px 7px; border-radius: 10px; font-size: 11px; font-weight: 600; margin: 1px 2px 1px 0; white-space: nowrap; }
+  .chip.bronze { background: var(--bronze-bg); color: var(--bronze); } .chip.silver { background: var(--silver-bg); color: var(--silver); }
+  .chip.gold { background: var(--gold-bg); color: var(--gold); } .chip.cube { background: var(--cube-bg); color: var(--cube); }
+  .chip.env { background: #e7f4ee; color: var(--ok); } .chip.envoff { background: #f1f2f4; color: #a3a8b3; }
+  .tier-certified { background: #dff3e9; color: #146c46; } .tier-production { background: #e3eefc; color: #1d5bb8; }
+  .tier-pipeline { background: #eee8fb; color: #5a3fb0; } .tier-undocumented { background: #fbf0dc; color: #94600a; }
+  .tier-sandbox { background: #f1f2f4; color: #6b7385; } .tier-stale { background: #fbe4e0; color: #a3321f; }
+  .st-certified, .st-deployed { background: #dff3e9; color: #146c46; } .st-beta { background: #e3eefc; color: #1d5bb8; }
+  .st-proposed { background: #fbf0dc; color: #94600a; } .st-deprecated { background: #fbe4e0; color: #a3321f; }
+  .bar { display: flex; height: 10px; border-radius: 5px; overflow: hidden; background: #f0f1f4; min-width: 90px; }
+  .bar span { display: block; height: 100%; }
+  .legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: 12px; color: var(--muted); margin: 6px 0 10px; }
+  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
+  .controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 0 0 10px; }
+  .controls input[type=search] { flex: 1 1 260px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 7px; font-size: 13px; }
+  .controls select { padding: 7px 8px; border: 1px solid var(--line); border-radius: 7px; font-size: 13px; background: #fff; max-width: 240px; }
+  .controls .n { color: var(--muted); font-size: 12px; margin-left: auto; }
+  .matrix td.cell { text-align: center; font-weight: 600; cursor: pointer; font-variant-numeric: tabular-nums; }
+  .matrix td.cell.zero { color: #c5c9d2; font-weight: 400; cursor: default; }
+  .findings li { margin-bottom: 8px; } .findings b { font-weight: 650; }
+  .note { font-size: 12px; color: var(--muted); margin-top: 8px; }
+  details.view { border: 1px solid var(--line); border-radius: 8px; background: #fff; margin-bottom: 8px; }
+  details.view > summary { list-style: none; cursor: pointer; padding: 10px 14px; display: grid; grid-template-columns: minmax(260px, 2fr) 3fr 90px 90px 80px; gap: 12px; align-items: center; }
+  details.view > summary::-webkit-details-marker { display: none; }
+  details.view[open] > summary { border-bottom: 1px solid var(--line); background: #fafbfc; }
+  details.view .body { padding: 12px 14px; }
+  .vname { font-weight: 600; } .vname .mono { font-weight: 400; color: var(--muted); display: block; }
+  .domain-h { font-size: 13px; font-weight: 650; color: var(--muted); margin: 18px 0 8px; text-transform: uppercase; letter-spacing: .04em; }
+  .more { margin: 10px auto 0; display: block; padding: 7px 14px; border: 1px solid var(--line); border-radius: 7px; background: #fff; cursor: pointer; }
+  .pill-toggle { display: inline-flex; border: 1px solid var(--line); border-radius: 7px; overflow: hidden; }
+  .pill-toggle button { border: 0; background: #fff; padding: 7px 11px; font-size: 13px; cursor: pointer; border-right: 1px solid var(--line); }
+  .pill-toggle button:last-child { border-right: 0; } .pill-toggle button.on { background: #1d2330; color: #fff; }
+  @media (max-width: 1000px) { .flow { grid-template-columns: 1fr; } .flow .arrow { transform: rotate(90deg); } .two { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>CARL Lakehouse — what's in Bronze, Silver, Gold &amp; Cube</h1>
+  <div class="meta" id="meta"></div>
+  <nav id="nav"></nav>
+</header>
+<main>
+  <section class="tab" id="tab-overview"></section>
+  <section class="tab" id="tab-bronze"></section>
+  <section class="tab" id="tab-silver"></section>
+  <section class="tab" id="tab-gold"></section>
+  <section class="tab" id="tab-cube"></section>
+  <section class="tab" id="tab-other"></section>
+</main>
+<script>
+const DATA = /*__DATA__*/null;
+
+const LAYERS = ["bronze", "silver", "gold"];
+const LAYER_INFO = {
+  bronze: { label: "Bronze", color: "var(--bronze)", what: "Raw landings from source systems, kept close to source shape." },
+  silver: { label: "Silver", color: "var(--silver)", what: "Cleaned, conformed and joined entities ready for modelling." },
+  gold:   { label: "Gold",   color: "var(--gold)",   what: "Business facts and dimensions built for reporting." },
+  cube:   { label: "Cube",   color: "var(--cube)",   what: "Semantic layer: governed measures and dimensions over Gold." },
+  other:  { label: "Unlayered", color: "var(--other)", what: "Control, audit, UAT and sandbox databases with no medallion suffix." },
+};
+const TIERS = ["certified", "production", "pipeline", "undocumented", "sandbox", "stale"];
+const TIER_COLOR = { certified: "#2fa36f", production: "#3b7ddd", pipeline: "#7a5fd0", undocumented: "#e0a230", sandbox: "#b9bec8", stale: "#d9583f" };
+const TIER_HELP = {
+  certified: "Bound to a certified or beta data product in the registry",
+  production: "In prod, refreshed, with a catalogued producer job",
+  pipeline: "Refreshed with a known producer, not yet in prod",
+  undocumented: "Refreshed, but no catalogued job claims to write it",
+  sandbox: "Database name marks it as scratch / POC / UAT",
+  stale: `No publish within ${DATA.windowDays} days of the snapshot`,
+};
+
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const fmt = n => Number(n || 0).toLocaleString();
+const pct = (a, b) => b ? Math.round(100 * a / b) + "%" : "–";
+const by = (arr, f) => arr.reduce((m, x) => ((m[f(x)] ||= []).push(x), m), {});
+const latest = t => (t.prodTs > t.devTs ? t.prodTs : t.devTs) || "";
+const exposed = t => t.cubes.length || t.views.length;
+const chip = (cls, text, title) => `<span class="chip ${cls}"${title ? ` title="${esc(title)}"` : ""}>${esc(text)}</span>`;
+const tierChip = t => chip("tier-" + t, t, TIER_HELP[t]);
+
+const T = DATA.tables;
+const byLayer = by(T, t => t.layer);
+const deployedViews = DATA.cubeViews.filter(v => v.status === "deployed");
+const designedViews = DATA.cubeViews.filter(v => v.status !== "deployed");
+
+function tierBar(rows) {
+  const c = {}; rows.forEach(r => c[r.tier] = (c[r.tier] || 0) + 1);
+  return `<div class="bar" title="${TIERS.filter(k => c[k]).map(k => `${k}: ${c[k]}`).join("\n")}">` +
+    TIERS.filter(k => c[k]).map(k => `<span style="width:${100 * c[k] / rows.length}%;background:${TIER_COLOR[k]}"></span>`).join("") + "</div>";
+}
+const tierLegend = () => `<div class="legend">${TIERS.map(k => `<span title="${esc(TIER_HELP[k])}"><i style="background:${TIER_COLOR[k]}"></i>${k}</span>`).join("")}</div>`;
+
+/* ---------- header + nav ---------- */
+document.getElementById("meta").innerHTML =
+  `Physical snapshot ${esc(DATA.asof)} · built ${esc(DATA.generated)} · ` +
+  `Sources: ${Object.values(DATA.sources).map(esc).join("; ")}`;
+
+const TABS = [
+  ["overview", "Overview", ""],
+  ["bronze", "Bronze", (byLayer.bronze || []).length],
+  ["silver", "Silver", (byLayer.silver || []).length],
+  ["gold", "Gold", (byLayer.gold || []).length],
+  ["cube", "Cube", deployedViews.length + " views"],
+  ["other", "Unlayered", (byLayer.other || []).length],
+];
+const nav = document.getElementById("nav");
+nav.innerHTML = TABS.map(([id, label, n]) =>
+  `<button data-tab="${id}" style="--accent:${(LAYER_INFO[id] || {}).color || "#fff"}">${label}${n !== "" ? `<span class="count">${esc(n)}</span>` : ""}</button>`).join("");
+nav.addEventListener("click", e => { const b = e.target.closest("button"); if (b) show(b.dataset.tab); });
+
+const rendered = {};
+function show(id, opts) {
+  document.querySelectorAll("nav button").forEach(b => b.classList.toggle("active", b.dataset.tab === id));
+  document.querySelectorAll("section.tab").forEach(s => s.classList.toggle("active", s.id === "tab-" + id));
+  if (!rendered[id]) { rendered[id] = true; (id === "overview" ? renderOverview : id === "cube" ? renderCube : renderLayer)(id); }
+  if (opts && LAYER_STATE[id]) { Object.assign(LAYER_STATE[id], opts); LAYER_STATE[id].apply(); }
+  history.replaceState(null, "", "#" + id);
+  window.scrollTo(0, 0);
+}
+
+/* ---------- overview ---------- */
+function layerStats(rows) {
+  const dbs = new Set(rows.map(r => r.db));
+  return {
+    n: rows.length, dbs: dbs.size,
+    prod: rows.filter(r => r.prod).length,
+    devOnly: rows.filter(r => r.dev && !r.prod).length,
+    exposed: rows.filter(exposed).length,
+    fresh: rows.filter(r => r.tier !== "stale" && r.tier !== "sandbox").length,
+    stale: rows.filter(r => r.tier === "stale").length,
+    domains: new Set(rows.map(r => r.domain)).size,
+  };
+}
+
+function renderOverview() {
+  const el = document.getElementById("tab-overview");
+  const s = Object.fromEntries(LAYERS.map(l => [l, layerStats(byLayer[l] || [])]));
+  const fields = deployedViews.flatMap(v => v.fields);
+  const measures = fields.filter(f => f.type === "measure").length;
+  const facts = DATA.cubes.filter(c => /fact/i.test(c.kind)).length;
+
+  const layerCard = l => `
+    <div class="card layer-card" style="--c:${LAYER_INFO[l].color}" onclick="show('${l}')">
+      <h3>${LAYER_INFO[l].label}</h3>
+      <div class="big">${fmt(s[l].n)} <span class="muted" style="font-size:13px;font-weight:400">tables</span></div>
+      <div class="what">${LAYER_INFO[l].what}</div>
+      <dl>
+        <dt>Databases</dt><dd>${s[l].dbs}</dd>
+        <dt>Domains</dt><dd>${s[l].domains}</dd>
+        <dt>In prod</dt><dd>${fmt(s[l].prod)} <span class="muted">(${pct(s[l].prod, s[l].n)})</span></dd>
+        <dt>Dev only</dt><dd>${fmt(s[l].devOnly)}</dd>
+        <dt>Stale (&gt;${DATA.windowDays}d)</dt><dd>${fmt(s[l].stale)}</dd>
+        <dt>Exposed via Cube</dt><dd>${fmt(s[l].exposed)}</dd>
+      </dl>
+    </div>`;
+
+  const cubeCard = `
+    <div class="card layer-card" style="--c:var(--cube)" onclick="show('cube')">
+      <h3>Cube</h3>
+      <div class="big">${deployedViews.length} <span class="muted" style="font-size:13px;font-weight:400">views deployed</span></div>
+      <div class="what">${LAYER_INFO.cube.what}</div>
+      <dl>
+        <dt>Cubes</dt><dd>${DATA.cubes.length}</dd>
+        <dt>Fact / dimension cubes</dt><dd>${facts} / ${DATA.cubes.length - facts}</dd>
+        <dt>Exposed fields</dt><dd>${fmt(fields.length)}</dd>
+        <dt>Measures</dt><dd>${fmt(measures)}</dd>
+        <dt>Designed, not deployed</dt><dd>${designedViews.filter(v => v.status === "proposed").length}</dd>
+        <dt>Business areas</dt><dd>${new Set(deployedViews.map(v => v.business).filter(Boolean)).size}</dd>
+      </dl>
+    </div>`;
+
+  // domain x layer matrix
+  const domains = [...new Set(T.filter(t => t.layer !== "other").map(t => t.domain))];
+  const viewsByDomainKey = {};
+  DATA.cubeViews.filter(v => v.status === "deployed").forEach(v => {
+    const srcDbs = (v.base || "").split(/[,\s]+/).filter(Boolean).map(x => x.split(".")[0]);
+    const doms = new Set(T.filter(t => srcDbs.some(d => t.db === d || t.db.replace(/^carl_/, "").replace(/_(dev|qa|stage|prod)$/, "") === d)).map(t => t.domain));
+    doms.forEach(d => viewsByDomainKey[d] = (viewsByDomainKey[d] || 0) + 1);
+  });
+  const cnt = {}; T.forEach(t => { const k = t.domain + "|" + t.layer; cnt[k] = (cnt[k] || 0) + 1; });
+  domains.sort((a, b) => LAYERS.reduce((s2, l) => s2 + (cnt[b + "|" + l] || 0), 0) - LAYERS.reduce((s2, l) => s2 + (cnt[a + "|" + l] || 0), 0));
+  const max = Math.max(...Object.values(cnt));
+  const shade = (n, color) => n ? `background:color-mix(in srgb, ${color} ${Math.round(12 + 60 * Math.sqrt(n / max))}%, white)` : "";
+  const matrix = `<table class="matrix"><thead><tr><th>Domain</th>${LAYERS.map(l => `<th class="num">${LAYER_INFO[l].label}</th>`).join("")}<th class="num">Cube views</th><th>Shape</th></tr></thead><tbody>` +
+    domains.map(d => {
+      const n = LAYERS.map(l => cnt[d + "|" + l] || 0), v = viewsByDomainKey[d] || 0;
+      const shape = n[0] && !n[1] && !n[2] ? "Bronze only" : n[2] && !v ? "Gold, no Cube" : v ? "Reaches Cube" : n[1] && !n[2] ? "Stops at Silver" : "";
+      return `<tr><td>${esc(d)}</td>${LAYERS.map((l, i) => `<td class="cell ${n[i] ? "" : "zero"}" style="${shade(n[i], LAYER_INFO[l].color)}" ${n[i] ? `onclick="show('${l}',{domain:${esc(JSON.stringify(d))}})"` : ""}>${n[i] || "·"}</td>`).join("")}
+        <td class="cell ${v ? "" : "zero"}" style="${shade(v * 8, "var(--cube)")}" ${v ? `onclick="show('cube')"` : ""}>${v || "·"}</td><td class="muted">${shape}</td></tr>`;
+    }).join("") + "</tbody></table>";
+
+  // findings
+  const bronzeOnly = domains.filter(d => cnt[d + "|bronze"] && !cnt[d + "|silver"] && !cnt[d + "|gold"]);
+  const goldProd = (byLayer.gold || []).filter(t => t.prod);
+  const goldProdExposed = goldProd.filter(exposed);
+  const dwh = (byLayer.gold || []).filter(t => /dwhprd_gold/.test(t.db));
+  const undoc = T.filter(t => t.tier === "undocumented").length;
+  const findings = [
+    `<b>${fmt(T.length)} Iceberg tables</b> across ${new Set(T.map(t => t.db)).size} databases: ${fmt(s.bronze.n)} Bronze, ${fmt(s.silver.n)} Silver, ${fmt(s.gold.n)} Gold, plus ${fmt((byLayer.other || []).length)} in unlayered control, UAT and sandbox databases.`,
+    `<b>Only ${fmt(goldProd.length)} of ${fmt(s.gold.n)} Gold tables are in prod</b> (${pct(goldProd.length, s.gold.n)}); ${fmt(goldProdExposed.length)} of those prod Gold tables are reachable through a Cube view.`,
+    dwh.length ? `<b>${fmt(dwh.length)} Gold tables are the Lumos DWH port</b> (${esc([...new Set(dwh.map(t => t.db))].join(", "))}), dev only. ${fmt(dwh.filter(exposed).length)} of them already back Cube cubes, so most deployed Cube views read from tables not yet in prod.` : "",
+    bronzeOnly.length ? `<b>${bronzeOnly.length} domains have Bronze but no Silver or Gold:</b> ${esc(bronzeOnly.join(", "))}. Every consumer of those re-derives the same logic.` : "",
+    `<b>${fmt(undoc)} tables are "undocumented"</b>: refreshing, but no catalogued job claims to write them, so nobody can be paged when they stop.`,
+    `<b>${designedViews.filter(v => v.status === "proposed").length} Cube views are designed but not deployed</b> (Ad Products and Research Market Share). Attach new demand to these rather than opening duplicates.`,
+  ].filter(Boolean);
+
+  const tierRows = LAYERS.concat("other").map(l => {
+    const rows = byLayer[l] || [];
+    return `<tr><td>${chip(l === "other" ? "" : l, LAYER_INFO[l].label)}</td><td class="num">${fmt(rows.length)}</td><td style="width:55%">${rows.length ? tierBar(rows) : ""}</td>` +
+      TIERS.map(k => `<td class="num">${fmt(rows.filter(r => r.tier === k).length)}</td>`).join("") + "</tr>";
+  }).join("");
+
+  const products = DATA.products.map(p => {
+    const layers = new Set(p.tables.map(f => (T.find(t => t.db + "." + t.t === f) || {}).layer || (f.match(/_(bronze|silver|gold)\b/) || [])[1]).filter(Boolean));
+    const live = p.tables.filter(f => T.some(t => t.db + "." + t.t === f)).length;
+    return `<tr><td class="mono">${esc(p.id)}</td><td><b>${esc(p.name)}</b><div class="muted">${esc(p.answers)}</div></td><td>${esc(p.domain)}</td><td>${chip("st-" + p.status, p.status)}</td>
+      <td>${LAYERS.filter(l => layers.has(l)).map(l => chip(l, LAYER_INFO[l].label)).join("")}${p.views.length ? chip("cube", "Cube") : ""}</td>
+      <td class="num">${p.tables.length ? `${live}/${p.tables.length}` : "–"}</td>
+      <td class="muted" style="max-width:340px">${p.gaps.map(g => esc(g)).join("<br>")}</td></tr>`;
+  }).join("");
+
+  el.innerHTML = `
+    <div class="flow">${layerCard("bronze")}<div class="arrow">→</div>${layerCard("silver")}<div class="arrow">→</div>${layerCard("gold")}<div class="arrow">→</div>${cubeCard}</div>
+    <div class="grid two" style="margin-top:14px">
+      <div class="card"><h2>Key findings</h2><ul class="findings">${findings.map(f => `<li>${f}</li>`).join("")}</ul></div>
+      <div class="card"><h2>Tier mix by layer <small>how safe each table is to cite</small></h2>${tierLegend()}
+        <table><thead><tr><th>Layer</th><th class="num">Tables</th><th></th>${TIERS.map(k => `<th class="num" title="${esc(TIER_HELP[k])}">${k.slice(0, 5)}</th>`).join("")}</tr></thead><tbody>${tierRows}</tbody></table>
+        <div class="note">Hover a tier for its definition. Tiers follow the iceberg-catalog-agent rules.</div></div>
+    </div>
+    <h2>Domain × layer <small>table counts; click a cell to open that layer filtered to the domain</small></h2>
+    <div class="card scroll" style="max-height:none;padding:0">${matrix}</div>
+    <h2>Curated data products <small>registry/products.yaml — what a requester can build on</small></h2>
+    <div class="card scroll" style="padding:0"><table><thead><tr><th>ID</th><th>Product</th><th>Domain</th><th>Status</th><th>Layers</th><th class="num">Tables live</th><th>Known gaps</th></tr></thead><tbody>${products}</tbody></table></div>`;
+}
+
+/* ---------- layer tabs ---------- */
+const LAYER_STATE = {};
+function sortable(table, rows, cols, renderRows, initial) {
+  let key = initial, asc = false;
+  const ths = table.querySelectorAll("th[data-k]");
+  ths.forEach(th => th.addEventListener("click", () => {
+    asc = key === th.dataset.k ? !asc : th.dataset.k === "t" || th.dataset.k === "db";
+    key = th.dataset.k; draw();
+  }));
+  function draw() {
+    ths.forEach(th => { th.classList.toggle("sorted", th.dataset.k === key); th.classList.toggle("asc", th.dataset.k === key && asc); });
+    const get = cols[key];
+    const sorted = rows().slice().sort((a, b) => { const x = get(a), y = get(b); return (x < y ? -1 : x > y ? 1 : 0) * (asc ? 1 : -1); });
+    renderRows(sorted);
+  }
+  return draw;
+}
+
+function renderLayer(layer) {
+  const el = document.getElementById("tab-" + layer);
+  const rows = byLayer[layer] || [];
+  const st = layerStats(rows);
+  const dbRows = Object.entries(by(rows, r => r.db)).map(([db, ts]) => ({
+    db, ts, domain: ts[0].domain, n: ts.length, prod: ts.filter(t => t.prod).length, dev: ts.filter(t => t.dev).length,
+    last: ts.map(latest).sort().pop() || "", exposed: ts.filter(exposed).length,
+    src: [...new Set(ts.map(t => t.src).filter(Boolean).flatMap(s => s.split(/,\s*/)))].join(", "),
+  }));
+  const domains = [...new Set(rows.map(r => r.domain))].sort();
+  const srcs = [...new Set(rows.flatMap(r => r.src ? r.src.split(/,\s*/) : []))].sort();
+  const info = LAYER_INFO[layer];
+
+  el.innerHTML = `
+    <div class="grid kpis">
+      ${[["Tables", st.n], ["Databases", st.dbs], ["Domains", st.domains], ["In prod", st.prod, pct(st.prod, st.n) + " of layer"],
+         ["Dev only", st.devOnly], ["Stale", st.stale, `no publish in ${DATA.windowDays}d`], ["Exposed via Cube", st.exposed]]
+        .map(([l, v, s]) => `<div class="card kpi" style="border-top:3px solid ${info.color}"><div class="l">${l}</div><div class="v">${fmt(v)}</div>${s ? `<div class="s">${s}</div>` : ""}</div>`).join("")}
+    </div>
+    <p class="muted" style="margin:10px 0 0">${info.what}</p>
+    <h2>Databases <small>click a row to filter the table inventory below</small></h2>${tierLegend()}
+    <div class="scroll" style="max-height:420px"><table id="${layer}-dbs"><thead><tr>
+      <th data-k="db">Database</th><th data-k="domain">Domain</th><th data-k="n" class="num">Tables</th><th data-k="dev" class="num">Dev</th><th data-k="prod" class="num">Prod</th>
+      <th data-k="exposed" class="num">Cube</th><th data-k="last">Last publish</th><th>Tier mix</th><th data-k="src">Source systems</th></tr></thead><tbody></tbody></table></div>
+    <h2>Table inventory</h2>
+    <div class="controls">
+      <input type="search" placeholder="Search table, database, producer, cube…" id="${layer}-q">
+      <select id="${layer}-domain"><option value="">All domains</option>${domains.map(d => `<option>${esc(d)}</option>`).join("")}</select>
+      <select id="${layer}-db"><option value="">All databases</option>${dbRows.map(d => d.db).sort().map(d => `<option>${esc(d)}</option>`).join("")}</select>
+      <select id="${layer}-tier"><option value="">All tiers</option>${TIERS.map(t => `<option>${t}</option>`).join("")}</select>
+      <select id="${layer}-src"><option value="">All sources</option>${srcs.map(s => `<option>${esc(s)}</option>`).join("")}</select>
+      <div class="pill-toggle" id="${layer}-env"><button data-v="" class="on">All envs</button><button data-v="prod">In prod</button><button data-v="devonly">Dev only</button></div>
+      <label class="muted"><input type="checkbox" id="${layer}-cube"> Cube-exposed</label>
+      <span class="n" id="${layer}-n"></span>
+    </div>
+    <div class="scroll"><table id="${layer}-tables"><thead><tr>
+      <th data-k="t">Table</th><th data-k="db">Database</th><th data-k="domain">Domain</th><th data-k="tier">Tier</th><th>Envs</th>
+      <th data-k="last">Last publish</th><th data-k="src">Source</th><th data-k="producer">Producer</th><th>Cube</th><th data-k="product">Product</th></tr></thead><tbody></tbody></table></div>
+    <button class="more" id="${layer}-more" hidden>Show more</button>`;
+
+  const state = LAYER_STATE[layer] = { q: "", domain: "", db: "", tier: "", src: "", env: "", cube: false, limit: 300 };
+  const $ = id => document.getElementById(`${layer}-${id}`);
+
+  const dbTable = $("dbs");
+  const drawDbs = sortable(dbTable, () => dbRows,
+    { db: r => r.db, domain: r => r.domain, n: r => r.n, dev: r => r.dev, prod: r => r.prod, exposed: r => r.exposed, last: r => r.last, src: r => r.src },
+    sorted => {
+      dbTable.tBodies[0].innerHTML = sorted.map(r => `<tr class="click ${state.db === r.db ? "sel" : ""}" data-db="${esc(r.db)}">
+        <td class="mono">${esc(r.db)}</td><td>${esc(r.domain)}</td><td class="num">${fmt(r.n)}</td><td class="num">${fmt(r.dev)}</td>
+        <td class="num">${r.prod ? fmt(r.prod) : '<span class="muted">0</span>'}</td><td class="num">${r.exposed || '<span class="muted">0</span>'}</td>
+        <td class="mono">${esc(r.last)}</td><td>${tierBar(r.ts)}</td><td class="muted">${esc(r.src)}</td></tr>`).join("");
+    }, "n");
+  dbTable.tBodies[0].addEventListener("click", e => {
+    const tr = e.target.closest("tr"); if (!tr) return;
+    state.db = state.db === tr.dataset.db ? "" : tr.dataset.db; $("db").value = state.db; state.apply();
+  });
+
+  const tTable = $("tables");
+  const filtered = () => {
+    const q = state.q.toLowerCase();
+    return rows.filter(r =>
+      (!state.domain || r.domain === state.domain) && (!state.db || r.db === state.db) && (!state.tier || r.tier === state.tier) &&
+      (!state.src || r.src.split(/,\s*/).includes(state.src)) &&
+      (!state.env || (state.env === "prod" ? r.prod : r.dev && !r.prod)) && (!state.cube || exposed(r)) &&
+      (!q || [r.t, r.db, r.producer, r.src, r.product, r.cubes.join(" "), r.views.join(" ")].join(" ").toLowerCase().includes(q)));
+  };
+  const drawTables = sortable(tTable, filtered,
+    { t: r => r.t, db: r => r.db, domain: r => r.domain, tier: r => TIERS.indexOf(r.tier), last: latest, src: r => r.src, producer: r => r.producer, product: r => r.product },
+    sorted => {
+      $("n").textContent = `${fmt(sorted.length)} of ${fmt(rows.length)} tables`;
+      tTable.tBodies[0].innerHTML = sorted.slice(0, state.limit).map(r => `<tr>
+        <td class="mono"><b>${esc(r.t)}</b></td><td class="mono muted">${esc(r.db)}</td><td>${esc(r.domain)}</td><td>${tierChip(r.tier)}</td>
+        <td>${chip(r.dev ? "env" : "envoff", "dev", r.devTs)}${chip(r.prod ? "env" : "envoff", "prod", r.prodTs)}</td>
+        <td class="mono">${esc(latest(r))}</td><td>${esc(r.src)}</td><td class="mono muted">${esc(r.producer)}</td>
+        <td>${r.views.map(v => chip("cube", v, "Cube view")).join("")}${r.cubes.length ? `<span class="muted" title="${esc(r.cubes.join("\n"))}">${r.cubes.length} cube${r.cubes.length > 1 ? "s" : ""}</span>` : ""}</td>
+        <td class="mono">${esc(r.product)}</td></tr>`).join("");
+      $("more").hidden = sorted.length <= state.limit;
+      $("more").textContent = `Show more (${fmt(sorted.length - state.limit)} hidden)`;
+    }, "last");
+
+  state.apply = () => {
+    $("q").value = state.q; $("domain").value = state.domain; $("db").value = state.db; $("tier").value = state.tier; $("src").value = state.src;
+    $("cube").checked = state.cube;
+    $("env").querySelectorAll("button").forEach(b => b.classList.toggle("on", b.dataset.v === state.env));
+    drawDbs(); drawTables();
+  };
+  $("q").addEventListener("input", e => { state.q = e.target.value; state.limit = 300; drawTables(); });
+  ["domain", "db", "tier", "src"].forEach(k => $(k).addEventListener("change", e => { state[k] = e.target.value; state.limit = 300; state.apply(); }));
+  $("cube").addEventListener("change", e => { state.cube = e.target.checked; drawTables(); });
+  $("env").addEventListener("click", e => { const b = e.target.closest("button"); if (b) { state.env = b.dataset.v; state.apply(); } });
+  $("more").addEventListener("click", () => { state.limit += 500; drawTables(); });
+  state.apply();
+}
+
+/* ---------- cube tab ---------- */
+function renderCube() {
+  const el = document.getElementById("tab-cube");
+  const fields = deployedViews.flatMap(v => v.fields.map(f => ({ ...f, view: v.name })));
+  const measures = fields.filter(f => f.type === "measure").length;
+  const facts = DATA.cubes.filter(c => /fact/i.test(c.kind)).length;
+  const srcDbs = by(DATA.cubes.flatMap(c => c.src.split(/[,\s]+/).filter(s => s.includes("."))), s => s.split(".")[0]);
+  const layerOfSrc = db => (db.match(/(bronze|silver|gold)/) || ["", "other"])[1];
+
+  el.innerHTML = `
+    <div class="grid kpis">
+      ${[["Views deployed", deployedViews.length, "the query surface"], ["Cubes", DATA.cubes.length, `${facts} fact · ${DATA.cubes.length - facts} dimension`],
+         ["Exposed fields", fields.length, `${fmt(measures)} measures · ${fmt(fields.length - measures)} dimensions`],
+         ["Business areas", new Set(deployedViews.map(v => v.business).filter(Boolean)).size, [...new Set(deployedViews.map(v => v.business).filter(Boolean))].join(", ")],
+         ["Source tables", Object.values(srcDbs).reduce((a, b) => a + new Set(b).size, 0), Object.keys(srcDbs).join(", ")],
+         ["Designed, not deployed", designedViews.filter(v => v.status === "proposed").length, "Ad Products · Market Share"]]
+        .map(([l, v, s]) => `<div class="card kpi" style="border-top:3px solid var(--cube)"><div class="l">${l}</div><div class="v">${fmt(v)}</div><div class="s">${esc(s)}</div></div>`).join("")}
+    </div>
+    <h2>Where Cube reads from <small>source tables behind all cubes, by database</small></h2>
+    <div class="card" style="padding:0"><table><thead><tr><th>Source database</th><th>Layer</th><th class="num">Tables used</th><th class="num">Cubes</th></tr></thead><tbody>
+      ${Object.entries(srcDbs).sort((a, b) => b[1].length - a[1].length).map(([db, list]) => {
+        const l = layerOfSrc(db);
+        return `<tr><td class="mono">${esc(db)}</td><td>${l === "other" ? "" : chip(l, LAYER_INFO[l].label)}</td><td class="num">${new Set(list).size}</td>
+          <td class="num">${DATA.cubes.filter(c => c.src.split(/[,\s]+/).some(s => s.startsWith(db + "."))).length}</td></tr>`;
+      }).join("")}</tbody></table></div>
+    <h2>Views <small>click a view to see its measures and dimensions</small></h2>
+    <div class="controls">
+      <input type="search" id="cube-q" placeholder="Search views, fields, descriptions, base tables…">
+      <select id="cube-biz"><option value="">All business areas</option>${[...new Set(DATA.cubeViews.map(v => v.business).filter(Boolean))].sort().map(b => `<option>${esc(b)}</option>`).join("")}</select>
+      <div class="pill-toggle" id="cube-status"><button data-v="" class="on">All</button><button data-v="deployed">Deployed</button><button data-v="designed">Designed only</button></div>
+      <span class="n" id="cube-n"></span>
+    </div>
+    <div id="cube-views"></div>
+    <h2>All cubes <small>the building blocks views are assembled from</small></h2>
+    <div class="controls">
+      <input type="search" id="cubes-q" placeholder="Search cubes, source tables, joins…">
+      <select id="cubes-kind"><option value="">All kinds</option><option>Fact / metric</option><option>Dimension</option></select>
+      <span class="n" id="cubes-n"></span>
+    </div>
+    <div class="scroll"><table id="cubes-table"><thead><tr>
+      <th data-k="name">Cube</th><th data-k="kind">Kind</th><th data-k="domain">Domain</th><th data-k="src">Source table</th>
+      <th data-k="measures" class="num">Measures</th><th data-k="dims" class="num">Dims</th><th data-k="views">Used in views</th><th>Description</th></tr></thead><tbody></tbody></table></div>`;
+
+  const vs = { q: "", biz: "", status: "" };
+  const drawViews = () => {
+    const q = vs.q.toLowerCase();
+    const list = DATA.cubeViews.filter(v =>
+      (!vs.biz || v.business === vs.biz) &&
+      (!vs.status || (vs.status === "deployed" ? v.status === "deployed" : v.status !== "deployed")) &&
+      (!q || [v.name, v.title, v.desc, v.base, v.domain, ...v.fields.map(f => f.name + " " + f.title + " " + f.desc)].join(" ").toLowerCase().includes(q)));
+    document.getElementById("cube-n").textContent = `${list.length} of ${DATA.cubeViews.length} views`;
+    const groups = by(list, v => v.domain);
+    document.getElementById("cube-views").innerHTML = Object.entries(groups).map(([dom, vlist]) => `<div class="domain-h">${esc(dom)} · ${vlist.length}</div>` +
+      vlist.map(v => {
+        const ms = v.fields.filter(f => f.type === "measure"), ds = v.fields.filter(f => f.type !== "measure");
+        const hit = f => q && [f.name, f.title, f.desc].join(" ").toLowerCase().includes(q);
+        const ftable = (title, fs) => fs.length ? `<h3 style="font-size:13px;margin:10px 0 6px">${title} (${fs.length})</h3><div class="scroll" style="max-height:320px"><table><thead><tr><th>Field</th><th>Title</th><th>Type / agg</th><th>Source cube.member</th><th>Description</th></tr></thead><tbody>` +
+          fs.map(f => `<tr${hit(f) ? ' style="background:#fff7d6"' : ""}><td class="mono">${esc(f.name)}</td><td>${esc(f.title)}</td><td class="mono">${esc(f.dtype)}</td><td class="mono muted">${esc(f.cube ? f.cube + "." + f.member : "")}</td><td class="muted">${esc(f.desc)}</td></tr>`).join("") + "</tbody></table></div>" : "";
+        return `<details class="view"${q && v.fields.some(hit) ? " open" : ""}><summary>
+          <div class="vname">${esc(v.title)}<span class="mono">${esc(v.name)}</span></div>
+          <div class="muted" style="font-size:12px">${esc(v.desc).slice(0, 220)}${v.desc.length > 220 ? "…" : ""}</div>
+          <div>${chip("st-" + v.status, v.status === "deployed" ? "deployed" : v.status)}${v.business ? chip("cube", v.business) : ""}</div>
+          <div class="muted" style="font-size:12px">${fmt(v.measures)} measures<br>${fmt(v.dims)} dims</div>
+          <div class="muted" style="font-size:12px">${v.joins != null ? fmt(v.joins) + " cubes" : ""}</div></summary>
+          <div class="body"><div><b>Base table:</b> <span class="mono">${esc(v.base)}</span></div>
+            <div class="muted" style="margin-top:4px">${esc(v.desc)}</div>
+            <div class="muted mono" style="margin-top:4px">${esc(v.file)}</div>
+            ${ftable("Measures", ms)}${ftable("Dimensions", ds)}</div></details>`;
+      }).join("")).join("") || '<p class="muted">No views match.</p>';
+  };
+  document.getElementById("cube-q").addEventListener("input", e => { vs.q = e.target.value; drawViews(); });
+  document.getElementById("cube-biz").addEventListener("change", e => { vs.biz = e.target.value; drawViews(); });
+  document.getElementById("cube-status").addEventListener("click", e => {
+    const b = e.target.closest("button"); if (!b) return; vs.status = b.dataset.v;
+    e.currentTarget.querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b)); drawViews();
+  });
+  drawViews();
+
+  const cs = { q: "", kind: "" };
+  const ct = document.getElementById("cubes-table");
+  const drawCubes = sortable(ct, () => DATA.cubes.filter(c => (!cs.kind || c.kind === cs.kind) &&
+      (!cs.q || [c.name, c.title, c.src, c.joins, c.views, c.desc].join(" ").toLowerCase().includes(cs.q.toLowerCase()))),
+    { name: c => c.name, kind: c => c.kind, domain: c => c.domain, src: c => c.src, measures: c => c.measures || 0, dims: c => c.dims || 0, views: c => c.views },
+    sorted => {
+      document.getElementById("cubes-n").textContent = `${sorted.length} of ${DATA.cubes.length} cubes`;
+      ct.tBodies[0].innerHTML = sorted.map(c => `<tr><td class="mono"><b>${esc(c.name)}</b><div class="muted">${esc(c.title)}</div></td><td>${esc(c.kind)}</td>
+        <td class="muted">${esc(c.domain)}</td><td class="mono">${esc(c.src)}</td><td class="num">${fmt(c.measures)}</td><td class="num">${fmt(c.dims)}</td>
+        <td class="mono muted" style="max-width:240px">${esc(c.views)}</td><td class="muted" style="max-width:420px">${esc(c.desc).slice(0, 260)}${c.desc.length > 260 ? "…" : ""}</td></tr>`).join("");
+    }, "measures");
+  document.getElementById("cubes-q").addEventListener("input", e => { cs.q = e.target.value; drawCubes(); });
+  document.getElementById("cubes-kind").addEventListener("change", e => { cs.kind = e.target.value; drawCubes(); });
+  drawCubes();
+}
+
+const startTab = location.hash.slice(1);
+show(TABS.some(([id]) => id === startTab) ? startTab : "overview");
+</script>
+</body>
+</html>

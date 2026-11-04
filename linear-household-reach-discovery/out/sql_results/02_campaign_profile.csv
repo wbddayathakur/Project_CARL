@@ -1,0 +1,6 @@
+campaign_type,media_type,is_linear,has_videoamp,completed,campaigns,with_ideal_deal_ids,with_multiple_deals,with_fw_campaign_ids,with_videoamp_planning_id,bad_flight_dates,end_before_start,earliest_flight,latest_flight
+StreamX,Linear & Digital,true,true,true,112,112,1,112,25,0,0,2024-04-01,2026-06-28
+DDL,Linear,true,true,true,341,341,1,0,0,0,0,2024-12-30,2026-03-29
+DDL,Linear,true,false,true,53,53,0,0,0,0,16,2025-03-31,2026-06-28
+,Digital,false,false,true,72,0,0,72,0,0,0,2025-01-13,2026-09-30
+,Digital,false,false,false,2,0,0,2,0,0,0,2026-01-12,2026-12-27

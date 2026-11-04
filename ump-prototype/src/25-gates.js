@@ -125,19 +125,26 @@ const GATE_META = {
   discovery:  { to:"Strategize", from:"Discovery orchestrator",  asks:"Is this ranked list one the planner would defend, product by product?" },
   strategize: { to:"Analyze",    from:"Strategize orchestrator",  asks:"Is there a saved allocation whose every deviation is argued?" },
   analyze:    { to:"Approval",   from:"Analyze orchestrator",    asks:"Is one version chosen, and is the choice legible?" },
-  approval:   { to:"Close",      from:"Approval orchestrator",   asks:"Does every line carry a decision and a reason?" },
+  approval:   { to:"the client proposal",      from:"Approval orchestrator",   asks:"Does every line carry a decision and a reason?" },
 };
 
 function evaluateGate(phase, st, ctx){
   const c = ctx || {};
   const pt = [];
+  /* Binding points hold the handoff. They test for the *absence* of something
+     the next phase cannot work without — an unadjudicated gap, an override with
+     no reason at all, a line still resting on an Indicative forecast. */
   const add = (id, label, w, ok, detail, fix) =>
-    pt.push({ id, label, w, bar:100, ok:!!ok, score: ok?100:0, detail, fix });
-  /* Points that measure the *quality* of an argument are met at a bar, not at a
-     perfect score — a mean of 100 across several reasons is not a real target. */
-  const addP = (id, label, w, score, detail, fix, bar) => {
-    const b = bar == null ? 100 : bar;
-    pt.push({ id, label, w, bar:b, ok: score >= b, score: Math.round(score), detail, fix });
+    pt.push({ id, label, w, bar:100, kind:"binding", ok:!!ok, score: ok?100:0, detail, fix });
+
+  /* Advisory points never hold the handoff. They measure *quality* — how good an
+     argument is, how strong the evidence is — and quality is not the system's to
+     veto (OQ-22: the system never blocks a weak strategy, it proposes a better
+     one and records the departure). The score travels into the rubric and into
+     the approval package, where P&I reads it and it carries consequence. */
+  const addA = (id, label, w, score, detail, fix, bar) => {
+    const b = bar == null ? 70 : bar;
+    pt.push({ id, label, w, bar:b, kind:"advisory", ok: score >= b, score: Math.round(score), detail, fix });
   };
 
   if (phase === "intake"){
@@ -148,19 +155,19 @@ function evaluateGate(phase, st, ctx){
     const jm = scoreJustifications(Object.fromEntries(
       Object.entries(st.gapDecisions).map(([k,v]) => [k, v && v.reason])));
 
-    addP("G1", "Every material requirement received or inferred, and accepted", 26,
-      material.length ? (material.length - openGaps.length) / material.length * 100 : 100,
+    add("G1", "Every material requirement received or inferred, and accepted", 26,
+      openGaps.length === 0,
       `${material.length - openGaps.length} of ${material.length} material gaps adjudicated.`,
       openGaps.length ? `Resolve ${openGaps.map(g=>g.id).join(", ")}.` : null);
 
-    addP("G2", "No contradiction left standing on a material attribute", 22,
-      matContra.length ? (matContra.length - openContra.length) / matContra.length * 100 : 100,
+    add("G2", "No contradiction left standing on a material attribute", 22,
+      openContra.length === 0,
       `${matContra.length - openContra.length} of ${matContra.length} material contradictions adjudicated.`,
       openContra.length ? `Adjudicate ${openContra.map(x=>x.id).join(", ")}.` : null);
 
     /* Scored by the Evidence Eval Agent on the RFP graph, not asserted here. */
     const eg = c.evGraph || evalEvidenceGraph(EVIDENCE, st);
-    addP("G3", "The graph is strong enough to plan an allocation on", 14,
+    addA("G3", "The graph is strong enough to plan an allocation on", 14,
       eg.plannable,
       `${eg.plannable}% of ${eg.scored.length} records clear the 60 confidence bar; mean ${eg.mean}.${
         eg.weak.length ? ` ${eg.weak.length} below it (weakest ${eg.weak[0].id} at ${eg.weak[0].conf}).` : ""}`,
@@ -175,12 +182,12 @@ function evaluateGate(phase, st, ctx){
         : `Brief v${st.briefVersion} is not approved.`,
       st.intakeApproved ? "Re-approve the current version." : "Approve the brief once the gaps are closed.");
 
-    addP("G5", "Adjudications carry reasons a reader could act on", 14,
+    addA("G5", "Adjudications carry reasons a reader could act on", 14,
       jm.all.length ? jm.mean : 0,
       jm.all.length
-        ? `${jm.all.length} recorded, mean argument score ${jm.mean}.${jm.weak.length ? ` ${jm.weak.length} too thin to travel.` : ""}`
+        ? `${jm.all.length} recorded, mean argument score ${jm.mean}.${jm.weak.length ? ` ${jm.weak.length} would read thin to P&I.` : ""}`
         : "No adjudication reasons recorded yet.",
-      jm.weak.length ? "Strengthen the reasons flagged on the gaps tab." : null, 70);
+      jm.weak.length ? "Strengthen the reasons flagged on the gaps tab — or carry them as they are and P&I will read them." : null, 70);
   }
 
   if (phase === "discovery"){
@@ -191,12 +198,12 @@ function evaluateGate(phase, st, ctx){
     const breached = on.filter(r => (r.breaches || []).some(b => b.id === "H2" || b.id === "H6"));
     const jm = scoreJustifications(st.rankJust);
 
-    add("D1", "Every region carrying budget has a product in the list", 26,
-      emptyRegions.length === 0,
+    addA("D1", "Every region carrying budget has a product in the list", 22,
+      emptyRegions.length === 0 ? 100 : 0,
       emptyRegions.length
-        ? `${emptyRegions.join(", ")} has an envelope and nothing to spend it on — the solver will report it unallocated.`
+        ? `${emptyRegions.join(", ")} has an envelope and nothing to spend it on — the solver will report it unallocated rather than move the money.`
         : "All four regional envelopes have somewhere to go.",
-      emptyRegions.length ? `Add a product in ${emptyRegions.join(", ")}.` : null);
+      emptyRegions.length ? `Add a product in ${emptyRegions.join(", ")}, or proceed and let the solve report it.` : null, 100);
 
     add("D2", "No product in the list carries an unresolved hard breach", 24,
       breached.length === 0,
@@ -205,17 +212,27 @@ function evaluateGate(phase, st, ctx){
         : "Every product in the list clears its hard constraints.",
       breached.length ? "Re-target to clear the breach, or take the product out." : null);
 
-    addP("D3", "Every change to the system's order survives evaluation", 26,
+    /* Presence of a reason binds; the strength of it does not. */
+    const changed = Object.keys(st.rankJust || {});
+    const unreasoned = changed.filter(k => !String(st.rankJust[k] || "").trim());
+    add("D3", "Every change to the system's order carries a reason", 14,
+      unreasoned.length === 0,
+      unreasoned.length ? `${unreasoned.length} change${unreasoned.length>1?"s":""} with no reason recorded.`
+        : changed.length ? `${changed.length} change${changed.length>1?"s":""}, each with a reason.`
+        : "No changes to the system's order.",
+      "A change with no reason cannot be read by P&I at all.");
+
+    addA("D3q", "Those reasons hold up to being read cold", 18,
       jm.all.length ? jm.mean : 100,
       jm.all.length
-        ? `${jm.all.length} planner change${jm.all.length>1?"s":""}, mean argument score ${jm.mean}.${jm.weak.length ? ` ${jm.weak.length} sent back.` : ""}`
+        ? `Mean argument score ${jm.mean} across ${jm.all.length} change${jm.all.length>1?"s":""}.${jm.weak.length ? ` ${jm.weak.length} would read thin.` : ""}`
         : "No changes to the system's order — nothing to defend.",
-      jm.weak.length ? `Rewrite the reason on ${jm.weak.map(w=>w.key).join(", ")}.` : null, 70);
+      jm.weak.length ? `${jm.weak.map(w=>w.key).join(", ")} would benefit from a rewrite. This does not hold the handoff.` : null, 70);
 
     add("D4", "The ranked list and its targeting are accepted", 24,
       !!st.strategyAccepted,
       st.strategyAccepted ? `Strategy brief v${st.strategyVersion} accepted.` : "The list has not been accepted yet.",
-      "Accept the list to open the solve.");
+      "Accept the list to open the solve. Acceptance is explicit, not implied by running the solve (D-5).");
   }
 
   if (phase === "strategize"){
@@ -230,26 +247,34 @@ function evaluateGate(phase, st, ctx){
       !!st.lastRun || (c.res && c.res.lines && c.res.lines.length),
       st.lastRun ? `Last solved ${st.lastRun}.` : "Not run yet.", "Run the solve.");
 
-    addP("S2", "Every override is argued, and the argument holds", 28,
-      ovr.length === 0 ? 100 : (unjust.length ? 0 : jm.mean),
+    /* Discovery §9: a version cannot be saved while an override is unjustified.
+       That is absence, and it binds. Strength is the advisory point below. */
+    add("S2", "Every override carries a reason", 20,
+      unjust.length === 0,
       ovr.length === 0 ? "No overrides — the optimiser's own answer stands."
         : unjust.length ? `${unjust.length} override${unjust.length>1?"s":""} carrying no reason at all.`
-        : `${ovr.length} override${ovr.length>1?"s":""}, mean argument score ${jm.mean}.${jm.weak.length?` ${jm.weak.length} sent back.`:""}`,
-      unjust.length ? "Attach a reason to every override." : jm.weak.length ? "Rewrite the reasons that were sent back." : null, 70);
+        : `${ovr.length} override${ovr.length>1?"s":""}, each with a reason.`,
+      unjust.length ? "Attach a reason to every override." : null);
 
-    add("S3", "No regional envelope left unallocated", 20,
-      (res.unallocated || []).length === 0,
+    addA("S2q", "Those reasons would survive P&I reading them", 16,
+      jm.all.length ? jm.mean : 100,
+      jm.all.length ? `Mean argument score ${jm.mean}.${jm.weak.length?` ${jm.weak.length} would read thin.`:""}`
+        : "No overrides to defend.",
+      jm.weak.length ? "Worth a rewrite before P&I sees it. This does not hold the handoff." : null, 70);
+
+    addA("S3", "No regional envelope left unallocated", 16,
+      (res.unallocated || []).length === 0 ? 100 : 0,
       (res.unallocated || []).length
         ? `${res.unallocated.map(u=>`${u.region} ${money1(u.amount)}`).join(", ")} has nowhere to go.`
         : "Every envelope is spent where it was budgeted.",
-      (res.unallocated || []).length ? "Go back to Discovery and add a product in that region." : null);
+      (res.unallocated || []).length ? "Go back to Discovery and add a product in that region, or carry it forward as a known shortfall." : null, 100);
 
     add("S4", "No hard constraint breached in the solve", 16,
       hardFail.length === 0,
       hardFail.length ? `${hardFail.map(x=>x.id).join(", ")} breached.` : "All hard constraints clear.",
-      hardFail.length ? "Re-target or re-order until the breach clears." : null);
+      hardFail.length ? "A hard constraint is a limit, not a preference — it binds before the solve (OQ-14)." : null);
 
-    add("S5", "At least one version saved", 18,
+    add("S5", "At least one version saved", 14,
       (st.versions || []).length > 0,
       `${(st.versions||[]).length} saved.`, "Save a version you would defend.");
   }
@@ -261,20 +286,37 @@ function evaluateGate(phase, st, ctx){
     const jm = best ? scoreJustifications(best.justifications) : { mean:100, weak:[], all:[] };
     const missKpi = best && best.roll.reach3 < FRAME.reachGoal3;
 
-    add("A1", "More than one version to choose between", 16,
-      vs.length >= 2, `${vs.length} version${vs.length===1?"":"s"} saved.`,
-      "Save a second version so the choice is a real one.");
+    addA("A1", "More than one version to choose between", 10,
+      vs.length >= 2 ? 100 : 0, `${vs.length} version${vs.length===1?"":"s"} saved.`,
+      vs.length < 2 ? "A single version is a recommendation, not a choice. Not a blocker." : null, 100);
 
-    add("A2", "One version is committed", 30,
+    add("A2", "One version is committed", 26,
       !!st.committed, st.committed ? `${st.committed} committed.` : "Nothing committed.",
       "Commit the version you would put in front of the client.");
 
-    addP("A3", "The committed version scores against the rubric", 20,
-      best ? Math.min(best.rubric.total / 85 * 100, 100) : 0,
-      best ? `Rubric ${Math.round(best.rubric.total)} against an 85 bar.` : "No version to score.",
-      "A version below the bar needs a reason it still goes forward.", 90);
+    /* The binding forecast rule: Indicative is a pre-screen, not a number a plan
+       may rest on at approval. T5 applied to inventory rather than requirements. */
+    const fc = c.forecast || (best ? versionFidelity(best) : null);
+    add("A6", "Every line rests on a Constrained forecast, not an Indicative one", 24,
+      !best ? false : fc && fc.indicativeLines.length === 0,
+      !best ? "No version to check."
+        : fc.indicativeLines.length
+          ? `${fc.indicativeLines.length} of ${fc.total} line${fc.total===1?"":"s"} still on the daily Indicative pre-screen: ${fc.indicativeLines.slice(0,3).join(", ")}${fc.indicativeLines.length>3?"…":""}.`
+          : `All ${fc.total} lines on Constrained avails, run ${fc.runAt}.`,
+      "Re-run the solve to replace the pre-screen figures. Indicative is not admissible at approval.");
 
-    addP("A4", "Every override in it carries an argument that held", 20,
+    addA("A3", "Every rubric dimension clears the threshold this RFP set", 16,
+      best ? best.rubric.clear / best.rubric.of * 100 : 0,
+      best
+        ? `${best.rubric.clear} of ${best.rubric.of} dimensions clear.${best.rubric.below.length
+            ? ` Short: ${best.rubric.below.map(b=>`${b.label} ${b.score} against ${b.bar}`).join(", ")}.`
+            : ""}`
+        : "No version to score.",
+      best && best.rubric.below.length
+        ? "A version can go forward short on a dimension. P&I reads which one, and by how much."
+        : null, 100);
+
+    addA("A4", "Every override in it carries an argument that held", 14,
       jm.all.length ? jm.mean : 100,
       jm.all.length ? `${jm.all.length} override${jm.all.length>1?"s":""}, mean score ${jm.mean}.` : "No overrides to defend.",
       jm.weak.length ? "Strengthen the argument before P&I reads it." : null, 70);
@@ -282,10 +324,10 @@ function evaluateGate(phase, st, ctx){
     /* Only assessable once a version is committed — the explanation lives in the
        commit note, which is the thing P&I reads first. */
     const noteEv = st.commitNote ? evalJustification(st.commitNote) : null;
-    addP("A5", "A missed KPI is explained, not left to be found", 14,
+    addA("A5", "A missed KPI is explained, not left to be found", 10,
       !st.committed ? 0 : !missKpi ? 100 : (noteEv ? noteEv.score : 0),
       !st.committed
-        ? (missKpi && best ? `3+ reach is ${pct(best.roll.reach3,1)} against a ${pct(FRAME.reachGoal3,0)} goal — the commit note has to carry why.`
+        ? (missKpi && best ? `3+ reach is ${pct(best.roll.reach3,1)} against a ${pct(FRAME.reachGoal3,0)} goal — the commit note should carry why.`
                            : "Assessed at commit.")
         : !missKpi ? "The stated KPI is met."
         : noteEv ? `Commit note scored ${noteEv.score}.` : "No commit note recorded.",
@@ -301,32 +343,41 @@ function evaluateGate(phase, st, ctx){
     const jm = scoreJustifications(Object.fromEntries(
       decided.map(l => [l.pid, dec[l.pid].reason])));
 
-    addP("P1", "Every line has a decision", 50,
-      lines.length ? decided.length / lines.length * 100 : 0,
+    /* The only real gate in the design (OQ-17). Every line must be decided —
+       not every line approved. */
+    add("P1", "Every line has a decision", 44,
+      lines.length > 0 && decided.length === lines.length,
       `${decided.length} of ${lines.length} decided.`,
       decided.length < lines.length ? `${lines.length - decided.length} line${lines.length-decided.length===1?"":"s"} still open.` : null);
 
     add("P2", "Every decision carries a reason", 24,
       noReason.length === 0,
       noReason.length ? `${noReason.length} decision${noReason.length>1?"s":""} with no reason recorded.` : "Each decision states its grounds.",
-      "A decision without a reason is not an instruction the planner can act on.");
+      "A disapproval without a workable reason is not a decision, it is a rejection.");
 
-    addP("P3", "Disapprovals are actionable, not verdicts", 26,
+    addA("P3", "Disapprovals are actionable, not verdicts", 32,
       jm.all.length ? jm.mean : 0,
       jm.all.length ? `Mean reason score ${jm.mean} across ${jm.all.length} decision${jm.all.length>1?"s":""}.` : "No reasons yet.",
-      jm.weak.length ? "Say what would make the line approvable." : null, 70);
+      jm.weak.length ? "Say what would make the line approvable, and where the inventory should sit instead." : null, 70);
   }
 
   const wsum = pt.reduce((s,x) => s + x.w, 0) || 1;
   const score = Math.round(pt.reduce((s,x) => s + x.score * x.w, 0) / wsum);
-  const blockers = pt.filter(x => !x.ok);
+
+  /* Only binding points hold the handoff. Advisory shortfalls are surfaced,
+     travel into the rubric and the approval package, and are never a veto. */
+  const binding  = pt.filter(x => x.kind === "binding");
+  const blockers = binding.filter(x => !x.ok);
+  const advisory = pt.filter(x => x.kind === "advisory" && !x.ok);
 
   return {
-    phase, score, par: GATE_PAR, open: score >= GATE_PAR && blockers.length === 0,
-    points: pt, blockers, meta: GATE_META[phase] || {},
-    /* What the orchestrator does with the score, in its own words. */
-    verdict: blockers.length === 0 ? "handoff"
-           : score >= GATE_PAR      ? "surface"
-           : "loop",
+    phase, score, par: GATE_PAR,
+    open: blockers.length === 0,
+    points: pt, blockers, advisory, meta: GATE_META[phase] || {},
+    /* What the orchestrator does, in its own words. It has three answers and
+       none of them is "no". */
+    verdict: blockers.length   ? "incomplete"     // something is missing, not weak
+           : advisory.length   ? "open-with-notes" // passable, with things P&I will read
+           : "clean",
   };
 }

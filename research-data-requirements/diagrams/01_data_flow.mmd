@@ -1,0 +1,91 @@
+flowchart LR
+  subgraph SRC["Sources"]
+    SF_BIG["Snowflake SHARE_PROD_BIG_MIT.MIT<br/>Big Data + Panel, daily, 2024-04 →"]
+    SF_DD["Snowflake COMMON.DIMDATE"]
+    SF_PANEL["Snowflake AMS_ICUE_SHARE.MIT<br/>Panel Only, 2015-06 → 2025-12"]
+    SF_MS["Snowflake MARKETSHARE schema<br/>weekly, Wed"]
+    SF_NRLD["Snowflake SHARE_PROD_NRLD"]
+    S3_TAX["S3 marketshare-prod/prod/mapping<br/>Research taxonomy CSVs"]
+    S3_GL["S3 turner-ams-bi-marketshare-smi/DataOutgoing<br/>Guideline Telecast + AccuTV, monthly"]
+    GIT["Git seed CSVs"]
+    MRI["MRI share + MRI Streaming SFTP"]
+  end
+
+  subgraph BRZ["Iceberg Bronze"]
+    B_BIG["big_mit_bronze<br/>program_viewing · program_descriptor (+_serial)<br/>timeperiod_quarterhour · universe_estimate<br/>program_viewing_sellingdemos · intab<br/>dimdate (NEW)"]
+    B_PANEL["mit_panel_bronze (NEW, backfill then frozen)<br/>program_viewing · program_descriptor"]
+    B_MS["marketshare_bronze<br/>dimnetwork · dimnetworkprogramnamemapping<br/>dimadvertiserbrand · dimmediatype · dimadintelattribute<br/>dimdaypart · dimtimeshiftedviewing<br/>factadintel · factprogram (fallback / parity only)"]
+    B_TAX["marketshare_taxonomy_bronze (NEW)<br/>taxonomy_run_manifest · rules_engine_raw<br/>distributormapping_raw · network_raw<br/>fourpartgenre_raw · productcategories_raw"]
+    B_GL["guideline_bronze (NEW)<br/>delivery_manifest · telecast_delivery<br/>accutv_delivery · quarantine"]
+    B_NRLD["nrld_bronze (Dev only → promote)<br/>12 tables: viewing events, weights,<br/>characteristics, UE, advertisement_event …"]
+    B_MRI["mri_bronze · mri_streaming_bronze"]
+  end
+
+  subgraph SLV["Iceberg Silver: research_silver"]
+    S_DIM["Conformed dims<br/>dim_broadcast_calendar · dim_network (SCD2)<br/>dim_program_taxonomy (SCD2) · dim_viewing_stream<br/>dim_demo + bridge_demo_cell<br/>dim_daypart + bridge_daypart_quarterhour"]
+    S_MIT["Nielsen MIT<br/>dim_telecast · fct_mit_telecast_viewing<br/>mit_timeperiod_qh_demo · mit_universe_estimate_demo"]
+    S_REF["Taxonomy refs (SCD2)<br/>ref_program_group_rule · ref_adintel_distributor<br/>ref_program_genre · ref_product_category"]
+    S_MS["MarketShare / Ad Intel<br/>dim_advertiser_brand (SCD2) · dim_media_type<br/>dim_ad_attribute · fct_adintel_occurrence"]
+    S_SEED["Seeds<br/>ref_pipeline_config · ref_event_program_map<br/>ref_network_crosswalk · ref_network_wbd_attributes<br/>ref_nielsen_program_type / _subtype<br/>ref_custom_daypart · ref_marketbreak"]
+    S_GL["Guideline<br/>fct_guideline_telecast_spend · fct_guideline_reject<br/>fct_guideline_spend_bounce · fct_guideline_accutv_spend<br/>match_telecast_guideline_mit"]
+    S_NRLD["NRLD<br/>nrld_viewing_event · nrld_person_network_day<br/>nrld_person_weight_day · nrld_person_characteristics<br/>nrld_universe_estimate · nrld_originator_map<br/>nrld_data_availability"]
+  end
+
+  subgraph GLD["Iceberg Gold: research_gold (WAP publish)"]
+    G_DIM["Published dim_*"]
+    G_MI["mi_ Marketplace Insights<br/>mi_fct_telecast_supply · mi_fct_telecast_demand<br/>mi_fct_telecast_adintel · mi_fct_category_spend<br/>mi_agg_program_quarter_imps"]
+    G_MS["ms_ MarketShare<br/>ms_fct_adintel_spend_daily<br/>ms_agg_category_share_month"]
+    G_NGR["ngr_ NextGen Research<br/>ngr_fct_avg_audience_day / _month / _quarter<br/>ngr_fct_program_telecast (+_month)<br/>ngr_fct_universe_estimate_month / _quarter<br/>ngr_fct_median_age_month<br/>ngr_fct_reach_freq_timespent_month / _quarter<br/>ngr_fct_audience_profile_quarter<br/>ngr_ref_data_availability · ngr_fct_mri_index (P2)"]
+    G_OPS["ops_dq_results · ops_data_freshness"]
+  end
+
+  CUBE["Cube views<br/>mi_view_* · ngr_view_* · MarketShare views"]
+  BI["Quick · Power BI · AI"]
+
+  SF_BIG --> B_BIG
+  SF_DD --> B_BIG
+  SF_PANEL --> B_PANEL
+  SF_MS --> B_MS
+  SF_NRLD --> B_NRLD
+  S3_TAX --> B_TAX
+  S3_GL --> B_GL
+  MRI -.-> B_MRI
+
+  B_BIG --> S_MIT
+  B_PANEL --> S_MIT
+  B_BIG -- dimdate --> S_DIM
+  B_MS --> S_DIM
+  B_MS --> S_MS
+  B_TAX --> S_REF
+  S_REF --> S_DIM
+  S_REF --> S_MS
+  GIT --> S_SEED
+  S_SEED --> S_DIM
+  S_SEED -- crosswalk --> S_GL
+  B_GL --> S_GL
+  S_MIT -- telecast match --> S_GL
+  B_NRLD --> S_NRLD
+
+  S_DIM --> G_DIM
+  S_MIT --> G_MI
+  S_GL --> G_MI
+  S_MS -- aggregated first --> G_MI
+  S_MS --> G_MS
+  S_MIT --> G_NGR
+  S_NRLD --> G_NGR
+  B_MRI -.-> G_NGR
+
+  G_DIM --> CUBE
+  G_MI --> CUBE
+  G_MS --> CUBE
+  G_NGR --> CUBE
+  G_OPS -- refresh_key --> CUBE
+  CUBE --> BI
+
+  classDef existing fill:#d4edda,stroke:#2e7d32,color:#000
+  classDef newtbl fill:#fff3cd,stroke:#b8860b,color:#000
+  classDef phase2 fill:#eeeeee,stroke:#888,stroke-dasharray:4 3,color:#000
+  class B_BIG,B_MS existing
+  class B_PANEL,B_TAX,B_GL newtbl
+  class B_NRLD newtbl
+  class MRI,B_MRI phase2

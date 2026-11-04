@@ -1,0 +1,8427 @@
+{
+ "source_file": "/Users/dthakur/Downloads/NextGenResearchDashboard.pbix",
+ "has_data_model": false,
+ "connection": {
+  "Version": 6,
+  "Connections": [
+   {
+    "Name": "EntityDataSource",
+    "ConnectionString": "Data Source=\"powerbi://api.powerbi.com/v1.0/myorg/Next Gen Research\";Initial Catalog=NextGenResearchDataSource;Access Mode=readonly;Integrated Security=ClaimsToken",
+    "ConnectionType": "pbiServiceXmlaStyleLive",
+    "PbiModelVirtualServerName": "sobe_wowvirtualserver",
+    "PbiModelDatabaseName": "b17e6823-3e14-4b5d-b6c2-a0051e14796d"
+   }
+  ],
+  "RemoteArtifacts": [
+   {
+    "DatasetId": "b17e6823-3e14-4b5d-b6c2-a0051e14796d",
+    "ReportId": "082ed359-6f59-44e7-ba9b-262585f22132"
+   }
+  ],
+  "OriginalWorkspaceObjectId": "50655572-7427-4f64-a8af-ef2f789b9b99"
+ },
+ "model_tables": [
+  "*MEASURES",
+  "CHANNEL_SELECTOR",
+  "CUSTOM_COMPARISON_SELECTION",
+  "CUSTOM_COMPARISON_TIME_PERIOD",
+  "DATA_AVAILABILITY",
+  "DATE_LAST_REFRESHED",
+  "DAYPART 1",
+  "DAYPART 2",
+  "Info - Channel Performance (Avg '000)",
+  "Info - Channel Performance (CVG Rtg)",
+  "L5_MONTH_UES_AND_HISTORICAL_UES",
+  "PREMIERES",
+  "TIME_PERIOD",
+  "UNIVERSE",
+  "VERSION",
+  "WM_REACH_AND_FREQUENCY",
+  "WM_NETWORKS",
+  "WM_AVG_AUDIENCE_MONTH",
+  "WM_BROADCAST_CALENDAR",
+  "WM_REACH_AND_FREQUENCY_QTR",
+  "WM_BROADCAST_CALENDAR_MAX_DATES",
+  "WM_DATE_SELECTION",
+  "WM_DEMO",
+  "WM_TSV",
+  "DIM_ALL_MAIN_OWNERS",
+  "WM_DAYPART_ALL",
+  "WM_MEDIAN_AGE_MONTH",
+  "WM_PROGRAM_CATEGORY",
+  "WM_UE_CALENDAR",
+  "ASC_AUDIENCE_NEW",
+  "NET_AUDIENCE_NEW",
+  "WM_DAYPART",
+  "GENDER_SKEW_AP",
+  "AD_SALES_RANKERS_LW_LSD",
+  "AD_SALES_RANKERS_MONTH_LSD",
+  "MONTH_SORT",
+  "CHANNEL_PERFORMANCE",
+  "WM_UNIVERSE_ESTIMATE_MONTH",
+  "WM_UNIVERSE_ESTIMATE_QUARTER",
+  "EXEC_PORTFOLIO_BY_DAY_L3",
+  "EXEC_PORT_TIERED_GROUPS"
+ ],
+ "diagram_groups": {
+  "Median Age Monthly": [
+   "WM_MEDIAN_AGE_MONTH",
+   "WM_NETWORKS",
+   "WM_TSV",
+   "WM_BROADCAST_CALENDAR",
+   "WM_DAYPART"
+  ],
+  "Avg Audience": [
+   "WM_AVG_AUDIENCE_MONTH",
+   "WM_BROADCAST_CALENDAR",
+   "WM_DEMO",
+   "WM_NETWORKS",
+   "WM_TSV",
+   "WM_DAYPART",
+   "UNIVERSE",
+   "WM_DATE_SELECTION"
+  ],
+  "Reach, Freq, Time Spennt Monthly": [
+   "WM_REACH_AND_FREQUENCY",
+   "TIME_PERIOD",
+   "WM_DATE_SELECTION",
+   "WM_BROADCAST_CALENDAR",
+   "WM_NETWORKS",
+   "WM_DEMO",
+   "WM_TSV",
+   "WM_DAYPART"
+  ],
+  "AP": [
+   "NET_AUDIENCE_NEW",
+   "WM_BROADCAST_CALENDAR",
+   "WM_NETWORKS",
+   "ASC_AUDIENCE_NEW",
+   "WM_DAYPART",
+   "GENDER_SKEW_AP"
+  ],
+  "AS Rankers": [
+   "AD_SALES_RANKERS_LW_LSD",
+   "WM_DAYPART_ALL",
+   "WM_DEMO",
+   "WM_NETWORKS",
+   "WM_DAYPART",
+   "AD_SALES_RANKERS_MONTH_LSD",
+   "WM_BROADCAST_CALENDAR"
+  ],
+  "Reach Quarterly": [],
+  "UE": [
+   "WM_UE_CALENDAR",
+   "WM_NETWORKS",
+   "WM_UNIVERSE_ESTIMATE_MONTH",
+   "WM_UNIVERSE_ESTIMATE_QUARTER",
+   "WM_BROADCAST_CALENDAR"
+  ],
+  "Channel Performance": [
+   "CHANNEL_PERFORMANCE",
+   "WM_NETWORKS",
+   "WM_DEMO",
+   "WM_TSV",
+   "WM_DAYPART",
+   "WM_BROADCAST_CALENDAR",
+   "PREMIERES"
+  ],
+  "Exec Portfolio": [
+   "EXEC_PORTFOLIO_BY_DAY_L3",
+   "WM_BROADCAST_CALENDAR",
+   "WM_TSV",
+   "WM_DAYPART",
+   "WM_DEMO",
+   "WM_NETWORKS",
+   "WM_DATE_SELECTION",
+   "EXEC_PORT_TIERED_GROUPS"
+  ]
+ },
+ "pages": [
+  {
+   "ordinal": 0,
+   "page": "Exec Portfolio Report",
+   "hidden": true,
+   "container_count": 31,
+   "visual_types": {
+    "image": 2,
+    "group": 6,
+    "clusteredColumnChart": 4,
+    "slicer": 6,
+    "actionButton": 4,
+    "card": 4,
+    "textbox": 2,
+    "pivotTable": 3
+   },
+   "tables": [
+    "*MEASURES",
+    "EXEC_PORTFOLIO_BY_DAY_L3",
+    "EXEC_PORT_TIERED_GROUPS",
+    "WM_DATE_SELECTION",
+    "WM_DAYPART",
+    "WM_DEMO",
+    "WM_NETWORKS",
+    "WM_TSV"
+   ],
+   "measure_count": 10
+  },
+  {
+   "ordinal": 1,
+   "page": "Network Tooltip Exec Portfolio",
+   "hidden": true,
+   "container_count": 2,
+   "visual_types": {
+    "tableEx": 2
+   },
+   "tables": [
+    "*MEASURES",
+    "WM_NETWORKS"
+   ],
+   "measure_count": 1
+  },
+  {
+   "ordinal": 2,
+   "page": "Delivery Trends",
+   "hidden": true,
+   "container_count": 15,
+   "visual_types": {
+    "hundredPercentStackedColumnChart": 1,
+    "slicer": 6,
+    "pivotTable": 2,
+    "lineChart": 1,
+    "group": 1,
+    "image": 1,
+    "card": 2,
+    "textbox": 1
+   },
+   "tables": [
+    "*MEASURES",
+    "BROADCAST_CALENDAR",
+    "DATASTREAM_DIM",
+    "WM_AVG_AUDIENCE_QUARTER",
+    "WM_BROADCAST_CALENDAR",
+    "WM_DATE_SELECTION",
+    "WM_DAYPART",
+    "WM_DEMO",
+    "WM_NETWORKS",
+    "WM_TSV",
+    "Yes/No"
+   ],
+   "measure_count": 4
+  },
+  {
+   "ordinal": 3,
+   "page": "KPIs Trends",
+   "hidden": false,
+   "container_count": 38,
+   "visual_types": {
+    "group": 1,
+    "image": 1,
+    "card": 15,
+    "textbox": 8,
+    "slicer": 6,
+    "lineChart": 5,
+    "ChicletSlicer1448559807354": 1,
+    "advanceCardE03760C5AB684758B56AA29F9E6C257B": 1
+   },
+   "tables": [
+    "*MEASURES",
+    "WM_BROADCAST_CALENDAR",
+    "WM_DATE_SELECTION",
+    "WM_DAYPART_ALL",
+    "WM_DEMO",
+    "WM_NETWORKS",
+    "WM_TSV"
+   ],
+   "measure_count": 21
+  },
+  {
+   "ordinal": 4,
+   "page": "Audience Profiles",
+   "hidden": false,
+   "container_count": 156,
+   "visual_types": {
+    "group": 29,
+    "card": 49,
+    "textbox": 48,
+    "image": 17,
+    "pivotTable": 3,
+    "basicShape": 4,
+    "slicer": 3,
+    "clusteredColumnChart": 1,
+    "ChicletSlicer1448559807354": 1,
+    "pieChart": 1
+   },
+   "tables": [
+    "*MEASURES",
+    "CHANNEL_SELECTOR",
+    "GENDER_SKEW_AP",
+    "WM_DATE_SELECTION",
+    "WM_DAYPART",
+    "WM_NETWORKS"
+   ],
+   "measure_count": 65
+  },
+  {
+   "ordinal": 5,
+   "page": "Channel Performance",
+   "hidden": false,
+   "container_count": 40,
+   "visual_types": {
+    "image": 2,
+    "card": 11,
+    "group": 4,
+    "lineClusteredColumnComboChart": 2,
+    "tableEx": 2,
+    "lineChart": 2,
+    "textbox": 5,
+    "slicer": 6,
+    "basicShape": 1,
+    "ChicletSlicer1448559807354": 1,
+    "actionButton": 4
+   },
+   "tables": [
+    "*MEASURES",
+    "AD_SALES_RANKERS_MONTH_LSD",
+    "BROADCAST_CALENDAR",
+    "CHANNEL_PERFORMANCE",
+    "WM_BROADCAST_CALENDAR",
+    "WM_DATE_SELECTION",
+    "WM_DAYPART",
+    "WM_DEMO",
+    "WM_NETWORKS",
+    "WM_TSV"
+   ],
+   "measure_count": 24
+  },
+  {
+   "ordinal": 6,
+   "page": "Ad Sales Rankers",
+   "hidden": true,
+   "container_count": 16,
+   "visual_types": {
+    "slicer": 7,
+    "tableEx": 3,
+    "card": 3,
+    "group": 1,
+    "image": 1,
+    "textbox": 1
+   },
+   "tables": [
+    "*MEASURES",
+    "AD_SALES_RANKERS_LW_LSD",
+    "AD_SALES_RANKERS_MONTH_LSD",
+    "WM_DATE_SELECTION",
+    "WM_DAYPART_ALL",
+    "WM_DEMO",
+    "WM_NETWORKS",
+    "WM_PROGRAM_CATEGORY"
+   ],
+   "measure_count": 14
+  },
+  {
+   "ordinal": 7,
+   "page": "Portfolio Share '000",
+   "hidden": false,
+   "container_count": 48,
+   "visual_types": {
+    "group": 9,
+    "image": 1,
+    "card": 18,
+    "textbox": 8,
+    "slicer": 5,
+    "donutChart": 2,
+    "clusteredBarChart": 2,
+    "pivotTable": 2,
+    "advanceCardE03760C5AB684758B56AA29F9E6C257B": 1
+   },
+   "tables": [
+    "*MEASURES",
+    "DAY_PART",
+    "UNIVERSE",
+    "WM_AVG_AUDIENCE_MONTH",
+    "WM_DATE_SELECTION",
+    "WM_DAYPART",
+    "WM_DEMO",
+    "WM_NETWORKS",
+    "WM_TSV"
+   ],
+   "measure_count": 16
+  },
+  {
+   "ordinal": 8,
+   "page": "Portfolio Share Trends",
+   "hidden": false,
+   "container_count": 22,
+   "visual_types": {
+    "group": 4,
+    "image": 1,
+    "card": 2,
+    "textbox": 4,
+    "slicer": 6,
+    "actionButton": 1,
+    "pivotTable": 2,
+    "ribbonChart": 1,
+    "advanceCardE03760C5AB684758B56AA29F9E6C257B": 1
+   },
+   "tables": [
+    "*MEASURES",
+    "MONTH_SORT",
+    "UNIVERSE",
+    "WM_BROADCAST_CALENDAR",
+    "WM_DATE_SELECTION",
+    "WM_DAYPART_ALL",
+    "WM_DEMO",
+    "WM_NETWORKS",
+    "WM_TSV"
+   ],
+   "measure_count": 8
+  },
+  {
+   "ordinal": 9,
+   "page": "Daypart Comparison",
+   "hidden": false,
+   "container_count": 64,
+   "visual_types": {
+    "group": 9,
+    "image": 1,
+    "card": 10,
+    "slicer": 11,
+    "textbox": 3,
+    "advanceCardE03760C5AB684758B56AA29F9E6C257B": 9,
+    "basicShape": 8,
+    "tableEx": 4,
+    "actionButton": 9
+   },
+   "tables": [
+    "*MEASURES",
+    "CONGLOMERATE_LKP",
+    "CUSTOM_COMPARISON_SELECTION",
+    "DAYPART 1",
+    "DAYPART 2",
+    "DEMO_DIM",
+    "TIME_PERIOD",
+    "WM_DATE_SELECTION",
+    "WM_DEMO",
+    "WM_NETWORKS",
+    "WM_TSV"
+   ],
+   "measure_count": 12
+  },
+  {
+   "ordinal": 10,
+   "page": "TV Universe",
+   "hidden": false,
+   "container_count": 11,
+   "visual_types": {
+    "group": 1,
+    "image": 1,
+    "card": 2,
+    "textbox": 2,
+    "slicer": 2,
+    "waterfallChart": 1,
+    "lineStackedColumnComboChart": 1,
+    "ChicletSlicer1448559807354": 1
+   },
+   "tables": [
+    "*MEASURES",
+    "WM_NETWORKS",
+    "WM_UE_CALENDAR"
+   ],
+   "measure_count": 5
+  },
+  {
+   "ordinal": 11,
+   "page": "Age and Gender",
+   "hidden": false,
+   "container_count": 18,
+   "visual_types": {
+    "group": 1,
+    "image": 1,
+    "card": 2,
+    "textbox": 7,
+    "slicer": 5,
+    "scatterChart": 1,
+    "advanceCardE03760C5AB684758B56AA29F9E6C257B": 1
+   },
+   "tables": [
+    "*MEASURES",
+    "CONGLOMERATE_LKP",
+    "WM_BROADCAST_CALENDAR",
+    "WM_DATE_SELECTION",
+    "WM_DAYPART_ALL",
+    "WM_NETWORKS",
+    "WM_TSV"
+   ],
+   "measure_count": 6
+  },
+  {
+   "ordinal": 12,
+   "page": "Reference Page",
+   "hidden": false,
+   "container_count": 7,
+   "visual_types": {
+    "group": 1,
+    "image": 1,
+    "card": 2,
+    "textbox": 2,
+    "tableEx": 1
+   },
+   "tables": [
+    "*MEASURES",
+    "DATA_AVAILABILITY"
+   ],
+   "measure_count": 2
+  },
+  {
+   "ordinal": 13,
+   "page": "Network Tooltip",
+   "hidden": true,
+   "container_count": 1,
+   "visual_types": {
+    "tableEx": 1
+   },
+   "tables": [
+    "*MEASURES",
+    "WM_NETWORKS"
+   ],
+   "measure_count": 1
+  },
+  {
+   "ordinal": 14,
+   "page": "Network Tooltip YTD",
+   "hidden": true,
+   "container_count": 1,
+   "visual_types": {
+    "tableEx": 1
+   },
+   "tables": [
+    "*MEASURES",
+    "WM_NETWORKS"
+   ],
+   "measure_count": 1
+  },
+  {
+   "ordinal": 15,
+   "page": "Info - Channel Perform (Avg '000)",
+   "hidden": true,
+   "container_count": 1,
+   "visual_types": {
+    "tableEx": 1
+   },
+   "tables": [
+    "Info - Channel Performance (Avg '000)"
+   ],
+   "measure_count": 0
+  },
+  {
+   "ordinal": 16,
+   "page": "Info - Channel Perform (CVG Rtg)",
+   "hidden": true,
+   "container_count": 1,
+   "visual_types": {
+    "tableEx": 1
+   },
+   "tables": [
+    "Info - Channel Performance (CVG Rtg)"
+   ],
+   "measure_count": 0
+  },
+  {
+   "ordinal": 17,
+   "page": "Info - Data Availability",
+   "hidden": true,
+   "container_count": 1,
+   "visual_types": {
+    "tableEx": 1
+   },
+   "tables": [
+    "DATA_AVAILABILITY",
+    "Info - Channel Performance (Avg '000)"
+   ],
+   "measure_count": 0
+  },
+  {
+   "ordinal": 18,
+   "page": "Info -CC year and qtr",
+   "hidden": true,
+   "container_count": 14,
+   "visual_types": {
+    "advanceCardE03760C5AB684758B56AA29F9E6C257B": 5,
+    "card": 6,
+    "textbox": 2,
+    "basicShape": 1
+   },
+   "tables": [
+    "*MEASURES"
+   ],
+   "measure_count": 9
+  },
+  {
+   "ordinal": 19,
+   "page": "Info-CC month",
+   "hidden": true,
+   "container_count": 21,
+   "visual_types": {
+    "advanceCardE03760C5AB684758B56AA29F9E6C257B": 7,
+    "card": 9,
+    "textbox": 3,
+    "basicShape": 2
+   },
+   "tables": [
+    "*MEASURES"
+   ],
+   "measure_count": 12
+  },
+  {
+   "ordinal": 20,
+   "page": "Template 01",
+   "hidden": true,
+   "container_count": 5,
+   "visual_types": {
+    "group": 1,
+    "image": 1,
+    "textbox": 1,
+    "card": 2
+   },
+   "tables": [
+    "*MEASURES"
+   ],
+   "measure_count": 2
+  },
+  {
+   "ordinal": 21,
+   "page": "Template 02",
+   "hidden": true,
+   "container_count": 6,
+   "visual_types": {
+    "group": 1,
+    "image": 1,
+    "card": 2,
+    "textbox": 2
+   },
+   "tables": [
+    "*MEASURES"
+   ],
+   "measure_count": 2
+  }
+ ],
+ "visuals": [
+  {
+   "page": "Exec Portfolio Report",
+   "page_hidden": true,
+   "type": "clusteredColumnChart",
+   "title": "Total TV Portfolio P25-54",
+   "measures": [
+    "YoY ASC w/out WBD",
+    "YoY Picker",
+    "YoY Picker ASC",
+    "YoY Picker ASC PUT"
+   ],
+   "columns": [
+    "EXEC_PORTFOLIO_BY_DAY_L3[DELIVERY]",
+    "WM_DEMO[DEMO_DESC]",
+    "WM_NETWORKS[Main ASCO Owners]",
+    "WM_NETWORKS[NETWORK TYPE 1]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "EXEC_PORTFOLIO_BY_DAY_L3",
+    "WM_DEMO",
+    "WM_NETWORKS"
+   ],
+   "formatting_measures": [
+    "YoY ASC w/out WBD",
+    "YoY Picker ASC",
+    "YoY Picker ASC PUT"
+   ],
+   "stale_only_tables": [
+    "CONGLOMERATE_LKP"
+   ]
+  },
+  {
+   "page": "Exec Portfolio Report",
+   "page_hidden": true,
+   "type": "clusteredColumnChart",
+   "title": "Total TV Portfolio P25-54",
+   "measures": [
+    "YoY ASC w/out WBD",
+    "YoY Picker",
+    "YoY Picker ASC",
+    "YoY Picker ASC PUT"
+   ],
+   "columns": [
+    "EXEC_PORTFOLIO_BY_DAY_L3[DELIVERY]",
+    "WM_DEMO[DEMO_DESC]",
+    "WM_NETWORKS[Main ASCO Owners]",
+    "WM_NETWORKS[NETWORK TYPE 1]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "EXEC_PORTFOLIO_BY_DAY_L3",
+    "WM_DEMO",
+    "WM_NETWORKS"
+   ],
+   "formatting_measures": [
+    "YoY ASC w/out WBD",
+    "YoY Picker ASC",
+    "YoY Picker ASC PUT"
+   ],
+   "stale_only_tables": [
+    "CONGLOMERATE_LKP"
+   ]
+  },
+  {
+   "page": "Exec Portfolio Report",
+   "page_hidden": true,
+   "type": "clusteredColumnChart",
+   "title": "Top 30 ASCO Nets by Portfolio P25-54",
+   "measures": [
+    "YoY Picker",
+    "YoY Picker Top 30 ASC",
+    "YoY Picker Top 30 ASC w/Out WBD8"
+   ],
+   "columns": [
+    "EXEC_PORT_TIERED_GROUPS[DISPLAY]",
+    "WM_DEMO[DEMO_DESC]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "EXEC_PORT_TIERED_GROUPS",
+    "WM_DEMO"
+   ],
+   "formatting_measures": [
+    "YoY Picker Top 30 ASC",
+    "YoY Picker Top 30 ASC w/Out WBD8"
+   ],
+   "stale_only_tables": [
+    "CONGLOMERATE_LKP",
+    "WM_NETWORKS"
+   ]
+  },
+  {
+   "page": "Exec Portfolio Report",
+   "page_hidden": true,
+   "type": "clusteredColumnChart",
+   "title": "Top 30 ASCO Nets by Portfolio P25-54",
+   "measures": [
+    "YoY Picker",
+    "YoY Picker Top 30 ASC",
+    "YoY Picker Top 30 ASC w/Out WBD8"
+   ],
+   "columns": [
+    "EXEC_PORT_TIERED_GROUPS[DISPLAY]",
+    "WM_DEMO[DEMO_DESC]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "EXEC_PORT_TIERED_GROUPS",
+    "WM_DEMO"
+   ],
+   "formatting_measures": [
+    "YoY Picker Top 30 ASC",
+    "YoY Picker Top 30 ASC w/Out WBD8"
+   ],
+   "stale_only_tables": [
+    "CONGLOMERATE_LKP",
+    "WM_NETWORKS"
+   ]
+  },
+  {
+   "page": "Exec Portfolio Report",
+   "page_hidden": true,
+   "type": "slicer",
+   "title": "Daypart Slicer",
+   "measures": [],
+   "columns": [
+    "WM_DAYPART[DAYPART]"
+   ],
+   "tables": [
+    "WM_DAYPART"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Exec Portfolio Report",
+   "page_hidden": true,
+   "type": "slicer",
+   "title": "Preset Selection Slicer",
+   "measures": [],
+   "columns": [
+    "WM_DATE_SELECTION[Selection]",
+    "WM_DATE_SELECTION[YoYComparisonLogic]"
+   ],
+   "tables": [
+    "WM_DATE_SELECTION"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Exec Portfolio Report",
+   "page_hidden": true,
+   "type": "slicer",
+   "title": "Date Slicer",
+   "measures": [],
+   "columns": [
+    "WM_DATE_SELECTION[Date]",
+    "WM_DATE_SELECTION[YoYComparisonLogic]"
+   ],
+   "tables": [
+    "WM_DATE_SELECTION"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Exec Portfolio Report",
+   "page_hidden": true,
+   "type": "slicer",
+   "title": "TimePeriodSwitcher",
+   "measures": [],
+   "columns": [
+    "WM_DATE_SELECTION[TimePeriodSwitcher]"
+   ],
+   "tables": [
+    "WM_DATE_SELECTION"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Exec Portfolio Report",
+   "page_hidden": true,
+   "type": "slicer",
+   "title": "Period Selector Preset",
+   "measures": [],
+   "columns": [
+    "WM_DATE_SELECTION[Period]"
+   ],
+   "tables": [
+    "WM_DATE_SELECTION"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Exec Portfolio Report",
+   "page_hidden": true,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Title for Report"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [
+    "Title for Report"
+   ],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Exec Portfolio Report",
+   "page_hidden": true,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Title for Report"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [
+    "Title for Report"
+   ],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Exec Portfolio Report",
+   "page_hidden": true,
+   "type": "pivotTable",
+   "title": "Top 30 ASCO Nets by Portfolio",
+   "measures": [
+    "YoY Picker"
+   ],
+   "columns": [
+    "EXEC_PORT_TIERED_GROUPS[DISPLAY]",
+    "EXEC_PORT_TIERED_GROUPS[LOGO]",
+    "WM_DEMO[DEMO_DESC_FOR_EXEC_PORTFOLIO]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "EXEC_PORT_TIERED_GROUPS",
+    "WM_DEMO"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": [
+    "EXEC_PORTFOLIO_BY_DAY_L3"
+   ]
+  },
+  {
+   "page": "Exec Portfolio Report",
+   "page_hidden": true,
+   "type": "pivotTable",
+   "title": "Top 30 ASCO Nets by Portfolio",
+   "measures": [
+    "DWR YoY Week",
+    "YoY Picker"
+   ],
+   "columns": [
+    "EXEC_PORT_TIERED_GROUPS[DISPLAY]",
+    "EXEC_PORT_TIERED_GROUPS[LOGO]",
+    "WM_DEMO[DEMO_DESC_FOR_EXEC_PORTFOLIO]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "EXEC_PORT_TIERED_GROUPS",
+    "WM_DEMO"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": [
+    "EXEC_PORTFOLIO_BY_DAY_L3"
+   ]
+  },
+  {
+   "page": "Exec Portfolio Report",
+   "page_hidden": true,
+   "type": "slicer",
+   "title": "Daypart Slicer",
+   "measures": [],
+   "columns": [
+    "WM_DAYPART[DAYPART]",
+    "WM_TSV[TSV]"
+   ],
+   "tables": [
+    "WM_DAYPART",
+    "WM_TSV"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Exec Portfolio Report",
+   "page_hidden": true,
+   "type": "pivotTable",
+   "title": null,
+   "measures": [],
+   "columns": [
+    "EXEC_PORTFOLIO_BY_DAY_L3[BroadcastDayKey]",
+    "EXEC_PORTFOLIO_BY_DAY_L3[BroadcastMonthKey]"
+   ],
+   "tables": [
+    "EXEC_PORTFOLIO_BY_DAY_L3"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Exec Portfolio Report",
+   "page_hidden": true,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Version"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Exec Portfolio Report",
+   "page_hidden": true,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Date Last Refreshed"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Network Tooltip Exec Portfolio",
+   "page_hidden": true,
+   "type": "tableEx",
+   "title": null,
+   "measures": [],
+   "columns": [
+    "WM_NETWORKS[DISPLAY]"
+   ],
+   "tables": [
+    "WM_NETWORKS"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Network Tooltip Exec Portfolio",
+   "page_hidden": true,
+   "type": "tableEx",
+   "title": null,
+   "measures": [
+    "YoY Picker"
+   ],
+   "columns": [
+    "WM_NETWORKS[DISPLAY]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "WM_NETWORKS"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Delivery Trends",
+   "page_hidden": true,
+   "type": "hundredPercentStackedColumnChart",
+   "title": "Portfolios",
+   "measures": [],
+   "columns": [
+    "WM_BROADCAST_CALENDAR[BC Quarter]",
+    "WM_NETWORKS[Main ASCO Owners]"
+   ],
+   "tables": [
+    "WM_BROADCAST_CALENDAR",
+    "WM_NETWORKS"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": [
+    "CONGLOMERATE_LKP"
+   ]
+  },
+  {
+   "page": "Delivery Trends",
+   "page_hidden": true,
+   "type": "slicer",
+   "title": null,
+   "measures": [],
+   "columns": [
+    "DATASTREAM_DIM[DATASTREAM]",
+    "WM_TSV[TSV]"
+   ],
+   "tables": [
+    "DATASTREAM_DIM",
+    "WM_TSV"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Delivery Trends",
+   "page_hidden": true,
+   "type": "slicer",
+   "title": null,
+   "measures": [],
+   "columns": [
+    "WM_DEMO[DEMO_DESC]"
+   ],
+   "tables": [
+    "WM_DEMO"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Delivery Trends",
+   "page_hidden": true,
+   "type": "slicer",
+   "title": null,
+   "measures": [],
+   "columns": [
+    "WM_DAYPART[DAYPART]"
+   ],
+   "tables": [
+    "WM_DAYPART"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Delivery Trends",
+   "page_hidden": true,
+   "type": "slicer",
+   "title": null,
+   "measures": [],
+   "columns": [
+    "WM_NETWORKS[NETWORKTYPE]"
+   ],
+   "tables": [
+    "WM_NETWORKS"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Delivery Trends",
+   "page_hidden": true,
+   "type": "slicer",
+   "title": null,
+   "measures": [],
+   "columns": [
+    "Yes/No[Value]"
+   ],
+   "tables": [
+    "Yes/No"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Delivery Trends",
+   "page_hidden": true,
+   "type": "pivotTable",
+   "title": "Q.o.Q Delivery",
+   "measures": [
+    "% Diff Delivery QoQ"
+   ],
+   "columns": [
+    "WM_AVG_AUDIENCE_QUARTER[QTRS_FOR_DIFF]",
+    "WM_AVG_AUDIENCE_QUARTER[Total Scope Text]",
+    "WM_BROADCAST_CALENDAR[BC Quarter]",
+    "WM_NETWORKS[Main ASCO Owners]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "WM_AVG_AUDIENCE_QUARTER",
+    "WM_BROADCAST_CALENDAR",
+    "WM_NETWORKS"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": [
+    "BROADCAST_CALENDAR"
+   ]
+  },
+  {
+   "page": "Delivery Trends",
+   "page_hidden": true,
+   "type": "lineChart",
+   "title": "Networks",
+   "measures": [],
+   "columns": [
+    "WM_BROADCAST_CALENDAR[BC Quarter]"
+   ],
+   "tables": [
+    "WM_BROADCAST_CALENDAR"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": [
+    "EXEC_PORT_TIERED_GROUPS"
+   ]
+  },
+  {
+   "page": "Delivery Trends",
+   "page_hidden": true,
+   "type": "pivotTable",
+   "title": "Share of Delivery",
+   "measures": [
+    "Share of TV (AMRLD/MIT)"
+   ],
+   "columns": [
+    "BROADCAST_CALENDAR[BC Quarter]",
+    "WM_AVG_AUDIENCE_QUARTER[Portfolio Text]",
+    "WM_AVG_AUDIENCE_QUARTER[SIX_QTRS]",
+    "WM_BROADCAST_CALENDAR[BC Quarter]",
+    "WM_NETWORKS[Column]",
+    "WM_NETWORKS[NETWORKLABEL]",
+    "WM_NETWORKS[Tiered WBD Networks]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "BROADCAST_CALENDAR",
+    "WM_AVG_AUDIENCE_QUARTER",
+    "WM_BROADCAST_CALENDAR",
+    "WM_NETWORKS"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Delivery Trends",
+   "page_hidden": true,
+   "type": "slicer",
+   "title": "Portfolio",
+   "measures": [],
+   "columns": [
+    "WM_NETWORKS[Main ASCO Owners]"
+   ],
+   "tables": [
+    "WM_NETWORKS"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Delivery Trends",
+   "page_hidden": true,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Version"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Delivery Trends",
+   "page_hidden": true,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Date Last Refreshed"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Ad Sales Rankers",
+   "page_hidden": true,
+   "type": "slicer",
+   "title": null,
+   "measures": [],
+   "columns": [
+    "WM_NETWORKS[NETWORK TYPE 1]"
+   ],
+   "tables": [
+    "WM_NETWORKS"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Ad Sales Rankers",
+   "page_hidden": true,
+   "type": "slicer",
+   "title": null,
+   "measures": [],
+   "columns": [
+    "WM_DEMO[DEMO_DESC]"
+   ],
+   "tables": [
+    "WM_DEMO"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Ad Sales Rankers",
+   "page_hidden": true,
+   "type": "slicer",
+   "title": null,
+   "measures": [],
+   "columns": [
+    "WM_DAYPART_ALL[DAYPART]"
+   ],
+   "tables": [
+    "WM_DAYPART_ALL"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Ad Sales Rankers",
+   "page_hidden": true,
+   "type": "slicer",
+   "title": null,
+   "measures": [],
+   "columns": [
+    "WM_PROGRAM_CATEGORY[Category]"
+   ],
+   "tables": [
+    "WM_PROGRAM_CATEGORY"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Ad Sales Rankers",
+   "page_hidden": true,
+   "type": "tableEx",
+   "title": "Last Week Top 20 Telecasts",
+   "measures": [
+    "AA '000 LW LSD",
+    "AA '000 TC RANKER",
+    "LW DATE PERIOD",
+    "WBD COLOR LW LSD"
+   ],
+   "columns": [
+    "AD_SALES_RANKERS_LW_LSD[AIRING]",
+    "AD_SALES_RANKERS_LW_LSD[NETWORK]",
+    "AD_SALES_RANKERS_LW_LSD[PROGRAM_NAME]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "AD_SALES_RANKERS_LW_LSD"
+   ],
+   "formatting_measures": [
+    "LW DATE PERIOD",
+    "WBD COLOR LW LSD"
+   ],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Ad Sales Rankers",
+   "page_hidden": true,
+   "type": "tableEx",
+   "title": "Top 20 Programs",
+   "measures": [
+    "AA '000 Month LSD",
+    "AA '000 PROGRAM RANKER",
+    "SELECTION DATE PERIOD",
+    "TELECAST COUNT",
+    "WBD COLOR MONTH"
+   ],
+   "columns": [
+    "AD_SALES_RANKERS_MONTH_LSD[NETWORK]",
+    "AD_SALES_RANKERS_MONTH_LSD[PROGRAM_NAME]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "AD_SALES_RANKERS_MONTH_LSD"
+   ],
+   "formatting_measures": [
+    "SELECTION DATE PERIOD",
+    "WBD COLOR MONTH"
+   ],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Ad Sales Rankers",
+   "page_hidden": true,
+   "type": "slicer",
+   "title": null,
+   "measures": [],
+   "columns": [
+    "WM_DATE_SELECTION[Selection]"
+   ],
+   "tables": [
+    "WM_DATE_SELECTION"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Ad Sales Rankers",
+   "page_hidden": true,
+   "type": "slicer",
+   "title": null,
+   "measures": [],
+   "columns": [
+    "WM_DATE_SELECTION[Period]"
+   ],
+   "tables": [
+    "WM_DATE_SELECTION"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Ad Sales Rankers",
+   "page_hidden": true,
+   "type": "tableEx",
+   "title": "Top 20 Networks",
+   "measures": [
+    "AA '000 Month LSD",
+    "AA '000 NETWORK RANKER",
+    "SELECTION DATE PERIOD",
+    "WBD COLOR MONTH"
+   ],
+   "columns": [
+    "AD_SALES_RANKERS_MONTH_LSD[NETWORK]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "AD_SALES_RANKERS_MONTH_LSD"
+   ],
+   "formatting_measures": [
+    "SELECTION DATE PERIOD",
+    "WBD COLOR MONTH"
+   ],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Ad Sales Rankers",
+   "page_hidden": true,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "SELECTED FILTERS"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [
+    "SELECTED FILTERS"
+   ],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Ad Sales Rankers",
+   "page_hidden": true,
+   "type": "slicer",
+   "title": null,
+   "measures": [
+    "AA '000 ALL"
+   ],
+   "columns": [
+    "WM_NETWORKS[DISPLAY]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "WM_NETWORKS"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Ad Sales Rankers",
+   "page_hidden": true,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Version"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Ad Sales Rankers",
+   "page_hidden": true,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Date Last Refreshed"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "KPIs Trends",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Version"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "KPIs Trends",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Date Last Refreshed"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "KPIs Trends",
+   "page_hidden": false,
+   "type": "slicer",
+   "title": null,
+   "measures": [],
+   "columns": [
+    "WM_DAYPART_ALL[DAYPART]"
+   ],
+   "tables": [
+    "WM_DAYPART_ALL"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "KPIs Trends",
+   "page_hidden": false,
+   "type": "lineChart",
+   "title": "MONTHLY REACH %",
+   "measures": [
+    "Monthly Reach %"
+   ],
+   "columns": [
+    "WM_BROADCAST_CALENDAR[BC Month Text]",
+    "WM_BROADCAST_CALENDAR[BC Year]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "WM_BROADCAST_CALENDAR"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": [
+    "BROADCAST_CALENDAR"
+   ]
+  },
+  {
+   "page": "KPIs Trends",
+   "page_hidden": false,
+   "type": "slicer",
+   "title": null,
+   "measures": [],
+   "columns": [
+    "WM_NETWORKS[DISPLAY]"
+   ],
+   "tables": [
+    "WM_NETWORKS"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "KPIs Trends",
+   "page_hidden": false,
+   "type": "slicer",
+   "title": null,
+   "measures": [],
+   "columns": [
+    "WM_TSV[TSV]"
+   ],
+   "tables": [
+    "WM_TSV"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "KPIs Trends",
+   "page_hidden": false,
+   "type": "slicer",
+   "title": null,
+   "measures": [],
+   "columns": [
+    "WM_DEMO[DEMO_DESC]"
+   ],
+   "tables": [
+    "WM_DEMO"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "KPIs Trends",
+   "page_hidden": false,
+   "type": "slicer",
+   "title": null,
+   "measures": [],
+   "columns": [
+    "WM_BROADCAST_CALENDAR[BC Year]"
+   ],
+   "tables": [
+    "WM_BROADCAST_CALENDAR"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "KPIs Trends",
+   "page_hidden": false,
+   "type": "lineChart",
+   "title": "AVG FREQUENCY (DAYS PER MONTH)",
+   "measures": [
+    "Avg Frequency"
+   ],
+   "columns": [
+    "WM_BROADCAST_CALENDAR[BC Month Text]",
+    "WM_BROADCAST_CALENDAR[BC Year]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "WM_BROADCAST_CALENDAR"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": [
+    "BROADCAST_CALENDAR"
+   ]
+  },
+  {
+   "page": "KPIs Trends",
+   "page_hidden": false,
+   "type": "lineChart",
+   "title": "AVG TIME SPENT (MINS PER MONTH)",
+   "measures": [
+    "Avg Time Spent"
+   ],
+   "columns": [
+    "WM_BROADCAST_CALENDAR[BC Month Text]",
+    "WM_BROADCAST_CALENDAR[BC Year]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "WM_BROADCAST_CALENDAR"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": [
+    "BROADCAST_CALENDAR"
+   ]
+  },
+  {
+   "page": "KPIs Trends",
+   "page_hidden": false,
+   "type": "lineChart",
+   "title": "SHARE %",
+   "measures": [
+    "Share"
+   ],
+   "columns": [
+    "WM_BROADCAST_CALENDAR[BC Month Text]",
+    "WM_BROADCAST_CALENDAR[BC Year]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "WM_BROADCAST_CALENDAR"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": [
+    "BROADCAST_CALENDAR"
+   ]
+  },
+  {
+   "page": "KPIs Trends",
+   "page_hidden": false,
+   "type": "lineChart",
+   "title": "AVG ''000",
+   "measures": [
+    "Avg Delivery"
+   ],
+   "columns": [
+    "WM_BROADCAST_CALENDAR[BC Month Text]",
+    "WM_BROADCAST_CALENDAR[BC Year]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "WM_BROADCAST_CALENDAR"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": [
+    "BROADCAST_CALENDAR"
+   ]
+  },
+  {
+   "page": "KPIs Trends",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "MoM Text",
+    "Share MoM"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "KPIs Trends",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Share MoM",
+    "Share YoY"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "KPIs Trends",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Avg Delivery MoM"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "KPIs Trends",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Monthly Reach % MoM",
+    "Share MoM"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "KPIs Trends",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Avg Frequency MoM",
+    "Share MoM"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "KPIs Trends",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Avg Time Spent MoM",
+    "Share MoM"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "KPIs Trends",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Avg Delivery YoY",
+    "Share MoM"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "KPIs Trends",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Monthly Reach % YoY",
+    "Share MoM"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "KPIs Trends",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Avg Frequency YoY",
+    "Share MoM"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "KPIs Trends",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Avg Time Spent YoY",
+    "Share MoM"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "KPIs Trends",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Share MoM"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "KPIs Trends",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Share MoM",
+    "YoY Text"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "KPIs Trends",
+   "page_hidden": false,
+   "type": "slicer",
+   "title": null,
+   "measures": [],
+   "columns": [
+    "WM_DATE_SELECTION[Selection]"
+   ],
+   "tables": [
+    "WM_DATE_SELECTION"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "KPIs Trends",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "BC Month",
+    "Share MoM"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "KPIs Trends",
+   "page_hidden": false,
+   "type": "ChicletSlicer1448559807354",
+   "title": null,
+   "measures": [],
+   "columns": [
+    "WM_NETWORKS[LOGO]"
+   ],
+   "tables": [
+    "WM_NETWORKS"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "KPIs Trends",
+   "page_hidden": false,
+   "type": "advanceCardE03760C5AB684758B56AA29F9E6C257B",
+   "title": null,
+   "measures": [
+    "Year KPI Trends (Multiple Selected Values)"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Core Demo 1 Text"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [
+    "Core Demo 1 Text"
+   ],
+   "stale_only_tables": [
+    "WM_NETWORKS"
+   ]
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Core Demo 2 Text",
+    "Core Demo 3 Text"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [
+    "Core Demo 3 Text"
+   ],
+   "stale_only_tables": [
+    "WM_NETWORKS"
+   ]
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Core Demo 2 Text",
+    "Core Demo 4 Text"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [
+    "Core Demo 4 Text"
+   ],
+   "stale_only_tables": [
+    "WM_NETWORKS"
+   ]
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Core Demo 2 Text",
+    "Core Demo 5 Text"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [
+    "Core Demo 5 Text"
+   ],
+   "stale_only_tables": [
+    "WM_NETWORKS"
+   ]
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Core Demo 2 Text",
+    "Core Demo 6 Text"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [
+    "Core Demo 6 Text"
+   ],
+   "stale_only_tables": [
+    "WM_NETWORKS"
+   ]
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Core Demo 2 Text",
+    "Core Demo 7 Text"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [
+    "Core Demo 7 Text"
+   ],
+   "stale_only_tables": [
+    "WM_NETWORKS"
+   ]
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Core Demo 2 Text",
+    "Core Demo 8 Text"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [
+    "Core Demo 8 Text"
+   ],
+   "stale_only_tables": [
+    "WM_NETWORKS"
+   ]
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Core Demo 2 Text",
+    "Core Demo 9 Text"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [
+    "Core Demo 9 Text"
+   ],
+   "stale_only_tables": [
+    "WM_NETWORKS"
+   ]
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Core Demo 2 Text"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [
+    "Core Demo 2 Text"
+   ],
+   "stale_only_tables": [
+    "WM_NETWORKS"
+   ]
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "card",
+   "title": "Reach",
+   "measures": [
+    "TV Reach"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "pivotTable",
+   "title": "ETHNICITY",
+   "measures": [
+    "Hispanic",
+    "Non-Hispanic"
+   ],
+   "columns": [
+    "CHANNEL_SELECTOR[CHANNEL]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "CHANNEL_SELECTOR"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "pivotTable",
+   "title": "Race",
+   "measures": [
+    "African American",
+    "Other",
+    "White"
+   ],
+   "columns": [
+    "CHANNEL_SELECTOR[CHANNEL]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "CHANNEL_SELECTOR"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "card",
+   "title": "CD Net",
+   "measures": [
+    "Connected Device"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "card",
+   "title": "CD ASC",
+   "measures": [
+    "Connected Device ASC Avg"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "card",
+   "title": "VMVPD Net",
+   "measures": [
+    "vMVPD"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "card",
+   "title": "VMVPD ASC",
+   "measures": [
+    "vMVPD ASC Avg"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "card",
+   "title": "Smart TV Net",
+   "measures": [
+    "Smart TV"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "card",
+   "title": "Smart TV ASC",
+   "measures": [
+    "Smart TV ASC Avg"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "card",
+   "title": "SVOD ASC",
+   "measures": [
+    "SVOD ASC Avg"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "card",
+   "title": "SVOD Network",
+   "measures": [
+    "SVOD"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "slicer",
+   "title": "Daypart",
+   "measures": [],
+   "columns": [
+    "WM_DAYPART[DAYPART]"
+   ],
+   "tables": [
+    "WM_DAYPART"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "slicer",
+   "title": "Date Selection",
+   "measures": [],
+   "columns": [
+    "WM_DATE_SELECTION[Selection]"
+   ],
+   "tables": [
+    "WM_DATE_SELECTION"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "slicer",
+   "title": "Network",
+   "measures": [],
+   "columns": [
+    "WM_NETWORKS[CONGLOMERATE]",
+    "WM_NETWORKS[DISPLAY]"
+   ],
+   "tables": [
+    "WM_NETWORKS"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "card",
+   "title": "Version",
+   "measures": [
+    "Version"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "card",
+   "title": "Date Refreshed",
+   "measures": [
+    "Date Last Refreshed"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "clusteredColumnChart",
+   "title": null,
+   "measures": [
+    "HHI 100K+",
+    "HHI 125K+",
+    "HHI 75K+"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "card",
+   "title": "NET Median HHI",
+   "measures": [
+    "LifestylePostion01Percent",
+    "Median HHI"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "card",
+   "title": "ASC Median HHI",
+   "measures": [
+    "Median HHI ASC Avg"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [],
+   "columns": [
+    "WM_DATE_SELECTION[Display]",
+    "WM_DATE_SELECTION[TimePeriodID]"
+   ],
+   "tables": [
+    "WM_DATE_SELECTION"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "ChicletSlicer1448559807354",
+   "title": "Network Logo",
+   "measures": [],
+   "columns": [
+    "WM_NETWORKS[LOGO]"
+   ],
+   "tables": [
+    "WM_NETWORKS"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "pivotTable",
+   "title": "Demo Table All",
+   "measures": [
+    "M18-49",
+    "M25-54",
+    "M35-64",
+    "P18-49",
+    "P25-54",
+    "P35-64",
+    "W18-49",
+    "W25-54",
+    "W35-64"
+   ],
+   "columns": [
+    "CHANNEL_SELECTOR[CHANNEL]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "CHANNEL_SELECTOR"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "card",
+   "title": "NET Median Age",
+   "measures": [
+    "Median Age"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "card",
+   "title": "ASC Median Age",
+   "measures": [
+    "Median Age ASC Avg"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "pieChart",
+   "title": null,
+   "measures": [],
+   "columns": [
+    "GENDER_SKEW_AP[DELIVERY]",
+    "GENDER_SKEW_AP[GENDER]",
+    "GENDER_SKEW_AP[Gender Displaye]"
+   ],
+   "tables": [
+    "GENDER_SKEW_AP"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": [
+    "NGR_PERSON_VIEW",
+    "WM_AVG_AUDIENCE_MONTH",
+    "WM_AVG_AUDIENCE_QUARTER"
+   ]
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "card",
+   "title": "ASC",
+   "measures": [
+    "Professional Managerial ASC Avg"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "4+ Years College ASC Avg"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "card",
+   "title": "ASC",
+   "measures": [
+    "Blue Collar Workers ASC Avg"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "card",
+   "title": "NET",
+   "measures": [
+    "Professional Managerial"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "card",
+   "title": "NET",
+   "measures": [
+    "Blue Collar Workers"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "card",
+   "title": "NET",
+   "measures": [
+    "4+ Years College"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "card",
+   "title": "NET",
+   "measures": [
+    "White Collar Workers"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "card",
+   "title": "ASC",
+   "measures": [
+    "White Collar Workers ASC Avg"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "card",
+   "title": "ASC",
+   "measures": [
+    "Own a Home ASC Avg"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "card",
+   "title": "NET",
+   "measures": [
+    "Have Any Pets"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "card",
+   "title": "NET",
+   "measures": [
+    "Own a Home"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "card",
+   "title": "Net",
+   "measures": [
+    "HH Size 4+"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "card",
+   "title": "NET",
+   "measures": [
+    "HH w Children 2-17"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "card",
+   "title": "ASC",
+   "measures": [
+    "HH Size 4+ ASC Avg"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "card",
+   "title": "ASC",
+   "measures": [
+    "Have Any Pets ASC Avg"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "card",
+   "title": "ASC",
+   "measures": [
+    "HH w Children 2-17 ASC Avg"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Have Any Pets ASC Avg"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "card",
+   "title": "ASC",
+   "measures": [
+    "Video Game Owner ASC Avg"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "card",
+   "title": "NET",
+   "measures": [
+    "HH w 3+ Smartphones"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "card",
+   "title": "NET",
+   "measures": [
+    "Avid Moviegoer"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "card",
+   "title": "NET",
+   "measures": [
+    "Video Game Owner"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "card",
+   "title": "NET",
+   "measures": [
+    "Wine Drinker"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "card",
+   "title": "ASC",
+   "measures": [
+    "HH w 3+ Smartphones ASC Avg"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Audience Profiles",
+   "page_hidden": false,
+   "type": "card",
+   "title": "ASC",
+   "measures": [
+    "Avid Moviegoer ASC Avg"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Channel Performance",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Version"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Channel Performance",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Date Last Refreshed"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Channel Performance",
+   "page_hidden": false,
+   "type": "lineClusteredColumnComboChart",
+   "title": "Avg ''000 by Day of Week",
+   "measures": [
+    "Network Avg '000 CY",
+    "Network Avg '000 PY",
+    "Network Avg '000 YoY"
+   ],
+   "columns": [
+    "CHANNEL_PERFORMANCE[DOW]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "CHANNEL_PERFORMANCE"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": [
+    "BROADCAST_CALENDAR"
+   ]
+  },
+  {
+   "page": "Channel Performance",
+   "page_hidden": false,
+   "type": "card",
+   "title": "Information",
+   "measures": [
+    "Information"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Channel Performance",
+   "page_hidden": false,
+   "type": "card",
+   "title": "BC Month Avg''000 DOW",
+   "measures": [
+    "BC Month () WM"
+   ],
+   "columns": [
+    "BROADCAST_CALENDAR[BROADCAST_MONTH_KEY]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "BROADCAST_CALENDAR"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Channel Performance",
+   "page_hidden": false,
+   "type": "tableEx",
+   "title": "Top Titles Live+SD",
+   "measures": [
+    "Program % Sched",
+    "Program Avg '000",
+    "Program Avg '000 Max TCs",
+    "Program Avg '000 Rank",
+    "Program Eff",
+    "Program Gross",
+    "Program TC's"
+   ],
+   "columns": [
+    "AD_SALES_RANKERS_MONTH_LSD[PROGRAM_NAME]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "AD_SALES_RANKERS_MONTH_LSD"
+   ],
+   "formatting_measures": [
+    "Program Avg '000",
+    "Program Avg '000 Max TCs",
+    "Program Avg '000 Rank",
+    "Program Eff"
+   ],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Channel Performance",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [],
+   "columns": [
+    "WM_BROADCAST_CALENDAR[BC Year]"
+   ],
+   "tables": [
+    "WM_BROADCAST_CALENDAR"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Channel Performance",
+   "page_hidden": false,
+   "type": "lineChart",
+   "title": "Avg ''000 by Month by Year",
+   "measures": [
+    "Network Avg '000 CY"
+   ],
+   "columns": [
+    "WM_BROADCAST_CALENDAR[BC Month Text]",
+    "WM_BROADCAST_CALENDAR[BC Year]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "WM_BROADCAST_CALENDAR"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": [
+    "BROADCAST_CALENDAR"
+   ]
+  },
+  {
+   "page": "Channel Performance",
+   "page_hidden": false,
+   "type": "card",
+   "title": "Skew Text",
+   "measures": [
+    "Network Avg '000 Skew Text",
+    "Program Median Age - Total Day (Monthly)"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Channel Performance",
+   "page_hidden": false,
+   "type": "card",
+   "title": "Median Age",
+   "measures": [
+    "Program Median Age - Total Day (Monthly)"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Channel Performance",
+   "page_hidden": false,
+   "type": "card",
+   "title": "Gender Skew",
+   "measures": [
+    "Network Avg '000 Skew",
+    "Program Median Age - Total Day (Monthly)"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Channel Performance",
+   "page_hidden": false,
+   "type": "slicer",
+   "title": "Daypart Slicer",
+   "measures": [],
+   "columns": [
+    "WM_DAYPART[DAYPART]"
+   ],
+   "tables": [
+    "WM_DAYPART"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Channel Performance",
+   "page_hidden": false,
+   "type": "slicer",
+   "title": "Date Selection Slicer",
+   "measures": [],
+   "columns": [
+    "WM_DATE_SELECTION[Selection]"
+   ],
+   "tables": [
+    "WM_DATE_SELECTION"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Channel Performance",
+   "page_hidden": false,
+   "type": "slicer",
+   "title": "Data Stream Slicer",
+   "measures": [],
+   "columns": [
+    "WM_TSV[TSV]"
+   ],
+   "tables": [
+    "WM_TSV"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Channel Performance",
+   "page_hidden": false,
+   "type": "slicer",
+   "title": "Demo Slicer",
+   "measures": [],
+   "columns": [
+    "WM_DEMO[DEMO_DESC]"
+   ],
+   "tables": [
+    "WM_DEMO"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Channel Performance",
+   "page_hidden": false,
+   "type": "slicer",
+   "title": "Network Slicer",
+   "measures": [],
+   "columns": [
+    "WM_NETWORKS[DISPLAY]"
+   ],
+   "tables": [
+    "WM_NETWORKS"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Channel Performance",
+   "page_hidden": false,
+   "type": "slicer",
+   "title": "Year Slicer",
+   "measures": [],
+   "columns": [
+    "WM_BROADCAST_CALENDAR[BC Year]"
+   ],
+   "tables": [
+    "WM_BROADCAST_CALENDAR"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Channel Performance",
+   "page_hidden": false,
+   "type": "ChicletSlicer1448559807354",
+   "title": "Network Slicer Logo",
+   "measures": [],
+   "columns": [
+    "WM_NETWORKS[LOGO]"
+   ],
+   "tables": [
+    "WM_NETWORKS"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Channel Performance",
+   "page_hidden": false,
+   "type": "lineClusteredColumnComboChart",
+   "title": "CVG Ratings by Day of Week",
+   "measures": [
+    "Network CVG Rating YoY",
+    "Network CVG Ratings CY",
+    "Network CVG Ratings PY"
+   ],
+   "columns": [
+    "CHANNEL_PERFORMANCE[DOW]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "CHANNEL_PERFORMANCE"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": [
+    "BROADCAST_CALENDAR"
+   ]
+  },
+  {
+   "page": "Channel Performance",
+   "page_hidden": false,
+   "type": "card",
+   "title": "Information",
+   "measures": [
+    "Information"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Channel Performance",
+   "page_hidden": false,
+   "type": "card",
+   "title": "Card",
+   "measures": [
+    "BC Month () WM"
+   ],
+   "columns": [
+    "BROADCAST_CALENDAR[BROADCAST_MONTH_KEY]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "BROADCAST_CALENDAR"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Channel Performance",
+   "page_hidden": false,
+   "type": "tableEx",
+   "title": "Top Titles Live+SD",
+   "measures": [
+    "Program % Sched",
+    "Program Avg '000",
+    "Program CVG Ratings",
+    "Program CVG Ratings Max TCs",
+    "Program CVG Ratings Rank",
+    "Program Eff",
+    "Program Gross",
+    "Program TC's"
+   ],
+   "columns": [
+    "AD_SALES_RANKERS_MONTH_LSD[PROGRAM_NAME]",
+    "WM_BROADCAST_CALENDAR[BC Year]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "AD_SALES_RANKERS_MONTH_LSD",
+    "WM_BROADCAST_CALENDAR"
+   ],
+   "formatting_measures": [
+    "Program CVG Ratings",
+    "Program CVG Ratings Max TCs",
+    "Program CVG Ratings Rank",
+    "Program Eff"
+   ],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Channel Performance",
+   "page_hidden": false,
+   "type": "card",
+   "title": "BC Month Top Titles",
+   "measures": [
+    "BC Month () WM"
+   ],
+   "columns": [
+    "BROADCAST_CALENDAR[BROADCAST_MONTH_KEY]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "BROADCAST_CALENDAR"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Channel Performance",
+   "page_hidden": false,
+   "type": "lineChart",
+   "title": "CVG Ratings by Month by Year",
+   "measures": [
+    "Network CVG Ratings"
+   ],
+   "columns": [
+    "WM_BROADCAST_CALENDAR[BC Month Text]",
+    "WM_BROADCAST_CALENDAR[BC Year]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "WM_BROADCAST_CALENDAR"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": [
+    "BROADCAST_CALENDAR"
+   ]
+  },
+  {
+   "page": "Portfolio Share '000",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Version"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Portfolio Share '000",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Date Last Refreshed"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Portfolio Share '000",
+   "page_hidden": false,
+   "type": "slicer",
+   "title": "Daypart Slicer",
+   "measures": [],
+   "columns": [
+    "WM_DAYPART[DAYPART]"
+   ],
+   "tables": [
+    "WM_DAYPART"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Portfolio Share '000",
+   "page_hidden": false,
+   "type": "slicer",
+   "title": "TSV Slicer",
+   "measures": [],
+   "columns": [
+    "WM_TSV[TSV]"
+   ],
+   "tables": [
+    "WM_TSV"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Portfolio Share '000",
+   "page_hidden": false,
+   "type": "slicer",
+   "title": "Demo Slicer",
+   "measures": [],
+   "columns": [
+    "WM_DEMO[DEMO_DESC]"
+   ],
+   "tables": [
+    "WM_DEMO"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Portfolio Share '000",
+   "page_hidden": false,
+   "type": "slicer",
+   "title": "Month Slicer",
+   "measures": [],
+   "columns": [
+    "WM_DATE_SELECTION[Selection]"
+   ],
+   "tables": [
+    "WM_DATE_SELECTION"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Portfolio Share '000",
+   "page_hidden": false,
+   "type": "donutChart",
+   "title": "Donut Chart",
+   "measures": [
+    "Share TV Avg '000 WBD vs Non WBD"
+   ],
+   "columns": [
+    "WM_AVG_AUDIENCE_MONTH[DELIVERY]",
+    "WM_NETWORKS[WBD IDENTIFIER]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "WM_AVG_AUDIENCE_MONTH",
+    "WM_NETWORKS"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": [
+    "CONGLOMERATE_LKP"
+   ]
+  },
+  {
+   "page": "Portfolio Share '000",
+   "page_hidden": false,
+   "type": "card",
+   "title": "Big Number",
+   "measures": [
+    "Share TV Avg '000 WBD"
+   ],
+   "columns": [
+    "WM_AVG_AUDIENCE_MONTH[DELIVERY]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "WM_AVG_AUDIENCE_MONTH"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Portfolio Share '000",
+   "page_hidden": false,
+   "type": "clusteredBarChart",
+   "title": "Share TV by Portfolio",
+   "measures": [
+    "Share TV Avg '000"
+   ],
+   "columns": [
+    "WM_NETWORKS[Owners (Porfolio Share '000)]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "WM_NETWORKS"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": [
+    "CONGLOMERATE_LKP"
+   ]
+  },
+  {
+   "page": "Portfolio Share '000",
+   "page_hidden": false,
+   "type": "pivotTable",
+   "title": "Share and Rank by Demo",
+   "measures": [
+    "Share TV AVG '000 Demo Rank",
+    "Share TV Avg '000",
+    "WBD COLOR MONTH"
+   ],
+   "columns": [
+    "WM_DEMO[DEMO_DESC]",
+    "WM_NETWORKS[Owners (Porfolio Share '000)]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "WM_DEMO",
+    "WM_NETWORKS"
+   ],
+   "formatting_measures": [
+    "WBD COLOR MONTH"
+   ],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Portfolio Share '000",
+   "page_hidden": false,
+   "type": "pivotTable",
+   "title": "Share and Rank by Demo",
+   "measures": [
+    "Share TV AVG '000 Demo Rank YTD",
+    "Share TV Avg '000 YTD",
+    "WBD COLOR MONTH"
+   ],
+   "columns": [
+    "DAY_PART[Day Part]",
+    "WM_DEMO[DEMO_DESC]",
+    "WM_NETWORKS[Owners (Porfolio Share '000)]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "DAY_PART",
+    "WM_DEMO",
+    "WM_NETWORKS"
+   ],
+   "formatting_measures": [
+    "WBD COLOR MONTH"
+   ],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Portfolio Share '000",
+   "page_hidden": false,
+   "type": "clusteredBarChart",
+   "title": "Share TV by Portfolio",
+   "measures": [
+    "Share TV Avg '000 YTD"
+   ],
+   "columns": [
+    "WM_NETWORKS[Owners (Porfolio Share '000)]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "WM_NETWORKS"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": [
+    "CONGLOMERATE_LKP"
+   ]
+  },
+  {
+   "page": "Portfolio Share '000",
+   "page_hidden": false,
+   "type": "donutChart",
+   "title": "Donut Chart",
+   "measures": [
+    "Share TV Avg '000 WBD vs Non WBD YTD"
+   ],
+   "columns": [
+    "WM_NETWORKS[WBD IDENTIFIER]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "WM_NETWORKS"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": [
+    "CONGLOMERATE_LKP"
+   ]
+  },
+  {
+   "page": "Portfolio Share '000",
+   "page_hidden": false,
+   "type": "card",
+   "title": "Big Number",
+   "measures": [
+    "Share TV Avg '000 WBD",
+    "Share TV Avg '000 WBD YTD"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Portfolio Share '000",
+   "page_hidden": false,
+   "type": "card",
+   "title": "YTD Detail",
+   "measures": [
+    "Share TV YTD Text"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Portfolio Share '000",
+   "page_hidden": false,
+   "type": "card",
+   "title": "YTD Detail",
+   "measures": [
+    "Share TV YTD Text"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Portfolio Share '000",
+   "page_hidden": false,
+   "type": "card",
+   "title": "YTD Text",
+   "measures": [
+    "Share TV YTD Text"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Portfolio Share '000",
+   "page_hidden": false,
+   "type": "card",
+   "title": "Share TV by Portfolio Month Date",
+   "measures": [
+    "BC Month () WM"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Portfolio Share '000",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "BC Month () WM"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Portfolio Share '000",
+   "page_hidden": false,
+   "type": "card",
+   "title": "Month Detail",
+   "measures": [
+    "BC Month () WM"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Portfolio Share '000",
+   "page_hidden": false,
+   "type": "card",
+   "title": "TSV, Daypart, Demo Detail",
+   "measures": [
+    "Filters - Share TV1"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Portfolio Share '000",
+   "page_hidden": false,
+   "type": "card",
+   "title": "TSV, Daypart, Demo Detail",
+   "measures": [
+    "Filters - Share TV1"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Portfolio Share '000",
+   "page_hidden": false,
+   "type": "card",
+   "title": "TSV, Daypart, Demo Detail",
+   "measures": [
+    "Filters - Share TV1"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Portfolio Share '000",
+   "page_hidden": false,
+   "type": "card",
+   "title": "TSV, Daypart, Demo Detail",
+   "measures": [
+    "Filters - Share TV1"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Portfolio Share '000",
+   "page_hidden": false,
+   "type": "card",
+   "title": "TSV, Daypart",
+   "measures": [
+    "Filters - Share TV2"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Portfolio Share '000",
+   "page_hidden": false,
+   "type": "card",
+   "title": "Detail",
+   "measures": [
+    "Filters - Share TV2"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Portfolio Share '000",
+   "page_hidden": false,
+   "type": "slicer",
+   "title": "Universe Slicer",
+   "measures": [],
+   "columns": [
+    "UNIVERSE[UNIVERSE]"
+   ],
+   "tables": [
+    "UNIVERSE"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Portfolio Share '000",
+   "page_hidden": false,
+   "type": "card",
+   "title": "Other Number",
+   "measures": [
+    "Share TV Avg '000"
+   ],
+   "columns": [
+    "WM_NETWORKS[Owners (Porfolio Share '000)]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "WM_NETWORKS"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Portfolio Share '000",
+   "page_hidden": false,
+   "type": "card",
+   "title": "Other Share",
+   "measures": [
+    "Share TV Avg '000",
+    "Share TV Avg '000 YTD"
+   ],
+   "columns": [
+    "WM_NETWORKS[Owners (Porfolio Share '000)]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "WM_NETWORKS"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Portfolio Share '000",
+   "page_hidden": false,
+   "type": "advanceCardE03760C5AB684758B56AA29F9E6C257B",
+   "title": null,
+   "measures": [
+    "BC Month w/ Broadcast Date"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Portfolio Share Trends",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Version"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Portfolio Share Trends",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Date Last Refreshed"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Portfolio Share Trends",
+   "page_hidden": false,
+   "type": "slicer",
+   "title": null,
+   "measures": [],
+   "columns": [
+    "WM_DAYPART_ALL[DAYPART]"
+   ],
+   "tables": [
+    "WM_DAYPART_ALL"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Portfolio Share Trends",
+   "page_hidden": false,
+   "type": "slicer",
+   "title": null,
+   "measures": [],
+   "columns": [
+    "WM_TSV[TSV]"
+   ],
+   "tables": [
+    "WM_TSV"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Portfolio Share Trends",
+   "page_hidden": false,
+   "type": "slicer",
+   "title": "Demo",
+   "measures": [],
+   "columns": [
+    "WM_DEMO[DEMO_DESC]"
+   ],
+   "tables": [
+    "WM_DEMO"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Portfolio Share Trends",
+   "page_hidden": false,
+   "type": "slicer",
+   "title": "Month",
+   "measures": [],
+   "columns": [
+    "WM_DATE_SELECTION[Selection]"
+   ],
+   "tables": [
+    "WM_DATE_SELECTION"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Portfolio Share Trends",
+   "page_hidden": false,
+   "type": "slicer",
+   "title": null,
+   "measures": [],
+   "columns": [
+    "WM_NETWORKS[Owners (Porfolio Share '000)]"
+   ],
+   "tables": [
+    "WM_NETWORKS"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Portfolio Share Trends",
+   "page_hidden": false,
+   "type": "pivotTable",
+   "title": "13 Month Portfolio and Networks Share Trends",
+   "measures": [
+    "Share TV Avg '000",
+    "WBD COLOR MONTH"
+   ],
+   "columns": [
+    "MONTH_SORT[BC MY]",
+    "WM_BROADCAST_CALENDAR[BROADCAST_MONTH_KEY]",
+    "WM_NETWORKS[DISPLAY]",
+    "WM_NETWORKS[Owners (Porfolio Share '000)]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "MONTH_SORT",
+    "WM_BROADCAST_CALENDAR",
+    "WM_NETWORKS"
+   ],
+   "formatting_measures": [
+    "WBD COLOR MONTH"
+   ],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Portfolio Share Trends",
+   "page_hidden": false,
+   "type": "pivotTable",
+   "title": "YTD Performance",
+   "measures": [
+    "Share TV Avg '000 YTD",
+    "Share TV Avg '000 YTD Growth",
+    "Share TV Avg '000 YTD Growth Arrow"
+   ],
+   "columns": [
+    "WM_NETWORKS[DISPLAY]",
+    "WM_NETWORKS[Owners (Porfolio Share '000)]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "WM_NETWORKS"
+   ],
+   "formatting_measures": [
+    "Share TV Avg '000 YTD Growth"
+   ],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Portfolio Share Trends",
+   "page_hidden": false,
+   "type": "ribbonChart",
+   "title": "13 Month Portfolio Share Trends",
+   "measures": [
+    "Share TV Avg '000"
+   ],
+   "columns": [
+    "MONTH_SORT[BC MY]",
+    "WM_BROADCAST_CALENDAR[BROADCAST_MONTH_KEY]",
+    "WM_NETWORKS[Owners (Porfolio Share '000)]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "MONTH_SORT",
+    "WM_BROADCAST_CALENDAR",
+    "WM_NETWORKS"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": [
+    "CONGLOMERATE_LKP"
+   ]
+  },
+  {
+   "page": "Portfolio Share Trends",
+   "page_hidden": false,
+   "type": "slicer",
+   "title": "Universe Slicer",
+   "measures": [],
+   "columns": [
+    "UNIVERSE[UNIVERSE]"
+   ],
+   "tables": [
+    "UNIVERSE"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Portfolio Share Trends",
+   "page_hidden": false,
+   "type": "advanceCardE03760C5AB684758B56AA29F9E6C257B",
+   "title": "Month Card",
+   "measures": [
+    "BC Month for Portfolio Share"
+   ],
+   "columns": [
+    "WM_BROADCAST_CALENDAR[BROADCAST_MONTH_KEY]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "WM_BROADCAST_CALENDAR"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Daypart Comparison",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Version"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Daypart Comparison",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Date Last Refreshed"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Daypart Comparison",
+   "page_hidden": false,
+   "type": "slicer",
+   "title": "Daypart 1 Slicer",
+   "measures": [],
+   "columns": [
+    "DAYPART 1[Daypart]"
+   ],
+   "tables": [
+    "DAYPART 1"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Daypart Comparison",
+   "page_hidden": false,
+   "type": "slicer",
+   "title": "Demo Slicer",
+   "measures": [],
+   "columns": [
+    "DEMO_DIM[SOURCE_DEMO_DESC]",
+    "WM_DEMO[DEMO_DESC]"
+   ],
+   "tables": [
+    "DEMO_DIM",
+    "WM_DEMO"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Daypart Comparison",
+   "page_hidden": false,
+   "type": "slicer",
+   "title": "Data Stream Slicer",
+   "measures": [],
+   "columns": [
+    "WM_TSV[TSV]"
+   ],
+   "tables": [
+    "WM_TSV"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Daypart Comparison",
+   "page_hidden": false,
+   "type": "slicer",
+   "title": "Metric Slicer",
+   "measures": [],
+   "columns": [
+    "CUSTOM_COMPARISON_SELECTION[Metric]"
+   ],
+   "tables": [
+    "CUSTOM_COMPARISON_SELECTION"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Daypart Comparison",
+   "page_hidden": false,
+   "type": "slicer",
+   "title": "Daypart 2 Slicer",
+   "measures": [],
+   "columns": [
+    "DAYPART 2[Daypart]"
+   ],
+   "tables": [
+    "DAYPART 2"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Daypart Comparison",
+   "page_hidden": false,
+   "type": "slicer",
+   "title": "Date Selection Slicer",
+   "measures": [],
+   "columns": [
+    "WM_DATE_SELECTION[Selection]"
+   ],
+   "tables": [
+    "WM_DATE_SELECTION"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Daypart Comparison",
+   "page_hidden": false,
+   "type": "advanceCardE03760C5AB684758B56AA29F9E6C257B",
+   "title": null,
+   "measures": [
+    "Metric Value Header"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Daypart Comparison",
+   "page_hidden": false,
+   "type": "advanceCardE03760C5AB684758B56AA29F9E6C257B",
+   "title": null,
+   "measures": [
+    "Metric Value Header"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Daypart Comparison",
+   "page_hidden": false,
+   "type": "tableEx",
+   "title": "Month Table",
+   "measures": [
+    "MoM Daypart1",
+    "MoM Daypart2",
+    "Selected Metric Current Daypart 1",
+    "Selected Metric Current Daypart 2",
+    "YoY Daypart1",
+    "YoY Daypart2"
+   ],
+   "columns": [
+    "CONGLOMERATE_LKP[ORIGINATORNAME]",
+    "WM_NETWORKS[DISPLAY]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "CONGLOMERATE_LKP",
+    "WM_NETWORKS"
+   ],
+   "formatting_measures": [
+    "MoM Daypart1",
+    "MoM Daypart2",
+    "YoY Daypart1",
+    "YoY Daypart2"
+   ],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Daypart Comparison",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Daypart 1"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Daypart Comparison",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Daypart 2"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Daypart Comparison",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Daypart 2"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Daypart Comparison",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Daypart 1"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Daypart Comparison",
+   "page_hidden": false,
+   "type": "tableEx",
+   "title": "Month Table",
+   "measures": [
+    "MoM Daypart1",
+    "MoM Daypart2",
+    "Selected Metric Current Daypart 1",
+    "Selected Metric Current Daypart 2",
+    "YoY Daypart1",
+    "YoY Daypart2"
+   ],
+   "columns": [
+    "WM_NETWORKS[DISPLAY]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "WM_NETWORKS"
+   ],
+   "formatting_measures": [
+    "MoM Daypart1",
+    "MoM Daypart2",
+    "YoY Daypart1",
+    "YoY Daypart2"
+   ],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Daypart Comparison",
+   "page_hidden": false,
+   "type": "advanceCardE03760C5AB684758B56AA29F9E6C257B",
+   "title": null,
+   "measures": [
+    "Metric Value Header"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Daypart Comparison",
+   "page_hidden": false,
+   "type": "advanceCardE03760C5AB684758B56AA29F9E6C257B",
+   "title": null,
+   "measures": [
+    "Metric Value Header"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Daypart Comparison",
+   "page_hidden": false,
+   "type": "advanceCardE03760C5AB684758B56AA29F9E6C257B",
+   "title": null,
+   "measures": [
+    "Metric Value Header"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Daypart Comparison",
+   "page_hidden": false,
+   "type": "advanceCardE03760C5AB684758B56AA29F9E6C257B",
+   "title": null,
+   "measures": [
+    "Metric Value Header"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Daypart Comparison",
+   "page_hidden": false,
+   "type": "tableEx",
+   "title": "YTD Table",
+   "measures": [
+    "Selected Metric Current Daypart 1",
+    "Selected Metric Current Daypart 2",
+    "YoY Daypart1",
+    "YoY Daypart2"
+   ],
+   "columns": [
+    "WM_NETWORKS[DISPLAY]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "WM_NETWORKS"
+   ],
+   "formatting_measures": [
+    "YoY Daypart1",
+    "YoY Daypart2"
+   ],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Daypart Comparison",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Daypart 1"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Daypart Comparison",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Daypart 2"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Daypart Comparison",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Daypart 2"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Daypart Comparison",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Daypart 1"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Daypart Comparison",
+   "page_hidden": false,
+   "type": "tableEx",
+   "title": "YTD Table",
+   "measures": [
+    "Selected Metric Current Daypart 1",
+    "Selected Metric Current Daypart 2",
+    "YoY Daypart1",
+    "YoY Daypart2"
+   ],
+   "columns": [
+    "WM_NETWORKS[DISPLAY]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "WM_NETWORKS"
+   ],
+   "formatting_measures": [
+    "YoY Daypart1",
+    "YoY Daypart2"
+   ],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Daypart Comparison",
+   "page_hidden": false,
+   "type": "advanceCardE03760C5AB684758B56AA29F9E6C257B",
+   "title": null,
+   "measures": [
+    "Metric Value Header"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Daypart Comparison",
+   "page_hidden": false,
+   "type": "advanceCardE03760C5AB684758B56AA29F9E6C257B",
+   "title": null,
+   "measures": [
+    "Metric Value Header"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Daypart Comparison",
+   "page_hidden": false,
+   "type": "slicer",
+   "title": null,
+   "measures": [],
+   "columns": [
+    "TIME_PERIOD[Time Period]"
+   ],
+   "tables": [
+    "TIME_PERIOD"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Daypart Comparison",
+   "page_hidden": false,
+   "type": "slicer",
+   "title": "Left Category Slicer",
+   "measures": [],
+   "columns": [
+    "WM_NETWORKS[NETWORK TYPE 1]"
+   ],
+   "tables": [
+    "WM_NETWORKS"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Daypart Comparison",
+   "page_hidden": false,
+   "type": "slicer",
+   "title": "Right Category Slicer",
+   "measures": [],
+   "columns": [
+    "WM_NETWORKS[NETWORK TYPE 1]"
+   ],
+   "tables": [
+    "WM_NETWORKS"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Daypart Comparison",
+   "page_hidden": false,
+   "type": "slicer",
+   "title": "Left Network Slicer",
+   "measures": [],
+   "columns": [
+    "WM_NETWORKS[DISPLAY]"
+   ],
+   "tables": [
+    "WM_NETWORKS"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Daypart Comparison",
+   "page_hidden": false,
+   "type": "slicer",
+   "title": "Right Network Slicer",
+   "measures": [],
+   "columns": [
+    "WM_NETWORKS[DISPLAY]"
+   ],
+   "tables": [
+    "WM_NETWORKS"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Daypart Comparison",
+   "page_hidden": false,
+   "type": "advanceCardE03760C5AB684758B56AA29F9E6C257B",
+   "title": "Date Range Selected",
+   "measures": [
+    "Dates Selected"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "TV Universe",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Version"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "TV Universe",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Date Last Refreshed"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "TV Universe",
+   "page_hidden": false,
+   "type": "slicer",
+   "title": null,
+   "measures": [],
+   "columns": [
+    "WM_NETWORKS[DISPLAY]",
+    "WM_NETWORKS[NETWORKLABEL]"
+   ],
+   "tables": [
+    "WM_NETWORKS"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "TV Universe",
+   "page_hidden": false,
+   "type": "waterfallChart",
+   "title": "\u25b3 Coverage Annual by Year",
+   "measures": [
+    "CVGUE000",
+    "CVGUE000 Variance (Year)"
+   ],
+   "columns": [
+    "WM_UE_CALENDAR[YEAR]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "WM_UE_CALENDAR"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "TV Universe",
+   "page_hidden": false,
+   "type": "lineStackedColumnComboChart",
+   "title": "Quarterly Coverage and Quarter over Quarter \u25b3",
+   "measures": [
+    "CVGUE000",
+    "CVGUE000 Variance (Quarter)"
+   ],
+   "columns": [
+    "WM_UE_CALENDAR[BROADCAST_QUARTER_KEY]",
+    "WM_UE_CALENDAR[YEAR_QUARTER]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "WM_UE_CALENDAR"
+   ],
+   "formatting_measures": [
+    "CVGUE000 Variance (Quarter)"
+   ],
+   "stale_only_tables": [
+    "CALENDAR_UE"
+   ]
+  },
+  {
+   "page": "TV Universe",
+   "page_hidden": false,
+   "type": "slicer",
+   "title": null,
+   "measures": [],
+   "columns": [
+    "WM_UE_CALENDAR[YEAR]"
+   ],
+   "tables": [
+    "WM_UE_CALENDAR"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "TV Universe",
+   "page_hidden": false,
+   "type": "ChicletSlicer1448559807354",
+   "title": null,
+   "measures": [],
+   "columns": [
+    "WM_NETWORKS[LOGO]"
+   ],
+   "tables": [
+    "WM_NETWORKS"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Age and Gender",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Version"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Age and Gender",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Date Last Refreshed"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Age and Gender",
+   "page_hidden": false,
+   "type": "slicer",
+   "title": null,
+   "measures": [],
+   "columns": [
+    "WM_DAYPART_ALL[DAYPART]"
+   ],
+   "tables": [
+    "WM_DAYPART_ALL"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Age and Gender",
+   "page_hidden": false,
+   "type": "slicer",
+   "title": null,
+   "measures": [],
+   "columns": [
+    "WM_NETWORKS[DISPLAY]"
+   ],
+   "tables": [
+    "WM_NETWORKS"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Age and Gender",
+   "page_hidden": false,
+   "type": "slicer",
+   "title": null,
+   "measures": [],
+   "columns": [
+    "WM_TSV[TSV]"
+   ],
+   "tables": [
+    "WM_TSV"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Age and Gender",
+   "page_hidden": false,
+   "type": "slicer",
+   "title": null,
+   "measures": [],
+   "columns": [
+    "WM_DATE_SELECTION[Selection]"
+   ],
+   "tables": [
+    "WM_DATE_SELECTION"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Age and Gender",
+   "page_hidden": false,
+   "type": "scatterChart",
+   "title": "Median Age/Male Skew",
+   "measures": [
+    "Avg Delivery P25-54",
+    "Male Skew P25-54",
+    "Median Age P2+"
+   ],
+   "columns": [
+    "CONGLOMERATE_LKP[ORIGINATORNAME]",
+    "WM_BROADCAST_CALENDAR[BC Month]",
+    "WM_NETWORKS[DISPLAY]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "CONGLOMERATE_LKP",
+    "WM_BROADCAST_CALENDAR",
+    "WM_NETWORKS"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Age and Gender",
+   "page_hidden": false,
+   "type": "slicer",
+   "title": "Owner",
+   "measures": [],
+   "columns": [
+    "WM_NETWORKS[Main ASCO Owners]"
+   ],
+   "tables": [
+    "WM_NETWORKS"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Age and Gender",
+   "page_hidden": false,
+   "type": "advanceCardE03760C5AB684758B56AA29F9E6C257B",
+   "title": "Date Card",
+   "measures": [
+    "BC Month w/ Broadcast Date"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Reference Page",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Version"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Reference Page",
+   "page_hidden": false,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Date Last Refreshed"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Reference Page",
+   "page_hidden": false,
+   "type": "tableEx",
+   "title": "Data Availability",
+   "measures": [],
+   "columns": [
+    "DATA_AVAILABILITY[MONTH YEAR]",
+    "DATA_AVAILABILITY[TIME_SHIFTED_VIEWING_TYPE]"
+   ],
+   "tables": [
+    "DATA_AVAILABILITY"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Network Tooltip",
+   "page_hidden": true,
+   "type": "tableEx",
+   "title": null,
+   "measures": [
+    "Share TV Avg '000"
+   ],
+   "columns": [
+    "WM_NETWORKS[NETWORKLABEL]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "WM_NETWORKS"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Network Tooltip YTD",
+   "page_hidden": true,
+   "type": "tableEx",
+   "title": null,
+   "measures": [
+    "Share TV Avg '000 YTD"
+   ],
+   "columns": [
+    "WM_NETWORKS[NETWORKLABEL]"
+   ],
+   "tables": [
+    "*MEASURES",
+    "WM_NETWORKS"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Info - Channel Perform (Avg '000)",
+   "page_hidden": true,
+   "type": "tableEx",
+   "title": null,
+   "measures": [],
+   "columns": [
+    "Info - Channel Performance (Avg '000)[Description]",
+    "Info - Channel Performance (Avg '000)[Display Names]"
+   ],
+   "tables": [
+    "Info - Channel Performance (Avg '000)"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Info - Channel Perform (CVG Rtg)",
+   "page_hidden": true,
+   "type": "tableEx",
+   "title": null,
+   "measures": [],
+   "columns": [
+    "Info - Channel Performance (CVG Rtg)[Description]",
+    "Info - Channel Performance (CVG Rtg)[Display Names]"
+   ],
+   "tables": [
+    "Info - Channel Performance (CVG Rtg)"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Info - Data Availability",
+   "page_hidden": true,
+   "type": "tableEx",
+   "title": null,
+   "measures": [],
+   "columns": [
+    "DATA_AVAILABILITY[MONTH YEAR]",
+    "Info - Channel Performance (Avg '000)[Display Names]"
+   ],
+   "tables": [
+    "DATA_AVAILABILITY",
+    "Info - Channel Performance (Avg '000)"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Info -CC year and qtr",
+   "page_hidden": true,
+   "type": "advanceCardE03760C5AB684758B56AA29F9E6C257B",
+   "title": null,
+   "measures": [
+    "Metric Value Header"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Info -CC year and qtr",
+   "page_hidden": true,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Selected Metric Current Daypart 1"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Info -CC year and qtr",
+   "page_hidden": true,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Selected Metric Current Daypart 2"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Info -CC year and qtr",
+   "page_hidden": true,
+   "type": "advanceCardE03760C5AB684758B56AA29F9E6C257B",
+   "title": null,
+   "measures": [
+    "Daypart 1"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Info -CC year and qtr",
+   "page_hidden": true,
+   "type": "advanceCardE03760C5AB684758B56AA29F9E6C257B",
+   "title": null,
+   "measures": [
+    "Daypart 2"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Info -CC year and qtr",
+   "page_hidden": true,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Prior Year Daypart 1"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Info -CC year and qtr",
+   "page_hidden": true,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Prior Year Daypart 2"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Info -CC year and qtr",
+   "page_hidden": true,
+   "type": "advanceCardE03760C5AB684758B56AA29F9E6C257B",
+   "title": null,
+   "measures": [
+    "Daypart 1"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Info -CC year and qtr",
+   "page_hidden": true,
+   "type": "advanceCardE03760C5AB684758B56AA29F9E6C257B",
+   "title": null,
+   "measures": [
+    "Daypart 2"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Info -CC year and qtr",
+   "page_hidden": true,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "CC Current Dates"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Info -CC year and qtr",
+   "page_hidden": true,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Prior Year Dates"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Info-CC month",
+   "page_hidden": true,
+   "type": "advanceCardE03760C5AB684758B56AA29F9E6C257B",
+   "title": null,
+   "measures": [
+    "Metric Value Header"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Info-CC month",
+   "page_hidden": true,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Selected Metric Current Daypart 1"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Info-CC month",
+   "page_hidden": true,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Selected Metric Current Daypart 2"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Info-CC month",
+   "page_hidden": true,
+   "type": "advanceCardE03760C5AB684758B56AA29F9E6C257B",
+   "title": null,
+   "measures": [
+    "Daypart 1"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Info-CC month",
+   "page_hidden": true,
+   "type": "advanceCardE03760C5AB684758B56AA29F9E6C257B",
+   "title": null,
+   "measures": [
+    "Daypart 2"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Info-CC month",
+   "page_hidden": true,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Prior Year Daypart 1"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Info-CC month",
+   "page_hidden": true,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Prior Year Daypart 2"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Info-CC month",
+   "page_hidden": true,
+   "type": "advanceCardE03760C5AB684758B56AA29F9E6C257B",
+   "title": null,
+   "measures": [
+    "Daypart 1"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Info-CC month",
+   "page_hidden": true,
+   "type": "advanceCardE03760C5AB684758B56AA29F9E6C257B",
+   "title": null,
+   "measures": [
+    "Daypart 2"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Info-CC month",
+   "page_hidden": true,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Prior Month Daypart 1"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Info-CC month",
+   "page_hidden": true,
+   "type": "advanceCardE03760C5AB684758B56AA29F9E6C257B",
+   "title": null,
+   "measures": [
+    "Daypart 1"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Info-CC month",
+   "page_hidden": true,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Prior Month Daypart 2"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Info-CC month",
+   "page_hidden": true,
+   "type": "advanceCardE03760C5AB684758B56AA29F9E6C257B",
+   "title": null,
+   "measures": [
+    "Daypart 2"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Info-CC month",
+   "page_hidden": true,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Prior Year Dates"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Info-CC month",
+   "page_hidden": true,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "CC Current Dates"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Info-CC month",
+   "page_hidden": true,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Prior Month Dates"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Template 01",
+   "page_hidden": true,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Version"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Template 01",
+   "page_hidden": true,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Date Last Refreshed"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Template 02",
+   "page_hidden": true,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Version"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  },
+  {
+   "page": "Template 02",
+   "page_hidden": true,
+   "type": "card",
+   "title": null,
+   "measures": [
+    "Date Last Refreshed"
+   ],
+   "columns": [],
+   "tables": [
+    "*MEASURES"
+   ],
+   "formatting_measures": [],
+   "stale_only_tables": []
+  }
+ ],
+ "fields": [
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "% Diff Delivery QoQ",
+   "pages": [
+    "Delivery Trends"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "4+ Years College",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "4+ Years College ASC Avg",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "AA '000 ALL",
+   "pages": [
+    "Ad Sales Rankers"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "AA '000 LW LSD",
+   "pages": [
+    "Ad Sales Rankers"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "AA '000 Month LSD",
+   "pages": [
+    "Ad Sales Rankers"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "AA '000 NETWORK RANKER",
+   "pages": [
+    "Ad Sales Rankers"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "AA '000 PROGRAM RANKER",
+   "pages": [
+    "Ad Sales Rankers"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "AA '000 TC RANKER",
+   "pages": [
+    "Ad Sales Rankers"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "African American",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Avg Delivery",
+   "pages": [
+    "KPIs Trends"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Avg Delivery MoM",
+   "pages": [
+    "KPIs Trends"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Avg Delivery P25-54",
+   "pages": [
+    "Age and Gender"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Avg Delivery YoY",
+   "pages": [
+    "KPIs Trends"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Avg Frequency",
+   "pages": [
+    "KPIs Trends"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Avg Frequency MoM",
+   "pages": [
+    "KPIs Trends"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Avg Frequency YoY",
+   "pages": [
+    "KPIs Trends"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Avg Time Spent",
+   "pages": [
+    "KPIs Trends"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Avg Time Spent MoM",
+   "pages": [
+    "KPIs Trends"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Avg Time Spent YoY",
+   "pages": [
+    "KPIs Trends"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Avid Moviegoer",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Avid Moviegoer ASC Avg",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "BC Month",
+   "pages": [
+    "KPIs Trends"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "BC Month () WM",
+   "pages": [
+    "Channel Performance",
+    "Portfolio Share '000"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "BC Month for Portfolio Share",
+   "pages": [
+    "Portfolio Share Trends"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "BC Month w/ Broadcast Date",
+   "pages": [
+    "Age and Gender",
+    "Portfolio Share '000"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Blue Collar Workers",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Blue Collar Workers ASC Avg",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "CC Current Dates",
+   "pages": [
+    "Info -CC year and qtr",
+    "Info-CC month"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "CVGUE000",
+   "pages": [
+    "TV Universe"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "CVGUE000 Variance (Quarter)",
+   "pages": [
+    "TV Universe"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "CVGUE000 Variance (Year)",
+   "pages": [
+    "TV Universe"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Connected Device",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Connected Device ASC Avg",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Core Demo 1 Text",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Core Demo 2 Text",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Core Demo 3 Text",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Core Demo 4 Text",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Core Demo 5 Text",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Core Demo 6 Text",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Core Demo 7 Text",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Core Demo 8 Text",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Core Demo 9 Text",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "DWR YoY Week",
+   "pages": [
+    "Exec Portfolio Report"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Date Last Refreshed",
+   "pages": [
+    "Ad Sales Rankers",
+    "Age and Gender",
+    "Audience Profiles",
+    "Channel Performance",
+    "Daypart Comparison",
+    "Delivery Trends",
+    "Exec Portfolio Report",
+    "KPIs Trends",
+    "Portfolio Share '000",
+    "Portfolio Share Trends",
+    "Reference Page",
+    "TV Universe",
+    "Template 01",
+    "Template 02"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Dates Selected",
+   "pages": [
+    "Daypart Comparison"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Daypart 1",
+   "pages": [
+    "Daypart Comparison",
+    "Info -CC year and qtr",
+    "Info-CC month"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Daypart 2",
+   "pages": [
+    "Daypart Comparison",
+    "Info -CC year and qtr",
+    "Info-CC month"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Filters - Share TV1",
+   "pages": [
+    "Portfolio Share '000"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Filters - Share TV2",
+   "pages": [
+    "Portfolio Share '000"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "HH Size 4+",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "HH Size 4+ ASC Avg",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "HH w 3+ Smartphones",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "HH w 3+ Smartphones ASC Avg",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "HH w Children 2-17",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "HH w Children 2-17 ASC Avg",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "HHI 100K+",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "HHI 125K+",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "HHI 75K+",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Have Any Pets",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Have Any Pets ASC Avg",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Hispanic",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Information",
+   "pages": [
+    "Channel Performance"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "LW DATE PERIOD",
+   "pages": [
+    "Ad Sales Rankers"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "LifestylePostion01Percent",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "M18-49",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "M25-54",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "M35-64",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Male Skew P25-54",
+   "pages": [
+    "Age and Gender"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Median Age",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Median Age ASC Avg",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Median Age P2+",
+   "pages": [
+    "Age and Gender"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Median HHI",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Median HHI ASC Avg",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Metric Value Header",
+   "pages": [
+    "Daypart Comparison",
+    "Info -CC year and qtr",
+    "Info-CC month"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "MoM Daypart1",
+   "pages": [
+    "Daypart Comparison"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "MoM Daypart2",
+   "pages": [
+    "Daypart Comparison"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "MoM Text",
+   "pages": [
+    "KPIs Trends"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Monthly Reach %",
+   "pages": [
+    "KPIs Trends"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Monthly Reach % MoM",
+   "pages": [
+    "KPIs Trends"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Monthly Reach % YoY",
+   "pages": [
+    "KPIs Trends"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Network Avg '000 CY",
+   "pages": [
+    "Channel Performance"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Network Avg '000 PY",
+   "pages": [
+    "Channel Performance"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Network Avg '000 Skew",
+   "pages": [
+    "Channel Performance"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Network Avg '000 Skew Text",
+   "pages": [
+    "Channel Performance"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Network Avg '000 YoY",
+   "pages": [
+    "Channel Performance"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Network CVG Rating YoY",
+   "pages": [
+    "Channel Performance"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Network CVG Ratings",
+   "pages": [
+    "Channel Performance"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Network CVG Ratings CY",
+   "pages": [
+    "Channel Performance"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Network CVG Ratings PY",
+   "pages": [
+    "Channel Performance"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Non-Hispanic",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Other",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Own a Home",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Own a Home ASC Avg",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "P18-49",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "P25-54",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "P35-64",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Prior Month Dates",
+   "pages": [
+    "Info-CC month"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Prior Month Daypart 1",
+   "pages": [
+    "Info-CC month"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Prior Month Daypart 2",
+   "pages": [
+    "Info-CC month"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Prior Year Dates",
+   "pages": [
+    "Info -CC year and qtr",
+    "Info-CC month"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Prior Year Daypart 1",
+   "pages": [
+    "Info -CC year and qtr",
+    "Info-CC month"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Prior Year Daypart 2",
+   "pages": [
+    "Info -CC year and qtr",
+    "Info-CC month"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Professional Managerial",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Professional Managerial ASC Avg",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Program % Sched",
+   "pages": [
+    "Channel Performance"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Program Avg '000",
+   "pages": [
+    "Channel Performance"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Program Avg '000 Max TCs",
+   "pages": [
+    "Channel Performance"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Program Avg '000 Rank",
+   "pages": [
+    "Channel Performance"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Program CVG Ratings",
+   "pages": [
+    "Channel Performance"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Program CVG Ratings Max TCs",
+   "pages": [
+    "Channel Performance"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Program CVG Ratings Rank",
+   "pages": [
+    "Channel Performance"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Program Eff",
+   "pages": [
+    "Channel Performance"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Program Gross",
+   "pages": [
+    "Channel Performance"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Program Median Age - Total Day (Monthly)",
+   "pages": [
+    "Channel Performance"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Program TC's",
+   "pages": [
+    "Channel Performance"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "SELECTED FILTERS",
+   "pages": [
+    "Ad Sales Rankers"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "SELECTION DATE PERIOD",
+   "pages": [
+    "Ad Sales Rankers"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "SVOD",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "SVOD ASC Avg",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Selected Metric Current Daypart 1",
+   "pages": [
+    "Daypart Comparison",
+    "Info -CC year and qtr",
+    "Info-CC month"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Selected Metric Current Daypart 2",
+   "pages": [
+    "Daypart Comparison",
+    "Info -CC year and qtr",
+    "Info-CC month"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Share",
+   "pages": [
+    "KPIs Trends"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Share MoM",
+   "pages": [
+    "KPIs Trends"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Share TV AVG '000 Demo Rank",
+   "pages": [
+    "Portfolio Share '000"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Share TV AVG '000 Demo Rank YTD",
+   "pages": [
+    "Portfolio Share '000"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Share TV Avg '000",
+   "pages": [
+    "Network Tooltip",
+    "Portfolio Share '000",
+    "Portfolio Share Trends"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Share TV Avg '000 WBD",
+   "pages": [
+    "Portfolio Share '000"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Share TV Avg '000 WBD YTD",
+   "pages": [
+    "Portfolio Share '000"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Share TV Avg '000 WBD vs Non WBD",
+   "pages": [
+    "Portfolio Share '000"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Share TV Avg '000 WBD vs Non WBD YTD",
+   "pages": [
+    "Portfolio Share '000"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Share TV Avg '000 YTD",
+   "pages": [
+    "Network Tooltip YTD",
+    "Portfolio Share '000",
+    "Portfolio Share Trends"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Share TV Avg '000 YTD Growth",
+   "pages": [
+    "Portfolio Share Trends"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Share TV Avg '000 YTD Growth Arrow",
+   "pages": [
+    "Portfolio Share Trends"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Share TV YTD Text",
+   "pages": [
+    "Portfolio Share '000"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Share YoY",
+   "pages": [
+    "KPIs Trends"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Share of TV (AMRLD/MIT)",
+   "pages": [
+    "Delivery Trends"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Smart TV",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Smart TV ASC Avg",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "TELECAST COUNT",
+   "pages": [
+    "Ad Sales Rankers"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "TV Reach",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Title for Report",
+   "pages": [
+    "Exec Portfolio Report"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Version",
+   "pages": [
+    "Ad Sales Rankers",
+    "Age and Gender",
+    "Audience Profiles",
+    "Channel Performance",
+    "Daypart Comparison",
+    "Delivery Trends",
+    "Exec Portfolio Report",
+    "KPIs Trends",
+    "Portfolio Share '000",
+    "Portfolio Share Trends",
+    "Reference Page",
+    "TV Universe",
+    "Template 01",
+    "Template 02"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Video Game Owner",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Video Game Owner ASC Avg",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "W18-49",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "W25-54",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "W35-64",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "WBD COLOR LW LSD",
+   "pages": [
+    "Ad Sales Rankers"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "WBD COLOR MONTH",
+   "pages": [
+    "Ad Sales Rankers",
+    "Portfolio Share '000",
+    "Portfolio Share Trends"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "White",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "White Collar Workers",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "White Collar Workers ASC Avg",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Wine Drinker",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "Year KPI Trends (Multiple Selected Values)",
+   "pages": [
+    "KPIs Trends"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "YoY ASC w/out WBD",
+   "pages": [
+    "Exec Portfolio Report"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "YoY Daypart1",
+   "pages": [
+    "Daypart Comparison"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "YoY Daypart2",
+   "pages": [
+    "Daypart Comparison"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "YoY Picker",
+   "pages": [
+    "Exec Portfolio Report",
+    "Network Tooltip Exec Portfolio"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "YoY Picker ASC",
+   "pages": [
+    "Exec Portfolio Report"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "YoY Picker ASC PUT",
+   "pages": [
+    "Exec Portfolio Report"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "YoY Picker Top 30 ASC",
+   "pages": [
+    "Exec Portfolio Report"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "YoY Picker Top 30 ASC w/Out WBD8",
+   "pages": [
+    "Exec Portfolio Report"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "YoY Text",
+   "pages": [
+    "KPIs Trends"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "vMVPD",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Measure",
+   "table": "*MEASURES",
+   "field": "vMVPD ASC Avg",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "AD_SALES_RANKERS_LW_LSD",
+   "field": "AIRING",
+   "pages": [
+    "Ad Sales Rankers"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "AD_SALES_RANKERS_LW_LSD",
+   "field": "NETWORK",
+   "pages": [
+    "Ad Sales Rankers"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "AD_SALES_RANKERS_LW_LSD",
+   "field": "PROGRAM_NAME",
+   "pages": [
+    "Ad Sales Rankers"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "AD_SALES_RANKERS_MONTH_LSD",
+   "field": "NETWORK",
+   "pages": [
+    "Ad Sales Rankers"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "AD_SALES_RANKERS_MONTH_LSD",
+   "field": "PROGRAM_NAME",
+   "pages": [
+    "Ad Sales Rankers",
+    "Channel Performance"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "BROADCAST_CALENDAR",
+   "field": "BC Quarter",
+   "pages": [
+    "Delivery Trends"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "BROADCAST_CALENDAR",
+   "field": "BROADCAST_MONTH_KEY",
+   "pages": [
+    "Channel Performance"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "CHANNEL_PERFORMANCE",
+   "field": "DOW",
+   "pages": [
+    "Channel Performance"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "CHANNEL_SELECTOR",
+   "field": "CHANNEL",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "CONGLOMERATE_LKP",
+   "field": "ORIGINATORNAME",
+   "pages": [
+    "Age and Gender",
+    "Daypart Comparison"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "CUSTOM_COMPARISON_SELECTION",
+   "field": "Metric",
+   "pages": [
+    "Daypart Comparison"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "DATASTREAM_DIM",
+   "field": "DATASTREAM",
+   "pages": [
+    "Delivery Trends"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "DATA_AVAILABILITY",
+   "field": "MONTH YEAR",
+   "pages": [
+    "Info - Data Availability",
+    "Reference Page"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "DATA_AVAILABILITY",
+   "field": "TIME_SHIFTED_VIEWING_TYPE",
+   "pages": [
+    "Reference Page"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "DAYPART 1",
+   "field": "Daypart",
+   "pages": [
+    "Daypart Comparison"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "DAYPART 2",
+   "field": "Daypart",
+   "pages": [
+    "Daypart Comparison"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "DAY_PART",
+   "field": "Day Part",
+   "pages": [
+    "Portfolio Share '000"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "DEMO_DIM",
+   "field": "SOURCE_DEMO_DESC",
+   "pages": [
+    "Daypart Comparison"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "EXEC_PORTFOLIO_BY_DAY_L3",
+   "field": "BroadcastDayKey",
+   "pages": [
+    "Exec Portfolio Report"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "EXEC_PORTFOLIO_BY_DAY_L3",
+   "field": "BroadcastMonthKey",
+   "pages": [
+    "Exec Portfolio Report"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "EXEC_PORTFOLIO_BY_DAY_L3",
+   "field": "DELIVERY",
+   "pages": [
+    "Exec Portfolio Report"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "EXEC_PORT_TIERED_GROUPS",
+   "field": "DISPLAY",
+   "pages": [
+    "Exec Portfolio Report"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "EXEC_PORT_TIERED_GROUPS",
+   "field": "LOGO",
+   "pages": [
+    "Exec Portfolio Report"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "GENDER_SKEW_AP",
+   "field": "DELIVERY",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "GENDER_SKEW_AP",
+   "field": "GENDER",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "GENDER_SKEW_AP",
+   "field": "Gender Displaye",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "Info - Channel Performance (Avg '000)",
+   "field": "Description",
+   "pages": [
+    "Info - Channel Perform (Avg '000)"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "Info - Channel Performance (Avg '000)",
+   "field": "Display Names",
+   "pages": [
+    "Info - Channel Perform (Avg '000)",
+    "Info - Data Availability"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "Info - Channel Performance (CVG Rtg)",
+   "field": "Description",
+   "pages": [
+    "Info - Channel Perform (CVG Rtg)"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "Info - Channel Performance (CVG Rtg)",
+   "field": "Display Names",
+   "pages": [
+    "Info - Channel Perform (CVG Rtg)"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "MONTH_SORT",
+   "field": "BC MY",
+   "pages": [
+    "Portfolio Share Trends"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "TIME_PERIOD",
+   "field": "Time Period",
+   "pages": [
+    "Daypart Comparison"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "UNIVERSE",
+   "field": "UNIVERSE",
+   "pages": [
+    "Portfolio Share '000",
+    "Portfolio Share Trends"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "WM_AVG_AUDIENCE_MONTH",
+   "field": "DELIVERY",
+   "pages": [
+    "Portfolio Share '000"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "WM_AVG_AUDIENCE_QUARTER",
+   "field": "Portfolio Text",
+   "pages": [
+    "Delivery Trends"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "WM_AVG_AUDIENCE_QUARTER",
+   "field": "QTRS_FOR_DIFF",
+   "pages": [
+    "Delivery Trends"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "WM_AVG_AUDIENCE_QUARTER",
+   "field": "SIX_QTRS",
+   "pages": [
+    "Delivery Trends"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "WM_AVG_AUDIENCE_QUARTER",
+   "field": "Total Scope Text",
+   "pages": [
+    "Delivery Trends"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "WM_BROADCAST_CALENDAR",
+   "field": "BC Month",
+   "pages": [
+    "Age and Gender"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "WM_BROADCAST_CALENDAR",
+   "field": "BC Month Text",
+   "pages": [
+    "Channel Performance",
+    "KPIs Trends"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "WM_BROADCAST_CALENDAR",
+   "field": "BC Quarter",
+   "pages": [
+    "Delivery Trends"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "WM_BROADCAST_CALENDAR",
+   "field": "BC Year",
+   "pages": [
+    "Channel Performance",
+    "KPIs Trends"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "WM_BROADCAST_CALENDAR",
+   "field": "BROADCAST_MONTH_KEY",
+   "pages": [
+    "Portfolio Share Trends"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "WM_DATE_SELECTION",
+   "field": "Date",
+   "pages": [
+    "Exec Portfolio Report"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "WM_DATE_SELECTION",
+   "field": "Display",
+   "pages": [
+    "Audience Profiles"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "WM_DATE_SELECTION",
+   "field": "Period",
+   "pages": [
+    "Ad Sales Rankers",
+    "Exec Portfolio Report"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "WM_DATE_SELECTION",
+   "field": "Selection",
+   "pages": [
+    "Ad Sales Rankers",
+    "Age and Gender",
+    "Audience Profiles",
+    "Channel Performance",
+    "Daypart Comparison",
+    "Exec Portfolio Report",
+    "KPIs Trends",
+    "Portfolio Share '000",
+    "Portfolio Share Trends"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "WM_DATE_SELECTION",
+   "field": "TSV",
+   "pages": [
+    "Audience Profiles",
+    "Exec Portfolio Report"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "WM_DATE_SELECTION",
+   "field": "TimePeriodID",
+   "pages": [
+    "Ad Sales Rankers",
+    "Age and Gender",
+    "Audience Profiles",
+    "Channel Performance",
+    "Delivery Trends",
+    "KPIs Trends",
+    "Portfolio Share '000",
+    "Portfolio Share Trends"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "WM_DATE_SELECTION",
+   "field": "TimePeriodSwitcher",
+   "pages": [
+    "Exec Portfolio Report"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "WM_DATE_SELECTION",
+   "field": "YoYComparisonLogic",
+   "pages": [
+    "Exec Portfolio Report"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "WM_DAYPART",
+   "field": "DAYPART",
+   "pages": [
+    "(report-level filter)",
+    "Audience Profiles",
+    "Channel Performance",
+    "Delivery Trends",
+    "Exec Portfolio Report",
+    "Portfolio Share '000"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "WM_DAYPART_ALL",
+   "field": "DAYPART",
+   "pages": [
+    "Ad Sales Rankers",
+    "Age and Gender",
+    "KPIs Trends",
+    "Portfolio Share Trends"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "WM_DEMO",
+   "field": "DEMO_DESC",
+   "pages": [
+    "(report-level filter)",
+    "Ad Sales Rankers",
+    "Channel Performance",
+    "Daypart Comparison",
+    "Delivery Trends",
+    "Exec Portfolio Report",
+    "KPIs Trends",
+    "Portfolio Share '000",
+    "Portfolio Share Trends"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "WM_DEMO",
+   "field": "DEMO_DESC_FOR_EXEC_PORTFOLIO",
+   "pages": [
+    "Exec Portfolio Report"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "WM_NETWORKS",
+   "field": "CONGLOMERATE",
+   "pages": [
+    "Audience Profiles",
+    "Channel Performance",
+    "KPIs Trends",
+    "TV Universe"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "WM_NETWORKS",
+   "field": "Column",
+   "pages": [
+    "Delivery Trends"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "WM_NETWORKS",
+   "field": "DISPLAY",
+   "pages": [
+    "(report-level filter)",
+    "Ad Sales Rankers",
+    "Age and Gender",
+    "Audience Profiles",
+    "Channel Performance",
+    "Daypart Comparison",
+    "KPIs Trends",
+    "Network Tooltip Exec Portfolio",
+    "Portfolio Share Trends",
+    "TV Universe"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "WM_NETWORKS",
+   "field": "LOGO",
+   "pages": [
+    "Audience Profiles",
+    "Channel Performance",
+    "KPIs Trends",
+    "TV Universe"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "WM_NETWORKS",
+   "field": "Main ASCO Owners",
+   "pages": [
+    "Age and Gender",
+    "Delivery Trends",
+    "Exec Portfolio Report"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "WM_NETWORKS",
+   "field": "NETWORK TYPE 1",
+   "pages": [
+    "Ad Sales Rankers",
+    "Daypart Comparison",
+    "Exec Portfolio Report"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "WM_NETWORKS",
+   "field": "NETWORKLABEL",
+   "pages": [
+    "Delivery Trends",
+    "Network Tooltip",
+    "Network Tooltip YTD",
+    "TV Universe"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "WM_NETWORKS",
+   "field": "NETWORKTYPE",
+   "pages": [
+    "Delivery Trends"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "WM_NETWORKS",
+   "field": "Owners (Porfolio Share '000)",
+   "pages": [
+    "Portfolio Share '000",
+    "Portfolio Share Trends"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "WM_NETWORKS",
+   "field": "SPANISH_LANG_NET",
+   "pages": [
+    "Delivery Trends"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "WM_NETWORKS",
+   "field": "Tiered WBD Networks",
+   "pages": [
+    "Delivery Trends"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "WM_NETWORKS",
+   "field": "WBD IDENTIFIER",
+   "pages": [
+    "Portfolio Share '000"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "WM_PROGRAM_CATEGORY",
+   "field": "Category",
+   "pages": [
+    "Ad Sales Rankers"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "WM_TSV",
+   "field": "TSV",
+   "pages": [
+    "(report-level filter)",
+    "Age and Gender",
+    "Channel Performance",
+    "Daypart Comparison",
+    "Delivery Trends",
+    "Exec Portfolio Report",
+    "KPIs Trends",
+    "Portfolio Share '000",
+    "Portfolio Share Trends"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "WM_UE_CALENDAR",
+   "field": "BROADCAST_QUARTER_KEY",
+   "pages": [
+    "TV Universe"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "WM_UE_CALENDAR",
+   "field": "YEAR",
+   "pages": [
+    "TV Universe"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "WM_UE_CALENDAR",
+   "field": "YEAR_QUARTER",
+   "pages": [
+    "TV Universe"
+   ]
+  },
+  {
+   "kind": "Column",
+   "table": "Yes/No",
+   "field": "Value",
+   "pages": [
+    "Delivery Trends"
+   ]
+  }
+ ],
+ "filter_literals": {
+  "*MEASURES[AA '000 ALL]": [
+   "> 0L"
+  ],
+  "*MEASURES[AA '000 Month LSD]": [
+   "> 0L"
+  ],
+  "*MEASURES[AA '000 NETWORK RANKER]": [
+   "< 21L"
+  ],
+  "*MEASURES[AA '000 PROGRAM RANKER]": [
+   "< 21L"
+  ],
+  "*MEASURES[AA '000 TC RANKER]": [
+   "< 21L"
+  ],
+  "*MEASURES[CVGUE000 Variance (Quarter)]": [
+   "< 0D",
+   "< 10000000000D",
+   "> 0D",
+   ">= -10000000000D"
+  ],
+  "*MEASURES[MoM Daypart1]": [
+   "< 0D",
+   "< 100D",
+   ">= -100D",
+   ">= 0D"
+  ],
+  "*MEASURES[MoM Daypart2]": [
+   "< 0D",
+   "< 1000D",
+   ">= -100D",
+   ">= 0D"
+  ],
+  "*MEASURES[Program Avg '000]": [
+   "< 1000000000D",
+   "= null",
+   "> 0D"
+  ],
+  "*MEASURES[Program Avg '000 Max TCs]": [
+   "< 1000000000D",
+   "> 0D"
+  ],
+  "*MEASURES[Program Avg '000 Rank]": [
+   "< 1000000001D",
+   "> 0D"
+  ],
+  "*MEASURES[Program CVG Ratings]": [
+   "< 100000000D",
+   "> 0D"
+  ],
+  "*MEASURES[Program CVG Ratings Max TCs]": [
+   "< 100000000D",
+   "> 0D"
+  ],
+  "*MEASURES[Program CVG Ratings Rank]": [
+   "< 100000000D",
+   "> 0D"
+  ],
+  "*MEASURES[Program Eff]": [
+   "< 1000000000D",
+   "< 100000000D",
+   "> 0D"
+  ],
+  "*MEASURES[Share TV Avg '000]": [
+   "= null",
+   "> 0L"
+  ],
+  "*MEASURES[Share TV Avg '000 YTD]": [
+   "= null",
+   "> 0L"
+  ],
+  "*MEASURES[Share TV Avg '000 YTD Growth]": [
+   "< 0D",
+   "< 1000000D",
+   ">= -1000000D",
+   ">= 0D"
+  ],
+  "*MEASURES[WBD COLOR LW LSD]": [
+   "= 'BLUE'"
+  ],
+  "*MEASURES[WBD COLOR MONTH]": [
+   "= 'BLUE'"
+  ],
+  "*MEASURES[YoY Daypart1]": [
+   "< 0D",
+   "< 1000D",
+   "< 100D",
+   ">= -1000D",
+   ">= -100D",
+   ">= 0D"
+  ],
+  "*MEASURES[YoY Daypart2]": [
+   "< 0D",
+   "< 1000D",
+   "< 100D",
+   ">= -1000D",
+   ">= -100D",
+   ">= 0D"
+  ],
+  "BROADCAST_CALENDAR[BC Quarter]": [
+   "= '2022 Q1'",
+   "= '2022 Q2'",
+   "= '2022 Q3'",
+   "= '2022 Q4'",
+   "= '2023 Q1'",
+   "= '2023 Q2'",
+   "= '2023 Q3'"
+  ],
+  "BROADCAST_CALENDAR[BC Year]": [
+   "= 2018L",
+   "= 2019L",
+   "= 2020L",
+   "= 2021L",
+   "= 2022L",
+   "= 2023L"
+  ],
+  "CALENDAR_UE[BROADCAST_QTR_KEY]": [
+   "= 20172L",
+   "= 20173L",
+   "= 20174L",
+   "= 20181L",
+   "= 20182L",
+   "= 20183L",
+   "= 20184L",
+   "= 20191L",
+   "= 20192L",
+   "= 20193L",
+   "= 20194L",
+   "= 20201L",
+   "= 20202L",
+   "= 20203L"
+  ],
+  "CHANNEL_SELECTOR[CHANNEL]": [
+   "= ''",
+   "= 'ASC'",
+   "= 'AVID MG'",
+   "= 'FREQ MG'",
+   "= 'METRIC'",
+   "= 'PRIN MG'",
+   "in ''",
+   "in 'ASC'"
+  ],
+  "CONGLOMERATE_LKP[CONGLOMERATE]": [
+   "= 'AETV Nets'",
+   "= 'AMC Nets'",
+   "= 'Discovery, Inc'",
+   "= 'Disney'",
+   "= 'Fox'",
+   "= 'Hallmark'",
+   "= 'NBC Universal'",
+   "= 'Other'",
+   "= 'Univision'",
+   "= 'ViacomCBS'",
+   "= 'Warner Bros. Discovery'",
+   "= 'Warner Media'",
+   "= 'WarnerMedia'"
+  ],
+  "CONGLOMERATE_LKP[DISCOVERY]": [
+   "= 'DISCOVERY'",
+   "= 'NON-DISCOVERY'",
+   "= 'NON-WBD'",
+   "= 'WBD'"
+  ],
+  "CONGLOMERATE_LKP[ORIGINATORNAME]": [
+   "= 'A&E Network'",
+   "= 'ABC'",
+   "= 'AMC'",
+   "= 'AMTV'",
+   "= 'Adult Swim'",
+   "= 'American Heroes Channel'",
+   "= 'Animal Planet'",
+   "= 'Axs TV'",
+   "= 'Azteca'",
+   "= 'BBC America'",
+   "= 'BET Her'",
+   "= 'Baby First TV'",
+   "= 'Bein Sport Espanol'",
+   "= 'Bein Sport'",
+   "= 'Big Ten Network'",
+   "= 'Black Entertainment TV'",
+   "= 'Boomerang'",
+   "= 'Bounce TV'",
+   "= 'Bravo TV'",
+   "= 'CBS'",
+   "= 'CMT'",
+   "= 'CNBC'",
+   "= 'CNN En Espanol'",
+   "= 'CNN'",
+   "= 'COZI'",
+   "= 'CW'",
+   "= 'Cartoon Network'",
+   "= 'Cinemax Prime'",
+   "= 'Comedy Central'",
+   "= 'Comedy TV'",
+   "= 'Comet'",
+   "= 'Cooking Channel'",
+   "= 'Court TV Mystery'",
+   "= 'DIY'",
+   "= 'Destination America'",
+   "= 'Discovery Channel'",
+   "= 'Discovery Familia'",
+   "= 'Discovery Family Channel'",
+   "= 'Disney Jr'",
+   "= 'Disney XD'",
+   "= 'Disney'",
+   "= 'E!'",
+   "= 'ESPN 2'",
+   "= 'ESPN Desportes'",
+   "= 'ESPN'",
+   "= 'ESPNU'",
+   "= 'ESPNews'",
+   "= 'El Rey'",
+   "= 'Estrella TV'",
+   "= 'FOX'",
+   "= 'FX Movie Channel'",
+   "= 'FX'",
+   "= 'FXX'",
+   "= 'FYI'",
+   "= 'Food Network'",
+   "= 'Fox Business Network'",
+   "= 'Fox Deportes'",
+   "= 'Fox News'",
+   "= 'Fox Sports 1'",
+   "= 'Fox Sports 2'",
+   "= 'Freeform'",
+   "= 'Fuse'",
+   "= 'GAC'",
+   "= 'GSN'",
+   "= 'Galavision'",
+   "= 'Golf'",
+   "= 'Grit'",
+   "= 'HBO Prime'",
+   "= 'HLN'",
+   "= 'Hallmark Drama'",
+   "= 'Hallmark Movie & Mysteries'",
+   "= 'Hallmark'",
+   "= 'Heroes and Icons'",
+   "= 'History'",
+   "= 'Home and Garden TV'",
+   "= 'IFC'",
+   "= 'INSP'",
+   "= 'Investigation Discovery'",
+   "= 'Ion'",
+   "= 'Justice Central'",
+   "= 'Laff'",
+   "= 'Lifetime Movie Network'",
+   "= 'Lifetime Television'",
+   "= 'Logo'",
+   "= 'MLB Network'",
+   "= 'MSNBC'",
+   "= 'MTV'",
+   "= 'MTV2'",
+   "= 'MeTV'",
+   "= 'MotorTrend'",
+   "= 'NBA TV'",
+   "= 'NBC Sports Network'",
+   "= 'NBC'",
+   "= 'NFL Network'",
+   "= 'Nat Geo Wild'",
+   "= 'National Geographic Channel'",
+   "= 'Newsmax TV'",
+   "= 'Newsy'",
+   "= 'Nick Jr'",
+   "= 'Nick@Nite'",
+   "= 'Nickelodeon'",
+   "= 'Nicktoons'",
+   "= 'Oprah Winfrey Network'",
+   "= 'Ovation Network'",
+   "= 'Oxygen Media'",
+   "= 'Paramount'",
+   "= 'Pop'",
+   "= 'RFD-TV'",
+   "= 'Reelzchannel'",
+   "= 'Science'",
+   "= 'Showtime Prime'",
+   "= 'Smithsonian'",
+   "= 'Start TV'",
+   "= 'Starz Encore Primary'",
+   "= 'Starz Encore'",
+   "= 'Starz Prime'",
+   "= 'Sundance'",
+   "= 'SyFy'",
+   "= 'TLC'",
+   "= 'TNT'",
+   "= 'TUDN'",
+   "= 'TV Land Classic'",
+   "= 'TV Land'",
+   "= 'TV One'",
+   "= 'Teennick'",
+   "= 'TeleXitos'",
+   "= 'Telemundo'",
+   "= 'Tennis Channel'",
+   "= 'Travel Channel'",
+   "= 'USA'",
+   "= 'Unimas'",
+   "= 'Universal Kids'",
+   "= 'Universo'",
+   "= 'Univision Deportes'",
+   "= 'Univision'",
+   "= 'Up'",
+   "= 'VH1'",
+   "= 'Vice'",
+   "= 'Viceland'",
+   "= 'WE tv'",
+   "= 'WGNA'",
+   "= 'WHNA'",
+   "= 'Weather Channel'",
+   "= 'tbs'",
+   "= 'truTV'"
+  ],
+  "CUSTOM_COMPARISON_SELECTION[Metric]": [
+   "in 'Avg ''000'"
+  ],
+  "DATASTREAM_DIM[DATASTREAM]": [
+   "in 'Not Defined'"
+  ],
+  "DAYPART 1[Daypart]": [
+   "in 'Total Day'",
+   "in null"
+  ],
+  "DAYPART 2[Daypart]": [
+   "in 'Prime'",
+   "in null"
+  ],
+  "EXEC_PORTFOLIO_BY_DAY_L3[BroadcastWeekKey]": [
+   "= 202201L",
+   "= 202202L",
+   "= 202203L",
+   "= 202204L",
+   "= 202205L",
+   "= 202206L",
+   "= 202207L",
+   "= 202208L",
+   "= 202209L",
+   "= 202210L",
+   "= 202211L",
+   "= 202212L",
+   "= 202213L",
+   "= 202214L",
+   "= 202215L",
+   "= 202216L",
+   "= 202217L",
+   "= 202218L",
+   "= 202219L",
+   "= 202220L",
+   "= 202221L",
+   "= 202222L",
+   "= 202223L",
+   "= 202224L",
+   "= 202225L",
+   "= 202226L",
+   "= 202227L",
+   "= 202228L",
+   "= 202229L",
+   "= 202230L",
+   "= 202231L",
+   "= 202232L",
+   "= 202233L",
+   "= 202234L",
+   "= 202235L",
+   "= 202236L",
+   "= 202237L",
+   "= 202238L",
+   "= 202239L",
+   "= 202240L",
+   "= 202241L",
+   "= 202242L",
+   "= 202243L",
+   "= 202244L",
+   "= 202245L",
+   "= 202246L",
+   "= 202247L",
+   "= 202248L",
+   "= 202249L",
+   "= 202250L",
+   "= 202251L",
+   "= 202252L",
+   "= 202301L",
+   "= 202302L",
+   "= 202303L",
+   "= 202304L",
+   "= 202305L",
+   "= 202306L",
+   "= 202307L",
+   "= 202308L",
+   "= 202309L",
+   "= 202310L",
+   "= 202311L",
+   "= 202312L",
+   "= 202313L",
+   "= 202314L",
+   "= 202315L",
+   "= 202316L",
+   "= 202317L",
+   "= 202318L",
+   "= 202319L",
+   "= 202320L",
+   "= 202321L",
+   "= 202322L",
+   "= 202323L",
+   "= 202324L",
+   "= 202325L",
+   "= 202326L",
+   "= 202327L",
+   "= 202328L",
+   "= 202329L",
+   "= 202330L",
+   "= 202331L",
+   "= 202332L",
+   "= 202333L",
+   "= 202334L",
+   "= 202335L",
+   "= 202336L",
+   "= 202337L",
+   "= 202338L",
+   "= 202339L",
+   "= 202340L",
+   "= 202341L",
+   "= 202342L",
+   "= 202343L",
+   "= 202344L",
+   "= 202345L",
+   "= 202346L",
+   "= 202347L",
+   "= 202348L",
+   "= 202350L"
+  ],
+  "EXEC_PORT_TIERED_GROUPS[DISPLAY]": [
+   "= 'USN8'",
+   "= 'WBD8'",
+   "in 'AETV3'",
+   "in 'DSNY5'",
+   "in 'FOX2'",
+   "in 'HALL'",
+   "in 'NBCU3'",
+   "in 'PAR6'",
+   "in 'RLZC'",
+   "in 'USN8'"
+  ],
+  "EXEC_PORT_TIERED_GROUPS[LOGO]": [
+   "= 'https://companieslogo.com/img/orig/WBD-09dee705.png?t=1649700090'",
+   "= 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/FOX_wordmark.svg/2560px-FOX_wordmark.svg.png'",
+   "= 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Disney_wordmark.svg/1200px-Disney_wordmark.svg.png'",
+   "= 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/A%2BE_Networks_2017.svg/800px-A%2BE_Networks_2017.svg.png'",
+   "= 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/NBCUniversal_Logo.svg/1280px-NBCUniversal_Logo.svg.png'",
+   "= 'https://upload.wikimedia.org/wikipedia/en/thumb/1/1e/Paramount_Global.svg/1200px-Paramount_Global.svg.png'"
+  ],
+  "EXEC_PORT_TIERED_GROUPS[NETWORKLABEL]": [
+   "= 'A&E'",
+   "= 'ABC'",
+   "= 'ACCU'",
+   "= 'ADSM'",
+   "= 'AEN'",
+   "= 'AHC'",
+   "= 'AMC'",
+   "= 'AMS'",
+   "= 'AMTV'",
+   "= 'AMZ'",
+   "= 'ANT'",
+   "= 'APL'",
+   "= 'AXS'",
+   "= 'AZA'",
+   "= 'BABY'",
+   "= 'BBCA'",
+   "= 'BET'",
+   "= 'BHER'",
+   "= 'BNC'",
+   "= 'BOOM'",
+   "= 'BOU'",
+   "= 'BRVO'",
+   "= 'BTN'",
+   "= 'CAT'",
+   "= 'CBS'",
+   "= 'CC'",
+   "= 'CDTV'",
+   "= 'CHG'",
+   "= 'CLEO'",
+   "= 'CMDY'",
+   "= 'CMT'",
+   "= 'CNBC'",
+   "= 'CNN'",
+   "= 'COM'",
+   "= 'COWB'",
+   "= 'COZ'",
+   "= 'CRT'",
+   "= 'CW'",
+   "= 'DAM'",
+   "= 'DBL'",
+   "= 'DFAM'",
+   "= 'DFC'",
+   "= 'DFY'",
+   "= 'DISC'",
+   "= 'DISJR'",
+   "= 'DLIF'",
+   "= 'DSNY'",
+   "= 'DXD'",
+   "= 'Disney'",
+   "= 'ENCY'",
+   "= 'ENT'",
+   "= 'ESPN'",
+   "= 'ESPN2'",
+   "= 'ESPNU'",
+   "= 'ETV'",
+   "= 'FBN'",
+   "= 'FETV'",
+   "= 'FOOD'",
+   "= 'FOX'",
+   "= 'FOXNC'",
+   "= 'FRFM'",
+   "= 'FS1'",
+   "= 'FS2'",
+   "= 'FUSE'",
+   "= 'FX'",
+   "= 'FXM'",
+   "= 'FXX'",
+   "= 'FYI'",
+   "= 'G4'",
+   "= 'GACF'",
+   "= 'GFAM'",
+   "= 'GOLF'",
+   "= 'GRT'",
+   "= 'GSN'",
+   "= 'HALL'",
+   "= 'HBOM'",
+   "= 'HGTV'",
+   "= 'HI'",
+   "= 'HIST'",
+   "= 'HLDRM'",
+   "= 'HLN'",
+   "= 'HMM'",
+   "= 'ID'",
+   "= 'IFC'",
+   "= 'INSP'",
+   "= 'ION'",
+   "= 'JCTV'",
+   "= 'LAF'",
+   "= 'LIF'",
+   "= 'LMN'",
+   "= 'LOGO'",
+   "= 'MAG'",
+   "= 'MAXP'",
+   "= 'MET'",
+   "= 'MLBN'",
+   "= 'MSNBC'",
+   "= 'MT'",
+   "= 'MTV'",
+   "= 'MTV2'",
+   "= 'MYS'",
+   "= 'NAN'",
+   "= 'NBAT'",
+   "= 'NBC Universal'",
+   "= 'NBC'",
+   "= 'NBCSN'",
+   "= 'NFLN'",
+   "= 'NGC'",
+   "= 'NGWD'",
+   "= 'NICK'",
+   "= 'NKJR'",
+   "= 'NKTNS'",
+   "= 'NLX'",
+   "= 'NMX'",
+   "= 'NWSN'",
+   "= 'OLYM'",
+   "= 'OUTD'",
+   "= 'OVTN'",
+   "= 'OWN'",
+   "= 'OXYG'",
+   "= 'Other'",
+   "= 'PAR'",
+   "= 'POP'",
+   "= 'PRST'",
+   "= 'Paramount'",
+   "= 'RFD'",
+   "= 'RLZC'",
+   "= 'SCI'",
+   "= 'SHO1'",
+   "= 'SMTH'",
+   "= 'SPMN'",
+   "= 'STV'",
+   "= 'STZP'",
+   "= 'SUND'",
+   "= 'SYFY'",
+   "= 'SYT'",
+   "= 'TBD'",
+   "= 'TBSC'",
+   "= 'TENN'",
+   "= 'TLC'",
+   "= 'TLNV'",
+   "= 'TNNK'",
+   "= 'TNT'",
+   "= 'TOON'",
+   "= 'TRAV'",
+   "= 'TRN'",
+   "= 'TRU'",
+   "= 'TV1'",
+   "= 'TVL'",
+   "= 'TVLC'",
+   "= 'TWC'",
+   "= 'UKID'",
+   "= 'UP'",
+   "= 'USA'",
+   "= 'VH1'",
+   "= 'VICE'",
+   "= 'WBD'",
+   "= 'WETV'"
+  ],
+  "GENDER_SKEW_AP[GENDER]": [
+   "in 'F'",
+   "in 'M'"
+  ],
+  "GENDER_SKEW_AP[Gender Displaye]": [
+   "= 'Female'",
+   "= 'Male'"
+  ],
+  "Info - Channel Performance (Avg '000)[Display Names]": [
+   "in 'PROGRAM'"
+  ],
+  "Info - Channel Performance (CVG Rtg)[Display Names]": [
+   "in 'PROGRAM'"
+  ],
+  "MONTH_SORT[BC MY]": [
+   "= 'Apr 2018'",
+   "= 'Apr 2019'",
+   "= 'Apr 2020'",
+   "= 'Apr 2021'",
+   "= 'Apr 2022'",
+   "= 'Apr 2023'",
+   "= 'Apr 2024'",
+   "= 'Apr 2025'",
+   "= 'Apr 2026'",
+   "= 'Aug 2018'",
+   "= 'Aug 2019'",
+   "= 'Aug 2020'",
+   "= 'Aug 2021'",
+   "= 'Aug 2022'",
+   "= 'Aug 2023'",
+   "= 'Aug 2024'",
+   "= 'Aug 2025'",
+   "= 'Dec 2018'",
+   "= 'Dec 2019'",
+   "= 'Dec 2020'",
+   "= 'Dec 2021'",
+   "= 'Dec 2022'",
+   "= 'Dec 2023'",
+   "= 'Dec 2024'",
+   "= 'Dec 2025'",
+   "= 'Feb 2018'",
+   "= 'Feb 2019'",
+   "= 'Feb 2020'",
+   "= 'Feb 2021'",
+   "= 'Feb 2022'",
+   "= 'Feb 2023'",
+   "= 'Feb 2024'",
+   "= 'Feb 2025'",
+   "= 'Feb 2026'",
+   "= 'Jan 2018'",
+   "= 'Jan 2019'",
+   "= 'Jan 2020'",
+   "= 'Jan 2021'",
+   "= 'Jan 2022'",
+   "= 'Jan 2023'",
+   "= 'Jan 2024'",
+   "= 'Jan 2025'",
+   "= 'Jan 2026'",
+   "= 'Jul 2018'",
+   "= 'Jul 2019'",
+   "= 'Jul 2020'",
+   "= 'Jul 2021'",
+   "= 'Jul 2022'",
+   "= 'Jul 2023'",
+   "= 'Jul 2024'",
+   "= 'Jul 2025'",
+   "= 'Jun 2018'",
+   "= 'Jun 2019'",
+   "= 'Jun 2020'",
+   "= 'Jun 2021'",
+   "= 'Jun 2022'",
+   "= 'Jun 2023'",
+   "= 'Jun 2024'",
+   "= 'Jun 2025'",
+   "= 'Mar 2018'",
+   "= 'Mar 2019'",
+   "= 'Mar 2020'",
+   "= 'Mar 2021'",
+   "= 'Mar 2022'",
+   "= 'Mar 2023'",
+   "= 'Mar 2024'",
+   "= 'Mar 2025'",
+   "= 'Mar 2026'",
+   "= 'May 2018'",
+   "= 'May 2019'",
+   "= 'May 2020'",
+   "= 'May 2021'",
+   "= 'May 2022'",
+   "= 'May 2023'",
+   "= 'May 2024'",
+   "= 'May 2025'",
+   "= 'Nov 2018'",
+   "= 'Nov 2019'",
+   "= 'Nov 2020'",
+   "= 'Nov 2021'",
+   "= 'Nov 2022'",
+   "= 'Nov 2023'",
+   "= 'Nov 2024'",
+   "= 'Nov 2025'",
+   "= 'Oct 2018'",
+   "= 'Oct 2019'",
+   "= 'Oct 2020'",
+   "= 'Oct 2021'",
+   "= 'Oct 2022'",
+   "= 'Oct 2023'",
+   "= 'Oct 2024'",
+   "= 'Oct 2025'",
+   "= 'Sep 2018'",
+   "= 'Sep 2019'",
+   "= 'Sep 2020'",
+   "= 'Sep 2021'",
+   "= 'Sep 2022'",
+   "= 'Sep 2023'",
+   "= 'Sep 2024'",
+   "= 'Sep 2025'",
+   "= null"
+  ],
+  "NGR_PERSON_VIEW[GENDER]": [
+   "= 'Female'",
+   "= 'Male'"
+  ],
+  "NGR_PERSON_VIEW[GENDER_CODE]": [
+   "= 'F'",
+   "= 'M'"
+  ],
+  "TIME_PERIOD[Time Period]": [
+   "in 'Month'"
+  ],
+  "UNIVERSE[UNIVERSE]": [
+   "in 'Pay TV (ASCO)'",
+   "in 'Total TV'"
+  ],
+  "WM_AVG_AUDIENCE_MONTH[Gender]": [
+   "= 'Female'",
+   "= 'Male'"
+  ],
+  "WM_AVG_AUDIENCE_QUARTER[GENDER]": [
+   "= 'Female'",
+   "= 'Male'"
+  ],
+  "WM_AVG_AUDIENCE_QUARTER[Portfolio Text]": [
+   "= 'Portfolio'",
+   "in 'Portfolio'"
+  ],
+  "WM_AVG_AUDIENCE_QUARTER[QTRS_FOR_DIFF]": [
+   "in true"
+  ],
+  "WM_AVG_AUDIENCE_QUARTER[SIX_QTRS]": [
+   "in true"
+  ],
+  "WM_BROADCAST_CALENDAR[BC Quarter]": [
+   "= '2021 Q1'",
+   "= '2021 Q2'",
+   "= '2021 Q3'",
+   "= '2021 Q4'",
+   "= '2022 Q1'",
+   "= '2022 Q2'",
+   "= '2022 Q3'",
+   "= '2022 Q4'",
+   "= '2023 Q1'",
+   "= '2023 Q2'",
+   "= '2023 Q3'",
+   "= '2023 Q4'"
+  ],
+  "WM_BROADCAST_CALENDAR[BC Year]": [
+   "= 2021D",
+   "= 2022D",
+   "= 2023D",
+   "= 2024D",
+   "= 2025D",
+   "= 2026D",
+   "in 2025D",
+   "in 2026D"
+  ],
+  "WM_DATE_SELECTION[Date]": [
+   "< datetime'2023-12-25T00:00:00'",
+   ">= datetime'2021-03-29T00:00:00'"
+  ],
+  "WM_DATE_SELECTION[Period]": [
+   "in 'Month'"
+  ],
+  "WM_DATE_SELECTION[Selection]": [
+   "in '2021 Q1'",
+   "in '2021 Q2'",
+   "in '2021 Q3'",
+   "in '2021 Q4'",
+   "in 'Latest'"
+  ],
+  "WM_DATE_SELECTION[TSV]": [
+   "in 'C3'",
+   "in 'Live+3'"
+  ],
+  "WM_DATE_SELECTION[TimePeriodID]": [
+   "in 3L",
+   "in 4L",
+   "in 6L"
+  ],
+  "WM_DATE_SELECTION[TimePeriodSwitcher]": [
+   "in 0L"
+  ],
+  "WM_DATE_SELECTION[YoYComparisonLogic]": [
+   "in 'YoY'"
+  ],
+  "WM_DAYPART[DAYPART]": [
+   "in 'Early Fringe'",
+   "in 'Late Fringe'",
+   "in 'Prime'",
+   "in 'Sales Prime'",
+   "in 'Total Day'",
+   "in 'Weekday Daytime'",
+   "in 'Weekday Morning'",
+   "in 'Weekend Daytime'",
+   "in null"
+  ],
+  "WM_DAYPART_ALL[DAYPART]": [
+   "in 'Daytime (M-F)'",
+   "in 'Early Morning (M-F)'",
+   "in 'Fringe'",
+   "in 'Latenight'",
+   "in 'Overnight'",
+   "in 'Prime (8-11)'",
+   "in 'Prime'",
+   "in 'Sales Prime'",
+   "in 'Total Day'",
+   "in 'Weekend Daytime'",
+   "in 'Weekend Early Morning'"
+  ],
+  "WM_DEMO[DEMO_DESC]": [
+   "= null",
+   "in 'P2+'",
+   "in 'P25-54'",
+   "in null"
+  ],
+  "WM_DEMO[DEMO_DESC_FOR_EXEC_PORTFOLIO]": [
+   "= 'K12-17'",
+   "= 'K2-11'",
+   "= 'M18+'",
+   "= 'M18-24'",
+   "= 'M18-34'",
+   "= 'M18-49'",
+   "= 'M2+'",
+   "= 'M25-49'",
+   "= 'M25-54'",
+   "= 'M35+'",
+   "= 'M35-64'",
+   "= 'M50+'",
+   "= 'M65+'",
+   "= 'P18+'",
+   "= 'P18-24'",
+   "= 'P18-34'",
+   "= 'P18-49'",
+   "= 'P2+'",
+   "= 'P25-49'",
+   "= 'P25-54'",
+   "= 'P35+'",
+   "= 'P35-64'",
+   "= 'P50+'",
+   "= 'W25-54'",
+   "in 'M25-54'",
+   "in 'P2+'",
+   "in 'P25-54'",
+   "in 'W25-54'"
+  ],
+  "WM_NETWORKS[CONGLOMERATE]": [
+   "in 'WBD'"
+  ],
+  "WM_NETWORKS[Column]": [
+   "= null"
+  ],
+  "WM_NETWORKS[DISPLAY]": [
+   "in ''",
+   "in 'Adult Swim'",
+   "in 'Animal Planet'",
+   "in 'CNN En Espanol'",
+   "in 'DIY'",
+   "in 'HBO Prime'",
+   "in 'TBS (MLB)'",
+   "in 'TNT (NBA)'",
+   "in 'TNT (NHL)'",
+   "in null"
+  ],
+  "WM_NETWORKS[Main ASCO Owners]": [
+   "= 'A&E'",
+   "= 'AMC'",
+   "= 'Disney'",
+   "= 'Fox'",
+   "= 'NBC Universal'",
+   "= 'Other'",
+   "= 'Paramount'",
+   "= 'WBD'",
+   "in 'Other'",
+   "in 'WBD'",
+   "in null"
+  ],
+  "WM_NETWORKS[NETWORK TYPE 1]": [
+   "in 'Ad-Supported-Cable'",
+   "in 'Big 4 Broadcast'",
+   "in null"
+  ],
+  "WM_NETWORKS[NETWORKLABEL]": [
+   "in 'TBS (MLB)'",
+   "in 'TNT (NBA)'",
+   "in 'TNT (NHL)'",
+   "in null"
+  ],
+  "WM_NETWORKS[NETWORKTYPE]": [
+   "in null"
+  ],
+  "WM_NETWORKS[Owners (Porfolio Share '000)]": [
+   "= 'A&E'",
+   "= 'AMC'",
+   "= 'Disney'",
+   "= 'Fox'",
+   "= 'Hallmark'",
+   "= 'NBC Universal'",
+   "= 'Other'",
+   "= 'Paramount'",
+   "= 'Univision'",
+   "= 'WBD'",
+   "= null",
+   "in 'Disney'",
+   "in 'Fox'",
+   "in 'NBC Universal'",
+   "in 'Other'",
+   "in 'Paramount'",
+   "in 'WBD'",
+   "in null"
+  ],
+  "WM_NETWORKS[SPANISH_LANG_NET]": [
+   "in false"
+  ],
+  "WM_NETWORKS[Tiered WBD Networks]": [
+   "in null"
+  ],
+  "WM_NETWORKS[WBD IDENTIFIER]": [
+   "= 'NON-WBD'",
+   "= 'WBD'"
+  ],
+  "WM_PROGRAM_CATEGORY[Category]": [
+   "in 'News'"
+  ],
+  "WM_TSV[TSV]": [
+   "in 'C3'",
+   "in 'Live'",
+   "in 'Live+3'"
+  ],
+  "WM_UE_CALENDAR[YEAR]": [
+   "in 2021L",
+   "in 2022L",
+   "in 2023L",
+   "in 2024L",
+   "in 2025L"
+  ],
+  "Yes/No[Value]": [
+   "in 'No'"
+  ]
+ },
+ "report_filters": [
+  "WM_DAYPART[DAYPART]",
+  "WM_DEMO[DEMO_DESC]",
+  "WM_NETWORKS[DISPLAY]",
+  "WM_TSV[TSV]"
+ ],
+ "bookmarks": [
+  "Channel Perf - Cvg RTG",
+  "Channel Perf - Avg '000",
+  "CC-Month",
+  "CC-Qtr",
+  "CC-Year",
+  "Preset Date Range",
+  "Custom Date Range"
+ ],
+ "tables_referenced_not_in_model": [
+  "BROADCAST_CALENDAR",
+  "CONGLOMERATE_LKP",
+  "DATASTREAM_DIM",
+  "DAY_PART",
+  "DEMO_DIM",
+  "WM_AVG_AUDIENCE_QUARTER",
+  "Yes/No"
+ ],
+ "model_tables_not_referenced_by_visuals": [
+  "ASC_AUDIENCE_NEW",
+  "CUSTOM_COMPARISON_TIME_PERIOD",
+  "DATE_LAST_REFRESHED",
+  "DIM_ALL_MAIN_OWNERS",
+  "L5_MONTH_UES_AND_HISTORICAL_UES",
+  "NET_AUDIENCE_NEW",
+  "PREMIERES",
+  "VERSION",
+  "WM_BROADCAST_CALENDAR_MAX_DATES",
+  "WM_MEDIAN_AGE_MONTH",
+  "WM_REACH_AND_FREQUENCY",
+  "WM_REACH_AND_FREQUENCY_QTR",
+  "WM_UNIVERSE_ESTIMATE_MONTH",
+  "WM_UNIVERSE_ESTIMATE_QUARTER"
+ ]
+}

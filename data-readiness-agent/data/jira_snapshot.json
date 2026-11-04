@@ -1,0 +1,6565 @@
+{
+ "retrieved": "2026-10-22",
+ "site": "wbdprod.atlassian.net",
+ "queries": {
+  "children_of_ingestion_epics": "parent in (CARL-1756, CARL-1380, CARL-2887, CARL-1477, CARL-3638, CARL-3639, CARL-4086, CARL-4087, CARL-4153, CARL-3779, CARL-3500, CARL-3499, CARL-3497, CARL-2888, CARL-3501, CARL-3750, CARL-1480, CARL-749, CARL-312, CARL-313, CARL-4035, CARL-3505, CARL-3504, CARL-3503, CARL-631, CARL-4050, CARL-1479) ORDER BY key ASC",
+  "blocked": "project = CARL AND status = Blocked ORDER BY updated DESC"
+ },
+ "children_of_ingestion_epics": [
+  {
+   "key": "CARL-242",
+   "summary": "SILVER.FACT_PACING_REVENUE_BUDGET_MO transformation/business logic",
+   "status": "Done",
+   "status_category": "done",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-312",
+    "summary": "Ingest Linear and Digital Revenue Data Set (Silver)"
+   },
+   "labels": [
+    "CARL_26Q1_Drop"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-02-20T17:40:32.361-0500",
+   "updated": "2026-03-19T10:10:19.277-0400",
+   "resolved": "2026-03-19T10:10:18.714-0400",
+   "links": [
+    {
+     "type": "Cloners",
+     "relation": "is cloned by",
+     "key": "CARL-280",
+     "summary": "GOLD.FACT_PACING_REVENUE_BUDGET_MO  transformation/business logic",
+     "status": "Done"
+    },
+    {
+     "type": "Blocks",
+     "relation": "blocks",
+     "key": "CARL-280",
+     "summary": "GOLD.FACT_PACING_REVENUE_BUDGET_MO  transformation/business logic",
+     "status": "Done"
+    },
+    {
+     "type": "Blocks",
+     "relation": "is blocked by",
+     "key": "CARL-298",
+     "summary": "BRONZE.SALESFORCE_WRR_LDR2_LINEAR",
+     "status": "Done"
+    },
+    {
+     "type": "Breaks",
+     "relation": "is broken by",
+     "key": "CARL-431",
+     "summary": "Ingest Timestamp Bug in Unified Reporting Silver/Gold tables",
+     "status": "Done"
+    },
+    {
+     "type": "Contains",
+     "relation": "contains",
+     "key": "CARL-402",
+     "summary": "Conduct Data Quality Checks for Converged Holes Report + Sports Holes and Shares Reports",
+     "status": "Done"
+    },
+    {
+     "type": "Contains",
+     "relation": "contains",
+     "key": "CARL-406",
+     "summary": "Conduct Data Quality Checks for Linear and Digital Converged Pacing Dashboard",
+     "status": "Done"
+    }
+   ]
+  },
+  {
+   "key": "CARL-254",
+   "summary": "feature/SILVER.DIM_NET_ACCOUNT transformation business logic",
+   "status": "Done",
+   "status_category": "done",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-312",
+    "summary": "Ingest Linear and Digital Revenue Data Set (Silver)"
+   },
+   "labels": [
+    "CARL_26Q2_Drop"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-02-23T10:25:05.462-0500",
+   "updated": "2026-08-25T10:29:24.689-0400",
+   "resolved": "2026-08-25T10:29:24.671-0400",
+   "links": [
+    {
+     "type": "Cloners",
+     "relation": "clones",
+     "key": "CARL-229",
+     "summary": "BRONZE.IDEAL_DCI_NET_ACCOUNT",
+     "status": "Done"
+    },
+    {
+     "type": "Blocks",
+     "relation": "is blocked by",
+     "key": "CARL-229",
+     "summary": "BRONZE.IDEAL_DCI_NET_ACCOUNT",
+     "status": "Done"
+    },
+    {
+     "type": "Blocks",
+     "relation": "blocks",
+     "key": "CARL-255",
+     "summary": "[Q2] Phase 2 GOLD.DIM_NET_ACCOUNT transformation/business logic",
+     "status": "To Do"
+    },
+    {
+     "type": "Blocks",
+     "relation": "is blocked by",
+     "key": "CARL-230",
+     "summary": "BRONZE.IDEAL_DCI_ACCT",
+     "status": "Done"
+    },
+    {
+     "type": "Blocks",
+     "relation": "is blocked by",
+     "key": "CARL-231",
+     "summary": "BRONZE.IDEAL_DCI_SALES_GROUP",
+     "status": "Done"
+    },
+    {
+     "type": "Blocks",
+     "relation": "is blocked by",
+     "key": "CARL-238",
+     "summary": "BRONZE.IDEAL_MSA_GE_NET",
+     "status": "Done"
+    },
+    {
+     "type": "Blocks",
+     "relation": "is blocked by",
+     "key": "CARL-232",
+     "summary": "BRONZE.IDEAL_DCI_SELL_PROPERTY_CATEGORY",
+     "status": "Done"
+    },
+    {
+     "type": "Blocks",
+     "relation": "is blocked by",
+     "key": "CARL-233",
+     "summary": "BRONZE.IDEAL_DCI_SELL_DIVISION",
+     "status": "Done"
+    }
+   ]
+  },
+  {
+   "key": "CARL-255",
+   "summary": "[Q2] Phase 2 GOLD.DIM_NET_ACCOUNT transformation/business logic",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-313",
+    "summary": "Ingest Linear and Digital Revenue Data Set (Gold)"
+   },
+   "labels": [
+    "CARL_26Q1_Drop"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-02-23T10:25:12.206-0500",
+   "updated": "2026-09-14T10:36:15.812-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Cloners",
+     "relation": "clones",
+     "key": "CARL-229",
+     "summary": "BRONZE.IDEAL_DCI_NET_ACCOUNT",
+     "status": "Done"
+    },
+    {
+     "type": "Blocks",
+     "relation": "is blocked by",
+     "key": "CARL-254",
+     "summary": "feature/SILVER.DIM_NET_ACCOUNT transformation business logic",
+     "status": "Done"
+    },
+    {
+     "type": "Blocks",
+     "relation": "is blocked by",
+     "key": "CARL-297",
+     "summary": "[Q2] Phase 2 SILVER.DIM_NET_ACCOUNT_AE_COMBO transformation/business logic",
+     "status": "Done"
+    }
+   ]
+  },
+  {
+   "key": "CARL-268",
+   "summary": "[Q2] Phase 2 SILVER.DIM_ADVERTISERS  transformation logic",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-312",
+    "summary": "Ingest Linear and Digital Revenue Data Set (Silver)"
+   },
+   "labels": [
+    "CARL_26Q2_Drop"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-02-23T11:14:05.664-0500",
+   "updated": "2026-09-14T10:36:24.028-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Cloners",
+     "relation": "clones",
+     "key": "CARL-236",
+     "summary": "BRONZE.IDEAL_MSA_GE_ADVERTISERS",
+     "status": "Done"
+    },
+    {
+     "type": "Blocks",
+     "relation": "is blocked by",
+     "key": "CARL-236",
+     "summary": "BRONZE.IDEAL_MSA_GE_ADVERTISERS",
+     "status": "Done"
+    },
+    {
+     "type": "Blocks",
+     "relation": "blocks",
+     "key": "CARL-269",
+     "summary": "[Q2] Phase 2 GOLD.DIM_ADVERTISERS  transformation/business logic",
+     "status": "To Do"
+    },
+    {
+     "type": "Blocks",
+     "relation": "is blocked by",
+     "key": "CARL-241",
+     "summary": "BRONZE.IDEAL_DEALBLDR_IDL_ADVERTISERS",
+     "status": "Done"
+    }
+   ]
+  },
+  {
+   "key": "CARL-269",
+   "summary": "[Q2] Phase 2 GOLD.DIM_ADVERTISERS  transformation/business logic",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-313",
+    "summary": "Ingest Linear and Digital Revenue Data Set (Gold)"
+   },
+   "labels": [
+    "CARL_26Q2_Drop"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-02-23T11:14:13.268-0500",
+   "updated": "2026-09-14T10:36:24.395-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Cloners",
+     "relation": "clones",
+     "key": "CARL-236",
+     "summary": "BRONZE.IDEAL_MSA_GE_ADVERTISERS",
+     "status": "Done"
+    },
+    {
+     "type": "Blocks",
+     "relation": "is blocked by",
+     "key": "CARL-268",
+     "summary": "[Q2] Phase 2 SILVER.DIM_ADVERTISERS  transformation logic",
+     "status": "To Do"
+    }
+   ]
+  },
+  {
+   "key": "CARL-280",
+   "summary": "GOLD.FACT_PACING_REVENUE_BUDGET_MO  transformation/business logic",
+   "status": "Done",
+   "status_category": "done",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-313",
+    "summary": "Ingest Linear and Digital Revenue Data Set (Gold)"
+   },
+   "labels": [
+    "CARL_26Q1_Drop"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-02-23T11:18:35.753-0500",
+   "updated": "2026-03-19T10:10:19.694-0400",
+   "resolved": "2026-03-19T10:10:17.160-0400",
+   "links": [
+    {
+     "type": "Cloners",
+     "relation": "clones",
+     "key": "CARL-242",
+     "summary": " SILVER.FACT_PACING_REVENUE_BUDGET_MO transformation/business logic",
+     "status": "Done"
+    },
+    {
+     "type": "Blocks",
+     "relation": "is blocked by",
+     "key": "CARL-242",
+     "summary": " SILVER.FACT_PACING_REVENUE_BUDGET_MO transformation/business logic",
+     "status": "Done"
+    },
+    {
+     "type": "Blocks",
+     "relation": "is blocked by",
+     "key": "CARL-250",
+     "summary": "Remove SILVER.FACT_BUDGET_MO transformation/business logic",
+     "status": "To Do"
+    },
+    {
+     "type": "Blocks",
+     "relation": "is blocked by",
+     "key": "CARL-293",
+     "summary": "Remove SILVER.FACT_REVENUE_LINEAR_MO  transformation/business logic",
+     "status": "To Do"
+    },
+    {
+     "type": "Breaks",
+     "relation": "is broken by",
+     "key": "CARL-431",
+     "summary": "Ingest Timestamp Bug in Unified Reporting Silver/Gold tables",
+     "status": "Done"
+    }
+   ]
+  },
+  {
+   "key": "CARL-281",
+   "summary": "[Q2] Phase 2 SILVER.DIM_USERS transformation logic",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-312",
+    "summary": "Ingest Linear and Digital Revenue Data Set (Silver)"
+   },
+   "labels": [
+    "CARL_26Q2_Drop"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-02-23T11:18:54.531-0500",
+   "updated": "2026-09-14T10:36:23.359-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Cloners",
+     "relation": "clones",
+     "key": "CARL-243",
+     "summary": "BRONZE.SALESFORCE_SF_USERS",
+     "status": "Done"
+    },
+    {
+     "type": "Blocks",
+     "relation": "is blocked by",
+     "key": "CARL-243",
+     "summary": "BRONZE.SALESFORCE_SF_USERS",
+     "status": "Done"
+    },
+    {
+     "type": "Blocks",
+     "relation": "blocks",
+     "key": "CARL-282",
+     "summary": "[Q2] Phase 2 GOLD.DIM_USERS  transformation/business logic",
+     "status": "To Do"
+    },
+    {
+     "type": "Blocks",
+     "relation": "is blocked by",
+     "key": "CARL-245",
+     "summary": "BRONZE.SALESFORCE_WKG_WRR_SF_COMP_ADSALES_USER",
+     "status": "Done"
+    },
+    {
+     "type": "Blocks",
+     "relation": "is blocked by",
+     "key": "CARL-228",
+     "summary": "BRONZE.IDEAL_DCI_GE_USER",
+     "status": "Done"
+    },
+    {
+     "type": "Blocks",
+     "relation": "is blocked by",
+     "key": "CARL-237",
+     "summary": "BRONZE.IDEAL_MSA_GE_USER",
+     "status": "Done"
+    }
+   ]
+  },
+  {
+   "key": "CARL-282",
+   "summary": "[Q2] Phase 2 GOLD.DIM_USERS  transformation/business logic",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-313",
+    "summary": "Ingest Linear and Digital Revenue Data Set (Gold)"
+   },
+   "labels": [
+    "CARL_26Q2_Drop"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-02-23T11:19:02.399-0500",
+   "updated": "2026-09-14T10:36:23.705-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Cloners",
+     "relation": "clones",
+     "key": "CARL-243",
+     "summary": "BRONZE.SALESFORCE_SF_USERS",
+     "status": "Done"
+    },
+    {
+     "type": "Blocks",
+     "relation": "is blocked by",
+     "key": "CARL-281",
+     "summary": "[Q2] Phase 2 SILVER.DIM_USERS transformation logic",
+     "status": "To Do"
+    }
+   ]
+  },
+  {
+   "key": "CARL-283",
+   "summary": "[Q2] Phase 2 SILVER.DIM_AGENCY transformation logic",
+   "status": "Done",
+   "status_category": "done",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-312",
+    "summary": "Ingest Linear and Digital Revenue Data Set (Silver)"
+   },
+   "labels": [
+    "CARL_26Q2_Drop"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-02-23T11:19:18.337-0500",
+   "updated": "2026-07-01T08:36:33.668-0400",
+   "resolved": "2026-07-01T08:36:31.985-0400",
+   "links": [
+    {
+     "type": "Cloners",
+     "relation": "clones",
+     "key": "CARL-244",
+     "summary": "BRONZE.SALESFORCE_SF_ACCOUNT",
+     "status": "Done"
+    },
+    {
+     "type": "Blocks",
+     "relation": "is blocked by",
+     "key": "CARL-244",
+     "summary": "BRONZE.SALESFORCE_SF_ACCOUNT",
+     "status": "Done"
+    },
+    {
+     "type": "Blocks",
+     "relation": "blocks",
+     "key": "CARL-284",
+     "summary": "[Q2] Phase 2 GOLD.DIM_AGENCY transformation/business logic",
+     "status": "To Do"
+    },
+    {
+     "type": "Blocks",
+     "relation": "is blocked by",
+     "key": "CARL-239",
+     "summary": "BRONZE.IDEAL_MSA_GE_AGENCIES",
+     "status": "Done"
+    },
+    {
+     "type": "Blocks",
+     "relation": "is blocked by",
+     "key": "CARL-234",
+     "summary": "BRONZE.IDEAL_DCI_AGENCIES",
+     "status": "Done"
+    },
+    {
+     "type": "Blocks",
+     "relation": "is blocked by",
+     "key": "CARL-240",
+     "summary": "BRONZE.IDEAL_DEALBLRD_IDL_AGENCIES",
+     "status": "Done"
+    },
+    {
+     "type": "Blocks",
+     "relation": "is blocked by",
+     "key": "CARL-235",
+     "summary": "BRONZE.IDEAL_DEALBLDR_DCI_MEGA_AGENCY",
+     "status": "Done"
+    }
+   ]
+  },
+  {
+   "key": "CARL-284",
+   "summary": "[Q2] Phase 2 GOLD.DIM_AGENCY transformation/business logic",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-313",
+    "summary": "Ingest Linear and Digital Revenue Data Set (Gold)"
+   },
+   "labels": [
+    "CARL_26Q2_Drop"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-02-23T11:19:24.788-0500",
+   "updated": "2026-09-28T08:20:45.601-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Cloners",
+     "relation": "clones",
+     "key": "CARL-244",
+     "summary": "BRONZE.SALESFORCE_SF_ACCOUNT",
+     "status": "Done"
+    },
+    {
+     "type": "Blocks",
+     "relation": "is blocked by",
+     "key": "CARL-283",
+     "summary": "[Q2] Phase 2 SILVER.DIM_AGENCY transformation logic",
+     "status": "Done"
+    }
+   ]
+  },
+  {
+   "key": "CARL-287",
+   "summary": "SILVER.DIM_TEAMS transformation/business logic",
+   "status": "Done",
+   "status_category": "done",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-312",
+    "summary": "Ingest Linear and Digital Revenue Data Set (Silver)"
+   },
+   "labels": [
+    "CARL_26Q1_Drop"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-02-23T11:20:06.418-0500",
+   "updated": "2026-03-18T16:36:07.960-0400",
+   "resolved": "2026-03-18T16:36:07.417-0400",
+   "links": [
+    {
+     "type": "Cloners",
+     "relation": "clones",
+     "key": "CARL-246",
+     "summary": "BRONZE.SALESFORCE_WKG_WRR_SF_COMP_AE_EVP",
+     "status": "Done"
+    },
+    {
+     "type": "Blocks",
+     "relation": "is blocked by",
+     "key": "CARL-246",
+     "summary": "BRONZE.SALESFORCE_WKG_WRR_SF_COMP_AE_EVP",
+     "status": "Done"
+    },
+    {
+     "type": "Blocks",
+     "relation": "blocks",
+     "key": "CARL-288",
+     "summary": "GOLD.DIM_TEAMS TYPE2  transformation/business logic",
+     "status": "Done"
+    },
+    {
+     "type": "Blocks",
+     "relation": "is blocked by",
+     "key": "CARL-247",
+     "summary": "BRONZE.SALESFORCE_WKG_WRR_SF_COMP_AE_SVP",
+     "status": "Done"
+    },
+    {
+     "type": "Blocks",
+     "relation": "is blocked by",
+     "key": "CARL-248",
+     "summary": "BRONZE.SALESFORCE_WKG_WRR_SF_COMP_AE_VP",
+     "status": "Done"
+    },
+    {
+     "type": "Breaks",
+     "relation": "is broken by",
+     "key": "CARL-431",
+     "summary": "Ingest Timestamp Bug in Unified Reporting Silver/Gold tables",
+     "status": "Done"
+    },
+    {
+     "type": "Contains",
+     "relation": "contains",
+     "key": "CARL-402",
+     "summary": "Conduct Data Quality Checks for Converged Holes Report + Sports Holes and Shares Reports",
+     "status": "Done"
+    },
+    {
+     "type": "Contains",
+     "relation": "contains",
+     "key": "CARL-406",
+     "summary": "Conduct Data Quality Checks for Linear and Digital Converged Pacing Dashboard",
+     "status": "Done"
+    }
+   ]
+  },
+  {
+   "key": "CARL-288",
+   "summary": "GOLD.DIM_TEAMS TYPE2  transformation/business logic",
+   "status": "Done",
+   "status_category": "done",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-313",
+    "summary": "Ingest Linear and Digital Revenue Data Set (Gold)"
+   },
+   "labels": [
+    "CARL_26Q1_Drop"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-02-23T11:20:13.060-0500",
+   "updated": "2026-03-19T10:33:52.590-0400",
+   "resolved": "2026-03-19T10:33:52.064-0400",
+   "links": [
+    {
+     "type": "Cloners",
+     "relation": "clones",
+     "key": "CARL-246",
+     "summary": "BRONZE.SALESFORCE_WKG_WRR_SF_COMP_AE_EVP",
+     "status": "Done"
+    },
+    {
+     "type": "Blocks",
+     "relation": "is blocked by",
+     "key": "CARL-287",
+     "summary": " SILVER.DIM_TEAMS transformation/business logic",
+     "status": "Done"
+    },
+    {
+     "type": "Breaks",
+     "relation": "is broken by",
+     "key": "CARL-431",
+     "summary": "Ingest Timestamp Bug in Unified Reporting Silver/Gold tables",
+     "status": "Done"
+    }
+   ]
+  },
+  {
+   "key": "CARL-294",
+   "summary": "SILVER.DIM_MONTH one time create",
+   "status": "Done",
+   "status_category": "done",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-312",
+    "summary": "Ingest Linear and Digital Revenue Data Set (Silver)"
+   },
+   "labels": [
+    "CARL_26Q1_Drop"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-02-23T14:31:24.012-0500",
+   "updated": "2026-03-16T14:58:36.614-0400",
+   "resolved": "2026-03-16T14:58:36.594-0400",
+   "links": [
+    {
+     "type": "Blocks",
+     "relation": "blocks",
+     "key": "CARL-295",
+     "summary": "[Q2] Phase 2 GOLD.DIM_MONTH",
+     "status": "Done"
+    }
+   ]
+  },
+  {
+   "key": "CARL-295",
+   "summary": "[Q2] Phase 2 GOLD.DIM_MONTH",
+   "status": "Done",
+   "status_category": "done",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-313",
+    "summary": "Ingest Linear and Digital Revenue Data Set (Gold)"
+   },
+   "labels": [
+    "CARL_26Q2_Drop"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-02-23T14:31:47.319-0500",
+   "updated": "2026-07-06T12:53:01.782-0400",
+   "resolved": "2026-07-06T12:53:00.194-0400",
+   "links": [
+    {
+     "type": "Blocks",
+     "relation": "is blocked by",
+     "key": "CARL-294",
+     "summary": " SILVER.DIM_MONTH one time create",
+     "status": "Done"
+    }
+   ]
+  },
+  {
+   "key": "CARL-297",
+   "summary": "[Q2] Phase 2 SILVER.DIM_NET_ACCOUNT_AE_COMBO transformation/business logic",
+   "status": "Done",
+   "status_category": "done",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-312",
+    "summary": "Ingest Linear and Digital Revenue Data Set (Silver)"
+   },
+   "labels": [
+    "CARL_26Q2_Drop"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-02-23T14:39:58.422-0500",
+   "updated": "2026-07-01T17:38:54.853-0400",
+   "resolved": "2026-07-01T17:38:53.109-0400",
+   "links": [
+    {
+     "type": "Blocks",
+     "relation": "is blocked by",
+     "key": "CARL-296",
+     "summary": "BRONZE.IDEAL_DCI_ACCOUNT_AE_COMBO",
+     "status": "Done"
+    },
+    {
+     "type": "Blocks",
+     "relation": "blocks",
+     "key": "CARL-255",
+     "summary": "[Q2] Phase 2 GOLD.DIM_NET_ACCOUNT transformation/business logic",
+     "status": "To Do"
+    }
+   ]
+  },
+  {
+   "key": "CARL-425",
+   "summary": "DAG and YAML condig file for Oracle Gold Transformation",
+   "status": "Done",
+   "status_category": "done",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-313",
+    "summary": "Ingest Linear and Digital Revenue Data Set (Gold)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-03-17T16:34:22.499-0400",
+   "updated": "2026-03-20T10:08:46.879-0400",
+   "resolved": "2026-03-20T10:08:46.348-0400",
+   "links": []
+  },
+  {
+   "key": "CARL-468",
+   "summary": "DAG improvement - Marketshare(Ad Intel)",
+   "status": "Ready For UAT",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-3499",
+    "summary": "Nielsen Ad Intel"
+   },
+   "labels": [
+    "CARL_26Q2_Drop"
+   ],
+   "priority": "Major",
+   "created": "2026-03-29T18:06:31.268-0400",
+   "updated": "2026-10-21T16:36:30.448-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Cloners",
+     "relation": "is cloned by",
+     "key": "CARL-578",
+     "summary": "DAG improvement - BigMit",
+     "status": "Ready For UAT"
+    },
+    {
+     "type": "Blocks",
+     "relation": "is blocked by",
+     "key": "CARL-2952",
+     "summary": "Complete NRLD Snowflake Framework Migration",
+     "status": "Blocked"
+    },
+    {
+     "type": "Relates",
+     "relation": "relates to",
+     "key": "CARL-3934",
+     "summary": "Migrate snowflake_to_bronze pipelines off the Glue-as-SQL-client pattern to native Airflow SQL operators",
+     "status": "To Do"
+    },
+    {
+     "type": "Relates",
+     "relation": "relates to",
+     "key": "CARL-4260",
+     "summary": "Glue job definition, deployment and promotion alignment",
+     "status": "To Do"
+    },
+    {
+     "type": "Relates",
+     "relation": "relates to",
+     "key": "CARL-4261",
+     "summary": "pipeline.yaml usage cleanup and standardization",
+     "status": "To Do"
+    }
+   ]
+  },
+  {
+   "key": "CARL-578",
+   "summary": "DAG improvement - BigMit",
+   "status": "Ready For UAT",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-3500",
+    "summary": "Nielsen Big MIT"
+   },
+   "labels": [
+    "CARL_26Q2_Drop"
+   ],
+   "priority": "Major",
+   "created": "2026-04-16T20:57:54.818-0400",
+   "updated": "2026-10-21T16:36:29.956-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Cloners",
+     "relation": "clones",
+     "key": "CARL-468",
+     "summary": "DAG improvement - Marketshare(Ad Intel)",
+     "status": "Ready For UAT"
+    },
+    {
+     "type": "Blocks",
+     "relation": "is blocked by",
+     "key": "CARL-2952",
+     "summary": "Complete NRLD Snowflake Framework Migration",
+     "status": "Blocked"
+    },
+    {
+     "type": "Relates",
+     "relation": "relates to",
+     "key": "CARL-3934",
+     "summary": "Migrate snowflake_to_bronze pipelines off the Glue-as-SQL-client pattern to native Airflow SQL operators",
+     "status": "To Do"
+    },
+    {
+     "type": "Relates",
+     "relation": "relates to",
+     "key": "CARL-4260",
+     "summary": "Glue job definition, deployment and promotion alignment",
+     "status": "To Do"
+    },
+    {
+     "type": "Relates",
+     "relation": "relates to",
+     "key": "CARL-4261",
+     "summary": "pipeline.yaml usage cleanup and standardization",
+     "status": "To Do"
+    }
+   ]
+  },
+  {
+   "key": "CARL-632",
+   "summary": "CNNI Permutive Data Ingestion Discovery",
+   "status": "In Triage",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-631",
+    "summary": "CNNI Permutive Data Discovery"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-04-29T16:23:56.437-0400",
+   "updated": "2026-09-13T22:19:58.110-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-745",
+   "summary": "P0 - Create SFTP component to pull Operative1 data feed for ingestion",
+   "status": "Done",
+   "status_category": "done",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-312",
+    "summary": "Ingest Linear and Digital Revenue Data Set (Silver)"
+   },
+   "labels": [
+    "Unified_Ads_Data"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-05-15T12:46:11.520-0400",
+   "updated": "2026-07-06T10:42:31.413-0400",
+   "resolved": "2026-07-06T10:42:29.764-0400",
+   "links": []
+  },
+  {
+   "key": "CARL-750",
+   "summary": "GAM Data Discovery",
+   "status": "In Progress",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-749",
+    "summary": "Ingest GAM Data (Bronze)"
+   },
+   "labels": [
+    "Unified_Ads_Data"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-05-15T13:07:25.390-0400",
+   "updated": "2026-10-14T11:06:00.612-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-1188",
+   "summary": "Oracle-->Bronze DEALBLDR.ICE_ACCOUNT_TRANSFER",
+   "status": "Ready For UAT",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1477",
+    "summary": "Ingest iDeal DEALBLDR Schema to Bronze"
+   },
+   "labels": [
+    "Total_Ad_Revenue_Pacing"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-06-12T09:00:34.543-0400",
+   "updated": "2026-10-14T11:06:00.608-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-1381",
+   "summary": "FreeWheel API Ingestion Framework \u2014 Generic Pull Engine, Config Schema, and MERGE Templates",
+   "status": "Done",
+   "status_category": "done",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1380",
+    "summary": "Ingest - FreeWheel API Bronze"
+   },
+   "labels": [
+    "Unified_Ads_Data"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-06-22T07:30:54.034-0400",
+   "updated": "2026-10-16T05:44:37.881-0400",
+   "resolved": "2026-10-12T10:11:08.469-0400",
+   "links": [
+    {
+     "type": "Relates",
+     "relation": "relates to",
+     "key": "CARL-4178",
+     "summary": "FreeWheel credential rotation runbook & secret conventions (documentation only)",
+     "status": "To Do"
+    }
+   ]
+  },
+  {
+   "key": "CARL-1382",
+   "summary": "Bronze Ingestion \u2014 video_ad_api_advertisers (Pilot)",
+   "status": "Ready for Testing",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1380",
+    "summary": "Ingest - FreeWheel API Bronze"
+   },
+   "labels": [
+    "Unified_Ads_Data"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-06-22T07:30:55.303-0400",
+   "updated": "2026-10-21T09:16:11.724-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-1383",
+   "summary": "Bronze Ingestion \u2014 video_ad_api_agency",
+   "status": "In Testing",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1380",
+    "summary": "Ingest - FreeWheel API Bronze"
+   },
+   "labels": [
+    "Unified_Ads_Data"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-06-22T07:30:56.410-0400",
+   "updated": "2026-10-19T18:48:30.210-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-1384",
+   "summary": "Bronze Ingestion \u2014 video_ad_api_campaigns",
+   "status": "In Testing",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1380",
+    "summary": "Ingest - FreeWheel API Bronze"
+   },
+   "labels": [
+    "Unified_Ads_Data"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-06-22T07:30:57.418-0400",
+   "updated": "2026-10-20T08:24:59.825-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-1385",
+   "summary": "Bronze Ingestion \u2014 video_ad_api_list_segment",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1380",
+    "summary": "Ingest - FreeWheel API Bronze"
+   },
+   "labels": [
+    "Unified_Ads_Data"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-06-22T07:30:58.521-0400",
+   "updated": "2026-08-31T13:59:09.984-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-1386",
+   "summary": "Bronze Ingestion \u2014 video_ad_api_inventory_package",
+   "status": "In Testing",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1380",
+    "summary": "Ingest - FreeWheel API Bronze"
+   },
+   "labels": [
+    "Unified_Ads_Data"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-06-22T07:30:59.833-0400",
+   "updated": "2026-10-21T08:55:23.777-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-1387",
+   "summary": "Silver Layer \u2014 video_ad_api_master_campaign_report (Phase 2)",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1380",
+    "summary": "Ingest - FreeWheel API Bronze"
+   },
+   "labels": [
+    "Unified_Ads_Data"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-06-22T07:31:01.093-0400",
+   "updated": "2026-07-20T14:17:28.486-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-1388",
+   "summary": "Bronze Ingestion \u2014 video_ad_api_contextual_segments",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1380",
+    "summary": "Ingest - FreeWheel API Bronze"
+   },
+   "labels": [
+    "Unified_Ads_Data"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-06-22T07:31:02.169-0400",
+   "updated": "2026-08-31T13:59:16.983-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-1389",
+   "summary": "Bronze Ingestion \u2014 video_ad_api_matched_audience_items",
+   "status": "Ready for Testing",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1380",
+    "summary": "Ingest - FreeWheel API Bronze"
+   },
+   "labels": [
+    "Unified_Ads_Data"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-06-22T07:31:03.441-0400",
+   "updated": "2026-10-15T10:07:54.195-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-1390",
+   "summary": "Bronze Ingestion \u2014 video_ad_api_audience_definition",
+   "status": "Ready for Testing",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1380",
+    "summary": "Ingest - FreeWheel API Bronze"
+   },
+   "labels": [
+    "Unified_Ads_Data"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-06-22T07:31:04.617-0400",
+   "updated": "2026-10-15T10:07:55.801-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-1391",
+   "summary": "Bronze Ingestion \u2014 video_ad_api_audience_data_provider",
+   "status": "Ready for Testing",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1380",
+    "summary": "Ingest - FreeWheel API Bronze"
+   },
+   "labels": [
+    "Unified_Ads_Data"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-06-22T07:31:05.718-0400",
+   "updated": "2026-10-15T10:07:57.450-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-1392",
+   "summary": "Bronze Ingestion \u2014 video_ad_api_insertion_orders",
+   "status": "Ready for Testing",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1380",
+    "summary": "Ingest - FreeWheel API Bronze"
+   },
+   "labels": [
+    "Unified_Ads_Data"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-06-22T07:31:06.721-0400",
+   "updated": "2026-10-15T10:07:59.279-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-1393",
+   "summary": "Bronze Ingestion \u2014 video_ad_api_videoasset",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1380",
+    "summary": "Ingest - FreeWheel API Bronze"
+   },
+   "labels": [
+    "Unified_Ads_Data"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-06-22T07:31:07.969-0400",
+   "updated": "2026-08-31T13:59:30.255-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-1394",
+   "summary": "Bronze Ingestion \u2014 video_ad_api_placements",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1380",
+    "summary": "Ingest - FreeWheel API Bronze"
+   },
+   "labels": [
+    "Unified_Ads_Data"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-06-22T07:31:09.233-0400",
+   "updated": "2026-08-31T13:59:32.334-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-1481",
+   "summary": "Ingest DCI_ORDER_LINE_IMPRESSIONS to bronze",
+   "status": "Done",
+   "status_category": "done",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1477",
+    "summary": "Ingest iDeal DEALBLDR Schema to Bronze"
+   },
+   "labels": [
+    "Total_Ad_Revenue_Pacing"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-06-26T06:24:41.059-0400",
+   "updated": "2026-09-24T08:30:47.289-0400",
+   "resolved": "2026-09-24T08:30:47.284-0400",
+   "links": []
+  },
+  {
+   "key": "CARL-1482",
+   "summary": "Ingest DCI_ORDER_SLOA_REVISION to bronze",
+   "status": "Done",
+   "status_category": "done",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1477",
+    "summary": "Ingest iDeal DEALBLDR Schema to Bronze"
+   },
+   "labels": [
+    "Total_Ad_Revenue_Pacing"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-06-26T06:24:41.812-0400",
+   "updated": "2026-07-17T10:20:07.332-0400",
+   "resolved": "2026-07-17T10:20:07.298-0400",
+   "links": []
+  },
+  {
+   "key": "CARL-1487",
+   "summary": "Design Digital Sports Revenue Ingest Feed",
+   "status": "In Triage",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1480",
+    "summary": "Ingest Digital Sports Revenue OTB + PipeFeed to Bronze"
+   },
+   "labels": [
+    "Total_Ad_Revenue_Pacing"
+   ],
+   "priority": "Minor",
+   "created": "2026-06-26T06:41:37.202-0400",
+   "updated": "2026-10-19T10:23:04.099-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-1488",
+   "summary": "Design Finance Forecast Ingest Feed (Digital+Linear)",
+   "status": "Done",
+   "status_category": "done",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1479",
+    "summary": "Finance Forecast Feed"
+   },
+   "labels": [
+    "Total_Ad_Revenue_Pacing"
+   ],
+   "priority": "Critical",
+   "created": "2026-06-26T06:42:38.552-0400",
+   "updated": "2026-10-19T10:23:04.621-0400",
+   "resolved": "2026-10-07T10:20:34.459-0400",
+   "links": [
+    {
+     "type": "Cloners",
+     "relation": "is cloned by",
+     "key": "CARL-3992",
+     "summary": "Design generic email-to-bronze ingestion pipeline",
+     "status": "Done"
+    }
+   ]
+  },
+  {
+   "key": "CARL-1492",
+   "summary": "Freewheel API Credentials for CARL-CORE service user",
+   "status": "Done",
+   "status_category": "done",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1380",
+    "summary": "Ingest - FreeWheel API Bronze"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-06-26T14:28:48.307-0400",
+   "updated": "2026-10-16T05:44:37.615-0400",
+   "resolved": "2026-07-17T10:21:28.816-0400",
+   "links": [
+    {
+     "type": "Blocks",
+     "relation": "blocks",
+     "key": "CARL-1398",
+     "summary": "F1 \u2014 Generic FreeWheel API Pull Engine (Python)",
+     "status": "Done"
+    },
+    {
+     "type": "Relates",
+     "relation": "relates to",
+     "key": "CARL-4178",
+     "summary": "FreeWheel credential rotation runbook & secret conventions (documentation only)",
+     "status": "To Do"
+    }
+   ]
+  },
+  {
+   "key": "CARL-1757",
+   "summary": "FreeWheel Bronze Table Phase 2 Discovery",
+   "status": "Done",
+   "status_category": "done",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-08T10:02:12.854-0400",
+   "updated": "2026-08-14T14:40:40.431-0400",
+   "resolved": "2026-08-14T14:40:40.416-0400",
+   "links": []
+  },
+  {
+   "key": "CARL-2712",
+   "summary": "Ingest DEALBLDR.DCI_RATECLASS -  (Production)",
+   "status": "Done",
+   "status_category": "done",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1477",
+    "summary": "Ingest iDeal DEALBLDR Schema to Bronze"
+   },
+   "labels": [
+    "ump"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-07-13T21:05:05.328-0400",
+   "updated": "2026-09-24T08:30:46.374-0400",
+   "resolved": "2026-09-24T08:30:46.369-0400",
+   "links": []
+  },
+  {
+   "key": "CARL-2720",
+   "summary": "Ingest DEALBLDR.IDL_ORDER_INVENTORY -  (Production)",
+   "status": "Done",
+   "status_category": "done",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1477",
+    "summary": "Ingest iDeal DEALBLDR Schema to Bronze"
+   },
+   "labels": [
+    "ump"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-07-13T21:05:29.619-0400",
+   "updated": "2026-09-24T08:30:46.969-0400",
+   "resolved": "2026-09-24T08:30:46.964-0400",
+   "links": []
+  },
+  {
+   "key": "CARL-2807",
+   "summary": "Ingest Freewheel F_MPP_MKPL_HOURLY to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:07:11.513-0400",
+   "updated": "2026-07-16T14:09:34.139-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2808",
+   "summary": "Ingest Freewheel F_DIRECT_SOLD_MKPL_HOURLY to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:07:12.333-0400",
+   "updated": "2026-07-16T14:09:33.838-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2809",
+   "summary": "Ingest Freewheel F_PROGRAMMATIC_SLOT_TROUBLESHOOTING_MKPL_HOURLY to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:07:13.067-0400",
+   "updated": "2026-07-16T14:09:34.017-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2810",
+   "summary": "Ingest Freewheel F_PROGRAMMATIC_SLOT_TROUBLESHOOTING_NI_HOURLY to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:07:13.899-0400",
+   "updated": "2026-07-16T14:09:33.977-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2811",
+   "summary": "Ingest Freewheel F_MPE_MKPL_HOURLY to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:07:14.725-0400",
+   "updated": "2026-07-16T14:09:33.828-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2812",
+   "summary": "Ingest Freewheel F_RESELLER_SOLD_NI_HOURLY to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:07:15.731-0400",
+   "updated": "2026-07-16T14:09:33.860-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2813",
+   "summary": "Ingest Freewheel F_RESELLER_SOLD_NI_OPPORTUNITY_HOURLY to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:07:16.741-0400",
+   "updated": "2026-07-16T14:09:33.806-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2814",
+   "summary": "Ingest Freewheel V4_BID_LOGS to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:07:17.834-0400",
+   "updated": "2026-07-16T14:09:34.179-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2815",
+   "summary": "Ingest Freewheel BATCH_STATUS to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:07:18.766-0400",
+   "updated": "2026-07-16T14:09:33.876-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2816",
+   "summary": "Ingest Freewheel D_BREAK to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:07:19.850-0400",
+   "updated": "2026-07-16T14:09:33.903-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2817",
+   "summary": "Ingest Freewheel D_AIRING to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:07:20.844-0400",
+   "updated": "2026-07-16T14:09:33.898-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2818",
+   "summary": "Ingest Freewheel D_CONCRETE_EVENT to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:07:21.709-0400",
+   "updated": "2026-07-16T14:09:33.856-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2819",
+   "summary": "Ingest Freewheel D_ABSTRACT_EVENT to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:07:22.616-0400",
+   "updated": "2026-07-16T14:09:33.964-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2820",
+   "summary": "Ingest Freewheel D_GLOBAL_INDUSTRY to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:07:23.598-0400",
+   "updated": "2026-07-16T14:09:33.871-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2821",
+   "summary": "Ingest Freewheel D_TV_NETWORK to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:07:24.805-0400",
+   "updated": "2026-07-16T14:09:33.825-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2822",
+   "summary": "Ingest Freewheel D_CHANNEL to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:07:25.714-0400",
+   "updated": "2026-07-16T14:09:34.049-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2823",
+   "summary": "Ingest Freewheel D_BRAND to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:07:26.757-0400",
+   "updated": "2026-07-16T14:09:34.009-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2824",
+   "summary": "Ingest Freewheel D_NETWORK to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:07:27.690-0400",
+   "updated": "2026-07-16T14:09:33.805-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2825",
+   "summary": "Ingest Freewheel D_MARKETPLACE_CREATIVE to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:07:28.790-0400",
+   "updated": "2026-07-16T14:09:33.843-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2826",
+   "summary": "Ingest Freewheel D_EXCHANGE_CREATIVE to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:07:29.602-0400",
+   "updated": "2026-07-16T14:09:34.028-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2827",
+   "summary": "Ingest Freewheel D_CREATIVE_INSTANCE_METRIC to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:07:30.577-0400",
+   "updated": "2026-07-16T14:09:33.890-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2828",
+   "summary": "Ingest Freewheel D_DIRECT_SOLD_CREATIVE_INSTANCE_METRIC to Bronze",
+   "status": "Ready For UAT",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:07:31.795-0400",
+   "updated": "2026-10-20T11:17:15.871-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2829",
+   "summary": "Ingest Freewheel D_CREATIVE_RENDITION to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:07:32.763-0400",
+   "updated": "2026-07-16T14:09:33.946-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2830",
+   "summary": "Ingest Freewheel D_CREATIVE_RENDITION_ASSET to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:07:33.784-0400",
+   "updated": "2026-07-16T14:09:33.857-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2831",
+   "summary": "Ingest Freewheel D_DIRECT_SOLD_CREATIVE_RENDITION_ASSET to Bronze",
+   "status": "Ready For UAT",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:07:34.772-0400",
+   "updated": "2026-10-20T11:15:43.122-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2832",
+   "summary": "Ingest Freewheel D_CREATIVE_INSTANCE to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:07:35.957-0400",
+   "updated": "2026-07-16T14:09:33.960-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2833",
+   "summary": "Ingest Freewheel D_IMPRESSION_CAP_CONFIGURATION to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:13:01.740-0400",
+   "updated": "2026-07-17T05:35:21.041-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2834",
+   "summary": "Ingest Freewheel D_CONTEXTUAL_SEGMENT to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:13:02.293-0400",
+   "updated": "2026-07-16T14:17:24.055-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2835",
+   "summary": "Ingest Freewheel D_DOMAIN to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:13:03.044-0400",
+   "updated": "2026-07-16T14:17:25.762-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2836",
+   "summary": "Ingest Freewheel D_CONTENT_PACKAGE to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:13:03.847-0400",
+   "updated": "2026-07-16T14:17:27.446-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2837",
+   "summary": "Ingest Freewheel D_DOMAIN_PACKAGE to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:13:04.867-0400",
+   "updated": "2026-07-16T14:17:29.699-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2838",
+   "summary": "Ingest Freewheel D_DELIVERED_CITY to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:13:05.741-0400",
+   "updated": "2026-07-16T14:17:31.609-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2839",
+   "summary": "Ingest Freewheel D_DELIVERED_POSTAL_CODE_PACKAGE to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:13:06.568-0400",
+   "updated": "2026-07-16T14:17:20.991-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2840",
+   "summary": "Ingest Freewheel D_DELIVERED_STATE to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:13:07.313-0400",
+   "updated": "2026-07-16T14:17:19.232-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2841",
+   "summary": "Ingest Freewheel D_VISITOR_ZONE to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:13:08.152-0400",
+   "updated": "2026-07-16T14:17:17.093-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2842",
+   "summary": "Ingest Freewheel D_REGION to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:13:08.965-0400",
+   "updated": "2026-07-16T14:17:15.217-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2843",
+   "summary": "Ingest Freewheel D_DELIVERED_DMA to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:13:09.714-0400",
+   "updated": "2026-07-16T14:17:13.258-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2844",
+   "summary": "Ingest Freewheel D_DEMAND_ENTITY to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:13:10.699-0400",
+   "updated": "2026-07-16T14:17:11.355-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2845",
+   "summary": "Ingest Freewheel D_RESELLER_PLACEMENT to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:13:11.761-0400",
+   "updated": "2026-07-16T14:17:09.637-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2846",
+   "summary": "Ingest Freewheel D_RESELLER to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:13:12.813-0400",
+   "updated": "2026-07-16T14:17:07.968-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2847",
+   "summary": "Ingest Freewheel D_SALES_CHANNEL_TYPE to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:13:13.808-0400",
+   "updated": "2026-07-16T14:17:06.400-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2848",
+   "summary": "Ingest Freewheel D_SUPPLY_SOURCE to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:13:14.549-0400",
+   "updated": "2026-07-16T14:17:04.666-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2849",
+   "summary": "Ingest Freewheel D_FORECAST_SCENARIO to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:13:15.325-0400",
+   "updated": "2026-07-16T14:17:02.654-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2850",
+   "summary": "Ingest Freewheel D_INVENTORY_PRIORITIZATION_SUB_CONFIGURATION to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:13:16.330-0400",
+   "updated": "2026-07-16T14:17:00.122-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2851",
+   "summary": "Ingest Freewheel D_YO_SUB_CONFIGURATION to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:13:17.324-0400",
+   "updated": "2026-07-16T14:16:54.529-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2852",
+   "summary": "Ingest Freewheel D_INVENTORY_PRIORITIZATION_CONFIGURATION to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:13:18.160-0400",
+   "updated": "2026-07-16T14:16:58.028-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2853",
+   "summary": "Ingest Freewheel D_YO_CONFIGURATION to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:13:19.005-0400",
+   "updated": "2026-07-16T14:16:49.965-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2854",
+   "summary": "Ingest Freewheel D_NESTED_YO_SUB_CONFIGURATION to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:22:02.870-0400",
+   "updated": "2026-07-16T14:22:33.841-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2856",
+   "summary": "Ingest Freewheel D_MARGIN_TARGET_CONFIGURATION to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:26:13.600-0400",
+   "updated": "2026-07-16T14:31:30.516-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2857",
+   "summary": "Ingest Freewheel D_PRIVATE_LISTING to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:26:14.386-0400",
+   "updated": "2026-07-16T14:31:30.444-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2858",
+   "summary": "Ingest Freewheel D_INVENTORY_SPLIT to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:26:15.095-0400",
+   "updated": "2026-07-16T14:31:30.532-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2859",
+   "summary": "Ingest Freewheel D_INBOUND_MRM_RULE to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:26:15.906-0400",
+   "updated": "2026-07-16T14:31:30.490-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2860",
+   "summary": "Ingest Freewheel D_EXCHANGE_LISTING to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:26:16.640-0400",
+   "updated": "2026-07-16T14:31:30.613-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2861",
+   "summary": "Ingest Freewheel D_OPEN_EXCHANGE_RULE to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:26:17.290-0400",
+   "updated": "2026-07-16T14:31:30.346-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2862",
+   "summary": "Ingest Freewheel D_LINEAR_SCHEDULE_BREAK_DETAILS to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:26:18.027-0400",
+   "updated": "2026-07-16T14:31:30.505-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2863",
+   "summary": "Ingest Freewheel D_LINEAR_SCHEDULE_SPOT_DETAILS to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:26:18.671-0400",
+   "updated": "2026-07-16T14:31:30.468-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2864",
+   "summary": "Ingest Freewheel D_LINEAR_SCHEDULE_WINDOW_DETAILS to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:26:19.343-0400",
+   "updated": "2026-07-16T14:31:30.438-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2865",
+   "summary": "Ingest Freewheel D_LINEAR_STATION_DETAILS to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:26:20.089-0400",
+   "updated": "2026-07-16T14:31:30.386-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2866",
+   "summary": "Ingest Freewheel D_THIRD_PARTY_PARTNER to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:26:20.894-0400",
+   "updated": "2026-07-16T14:31:30.492-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2867",
+   "summary": "Ingest Freewheel D_ISP to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:26:21.551-0400",
+   "updated": "2026-07-16T14:31:30.533-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2868",
+   "summary": "Ingest Freewheel D_CURRENCY to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:26:22.270-0400",
+   "updated": "2026-07-16T14:31:30.394-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2869",
+   "summary": "Ingest Freewheel D_PROFILE to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:26:23.110-0400",
+   "updated": "2026-07-16T14:31:30.466-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2870",
+   "summary": "Ingest Freewheel D_THIRD_PARTY_IDENTIFIER to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:26:24.126-0400",
+   "updated": "2026-07-16T14:31:30.423-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2871",
+   "summary": "Ingest Freewheel D_SITE_SECTION_TO_SITE to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:26:25.056-0400",
+   "updated": "2026-07-16T14:31:30.399-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2872",
+   "summary": "Ingest Freewheel D_STANDARD_APP_BUNDLE to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:26:25.980-0400",
+   "updated": "2026-07-16T14:31:30.513-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2873",
+   "summary": "Ingest Freewheel D_STANDARD_APP to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:26:26.946-0400",
+   "updated": "2026-07-16T14:31:30.372-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2874",
+   "summary": "Ingest Freewheel D_STANDARD_DOMAIN to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:26:27.629-0400",
+   "updated": "2026-07-16T14:31:30.603-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2875",
+   "summary": "Ingest Freewheel D_STANDARD_CONTENT_SERIES to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:26:28.500-0400",
+   "updated": "2026-07-16T14:31:30.470-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2876",
+   "summary": "Ingest Freewheel D_STANDARD_PUBLISHER to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:26:29.334-0400",
+   "updated": "2026-07-16T14:31:30.537-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2877",
+   "summary": "Ingest Freewheel D_STANDARD_IAB_CATEGORY to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:26:30.078-0400",
+   "updated": "2026-07-16T14:31:30.636-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2878",
+   "summary": "Ingest Freewheel D_STANDARD_SPORTS_ENTITY to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:26:30.819-0400",
+   "updated": "2026-07-16T14:31:30.356-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2879",
+   "summary": "Ingest Freewheel D_STANDARD_COUNTRY to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:26:31.451-0400",
+   "updated": "2026-07-16T14:31:30.529-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2880",
+   "summary": "Ingest Freewheel D_STANDARD_DMA to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:26:32.250-0400",
+   "updated": "2026-07-16T14:31:30.542-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2881",
+   "summary": "Ingest Freewheel D_STANDARD_SUB_DEVICE_TYPE to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:26:32.933-0400",
+   "updated": "2026-07-16T14:31:30.562-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2882",
+   "summary": "Ingest Freewheel D_STANDARD_ADDRESSABILITY to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:26:33.807-0400",
+   "updated": "2026-07-16T14:31:30.587-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2883",
+   "summary": "Ingest Freewheel D_STANDARD_VIEWERSHIP_PROFILE to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:26:34.612-0400",
+   "updated": "2026-07-16T14:31:30.533-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2884",
+   "summary": "Ingest Freewheel D_STANDARD_OPERATOR to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:26:35.440-0400",
+   "updated": "2026-07-16T14:31:30.411-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2885",
+   "summary": "Ingest Freewheel D_STANDARD_PRIVACY to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:26:36.083-0400",
+   "updated": "2026-07-16T14:31:30.426-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2886",
+   "summary": "Ingest Freewheel D_STANDARD_IP_ENABLED_AUDIENCE to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T14:26:36.821-0400",
+   "updated": "2026-07-16T14:31:30.467-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2889",
+   "summary": "Silver model design & documentation",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-2888",
+    "summary": "Operative One (Silver)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T21:48:32.931-0400",
+   "updated": "2026-10-13T11:34:40.272-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Cloners",
+     "relation": "is cloned by",
+     "key": "CARL-2890",
+     "summary": "Event-driven bronze-to-silver pipeline and DAG design / documentation",
+     "status": "To Do"
+    },
+    {
+     "type": "Blocks",
+     "relation": "blocks",
+     "key": "CARL-2890",
+     "summary": "Event-driven bronze-to-silver pipeline and DAG design / documentation",
+     "status": "To Do"
+    }
+   ]
+  },
+  {
+   "key": "CARL-2890",
+   "summary": "Event-driven bronze-to-silver pipeline and DAG design / documentation",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-2888",
+    "summary": "Operative One (Silver)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T22:36:46.052-0400",
+   "updated": "2026-10-13T11:34:40.045-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Cloners",
+     "relation": "clones",
+     "key": "CARL-2889",
+     "summary": "Silver model design & documentation",
+     "status": "To Do"
+    },
+    {
+     "type": "Blocks",
+     "relation": "is blocked by",
+     "key": "CARL-2889",
+     "summary": "Silver model design & documentation",
+     "status": "To Do"
+    },
+    {
+     "type": "Cloners",
+     "relation": "is cloned by",
+     "key": "CARL-2891",
+     "summary": "Event-driven bronze-to-silver pipeline and DAG implementation",
+     "status": "To Do"
+    }
+   ]
+  },
+  {
+   "key": "CARL-2891",
+   "summary": "Event-driven bronze-to-silver pipeline and DAG implementation",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-2888",
+    "summary": "Operative One (Silver)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-16T22:53:52.610-0400",
+   "updated": "2026-10-13T11:34:40.445-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Cloners",
+     "relation": "clones",
+     "key": "CARL-2890",
+     "summary": "Event-driven bronze-to-silver pipeline and DAG design / documentation",
+     "status": "To Do"
+    }
+   ]
+  },
+  {
+   "key": "CARL-2892",
+   "summary": "Ingest Freewheel D_IMPRESSION_CAP_SUB_CONFIGURATION to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-17T05:44:12.495-0400",
+   "updated": "2026-07-17T05:49:10.758-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2893",
+   "summary": "Ingest Freewheel D_IMPRESSION_TARGET_CONFIGURATION to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-17T05:44:13.368-0400",
+   "updated": "2026-07-17T05:48:52.058-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2894",
+   "summary": "Ingest Freewheel D_IMPRESSION_TARGET_SUB_CONFIGURATION to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-17T05:44:14.064-0400",
+   "updated": "2026-07-17T05:48:34.370-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2895",
+   "summary": "Ingest Freewheel D_NESTED_INVENTORY_PRIORITIZATION_CONFIGURATION to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-17T05:44:14.718-0400",
+   "updated": "2026-07-17T05:48:16.149-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2896",
+   "summary": "Ingest Freewheel D_NESTED_INVENTORY_PRIORITIZATION_SUB_CONFIGURATION to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-17T05:44:15.423-0400",
+   "updated": "2026-07-17T05:48:01.779-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2897",
+   "summary": "Ingest Freewheel D_NESTED_YO_CONFIGURATION to Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-17T05:44:16.110-0400",
+   "updated": "2026-07-17T05:47:45.657-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2915",
+   "summary": "Silver model design & documentation",
+   "status": "Done",
+   "status_category": "done",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-2887",
+    "summary": "Freewheel (Silver)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-17T07:05:52.480-0400",
+   "updated": "2026-10-09T10:13:19.295-0400",
+   "resolved": "2026-10-09T10:13:19.260-0400",
+   "links": [
+    {
+     "type": "Cloners",
+     "relation": "is cloned by",
+     "key": "CARL-2916",
+     "summary": "Document FreeWheel silver processing rules",
+     "status": "Done"
+    },
+    {
+     "type": "Relates",
+     "relation": "relates to",
+     "key": "CARL-3850",
+     "summary": "FreeWheel silver: bronze catalog freshness guard can pass on a pointer that predates bronze completion",
+     "status": "Done"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3791",
+     "summary": "Build the FreeWheel Silver dim pipeline and develop dim_ad_unit in Silver",
+     "status": "In Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3793",
+     "summary": "Develop FreeWheel dim_audience_item in Silver",
+     "status": "Ready for Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3792",
+     "summary": "Develop FreeWheel dim_ad_unit_type in Silver",
+     "status": "Ready for Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3794",
+     "summary": "Develop FreeWheel dim_cbp in Silver",
+     "status": "Ready for Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3795",
+     "summary": "Develop FreeWheel dim_content_brand in Silver",
+     "status": "Ready for Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3796",
+     "summary": "Develop FreeWheel dim_content_channel in Silver",
+     "status": "Ready for Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3798",
+     "summary": "Develop FreeWheel dim_deal in Silver",
+     "status": "Ready for Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3797",
+     "summary": "Develop FreeWheel dim_creative in Silver",
+     "status": "Done"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3799",
+     "summary": "Develop FreeWheel dim_genre in Silver",
+     "status": "Ready for Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3800",
+     "summary": "Develop FreeWheel dim_global_advertiser in Silver",
+     "status": "Ready for Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3801",
+     "summary": "Develop FreeWheel dim_global_brand in Silver",
+     "status": "Ready for Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3802",
+     "summary": "Develop FreeWheel dim_network in Silver",
+     "status": "Ready for Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3803",
+     "summary": "Develop FreeWheel dim_placement in Silver",
+     "status": "Ready for Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3804",
+     "summary": "Develop FreeWheel dim_site in Silver",
+     "status": "Ready for Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3805",
+     "summary": "Develop FreeWheel dim_site_section in Silver",
+     "status": "Ready for Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3806",
+     "summary": "Develop FreeWheel dim_tv_rating in Silver",
+     "status": "Ready for Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3807",
+     "summary": "Develop FreeWheel dim_video in Silver",
+     "status": "Ready for Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3808",
+     "summary": "Develop FreeWheel dim_video_series in Silver",
+     "status": "Ready for Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3809",
+     "summary": "Develop FreeWheel fact_ad_stream_impression \"Gold.User_Ad_Stream_Base\" in Silver",
+     "status": "In Progress"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3920",
+     "summary": "Develop FreeWheel dim_campaign in Silver (For Tool 1)",
+     "status": "Ready for Testing"
+    }
+   ]
+  },
+  {
+   "key": "CARL-2916",
+   "summary": "Document FreeWheel silver processing rules",
+   "status": "Done",
+   "status_category": "done",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-2887",
+    "summary": "Freewheel (Silver)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-17T07:31:39.497-0400",
+   "updated": "2026-10-09T10:11:17.642-0400",
+   "resolved": "2026-10-09T10:11:17.627-0400",
+   "links": [
+    {
+     "type": "Cloners",
+     "relation": "clones",
+     "key": "CARL-2915",
+     "summary": "Silver model design & documentation",
+     "status": "Done"
+    },
+    {
+     "type": "Cloners",
+     "relation": "is cloned by",
+     "key": "CARL-2917",
+     "summary": "Silver pipeline and DAG design / documentation",
+     "status": "Done"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3792",
+     "summary": "Develop FreeWheel dim_ad_unit_type in Silver",
+     "status": "Ready for Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3791",
+     "summary": "Build the FreeWheel Silver dim pipeline and develop dim_ad_unit in Silver",
+     "status": "In Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3793",
+     "summary": "Develop FreeWheel dim_audience_item in Silver",
+     "status": "Ready for Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3794",
+     "summary": "Develop FreeWheel dim_cbp in Silver",
+     "status": "Ready for Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3795",
+     "summary": "Develop FreeWheel dim_content_brand in Silver",
+     "status": "Ready for Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3796",
+     "summary": "Develop FreeWheel dim_content_channel in Silver",
+     "status": "Ready for Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3798",
+     "summary": "Develop FreeWheel dim_deal in Silver",
+     "status": "Ready for Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3797",
+     "summary": "Develop FreeWheel dim_creative in Silver",
+     "status": "Done"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3799",
+     "summary": "Develop FreeWheel dim_genre in Silver",
+     "status": "Ready for Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3800",
+     "summary": "Develop FreeWheel dim_global_advertiser in Silver",
+     "status": "Ready for Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3801",
+     "summary": "Develop FreeWheel dim_global_brand in Silver",
+     "status": "Ready for Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3802",
+     "summary": "Develop FreeWheel dim_network in Silver",
+     "status": "Ready for Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3803",
+     "summary": "Develop FreeWheel dim_placement in Silver",
+     "status": "Ready for Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3804",
+     "summary": "Develop FreeWheel dim_site in Silver",
+     "status": "Ready for Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3805",
+     "summary": "Develop FreeWheel dim_site_section in Silver",
+     "status": "Ready for Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3806",
+     "summary": "Develop FreeWheel dim_tv_rating in Silver",
+     "status": "Ready for Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3807",
+     "summary": "Develop FreeWheel dim_video in Silver",
+     "status": "Ready for Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3808",
+     "summary": "Develop FreeWheel dim_video_series in Silver",
+     "status": "Ready for Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3809",
+     "summary": "Develop FreeWheel fact_ad_stream_impression \"Gold.User_Ad_Stream_Base\" in Silver",
+     "status": "In Progress"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3920",
+     "summary": "Develop FreeWheel dim_campaign in Silver (For Tool 1)",
+     "status": "Ready for Testing"
+    }
+   ]
+  },
+  {
+   "key": "CARL-2917",
+   "summary": "Silver pipeline and DAG design / documentation",
+   "status": "Done",
+   "status_category": "done",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-2887",
+    "summary": "Freewheel (Silver)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-17T07:40:18.577-0400",
+   "updated": "2026-10-09T10:10:42.994-0400",
+   "resolved": "2026-10-09T10:10:36.062-0400",
+   "links": [
+    {
+     "type": "Cloners",
+     "relation": "clones",
+     "key": "CARL-2916",
+     "summary": "Document FreeWheel silver processing rules",
+     "status": "Done"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3791",
+     "summary": "Build the FreeWheel Silver dim pipeline and develop dim_ad_unit in Silver",
+     "status": "In Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3792",
+     "summary": "Develop FreeWheel dim_ad_unit_type in Silver",
+     "status": "Ready for Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3793",
+     "summary": "Develop FreeWheel dim_audience_item in Silver",
+     "status": "Ready for Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3794",
+     "summary": "Develop FreeWheel dim_cbp in Silver",
+     "status": "Ready for Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3795",
+     "summary": "Develop FreeWheel dim_content_brand in Silver",
+     "status": "Ready for Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3796",
+     "summary": "Develop FreeWheel dim_content_channel in Silver",
+     "status": "Ready for Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3797",
+     "summary": "Develop FreeWheel dim_creative in Silver",
+     "status": "Done"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3798",
+     "summary": "Develop FreeWheel dim_deal in Silver",
+     "status": "Ready for Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3799",
+     "summary": "Develop FreeWheel dim_genre in Silver",
+     "status": "Ready for Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3800",
+     "summary": "Develop FreeWheel dim_global_advertiser in Silver",
+     "status": "Ready for Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3801",
+     "summary": "Develop FreeWheel dim_global_brand in Silver",
+     "status": "Ready for Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3802",
+     "summary": "Develop FreeWheel dim_network in Silver",
+     "status": "Ready for Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3803",
+     "summary": "Develop FreeWheel dim_placement in Silver",
+     "status": "Ready for Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3804",
+     "summary": "Develop FreeWheel dim_site in Silver",
+     "status": "Ready for Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3805",
+     "summary": "Develop FreeWheel dim_site_section in Silver",
+     "status": "Ready for Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3806",
+     "summary": "Develop FreeWheel dim_tv_rating in Silver",
+     "status": "Ready for Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3807",
+     "summary": "Develop FreeWheel dim_video in Silver",
+     "status": "Ready for Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3808",
+     "summary": "Develop FreeWheel dim_video_series in Silver",
+     "status": "Ready for Testing"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3809",
+     "summary": "Develop FreeWheel fact_ad_stream_impression \"Gold.User_Ad_Stream_Base\" in Silver",
+     "status": "In Progress"
+    },
+    {
+     "type": "Implements",
+     "relation": "is implemented by",
+     "key": "CARL-3920",
+     "summary": "Develop FreeWheel dim_campaign in Silver (For Tool 1)",
+     "status": "Ready for Testing"
+    }
+   ]
+  },
+  {
+   "key": "CARL-2919",
+   "summary": "Freewheel API: ECS Containers CICD in carl-data-engineering repo",
+   "status": "In Progress",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1380",
+    "summary": "Ingest - FreeWheel API Bronze"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-17T09:45:47.173-0400",
+   "updated": "2026-08-28T10:13:23.007-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2920",
+   "summary": "Freewheel API: Bronze DAG",
+   "status": "In Review",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1380",
+    "summary": "Ingest - FreeWheel API Bronze"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-17T09:46:40.550-0400",
+   "updated": "2026-08-28T10:13:28.575-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2925",
+   "summary": "Freewheel API Bronze Ingestion Discovery",
+   "status": "In Progress",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1380",
+    "summary": "Ingest - FreeWheel API Bronze"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-20T14:14:39.130-0400",
+   "updated": "2026-10-19T10:22:59.608-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2952",
+   "summary": "Complete NRLD Snowflake Framework Migration",
+   "status": "Blocked",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-3779",
+    "summary": "Nielsen NRLD"
+   },
+   "labels": [],
+   "priority": "Major",
+   "created": "2026-07-27T18:11:24.196-0400",
+   "updated": "2026-10-14T11:06:00.622-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Blocks",
+     "relation": "is blocked by",
+     "key": "CARL-563",
+     "summary": "Ingestion framework for Snowflake sources",
+     "status": "Done"
+    },
+    {
+     "type": "Blocks",
+     "relation": "blocks",
+     "key": "CARL-468",
+     "summary": "DAG improvement - Marketshare(Ad Intel)",
+     "status": "Ready For UAT"
+    },
+    {
+     "type": "Blocks",
+     "relation": "blocks",
+     "key": "CARL-578",
+     "summary": "DAG improvement - BigMit",
+     "status": "Ready For UAT"
+    }
+   ]
+  },
+  {
+   "key": "CARL-3498",
+   "summary": "Blueprint Silver Data Model Design and Implementation",
+   "status": "Ready For UAT",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-3497",
+    "summary": "Blueprint Pipeline"
+   },
+   "labels": [
+    "blueprint"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-08-02T15:28:05.255-0400",
+   "updated": "2026-10-14T11:06:00.622-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Blocks",
+     "relation": "is blocked by",
+     "key": "CARL-3810",
+     "summary": "Lake Formation grants missing for linear_programming databases - silver tables are write-only",
+     "status": "Done"
+    },
+    {
+     "type": "Completed Before",
+     "relation": "is completed before",
+     "key": "CARL-3744",
+     "summary": "Blueprint Gold Data Model Design",
+     "status": "Done"
+    },
+    {
+     "type": "Relates",
+     "relation": "relates to",
+     "key": "CARL-4016",
+     "summary": "Linear Programming Silver: add bronze_snapshot_id lineage column and make metadata columns NOT NULL on the 11 Silver tables",
+     "status": "To Do"
+    }
+   ]
+  },
+  {
+   "key": "CARL-3568",
+   "summary": "Update Bronze to Silver Oracle DAG",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-312",
+    "summary": "Ingest Linear and Digital Revenue Data Set (Silver)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-08-12T17:42:31.364-0400",
+   "updated": "2026-08-12T18:07:01.097-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-3640",
+   "summary": "Silver Layer Modeling: Linear Revenue Booked & Working",
+   "status": "Done",
+   "status_category": "done",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-3638",
+    "summary": "Silver Ad Sales Total Ad Revenue North Star[Phase1]"
+   },
+   "labels": [
+    "Total_Ad_Revenue_Pacing"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-08-23T08:09:35.289-0400",
+   "updated": "2026-10-12T10:16:20.316-0400",
+   "resolved": "2026-10-12T10:16:20.298-0400",
+   "links": []
+  },
+  {
+   "key": "CARL-3641",
+   "summary": "Silver Layer Modeling: Digital Revenue",
+   "status": "In Progress",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-3638",
+    "summary": "Silver Ad Sales Total Ad Revenue North Star[Phase1]"
+   },
+   "labels": [
+    "Total_Ad_Revenue_Pacing"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-08-23T08:10:58.188-0400",
+   "updated": "2026-10-14T11:06:00.622-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Defines",
+     "relation": "is defined by",
+     "key": "CARL-3491",
+     "summary": "Silver Data Model Design",
+     "status": "In Progress"
+    }
+   ]
+  },
+  {
+   "key": "CARL-3644",
+   "summary": "Silver Layer Modeling: Sales Force Linear and Digital Pipeline",
+   "status": "In Progress",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-3638",
+    "summary": "Silver Ad Sales Total Ad Revenue North Star[Phase1]"
+   },
+   "labels": [
+    "Total_Ad_Revenue_Pacing"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-08-23T08:22:12.042-0400",
+   "updated": "2026-10-14T11:06:00.622-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Defines",
+     "relation": "is defined by",
+     "key": "CARL-3491",
+     "summary": "Silver Data Model Design",
+     "status": "In Progress"
+    }
+   ]
+  },
+  {
+   "key": "CARL-3744",
+   "summary": "Blueprint Gold Data Model Design",
+   "status": "Done",
+   "status_category": "done",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-3497",
+    "summary": "Blueprint Pipeline"
+   },
+   "labels": [
+    "blueprint"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-09-09T13:08:11.653-0400",
+   "updated": "2026-09-28T17:19:47.249-0400",
+   "resolved": "2026-09-28T16:54:53.454-0400",
+   "links": [
+    {
+     "type": "Completed Before",
+     "relation": "completed before",
+     "key": "CARL-3498",
+     "summary": "Blueprint Silver Data Model Design and Implementation",
+     "status": "Ready For UAT"
+    },
+    {
+     "type": "Relates",
+     "relation": "relates to",
+     "key": "CARL-4017",
+     "summary": "Linear Programming Gold Data Model - Implementation",
+     "status": "Ready For UAT"
+    }
+   ]
+  },
+  {
+   "key": "CARL-3781",
+   "summary": "[bug] NRLD Bronze daily ingestion misses vendor back-dated inserts + duplicated rows",
+   "status": "In Review",
+   "status_category": "indeterminate",
+   "issuetype": "Bug",
+   "parent": {
+    "key": "CARL-3779",
+    "summary": "Nielsen NRLD"
+   },
+   "labels": [
+    "bronze",
+    "data-engineering",
+    "nrld",
+    "snowflake-to-bronze"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-09-14T09:47:31.797-0400",
+   "updated": "2026-10-14T11:06:00.631-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-3791",
+   "summary": "Build the FreeWheel Silver dim pipeline and develop dim_ad_unit in Silver",
+   "status": "In Testing",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-2887",
+    "summary": "Freewheel (Silver)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-09-15T15:50:19.928-0400",
+   "updated": "2026-10-20T08:50:29.802-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2915",
+     "summary": "Silver model design & documentation",
+     "status": "Done"
+    },
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2916",
+     "summary": "Document FreeWheel silver processing rules",
+     "status": "Done"
+    },
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2917",
+     "summary": "Silver pipeline and DAG design / documentation",
+     "status": "Done"
+    }
+   ]
+  },
+  {
+   "key": "CARL-3792",
+   "summary": "Develop FreeWheel dim_ad_unit_type in Silver",
+   "status": "Ready for Testing",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-2887",
+    "summary": "Freewheel (Silver)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-09-15T15:50:21.460-0400",
+   "updated": "2026-10-14T13:11:15.350-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2916",
+     "summary": "Document FreeWheel silver processing rules",
+     "status": "Done"
+    },
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2915",
+     "summary": "Silver model design & documentation",
+     "status": "Done"
+    },
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2917",
+     "summary": "Silver pipeline and DAG design / documentation",
+     "status": "Done"
+    }
+   ]
+  },
+  {
+   "key": "CARL-3793",
+   "summary": "Develop FreeWheel dim_audience_item in Silver",
+   "status": "Ready for Testing",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-2887",
+    "summary": "Freewheel (Silver)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-09-15T15:50:22.348-0400",
+   "updated": "2026-10-14T13:11:17.293-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2915",
+     "summary": "Silver model design & documentation",
+     "status": "Done"
+    },
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2916",
+     "summary": "Document FreeWheel silver processing rules",
+     "status": "Done"
+    },
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2917",
+     "summary": "Silver pipeline and DAG design / documentation",
+     "status": "Done"
+    }
+   ]
+  },
+  {
+   "key": "CARL-3794",
+   "summary": "Develop FreeWheel dim_cbp in Silver",
+   "status": "Ready for Testing",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-2887",
+    "summary": "Freewheel (Silver)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-09-15T15:50:22.990-0400",
+   "updated": "2026-10-14T13:11:19.076-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2916",
+     "summary": "Document FreeWheel silver processing rules",
+     "status": "Done"
+    },
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2915",
+     "summary": "Silver model design & documentation",
+     "status": "Done"
+    },
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2917",
+     "summary": "Silver pipeline and DAG design / documentation",
+     "status": "Done"
+    }
+   ]
+  },
+  {
+   "key": "CARL-3795",
+   "summary": "Develop FreeWheel dim_content_brand in Silver",
+   "status": "Ready for Testing",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-2887",
+    "summary": "Freewheel (Silver)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-09-15T15:50:23.370-0400",
+   "updated": "2026-10-14T13:11:20.708-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2916",
+     "summary": "Document FreeWheel silver processing rules",
+     "status": "Done"
+    },
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2915",
+     "summary": "Silver model design & documentation",
+     "status": "Done"
+    },
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2917",
+     "summary": "Silver pipeline and DAG design / documentation",
+     "status": "Done"
+    }
+   ]
+  },
+  {
+   "key": "CARL-3796",
+   "summary": "Develop FreeWheel dim_content_channel in Silver",
+   "status": "Ready for Testing",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-2887",
+    "summary": "Freewheel (Silver)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-09-15T15:50:38.254-0400",
+   "updated": "2026-10-14T13:11:22.995-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2915",
+     "summary": "Silver model design & documentation",
+     "status": "Done"
+    },
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2916",
+     "summary": "Document FreeWheel silver processing rules",
+     "status": "Done"
+    },
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2917",
+     "summary": "Silver pipeline and DAG design / documentation",
+     "status": "Done"
+    }
+   ]
+  },
+  {
+   "key": "CARL-3797",
+   "summary": "Develop FreeWheel dim_creative in Silver",
+   "status": "Done",
+   "status_category": "done",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-2887",
+    "summary": "Freewheel (Silver)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-09-15T15:50:48.084-0400",
+   "updated": "2026-10-12T17:01:24.413-0400",
+   "resolved": "2026-10-12T17:01:02.082-0400",
+   "links": [
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2917",
+     "summary": "Silver pipeline and DAG design / documentation",
+     "status": "Done"
+    },
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2916",
+     "summary": "Document FreeWheel silver processing rules",
+     "status": "Done"
+    },
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2915",
+     "summary": "Silver model design & documentation",
+     "status": "Done"
+    },
+    {
+     "type": "Relates",
+     "relation": "relates to",
+     "key": "CARL-4139",
+     "summary": "FreeWheel silver: add dim_direct_sold_creative from d_direct_sold_creative (d_creative deprecated)",
+     "status": "Ready for Testing"
+    }
+   ]
+  },
+  {
+   "key": "CARL-3798",
+   "summary": "Develop FreeWheel dim_deal in Silver",
+   "status": "Ready for Testing",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-2887",
+    "summary": "Freewheel (Silver)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-09-15T15:50:51.642-0400",
+   "updated": "2026-10-14T13:12:25.497-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2916",
+     "summary": "Document FreeWheel silver processing rules",
+     "status": "Done"
+    },
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2915",
+     "summary": "Silver model design & documentation",
+     "status": "Done"
+    },
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2917",
+     "summary": "Silver pipeline and DAG design / documentation",
+     "status": "Done"
+    }
+   ]
+  },
+  {
+   "key": "CARL-3799",
+   "summary": "Develop FreeWheel dim_genre in Silver",
+   "status": "Ready for Testing",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-2887",
+    "summary": "Freewheel (Silver)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-09-15T15:50:59.291-0400",
+   "updated": "2026-10-14T13:12:23.310-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2915",
+     "summary": "Silver model design & documentation",
+     "status": "Done"
+    },
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2917",
+     "summary": "Silver pipeline and DAG design / documentation",
+     "status": "Done"
+    },
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2916",
+     "summary": "Document FreeWheel silver processing rules",
+     "status": "Done"
+    }
+   ]
+  },
+  {
+   "key": "CARL-3800",
+   "summary": "Develop FreeWheel dim_global_advertiser in Silver",
+   "status": "Ready for Testing",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-2887",
+    "summary": "Freewheel (Silver)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-09-15T15:51:07.046-0400",
+   "updated": "2026-10-14T13:12:20.195-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2917",
+     "summary": "Silver pipeline and DAG design / documentation",
+     "status": "Done"
+    },
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2916",
+     "summary": "Document FreeWheel silver processing rules",
+     "status": "Done"
+    },
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2915",
+     "summary": "Silver model design & documentation",
+     "status": "Done"
+    }
+   ]
+  },
+  {
+   "key": "CARL-3801",
+   "summary": "Develop FreeWheel dim_global_brand in Silver",
+   "status": "Ready for Testing",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-2887",
+    "summary": "Freewheel (Silver)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-09-15T15:51:14.028-0400",
+   "updated": "2026-10-14T13:12:17.721-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2915",
+     "summary": "Silver model design & documentation",
+     "status": "Done"
+    },
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2917",
+     "summary": "Silver pipeline and DAG design / documentation",
+     "status": "Done"
+    },
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2916",
+     "summary": "Document FreeWheel silver processing rules",
+     "status": "Done"
+    }
+   ]
+  },
+  {
+   "key": "CARL-3802",
+   "summary": "Develop FreeWheel dim_network in Silver",
+   "status": "Ready for Testing",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-2887",
+    "summary": "Freewheel (Silver)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-09-15T15:51:30.770-0400",
+   "updated": "2026-10-14T13:12:13.058-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2916",
+     "summary": "Document FreeWheel silver processing rules",
+     "status": "Done"
+    },
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2917",
+     "summary": "Silver pipeline and DAG design / documentation",
+     "status": "Done"
+    },
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2915",
+     "summary": "Silver model design & documentation",
+     "status": "Done"
+    }
+   ]
+  },
+  {
+   "key": "CARL-3803",
+   "summary": "Develop FreeWheel dim_placement in Silver",
+   "status": "Ready for Testing",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-2887",
+    "summary": "Freewheel (Silver)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-09-15T15:51:38.288-0400",
+   "updated": "2026-10-14T13:12:11.126-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2915",
+     "summary": "Silver model design & documentation",
+     "status": "Done"
+    },
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2917",
+     "summary": "Silver pipeline and DAG design / documentation",
+     "status": "Done"
+    },
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2916",
+     "summary": "Document FreeWheel silver processing rules",
+     "status": "Done"
+    }
+   ]
+  },
+  {
+   "key": "CARL-3804",
+   "summary": "Develop FreeWheel dim_site in Silver",
+   "status": "Ready for Testing",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-2887",
+    "summary": "Freewheel (Silver)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-09-15T15:51:45.531-0400",
+   "updated": "2026-10-14T13:12:09.061-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2915",
+     "summary": "Silver model design & documentation",
+     "status": "Done"
+    },
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2916",
+     "summary": "Document FreeWheel silver processing rules",
+     "status": "Done"
+    },
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2917",
+     "summary": "Silver pipeline and DAG design / documentation",
+     "status": "Done"
+    }
+   ]
+  },
+  {
+   "key": "CARL-3805",
+   "summary": "Develop FreeWheel dim_site_section in Silver",
+   "status": "Ready for Testing",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-2887",
+    "summary": "Freewheel (Silver)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-09-15T15:51:52.295-0400",
+   "updated": "2026-10-14T13:12:06.653-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2915",
+     "summary": "Silver model design & documentation",
+     "status": "Done"
+    },
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2916",
+     "summary": "Document FreeWheel silver processing rules",
+     "status": "Done"
+    },
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2917",
+     "summary": "Silver pipeline and DAG design / documentation",
+     "status": "Done"
+    }
+   ]
+  },
+  {
+   "key": "CARL-3806",
+   "summary": "Develop FreeWheel dim_tv_rating in Silver",
+   "status": "Ready for Testing",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-2887",
+    "summary": "Freewheel (Silver)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-09-15T15:52:38.993-0400",
+   "updated": "2026-10-14T13:12:04.303-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2915",
+     "summary": "Silver model design & documentation",
+     "status": "Done"
+    },
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2916",
+     "summary": "Document FreeWheel silver processing rules",
+     "status": "Done"
+    },
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2917",
+     "summary": "Silver pipeline and DAG design / documentation",
+     "status": "Done"
+    }
+   ]
+  },
+  {
+   "key": "CARL-3807",
+   "summary": "Develop FreeWheel dim_video in Silver",
+   "status": "Ready for Testing",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-2887",
+    "summary": "Freewheel (Silver)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-09-15T15:52:39.473-0400",
+   "updated": "2026-10-14T13:11:59.071-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2916",
+     "summary": "Document FreeWheel silver processing rules",
+     "status": "Done"
+    },
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2915",
+     "summary": "Silver model design & documentation",
+     "status": "Done"
+    },
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2917",
+     "summary": "Silver pipeline and DAG design / documentation",
+     "status": "Done"
+    }
+   ]
+  },
+  {
+   "key": "CARL-3808",
+   "summary": "Develop FreeWheel dim_video_series in Silver",
+   "status": "Ready for Testing",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-2887",
+    "summary": "Freewheel (Silver)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-09-15T15:52:40.018-0400",
+   "updated": "2026-10-14T13:11:51.756-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2917",
+     "summary": "Silver pipeline and DAG design / documentation",
+     "status": "Done"
+    },
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2915",
+     "summary": "Silver model design & documentation",
+     "status": "Done"
+    },
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2916",
+     "summary": "Document FreeWheel silver processing rules",
+     "status": "Done"
+    }
+   ]
+  },
+  {
+   "key": "CARL-3809",
+   "summary": "Develop FreeWheel fact_ad_stream_impression \"Gold.User_Ad_Stream_Base\" in Silver",
+   "status": "In Progress",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-2887",
+    "summary": "Freewheel (Silver)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-09-15T15:52:40.469-0400",
+   "updated": "2026-10-16T14:34:39.088-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2915",
+     "summary": "Silver model design & documentation",
+     "status": "Done"
+    },
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2916",
+     "summary": "Document FreeWheel silver processing rules",
+     "status": "Done"
+    },
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2917",
+     "summary": "Silver pipeline and DAG design / documentation",
+     "status": "Done"
+    },
+    {
+     "type": "Dependency",
+     "relation": "depends upon",
+     "key": "CARL-4210",
+     "summary": "Ingest D_RESELLER, D_DELIVERED_POSTAL_CODE_PACKAGE, and D_VIDEO (RATING, AIR_DATE) to Bronze",
+     "status": "Ready for Testing"
+    }
+   ]
+  },
+  {
+   "key": "CARL-3811",
+   "summary": "Ingest Freewheel D_DIRECT_SOLD_CREATIVE_AD_ASSIGNMENT to Bronze",
+   "status": "Ready For UAT",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-09-15T16:50:19.702-0400",
+   "updated": "2026-10-21T17:06:45.095-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-3851",
+   "summary": "[Design] Freewheel Change Log Solutions For Agent Factory Project (Tool 2)",
+   "status": "In Progress",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-2887",
+    "summary": "Freewheel (Silver)"
+   },
+   "labels": [
+    "agent-factory-tool-2"
+   ],
+   "priority": "Critical",
+   "created": "2026-09-17T17:46:58.925-0400",
+   "updated": "2026-10-14T17:09:57.472-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Relates",
+     "relation": "relates to",
+     "key": "CARL-4201",
+     "summary": "Design FreeWheel Tool #2 silver processing rules",
+     "status": "In Progress"
+    }
+   ]
+  },
+  {
+   "key": "CARL-3852",
+   "summary": "Bring freewheel_bronze and freewheel_silver under carl-infra Glue database and Lake Formation management",
+   "status": "Archive",
+   "status_category": "done",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-2887",
+    "summary": "Freewheel (Silver)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-09-18T13:31:21.654-0400",
+   "updated": "2026-10-12T14:32:45.511-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-3917",
+   "summary": "Build the FreeWheel Silver fact pipeline and develop fact_creative_impression_daily (For Tool 1)",
+   "status": "In Progress",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-2887",
+    "summary": "Freewheel (Silver)"
+   },
+   "labels": [
+    "agent-factory-tool-1"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-09-22T14:27:01.855-0400",
+   "updated": "2026-10-21T17:11:11.505-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Blocks",
+     "relation": "is blocked by",
+     "key": "CARL-3920",
+     "summary": "Develop FreeWheel dim_campaign in Silver (For Tool 1)",
+     "status": "Ready for Testing"
+    }
+   ]
+  },
+  {
+   "key": "CARL-3920",
+   "summary": "Develop FreeWheel dim_campaign in Silver (For Tool 1)",
+   "status": "Ready for Testing",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-2887",
+    "summary": "Freewheel (Silver)"
+   },
+   "labels": [
+    "agent-factory-tool-1"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-09-22T16:05:09.101-0400",
+   "updated": "2026-10-14T13:12:37.768-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2915",
+     "summary": "Silver model design & documentation",
+     "status": "Done"
+    },
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2916",
+     "summary": "Document FreeWheel silver processing rules",
+     "status": "Done"
+    },
+    {
+     "type": "Implements",
+     "relation": "implements",
+     "key": "CARL-2917",
+     "summary": "Silver pipeline and DAG design / documentation",
+     "status": "Done"
+    },
+    {
+     "type": "Blocks",
+     "relation": "blocks",
+     "key": "CARL-3917",
+     "summary": "Build the FreeWheel Silver fact pipeline and develop fact_creative_impression_daily (For Tool 1)",
+     "status": "In Progress"
+    }
+   ]
+  },
+  {
+   "key": "CARL-3942",
+   "summary": "Recreate and reload six FreeWheel bronze Iceberg tables with Athena-unreadable LZ4_RAW Parquet",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Bug",
+   "parent": {
+    "key": "CARL-1756",
+    "summary": "Ingest Freewheel Data (Bronze Phase 2)"
+   },
+   "labels": [
+    "athena",
+    "bronze",
+    "freewheel",
+    "iceberg",
+    "lz4",
+    "tech-debt"
+   ],
+   "priority": "Critical",
+   "created": "2026-09-25T11:31:33.261-0400",
+   "updated": "2026-09-25T12:19:59.784-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-3947",
+   "summary": "Silver Table: fact_digital_op1",
+   "status": "In Progress",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-3638",
+    "summary": "Silver Ad Sales Total Ad Revenue North Star[Phase1]"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-09-25T17:36:17.630-0400",
+   "updated": "2026-10-15T02:54:35.943-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-3948",
+   "summary": "Silver Table: fact_linear_revenue_ms",
+   "status": "In Progress",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-3638",
+    "summary": "Silver Ad Sales Total Ad Revenue North Star[Phase1]"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-09-25T17:38:07.912-0400",
+   "updated": "2026-10-14T16:25:10.705-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Cloners",
+     "relation": "is cloned by",
+     "key": "CARL-4048",
+     "summary": "Silver Table: fact_linear_working_ms",
+     "status": "In Progress"
+    }
+   ]
+  },
+  {
+   "key": "CARL-3949",
+   "summary": "Silver Table: fact_pipeline_sf",
+   "status": "In Progress",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-3638",
+    "summary": "Silver Ad Sales Total Ad Revenue North Star[Phase1]"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-09-25T17:38:44.077-0400",
+   "updated": "2026-10-15T02:54:50.267-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-3950",
+   "summary": "Silver Table: fact_finance_weekly_quarter_forecast",
+   "status": "In Progress",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1479",
+    "summary": "Finance Forecast Feed"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-09-25T17:41:15.127-0400",
+   "updated": "2026-10-14T11:06:00.622-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-3992",
+   "summary": "Design generic email-to-bronze ingestion pipeline",
+   "status": "Done",
+   "status_category": "done",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1479",
+    "summary": "Finance Forecast Feed"
+   },
+   "labels": [
+    "Total_Ad_Revenue_Pacing"
+   ],
+   "priority": "Critical",
+   "created": "2026-09-28T11:38:32.959-0400",
+   "updated": "2026-10-07T10:20:39.078-0400",
+   "resolved": "2026-10-07T10:20:39.046-0400",
+   "links": [
+    {
+     "type": "Cloners",
+     "relation": "clones",
+     "key": "CARL-1488",
+     "summary": "Design Finance Forecast Ingest Feed (Digital+Linear)",
+     "status": "Done"
+    }
+   ]
+  },
+  {
+   "key": "CARL-4010",
+   "summary": "Foundry Integration Discovery",
+   "status": "In Progress",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-3497",
+    "summary": "Blueprint Pipeline"
+   },
+   "labels": [
+    "blueprint"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-09-28T13:32:04.620-0400",
+   "updated": "2026-10-13T11:33:20.070-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-4012",
+   "summary": "Total Ad Revenue - Gold Northstar table",
+   "status": "In Progress",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-3639",
+    "summary": "Gold Ad Sales Total Ad Revenue North Star[Phase1]"
+   },
+   "labels": [
+    "Total_Ad_Revenue_Pacing"
+   ],
+   "priority": "Critical",
+   "created": "2026-09-28T14:09:09.500-0400",
+   "updated": "2026-10-15T10:06:45.141-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-4016",
+   "summary": "Linear Programming Silver: add bronze_snapshot_id lineage column and make metadata columns NOT NULL on the 11 Silver tables",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-3497",
+    "summary": "Blueprint Pipeline"
+   },
+   "labels": [
+    "blueprint"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-09-28T17:19:16.054-0400",
+   "updated": "2026-10-01T12:02:34.647-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Relates",
+     "relation": "relates to",
+     "key": "CARL-3498",
+     "summary": "Blueprint Silver Data Model Design and Implementation",
+     "status": "Ready For UAT"
+    }
+   ]
+  },
+  {
+   "key": "CARL-4017",
+   "summary": "Linear Programming Gold Data Model - Implementation",
+   "status": "Ready For UAT",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-3497",
+    "summary": "Blueprint Pipeline"
+   },
+   "labels": [
+    "blueprint"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-09-28T17:19:32.101-0400",
+   "updated": "2026-10-19T11:06:57.746-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Relates",
+     "relation": "relates to",
+     "key": "CARL-3744",
+     "summary": "Blueprint Gold Data Model Design",
+     "status": "Done"
+    }
+   ]
+  },
+  {
+   "key": "CARL-4018",
+   "summary": "Cleanup of orphan files in S3 bucket",
+   "status": "Ready for Testing",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-3497",
+    "summary": "Blueprint Pipeline"
+   },
+   "labels": [
+    "blueprint"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-09-28T17:19:33.484-0400",
+   "updated": "2026-10-21T15:53:46.562-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-4033",
+   "summary": "[Spike] Support Ad Sales Fast Track Phase1: S3 Data Feed to Quick Integration",
+   "status": "In Review",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-3639",
+    "summary": "Gold Ad Sales Total Ad Revenue North Star[Phase1]"
+   },
+   "labels": [],
+   "priority": "Critical",
+   "created": "2026-10-01T03:23:24.612-0400",
+   "updated": "2026-10-14T11:06:22.548-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Parent/Child",
+     "relation": "is the child of",
+     "key": "CARL-4051",
+     "summary": "Dev S3 bucket for the Ad Sales converged pipeline",
+     "status": "In Review"
+    }
+   ]
+  },
+  {
+   "key": "CARL-4036",
+   "summary": "Get P_SCH_OFF table available in bronze",
+   "status": "Ready For UAT",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-4035",
+    "summary": "Ingest iDeal tables to linear_digital_revenue_bronze for Venus"
+   },
+   "labels": [
+    "venus"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-10-01T05:50:41.797-0400",
+   "updated": "2026-10-15T09:24:40.597-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-4037",
+   "summary": "Get E_SCH_OFF table available in bronze",
+   "status": "Ready For UAT",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-4035",
+    "summary": "Ingest iDeal tables to linear_digital_revenue_bronze for Venus"
+   },
+   "labels": [
+    "venus"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-10-01T05:50:55.357-0400",
+   "updated": "2026-10-15T12:09:30.925-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-4038",
+   "summary": "Get DCI_PSP_SELL_TITLE_EXP_DTL_STG table available in bronze",
+   "status": "Ready For UAT",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-4035",
+    "summary": "Ingest iDeal tables to linear_digital_revenue_bronze for Venus"
+   },
+   "labels": [
+    "venus"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-10-01T05:51:23.152-0400",
+   "updated": "2026-10-15T17:34:24.425-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-4039",
+   "summary": "Get DCI_PSP_SPORTS_SELL_TITLE table available in bronze",
+   "status": "Ready For UAT",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-4035",
+    "summary": "Ingest iDeal tables to linear_digital_revenue_bronze for Venus"
+   },
+   "labels": [
+    "venus"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-10-01T05:51:39.131-0400",
+   "updated": "2026-10-15T17:40:12.291-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-4040",
+   "summary": "Get DCI_PSP_ALT_SELL_TITLE table available in bronze",
+   "status": "Ready For UAT",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-4035",
+    "summary": "Ingest iDeal tables to linear_digital_revenue_bronze for Venus"
+   },
+   "labels": [
+    "venus"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-10-01T05:51:46.453-0400",
+   "updated": "2026-10-14T11:06:22.551-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-4041",
+   "summary": "Get DCI_PRICING_IMPORT_HDR table available in bronze",
+   "status": "Ready For UAT",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-4035",
+    "summary": "Ingest iDeal tables to linear_digital_revenue_bronze for Venus"
+   },
+   "labels": [
+    "venus"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-10-01T05:51:58.226-0400",
+   "updated": "2026-10-15T12:20:53.022-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-4042",
+   "summary": "Get DCI_STAR_UE_EXPORT_STG table available in bronze",
+   "status": "Ready For UAT",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-4035",
+    "summary": "Ingest iDeal tables to linear_digital_revenue_bronze for Venus"
+   },
+   "labels": [
+    "venus"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-10-01T05:52:05.293-0400",
+   "updated": "2026-10-15T11:41:17.957-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-4043",
+   "summary": "Get DCI_STAR_ESTIMATES_EXPORT_STG table available in bronze",
+   "status": "In Testing",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-4035",
+    "summary": "Ingest iDeal tables to linear_digital_revenue_bronze for Venus"
+   },
+   "labels": [
+    "venus"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-10-01T05:52:12.294-0400",
+   "updated": "2026-10-21T19:49:07.233-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Discovered while testing",
+     "relation": "testing discovered",
+     "key": "CARL-4209",
+     "summary": "dci_star_estimats_export_stg - schema mismatch",
+     "status": "Ready For UAT"
+    }
+   ]
+  },
+  {
+   "key": "CARL-4044",
+   "summary": "Get IDEAL_DCI_SUPER_DEAL table available in bronze",
+   "status": "Ready For UAT",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-4035",
+    "summary": "Ingest iDeal tables to linear_digital_revenue_bronze for Venus"
+   },
+   "labels": [
+    "venus"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-10-01T05:52:20.591-0400",
+   "updated": "2026-10-15T09:10:21.587-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-4048",
+   "summary": "Silver Table: fact_linear_working_ms",
+   "status": "In Progress",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-3638",
+    "summary": "Silver Ad Sales Total Ad Revenue North Star[Phase1]"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-10-01T10:06:27.352-0400",
+   "updated": "2026-10-14T11:06:00.621-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Cloners",
+     "relation": "clones",
+     "key": "CARL-3948",
+     "summary": "Silver Table: fact_linear_revenue_ms",
+     "status": "In Progress"
+    }
+   ]
+  },
+  {
+   "key": "CARL-4051",
+   "summary": "Dev S3 bucket for the Ad Sales converged pipeline",
+   "status": "In Review",
+   "status_category": "indeterminate",
+   "issuetype": "Spike",
+   "parent": {
+    "key": "CARL-3639",
+    "summary": "Gold Ad Sales Total Ad Revenue North Star[Phase1]"
+   },
+   "labels": [],
+   "priority": "Critical",
+   "created": "2026-10-02T07:54:22.729-0400",
+   "updated": "2026-10-14T11:06:22.552-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Parent/Child",
+     "relation": "is the parent of",
+     "key": "CARL-4033",
+     "summary": "[Spike] Support Ad Sales Fast Track Phase1: S3 Data Feed to Quick Integration",
+     "status": "In Review"
+    }
+   ]
+  },
+  {
+   "key": "CARL-4055",
+   "summary": "[Spike] Support Ad Sales Fast Track Phase2: BI Export to S3 + Py Scripts to AWS Cron Job",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-3639",
+    "summary": "Gold Ad Sales Total Ad Revenue North Star[Phase1]"
+   },
+   "labels": [],
+   "priority": "Critical",
+   "created": "2026-10-02T13:03:15.501-0400",
+   "updated": "2026-10-02T13:12:40.526-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-4069",
+   "summary": "Ingest SALESFORCE.SF_CASE from Oracle into Iceberg Bronze",
+   "status": "Done",
+   "status_category": "done",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-4153",
+    "summary": "Ingest Salesforce Data [Phase2]"
+   },
+   "labels": [
+    "UMP"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-10-05T18:33:32.683-0400",
+   "updated": "2026-10-14T19:21:31.414-0400",
+   "resolved": "2026-10-14T19:21:31.395-0400",
+   "links": [
+    {
+     "type": "Relates",
+     "relation": "relates to",
+     "key": "ATM-2926",
+     "summary": "Extract the data from Oracle to Iceberg for listed tables",
+     "status": "In Review"
+    }
+   ]
+  },
+  {
+   "key": "CARL-4070",
+   "summary": "Ingest SALESFORCE.SF_CASEFEED from Oracle into Iceberg Bronze",
+   "status": "Done",
+   "status_category": "done",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-4153",
+    "summary": "Ingest Salesforce Data [Phase2]"
+   },
+   "labels": [
+    "UMP"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-10-05T18:33:44.898-0400",
+   "updated": "2026-10-14T19:21:49.366-0400",
+   "resolved": "2026-10-14T19:21:49.351-0400",
+   "links": [
+    {
+     "type": "Relates",
+     "relation": "relates to",
+     "key": "ATM-2926",
+     "summary": "Extract the data from Oracle to Iceberg for listed tables",
+     "status": "In Review"
+    }
+   ]
+  },
+  {
+   "key": "CARL-4071",
+   "summary": "Ingest SALESFORCE.SF_ENGAGE_REQUEST__C from Oracle into Iceberg Bronze",
+   "status": "Done",
+   "status_category": "done",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-4153",
+    "summary": "Ingest Salesforce Data [Phase2]"
+   },
+   "labels": [
+    "UMP"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-10-05T18:33:45.467-0400",
+   "updated": "2026-10-14T19:22:52.999-0400",
+   "resolved": "2026-10-14T19:22:52.986-0400",
+   "links": [
+    {
+     "type": "Relates",
+     "relation": "relates to",
+     "key": "ATM-2926",
+     "summary": "Extract the data from Oracle to Iceberg for listed tables",
+     "status": "In Review"
+    }
+   ]
+  },
+  {
+   "key": "CARL-4072",
+   "summary": "Ingest SALESFORCE.SF_FEEDCOMMENT from Oracle into Iceberg Bronze",
+   "status": "Done",
+   "status_category": "done",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-4153",
+    "summary": "Ingest Salesforce Data [Phase2]"
+   },
+   "labels": [
+    "UMP"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-10-05T18:33:45.779-0400",
+   "updated": "2026-10-14T19:23:11.920-0400",
+   "resolved": "2026-10-14T19:23:11.904-0400",
+   "links": [
+    {
+     "type": "Relates",
+     "relation": "relates to",
+     "key": "ATM-2926",
+     "summary": "Extract the data from Oracle to Iceberg for listed tables",
+     "status": "In Review"
+    }
+   ]
+  },
+  {
+   "key": "CARL-4073",
+   "summary": "Ingest SALESFORCE.SF_CASECOMMENT from Oracle into Iceberg Bronze",
+   "status": "Done",
+   "status_category": "done",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-4153",
+    "summary": "Ingest Salesforce Data [Phase2]"
+   },
+   "labels": [
+    "UMP"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-10-05T18:33:46.128-0400",
+   "updated": "2026-10-14T19:23:32.568-0400",
+   "resolved": "2026-10-14T19:23:32.555-0400",
+   "links": [
+    {
+     "type": "Relates",
+     "relation": "relates to",
+     "key": "ATM-2926",
+     "summary": "Extract the data from Oracle to Iceberg for listed tables",
+     "status": "In Review"
+    }
+   ]
+  },
+  {
+   "key": "CARL-4074",
+   "summary": "Ingest SALESFORCE.SF_MML_MIDROLL_VIDEO_DETAILS__C from Oracle into Iceberg Bronze",
+   "status": "Done",
+   "status_category": "done",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-4153",
+    "summary": "Ingest Salesforce Data [Phase2]"
+   },
+   "labels": [
+    "UMP"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-10-05T18:33:46.222-0400",
+   "updated": "2026-10-14T19:24:41.725-0400",
+   "resolved": "2026-10-14T19:23:58.154-0400",
+   "links": [
+    {
+     "type": "Relates",
+     "relation": "relates to",
+     "key": "ATM-2926",
+     "summary": "Extract the data from Oracle to Iceberg for listed tables",
+     "status": "In Review"
+    }
+   ]
+  },
+  {
+   "key": "CARL-4075",
+   "summary": "Ingest SALESFORCE.SF_FEEDATTACHMENT from Oracle into Iceberg Bronze",
+   "status": "Done",
+   "status_category": "done",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-4153",
+    "summary": "Ingest Salesforce Data [Phase2]"
+   },
+   "labels": [
+    "UMP"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-10-05T18:33:46.583-0400",
+   "updated": "2026-10-14T19:26:07.684-0400",
+   "resolved": "2026-10-14T19:26:07.668-0400",
+   "links": [
+    {
+     "type": "Relates",
+     "relation": "relates to",
+     "key": "ATM-2926",
+     "summary": "Extract the data from Oracle to Iceberg for listed tables",
+     "status": "In Review"
+    }
+   ]
+  },
+  {
+   "key": "CARL-4076",
+   "summary": "Ingest SALESFORCE.SF_INTERNATIONAL_AE__C from Oracle into Iceberg Bronze",
+   "status": "Done",
+   "status_category": "done",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-4153",
+    "summary": "Ingest Salesforce Data [Phase2]"
+   },
+   "labels": [
+    "UMP"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-10-05T18:33:48.684-0400",
+   "updated": "2026-10-14T19:26:37.128-0400",
+   "resolved": "2026-10-14T19:26:37.111-0400",
+   "links": [
+    {
+     "type": "Relates",
+     "relation": "relates to",
+     "key": "ATM-2926",
+     "summary": "Extract the data from Oracle to Iceberg for listed tables",
+     "status": "In Review"
+    }
+   ]
+  },
+  {
+   "key": "CARL-4077",
+   "summary": "Ingest SALESFORCE.SF_INTERNATIONAL_AE_MEMBER__C from Oracle into Iceberg Bronze",
+   "status": "Done",
+   "status_category": "done",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-4153",
+    "summary": "Ingest Salesforce Data [Phase2]"
+   },
+   "labels": [
+    "UMP"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-10-05T18:33:48.686-0400",
+   "updated": "2026-10-14T19:26:59.235-0400",
+   "resolved": "2026-10-14T19:26:59.198-0400",
+   "links": [
+    {
+     "type": "Relates",
+     "relation": "relates to",
+     "key": "ATM-2926",
+     "summary": "Extract the data from Oracle to Iceberg for listed tables",
+     "status": "In Review"
+    }
+   ]
+  },
+  {
+   "key": "CARL-4078",
+   "summary": "Ingest SALESFORCE.SF_OPPORTUNITY_INTEGRATION_FIELDS__C from Oracle into Iceberg Bronze",
+   "status": "Done",
+   "status_category": "done",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-4153",
+    "summary": "Ingest Salesforce Data [Phase2]"
+   },
+   "labels": [
+    "UMP"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-10-05T18:34:00.700-0400",
+   "updated": "2026-10-15T01:56:45.016-0400",
+   "resolved": "2026-10-15T01:56:44.998-0400",
+   "links": [
+    {
+     "type": "Relates",
+     "relation": "relates to",
+     "key": "ATM-2926",
+     "summary": "Extract the data from Oracle to Iceberg for listed tables",
+     "status": "In Review"
+    }
+   ]
+  },
+  {
+   "key": "CARL-4079",
+   "summary": "Ingest SALESFORCE.SF_UPFRONT_INTERNAL_SPEC__C from Oracle into Iceberg Bronze",
+   "status": "Done",
+   "status_category": "done",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-4153",
+    "summary": "Ingest Salesforce Data [Phase2]"
+   },
+   "labels": [
+    "UMP"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-10-05T18:34:01.671-0400",
+   "updated": "2026-10-15T01:56:47.004-0400",
+   "resolved": "2026-10-15T01:56:46.989-0400",
+   "links": [
+    {
+     "type": "Relates",
+     "relation": "relates to",
+     "key": "ATM-2926",
+     "summary": "Extract the data from Oracle to Iceberg for listed tables",
+     "status": "In Review"
+    }
+   ]
+  },
+  {
+   "key": "CARL-4080",
+   "summary": "Ingest SALESFORCE.SF_OPERATIVE_PRODUCT__C from Oracle into Iceberg Bronze",
+   "status": "Done",
+   "status_category": "done",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-4153",
+    "summary": "Ingest Salesforce Data [Phase2]"
+   },
+   "labels": [
+    "UMP"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-10-05T18:34:01.943-0400",
+   "updated": "2026-10-15T01:56:48.635-0400",
+   "resolved": "2026-10-15T01:56:48.620-0400",
+   "links": [
+    {
+     "type": "Relates",
+     "relation": "relates to",
+     "key": "ATM-2926",
+     "summary": "Extract the data from Oracle to Iceberg for listed tables",
+     "status": "In Review"
+    }
+   ]
+  },
+  {
+   "key": "CARL-4081",
+   "summary": "Ingest SALESFORCE.SF_PROCESS_LOG__C from Oracle into Iceberg Bronze",
+   "status": "Done",
+   "status_category": "done",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-4153",
+    "summary": "Ingest Salesforce Data [Phase2]"
+   },
+   "labels": [
+    "UMP"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-10-05T18:34:01.965-0400",
+   "updated": "2026-10-15T01:56:50.673-0400",
+   "resolved": "2026-10-15T01:56:50.651-0400",
+   "links": [
+    {
+     "type": "Relates",
+     "relation": "relates to",
+     "key": "ATM-2926",
+     "summary": "Extract the data from Oracle to Iceberg for listed tables",
+     "status": "In Review"
+    }
+   ]
+  },
+  {
+   "key": "CARL-4082",
+   "summary": "Ingest SALESFORCE.SF_REQUEST_FORM__C from Oracle into Iceberg Bronze",
+   "status": "Done",
+   "status_category": "done",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-4153",
+    "summary": "Ingest Salesforce Data [Phase2]"
+   },
+   "labels": [
+    "UMP"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-10-05T18:34:01.986-0400",
+   "updated": "2026-10-15T01:56:57.786-0400",
+   "resolved": "2026-10-15T01:56:57.771-0400",
+   "links": [
+    {
+     "type": "Relates",
+     "relation": "relates to",
+     "key": "ATM-2926",
+     "summary": "Extract the data from Oracle to Iceberg for listed tables",
+     "status": "In Review"
+    }
+   ]
+  },
+  {
+   "key": "CARL-4083",
+   "summary": "Ingest SALESFORCE.SF_SCATTER_INTERNAL_SPEC__C from Oracle into Iceberg Bronze",
+   "status": "Done",
+   "status_category": "done",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-4153",
+    "summary": "Ingest Salesforce Data [Phase2]"
+   },
+   "labels": [
+    "UMP"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-10-05T18:34:02.179-0400",
+   "updated": "2026-10-15T01:56:59.274-0400",
+   "resolved": "2026-10-15T01:56:59.260-0400",
+   "links": [
+    {
+     "type": "Relates",
+     "relation": "relates to",
+     "key": "ATM-2926",
+     "summary": "Extract the data from Oracle to Iceberg for listed tables",
+     "status": "In Review"
+    }
+   ]
+  },
+  {
+   "key": "CARL-4084",
+   "summary": "Ingest SALESFORCE.SF_VENDOR_CERTIFICATION__C from Oracle into Iceberg Bronze",
+   "status": "Done",
+   "status_category": "done",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-4153",
+    "summary": "Ingest Salesforce Data [Phase2]"
+   },
+   "labels": [
+    "UMP"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-10-05T18:34:03.856-0400",
+   "updated": "2026-10-15T01:57:00.844-0400",
+   "resolved": "2026-10-15T01:57:00.821-0400",
+   "links": [
+    {
+     "type": "Relates",
+     "relation": "relates to",
+     "key": "ATM-2926",
+     "summary": "Extract the data from Oracle to Iceberg for listed tables",
+     "status": "In Review"
+    }
+   ]
+  },
+  {
+   "key": "CARL-4085",
+   "summary": "Ingest SALESFORCE.SF_VENDOR__C from Oracle into Iceberg Bronze",
+   "status": "Done",
+   "status_category": "done",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-4153",
+    "summary": "Ingest Salesforce Data [Phase2]"
+   },
+   "labels": [
+    "UMP"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-10-05T18:34:04.906-0400",
+   "updated": "2026-10-15T01:57:02.852-0400",
+   "resolved": "2026-10-15T01:57:02.835-0400",
+   "links": [
+    {
+     "type": "Relates",
+     "relation": "relates to",
+     "key": "ATM-2926",
+     "summary": "Extract the data from Oracle to Iceberg for listed tables",
+     "status": "In Review"
+    }
+   ]
+  },
+  {
+   "key": "CARL-4093",
+   "summary": "Create the IAM role Blueprint's MWAA assumes to read the Linear Programming Gold DAG's run status",
+   "status": "In Progress",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-3497",
+    "summary": "Blueprint Pipeline"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-10-06T16:46:36.769-0400",
+   "updated": "2026-10-20T13:34:50.496-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-4100",
+   "summary": "Infra \u2014 SES mailbox policy and email landing layout",
+   "status": "In Review",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1479",
+    "summary": "Finance Forecast Feed"
+   },
+   "labels": [
+    "Total_Ad_Revenue_Pacing"
+   ],
+   "priority": "Critical",
+   "created": "2026-10-07T10:23:24.489-0400",
+   "updated": "2026-10-21T10:44:35.602-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Cloners",
+     "relation": "is cloned by",
+     "key": "CARL-4101",
+     "summary": "Store Raw Emails and Clean Up Expired Mailbox Trash",
+     "status": "In Review"
+    }
+   ]
+  },
+  {
+   "key": "CARL-4101",
+   "summary": "Store Raw Emails and Clean Up Expired Mailbox Trash",
+   "status": "In Review",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1479",
+    "summary": "Finance Forecast Feed"
+   },
+   "labels": [
+    "Total_Ad_Revenue_Pacing"
+   ],
+   "priority": "Critical",
+   "created": "2026-10-07T10:29:37.147-0400",
+   "updated": "2026-10-21T10:41:32.503-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Cloners",
+     "relation": "clones",
+     "key": "CARL-4100",
+     "summary": "Infra \u2014 SES mailbox policy and email landing layout",
+     "status": "In Review"
+    },
+    {
+     "type": "Cloners",
+     "relation": "is cloned by",
+     "key": "CARL-4102",
+     "summary": "Extract and validate attachments and route them to ready or trash",
+     "status": "In Review"
+    }
+   ]
+  },
+  {
+   "key": "CARL-4102",
+   "summary": "Extract and validate attachments and route them to ready or trash",
+   "status": "In Review",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1479",
+    "summary": "Finance Forecast Feed"
+   },
+   "labels": [
+    "Total_Ad_Revenue_Pacing"
+   ],
+   "priority": "Critical",
+   "created": "2026-10-07T10:37:43.490-0400",
+   "updated": "2026-10-21T10:41:40.474-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Cloners",
+     "relation": "clones",
+     "key": "CARL-4101",
+     "summary": "Store Raw Emails and Clean Up Expired Mailbox Trash",
+     "status": "In Review"
+    },
+    {
+     "type": "Cloners",
+     "relation": "is cloned by",
+     "key": "CARL-4103",
+     "summary": "Glue \u2014 Load Ready Email Files into Bronze Iceberg",
+     "status": "In Review"
+    }
+   ]
+  },
+  {
+   "key": "CARL-4103",
+   "summary": "Glue \u2014 Load Ready Email Files into Bronze Iceberg",
+   "status": "In Review",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1479",
+    "summary": "Finance Forecast Feed"
+   },
+   "labels": [
+    "Total_Ad_Revenue_Pacing"
+   ],
+   "priority": "Critical",
+   "created": "2026-10-07T10:51:31.152-0400",
+   "updated": "2026-10-21T10:41:47.857-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Cloners",
+     "relation": "clones",
+     "key": "CARL-4102",
+     "summary": "Extract and validate attachments and route them to ready or trash",
+     "status": "In Review"
+    },
+    {
+     "type": "Cloners",
+     "relation": "is cloned by",
+     "key": "CARL-4104",
+     "summary": "MWAA \u2014 Schedule the Email Bronze Load",
+     "status": "In Review"
+    }
+   ]
+  },
+  {
+   "key": "CARL-4104",
+   "summary": "MWAA \u2014 Schedule the Email Bronze Load",
+   "status": "In Review",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-1479",
+    "summary": "Finance Forecast Feed"
+   },
+   "labels": [
+    "Total_Ad_Revenue_Pacing"
+   ],
+   "priority": "Critical",
+   "created": "2026-10-07T10:54:28.910-0400",
+   "updated": "2026-10-21T10:41:58.232-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Cloners",
+     "relation": "clones",
+     "key": "CARL-4103",
+     "summary": "Glue \u2014 Load Ready Email Files into Bronze Iceberg",
+     "status": "In Review"
+    }
+   ]
+  },
+  {
+   "key": "CARL-4139",
+   "summary": "FreeWheel silver: add dim_direct_sold_creative from d_direct_sold_creative (d_creative deprecated)",
+   "status": "Ready for Testing",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-2887",
+    "summary": "Freewheel (Silver)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-10-12T14:08:16.051-0400",
+   "updated": "2026-10-14T13:12:01.646-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Relates",
+     "relation": "relates to",
+     "key": "CARL-3797",
+     "summary": "Develop FreeWheel dim_creative in Silver",
+     "status": "Done"
+    },
+    {
+     "type": "Action item",
+     "relation": "action item from",
+     "key": "CARL-4111",
+     "summary": "Retire FreeWheel d_creative from Bronze ingestion and use d_direct_sold_creative",
+     "status": "In Review"
+    }
+   ]
+  },
+  {
+   "key": "CARL-4165",
+   "summary": "[Spike] STAQ Data Discovery for Ingestion",
+   "status": "In Progress",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-3750",
+    "summary": "Ingest STAQ Data in CARL (Bronze)"
+   },
+   "labels": [],
+   "priority": "Major",
+   "created": "2026-10-12T23:57:23.673-0400",
+   "updated": "2026-10-14T18:31:17.329-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-4166",
+   "summary": "Delete the sql for d_creative from the Repo",
+   "status": "In Progress",
+   "status_category": "indeterminate",
+   "issuetype": "Task",
+   "parent": {
+    "key": "CARL-3779",
+    "summary": "Nielsen NRLD"
+   },
+   "labels": [
+    "bronze",
+    "data-engineering",
+    "nrld",
+    "snowflake-to-bronze"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-10-13T12:52:37.307-0400",
+   "updated": "2026-10-13T12:55:29.732-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-4182",
+   "summary": "Revisit & Decouple Silver Layer Data Model Architecture (Long-Term Silver Re-Design)",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-312",
+    "summary": "Ingest Linear and Digital Revenue Data Set (Silver)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-10-14T08:13:26.635-0400",
+   "updated": "2026-10-14T08:15:50.052-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-4201",
+   "summary": "Design FreeWheel Tool #2 silver processing rules",
+   "status": "In Progress",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-2887",
+    "summary": "Freewheel (Silver)"
+   },
+   "labels": [
+    "agent-factory-tool-2"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-10-14T16:40:06.480-0400",
+   "updated": "2026-10-15T09:31:24.813-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Relates",
+     "relation": "relates to",
+     "key": "CARL-3851",
+     "summary": "[Design] Freewheel Change Log Solutions For Agent Factory Project (Tool 2) ",
+     "status": "In Progress"
+    }
+   ]
+  },
+  {
+   "key": "CARL-4211",
+   "summary": "Ingest SALESFORCE.SF_OPPORTUNITY_ESTIMATE__C from Oracle into Iceberg Bronze",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-4153",
+    "summary": "Ingest Salesforce Data [Phase2]"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-10-19T07:34:54.865-0400",
+   "updated": "2026-10-19T10:22:17.285-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-4222",
+   "summary": "FreeWheel silver: add dim_postal_code_package, fold d_reseller into dim_network, add d_video rating and air_date",
+   "status": "To Do",
+   "status_category": "new",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-2887",
+    "summary": "Freewheel (Silver)"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-10-20T12:33:02.853-0400",
+   "updated": "2026-10-21T09:20:00.475-0400",
+   "resolved": null,
+   "links": []
+  }
+ ],
+ "blocked": [
+  {
+   "key": "CARL-691",
+   "summary": "Get DCI_INV_SCHEDULE_ENTITY table available in bronze",
+   "status": "Blocked",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-351",
+    "summary": "CMP iDeal Data Foundation Readiness "
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-05-11T20:13:13.189-0400",
+   "updated": "2026-10-21T17:56:42.531-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Action item",
+     "relation": "has action item",
+     "key": "CARL-4264",
+     "summary": "inconsistent name and missing data for dci_inv_schedule_entity table",
+     "status": "To Do"
+    }
+   ]
+  },
+  {
+   "key": "CARL-3578",
+   "summary": "Monthly Order Tracking Report",
+   "status": "Blocked",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-4134",
+    "summary": "Microstrategy Report P1: Sox and Accounting "
+   },
+   "labels": [
+    "microstrategy",
+    "sox"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-08-14T13:36:44.063-0400",
+   "updated": "2026-10-21T10:28:32.446-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Blocks",
+     "relation": "is blocked by",
+     "key": "CARL-3629",
+     "summary": "SOX ingestion gap: BI Monthly Order Tracking Report & BI Affiliate Systems Subscriber Analysis Report \u2014 Oracle source tables unreachable, no DAG generated",
+     "status": "To Do"
+    },
+    {
+     "type": "Blocks",
+     "relation": "is blocked by",
+     "key": "CARL-3657",
+     "summary": "Expedited light-weight ingestion: PLAN_HIST_CURRENCY_RATE_VW / PLAN_CURR_CURRENCY_RATE_VW \u2014 unblocks ~15 of 30 Monthly Order Tracking Report measures",
+     "status": "To Do"
+    },
+    {
+     "type": "Validate",
+     "relation": "validates",
+     "key": "CARL-3685",
+     "summary": "Validate SOX dev QuickSight dataset \u2014 Campaign Fact (Report 12: Monthly Order Tracking Report)",
+     "status": "Done"
+    }
+   ]
+  },
+  {
+   "key": "CARL-4035",
+   "summary": "Ingest iDeal tables to linear_digital_revenue_bronze for Venus",
+   "status": "Blocked",
+   "status_category": "indeterminate",
+   "issuetype": "Epic",
+   "parent": {
+    "key": "CARL-624",
+    "summary": "iDeal Data"
+   },
+   "labels": [
+    "venus"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-10-01T05:41:47.140-0400",
+   "updated": "2026-10-16T12:46:43.707-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-2952",
+   "summary": "Complete NRLD Snowflake Framework Migration",
+   "status": "Blocked",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-3779",
+    "summary": "Nielsen NRLD"
+   },
+   "labels": [],
+   "priority": "Major",
+   "created": "2026-07-27T18:11:24.196-0400",
+   "updated": "2026-10-14T11:06:00.622-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Blocks",
+     "relation": "is blocked by",
+     "key": "CARL-563",
+     "summary": "Ingestion framework for Snowflake sources",
+     "status": "Done"
+    },
+    {
+     "type": "Blocks",
+     "relation": "blocks",
+     "key": "CARL-468",
+     "summary": "DAG improvement - Marketshare(Ad Intel)",
+     "status": "Ready For UAT"
+    },
+    {
+     "type": "Blocks",
+     "relation": "blocks",
+     "key": "CARL-578",
+     "summary": "DAG improvement - BigMit",
+     "status": "Ready For UAT"
+    }
+   ]
+  },
+  {
+   "key": "CARL-3592",
+   "summary": "Sports Linear BUF Comparison - Pending - 25/26",
+   "status": "Blocked",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-3571",
+    "summary": "MicroStrategy Reports P1: Ad Sales Batch 2.1"
+   },
+   "labels": [
+    "adsales",
+    "microstrategy"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-08-14T15:22:03.315-0400",
+   "updated": "2026-10-14T11:06:00.621-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Duplicate",
+     "relation": "duplicates",
+     "key": "CARL-2986",
+     "summary": "Sports Linear BUF Comparison - Pending - 25/26",
+     "status": "Archive"
+    }
+   ]
+  },
+  {
+   "key": "CARL-506",
+   "summary": "Amazon Quick Usage Metrics Enablement",
+   "status": "Blocked",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-546",
+    "summary": "QS Usage & Adoption"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-04-08T14:13:43.275-0400",
+   "updated": "2026-10-14T11:06:00.613-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Blocks",
+     "relation": "blocks",
+     "key": "CARL-518",
+     "summary": "Build and deploy QS metrics dashboard",
+     "status": "Done"
+    },
+    {
+     "type": "Discovered while testing",
+     "relation": "testing discovered",
+     "key": "CARL-2963",
+     "summary": "Usage Metrics Enablement - Dashboard errors",
+     "status": "To Do"
+    }
+   ]
+  },
+  {
+   "key": "CARL-417",
+   "summary": "DUC: Review and submit DUC to CAKE (FW/OP1)",
+   "status": "Blocked",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-345",
+    "summary": "[Goverannce]Data Compliance and SOX Control "
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-03-17T15:24:51.636-0400",
+   "updated": "2026-10-14T11:06:00.606-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Blocks",
+     "relation": "is blocked by",
+     "key": "CARL-451",
+     "summary": "DUC: Populate CARL DUC with Nielsen data",
+     "status": "To Do"
+    },
+    {
+     "type": "Blocks",
+     "relation": "is blocked by",
+     "key": "CARL-627",
+     "summary": "DUC: Confirm data source descriptions in DUC (GAM, ABS)",
+     "status": "To Do"
+    }
+   ]
+  },
+  {
+   "key": "CARL-1183",
+   "summary": "Discrepancies with Combined Revenue Holes Report",
+   "status": "Blocked",
+   "status_category": "indeterminate",
+   "issuetype": "Bug",
+   "parent": {
+    "key": "CARL-462",
+    "summary": "CARL Production Support"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-06-10T15:31:22.566-0400",
+   "updated": "2026-10-14T10:26:14.864-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-656",
+   "summary": "SharePoint",
+   "status": "Blocked",
+   "status_category": "indeterminate",
+   "issuetype": "Epic",
+   "parent": {
+    "key": "CARL-655",
+    "summary": "Unstructured Data"
+   },
+   "labels": [],
+   "priority": "Minor",
+   "created": "2026-05-06T16:33:33.204-0400",
+   "updated": "2026-10-13T01:01:24.342-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-3725",
+   "summary": "ideal_msa_de_units - scheme issues",
+   "status": "Blocked",
+   "status_category": "indeterminate",
+   "issuetype": "Bug",
+   "parent": {
+    "key": "CARL-351",
+    "summary": "CMP iDeal Data Foundation Readiness "
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-09-06T11:59:21.496-0400",
+   "updated": "2026-10-12T12:58:50.068-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Discovered while testing",
+     "relation": "discovered while testing",
+     "key": "CARL-1472",
+     "summary": "Ingest DE_UNITS to bronze (Prod)",
+     "status": "Blocked"
+    }
+   ]
+  },
+  {
+   "key": "CARL-3722",
+   "summary": "ideal_posting_stw_impression - Schema mismatch",
+   "status": "Blocked",
+   "status_category": "indeterminate",
+   "issuetype": "Bug",
+   "parent": {
+    "key": "CARL-351",
+    "summary": "CMP iDeal Data Foundation Readiness "
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-09-05T17:02:02.975-0400",
+   "updated": "2026-10-12T12:58:49.800-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Discovered while testing",
+     "relation": "discovered while testing",
+     "key": "CARL-1469",
+     "summary": "Ingest STW_IMPRESSION to bronze (Prod)",
+     "status": "Blocked"
+    }
+   ]
+  },
+  {
+   "key": "CARL-1883",
+   "summary": "Missing fields from ideal_dci_ratecard_header target table",
+   "status": "Blocked",
+   "status_category": "indeterminate",
+   "issuetype": "Bug",
+   "parent": {
+    "key": "CARL-351",
+    "summary": "CMP iDeal Data Foundation Readiness "
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-07-10T12:05:37.938-0400",
+   "updated": "2026-10-12T12:58:49.574-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Discovered while testing",
+     "relation": "discovered while testing",
+     "key": "CARL-698",
+     "summary": "Get DCI_RATECARD_HEADER table available in bronze",
+     "status": "Blocked"
+    }
+   ]
+  },
+  {
+   "key": "CARL-705",
+   "summary": "Get DCI_DEAL_SUMMARY_DATA table available in bronze",
+   "status": "Blocked",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-351",
+    "summary": "CMP iDeal Data Foundation Readiness "
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-05-11T20:14:56.381-0400",
+   "updated": "2026-10-12T12:58:48.677-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Action item",
+     "relation": "has action item",
+     "key": "CARL-3495",
+     "summary": "Row counts not matching after running the DAG with no increase in Oracle counts",
+     "status": "Done"
+    },
+    {
+     "type": "Discovered while testing",
+     "relation": "testing discovered",
+     "key": "CARL-3682",
+     "summary": "Row count mismatch for  DCI_DEAL_SUMMARY_DATA Iceberg table in July and August 2026",
+     "status": "In Testing"
+    }
+   ]
+  },
+  {
+   "key": "CARL-698",
+   "summary": "Get DCI_RATECARD_HEADER table available in bronze",
+   "status": "Blocked",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-351",
+    "summary": "CMP iDeal Data Foundation Readiness "
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-05-11T20:13:58.361-0400",
+   "updated": "2026-10-12T12:58:48.451-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Discovered while testing",
+     "relation": "testing discovered",
+     "key": "CARL-1883",
+     "summary": "Missing fields from ideal_dci_ratecard_header target table",
+     "status": "Blocked"
+    }
+   ]
+  },
+  {
+   "key": "CARL-1470",
+   "summary": "Ingest STW_UNIT_IMPRESSION to bronze (Prod)",
+   "status": "Blocked",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-351",
+    "summary": "CMP iDeal Data Foundation Readiness "
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-06-25T12:51:40.640-0400",
+   "updated": "2026-10-12T12:58:48.226-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Discovered while testing",
+     "relation": "testing discovered",
+     "key": "CARL-3697",
+     "summary": "POSTING_STW_UNIT_IMPRESSION - Schema mismatch - datatype ",
+     "status": "In Review"
+    }
+   ]
+  },
+  {
+   "key": "CARL-1472",
+   "summary": "Ingest DE_UNITS to bronze (Prod)",
+   "status": "Blocked",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-351",
+    "summary": "CMP iDeal Data Foundation Readiness "
+   },
+   "labels": [
+    "Total_Ad_Revenue_Pacing",
+    "ump"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-06-25T12:51:42.370-0400",
+   "updated": "2026-10-12T12:58:48.010-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Discovered while testing",
+     "relation": "testing discovered",
+     "key": "CARL-3725",
+     "summary": "ideal_msa_de_units - scheme issues",
+     "status": "Blocked"
+    }
+   ]
+  },
+  {
+   "key": "CARL-2803",
+   "summary": "Get DCI_ORDER_HEADER table available in bronze",
+   "status": "Blocked",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-351",
+    "summary": "CMP iDeal Data Foundation Readiness "
+   },
+   "labels": [
+    "Total_Ad_Revenue_Pacing",
+    "ump"
+   ],
+   "priority": "Major",
+   "created": "2026-07-15T17:30:15.389-0400",
+   "updated": "2026-10-12T12:58:47.781-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-1469",
+   "summary": "Ingest STW_IMPRESSION to bronze (Prod)",
+   "status": "Blocked",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-351",
+    "summary": "CMP iDeal Data Foundation Readiness "
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-06-25T12:51:37.901-0400",
+   "updated": "2026-10-12T12:58:47.538-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Discovered while testing",
+     "relation": "testing discovered",
+     "key": "CARL-3722",
+     "summary": "ideal_posting_stw_impression - Schema mismatch",
+     "status": "Blocked"
+    }
+   ]
+  },
+  {
+   "key": "CARL-696",
+   "summary": "Get DCI_RATECARD_DEMOVPVH table available in bronze",
+   "status": "Blocked",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-351",
+    "summary": "CMP iDeal Data Foundation Readiness "
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-05-11T20:13:54.697-0400",
+   "updated": "2026-10-12T12:58:47.307-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Action item",
+     "relation": "has action item",
+     "key": "CARL-3495",
+     "summary": "Row counts not matching after running the DAG with no increase in Oracle counts",
+     "status": "Done"
+    },
+    {
+     "type": "Action item",
+     "relation": "action item from",
+     "key": "CARL-3514",
+     "summary": "PROD bug: incremental-bronze-load-prod Glue capacity config is undersized and causing ideal_incremental_load failures",
+     "status": "In Progress"
+    },
+    {
+     "type": "Discovered while testing",
+     "relation": "testing discovered",
+     "key": "CARL-3683",
+     "summary": "Data mismatches for IDEAL_DCI_RATECARD_DEMOVPVH",
+     "status": "In Testing"
+    }
+   ]
+  },
+  {
+   "key": "CARL-3014",
+   "summary": "Global Perspectives",
+   "status": "Blocked",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-3789",
+    "summary": "MicroStrategy Reports P1: Ad Sales Batch 2.2"
+   },
+   "labels": [
+    "microstrategy"
+   ],
+   "priority": "Not Prioritized",
+   "created": "2026-07-30T21:12:28.201-0400",
+   "updated": "2026-10-12T12:36:46.052-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Blocks",
+     "relation": "is blocked by",
+     "key": "CARL-4058",
+     "summary": "Global Perspectives: verify MSTR Oracle schema vs Iceberg dimension sources for key overlap (selling title / episode)",
+     "status": "To Do"
+    }
+   ]
+  },
+  {
+   "key": "CARL-3784",
+   "summary": "[DS-MIG] STM_Creation-BTS_DLA_Pipeline",
+   "status": "Blocked",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-3562",
+    "summary": "IBM Data stage Migration [DS-MIG]"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-09-15T06:48:05.124-0400",
+   "updated": "2026-09-29T10:38:05.452-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-3656",
+   "summary": "[DS-MIG] POC - BTS_DLA MVP Pipeline Setup",
+   "status": "Blocked",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-3562",
+    "summary": "IBM Data stage Migration [DS-MIG]"
+   },
+   "labels": [],
+   "priority": "Not Prioritized",
+   "created": "2026-08-26T10:13:34.791-0400",
+   "updated": "2026-09-29T10:34:38.117-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-582",
+   "summary": "Unstructured data pilot testing",
+   "status": "Blocked",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-656",
+    "summary": "SharePoint"
+   },
+   "labels": [
+    "30_60",
+    "Bobby_V_Dashboard"
+   ],
+   "priority": "Major",
+   "created": "2026-04-17T11:50:58.100-0400",
+   "updated": "2026-09-02T12:50:34.659-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-622",
+   "summary": "[Long Term Solution] - Linear TUS/NCAA Revenue Issue",
+   "status": "Blocked",
+   "status_category": "indeterminate",
+   "issuetype": "Story",
+   "parent": {
+    "key": "CARL-6",
+    "summary": "Quick Suite Report: Converged Holes Report + Sports Holes and Shares Reports"
+   },
+   "labels": [
+    "30_60"
+   ],
+   "priority": "Major",
+   "created": "2026-04-29T14:46:09.631-0400",
+   "updated": "2026-07-06T10:05:45.260-0400",
+   "resolved": null,
+   "links": [
+    {
+     "type": "Blocks",
+     "relation": "is blocked by",
+     "key": "CARL-641",
+     "summary": "[Temporary Workaround] - Remove Linear NCAA Revenue from Holes Dashboard",
+     "status": "Done"
+    }
+   ]
+  },
+  {
+   "key": "CARL-324",
+   "summary": "Request to place any required flat files in Sharepoint",
+   "status": "Blocked",
+   "status_category": "indeterminate",
+   "issuetype": "Sub-task",
+   "parent": {
+    "key": "CARL-316",
+    "summary": "Next Gen Lift and Shift Documentation"
+   },
+   "labels": [],
+   "priority": "Minor",
+   "created": "2026-02-25T17:23:24.936-0500",
+   "updated": "2026-04-30T19:48:53.540-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-327",
+   "summary": "Request to provid guidance on bulk editing PBI data source connection",
+   "status": "Blocked",
+   "status_category": "indeterminate",
+   "issuetype": "Sub-task",
+   "parent": {
+    "key": "CARL-316",
+    "summary": "Next Gen Lift and Shift Documentation"
+   },
+   "labels": [],
+   "priority": "Minor",
+   "created": "2026-02-25T17:29:39.874-0500",
+   "updated": "2026-04-30T19:47:29.622-0400",
+   "resolved": null,
+   "links": []
+  },
+  {
+   "key": "CARL-320",
+   "summary": "Request snowflake share on Next Gen Legacy Gold tables to TED_AMS account",
+   "status": "Blocked",
+   "status_category": "indeterminate",
+   "issuetype": "Sub-task",
+   "parent": {
+    "key": "CARL-316",
+    "summary": "Next Gen Lift and Shift Documentation"
+   },
+   "labels": [],
+   "priority": "Major",
+   "created": "2026-02-25T13:12:47.794-0500",
+   "updated": "2026-04-30T19:47:23.703-0400",
+   "resolved": null,
+   "links": []
+  }
+ ]
+}

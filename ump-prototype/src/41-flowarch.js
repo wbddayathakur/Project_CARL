@@ -178,7 +178,7 @@ const EvalLoopSvg = () => (
     <Arrow d="M382,239 L468,239"/>
 
     <Arrow d="M562,206 L562,178 L340,178 L340,170" color={HITL} chip
-      label="NO — sent back with what it is missing" lx={451} ly={178} lw={44}/>
+      label="THIN — named, scored, travels anyway" lx={451} ly={178} lw={44}/>
 
     <SvgBox x={472} y={318} w={180} h={52} chars={30} title="Allow customisations"
       body="Targeting templates on the product"/>
@@ -222,8 +222,8 @@ const FlowArchTab = () => (
            "Not just the current phase — every evaluation point inside every phase, and what each one is worth."],
           ["Scores the intermediate status",
            "A phase is not done or not-done. It has a score, and the score is made of named points a human can argue with."],
-          ["Below par, loops or surfaces",
-           "It re-runs the phase, or it stops and asks for strategic input. It does not advance the plan and it does not overrule the planner."],
+          ["Separates missing from weak",
+           "Something absent holds the handoff, because the next phase would have to guess. Something weak does not — it is scored and carried forward. It never advances the plan and never overrules the planner."],
         ].map(([t,b],i)=>(
           <div key={i} style={{borderLeft:"2px solid var(--accent)", paddingLeft:11}}>
             <div style={{fontSize:12.5, fontWeight:600}}>{t}</div>
@@ -233,9 +233,12 @@ const FlowArchTab = () => (
       </div>
       <div className="hr"/>
       <div className="tiny muted" style={{lineHeight:1.6}}>
-        The one power it has is to refuse a handoff. That is a smaller claim than “an AI that plans”, and a much more
-        useful one: it means the inputs to every phase are trustworthy without anyone having to check them, because
-        the phase before it could not have ended otherwise. Live on every phase screen as the <b>handoff gate</b>.
+        The one power it has is to refuse a handoff when something is <b>absent</b> — never when something is merely
+        weak. That is a smaller claim than “an AI that plans”, and a much more useful one: the next phase never has
+        to guess at an input, and nobody's judgement is second-guessed by a scoring function. Quality is still
+        measured, but it travels forward to P&amp;I, who holds the only gate that can stop a plan. A gate the desk
+        could not get past under deadline would simply be worked around, which is worse than not having one.
+        Live on every phase screen as the <b>handoff gate</b>.
       </div>
     </Card>
 

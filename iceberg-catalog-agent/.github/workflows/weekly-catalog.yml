@@ -1,0 +1,68 @@
+# Weekly catalog refresh.
+#
+# Preferred over cron on a laptop: a laptop that is closed on Monday morning
+# silently stops publishing, and nobody notices until someone files a duplicate
+# request against a two-month-old page.
+#
+# Needs a role in each of the four CARL accounts with glue:GetDatabases and
+# glue:GetTables, and nothing else. Set the role ARNs in config.yaml.
+
+name: Weekly Iceberg catalog
+
+on:
+  schedule:
+    # Monday 07:00 Asia/Kolkata is 01:30 UTC. GitHub cron is UTC only.
+    - cron: "30 1 * * 1"
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Publish to Confluence
+        type: boolean
+        default: true
+
+permissions:
+  id-token: write   # for OIDC into AWS; no long-lived keys in secrets
+  contents: read
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Assume the catalog reader role
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.CARL_CATALOG_READER_ROLE }}
+          aws-region: us-east-1
+
+      - name: Collect and publish
+        env:
+          CONFLUENCE_USER: ${{ secrets.CONFLUENCE_USER }}
+          CONFLUENCE_TOKEN: ${{ secrets.CONFLUENCE_TOKEN }}
+        run: |
+          python -m iceberg_catalog \
+            --source auto \
+            ${{ (github.event_name == 'schedule' || inputs.publish) && '--publish' || '' }}
+
+      # The dated adoption JSON is what makes week-on-week movement
+      # reconstructable later, so keep it even when a publish fails.
+      - name: Keep the run output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: catalog-${{ github.run_number }}
+          path: |
+            out/iceberg-catalog.md
+            out/iceberg-catalog.json
+            out/history/
+          retention-days: 400

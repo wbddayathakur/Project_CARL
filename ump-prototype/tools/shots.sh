@@ -3,7 +3,24 @@
 # fails loudly if any of them threw a console error. Used to check a change did
 # not break a screen that is not the one being worked on.
 set -u
-CHROME="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+
+# Any Chromium will do — whichever this machine happens to have.
+CHROME="${CHROME:-}"
+if [ -z "$CHROME" ]; then
+  for c in \
+    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
+    "/Applications/Chromium.app/Contents/MacOS/Chromium" \
+    "/Applications/Brave Browser.app/Contents/MacOS/Brave Browser" \
+    "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge"
+  do
+    [ -x "$c" ] && CHROME="$c" && break
+  done
+fi
+if [ -z "$CHROME" ] || [ ! -x "$CHROME" ]; then
+  echo "no Chromium found — install Chrome, Chromium, Brave or Edge, or set CHROME=/path/to/binary" >&2
+  exit 2
+fi
+echo "using $(basename "$CHROME")"
 HERE="$(cd "$(dirname "$0")/.." && pwd)"
 OUT="${1:-/tmp/ump-shots}"
 W="${W:-1600}"; H="${H:-2400}"
@@ -23,6 +40,7 @@ ROUTES=(
   "plan/strategize/worked::strategize"
   "plan/analyze/worked::analyze"
   "plan/approval/worked::approval"
+  "plan/approval/worked/inventory::approval-inventory"
 )
 
 fail=0

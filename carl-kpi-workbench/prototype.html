@@ -1,0 +1,835 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>CARL KPI Discovery &amp; Standardization Workbench</title>
+<style>
+:root{
+  --navy:#12233f; --bg:#f5f7fb; --blue:#2563eb; --violet:#8b5cf6; --teal:#14b8a6;
+  --slate900:#0f172a; --slate700:#334155; --slate500:#64748b; --slate400:#94a3b8;
+  --slate200:#e2e8f0; --slate100:#f1f5f9; --slate50:#f8fafc;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--slate700); min-height:100vh;
+  font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  font-size:14px; -webkit-font-smoothing:antialiased;
+}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+h1,h2,h3{color:var(--slate900)}
+
+/* ---------- shell ---------- */
+header.top{
+  background:var(--navy); color:#fff; padding:14px 28px; display:flex;
+  align-items:center; justify-content:space-between; position:sticky; top:0; z-index:40;
+  box-shadow:0 10px 15px -3px rgba(0,0,0,.18);
+}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-mark{
+  height:40px;width:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,#22d3ee,var(--blue));
+}
+.brand h1{font-size:17px;font-weight:600;color:#fff}
+.brand p{font-size:12px;color:#cbd5e1;margin-top:2px}
+.layout{display:flex;align-items:flex-start}
+aside{
+  width:256px;flex:none;background:#fff;border-right:1px solid var(--slate200);
+  min-height:calc(100vh - 69px);position:sticky;top:69px;padding:16px;z-index:30;
+}
+aside .label{
+  padding:8px 12px;font-size:11px;text-transform:uppercase;letter-spacing:.08em;
+  font-weight:600;color:var(--slate400);
+}
+.nav-item{
+  width:100%;display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;
+  color:var(--slate500);margin-bottom:4px;transition:background .15s,color .15s;text-align:left;
+}
+.nav-item:hover{background:var(--slate50)}
+.nav-item.active{background:#eff6ff;color:#1d4ed8;font-weight:600}
+.nav-item .chev{margin-left:auto}
+.pipeline{margin-top:28px;padding:16px;background:var(--slate50);border-radius:16px}
+.pipeline h4{font-size:12px;font-weight:600;color:var(--slate700)}
+.pipeline .row{margin-top:12px}
+.pipeline .row>div{display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px}
+.disclaimer{font-size:10px;line-height:1.5;color:var(--slate400);margin-top:16px;padding:0 8px}
+main{flex:1;padding:28px;max-width:1600px;margin:0 auto;overflow:hidden;min-width:0}
+
+/* ---------- toolbar ---------- */
+.toolbar{display:flex;align-items:center;gap:12px;margin-bottom:24px;flex-wrap:wrap}
+.search{position:relative;flex:1;max-width:576px;min-width:260px}
+.search svg{position:absolute;left:12px;top:10px;color:var(--slate400)}
+.search input{
+  width:100%;height:40px;padding:8px 12px 8px 40px;border:1px solid var(--slate200);
+  border-radius:12px;background:#fff;font:inherit;color:var(--slate900);
+}
+.search input:focus{outline:2px solid var(--blue);outline-offset:1px}
+.segmented{display:flex;background:#fff;padding:4px;border-radius:12px;border:1px solid var(--slate200)}
+.segmented button{padding:8px 16px;border-radius:8px;color:var(--slate500)}
+.segmented button.active{background:var(--navy);color:#fff}
+
+/* ---------- primitives ---------- */
+.card{background:#fff;border-radius:16px;box-shadow:0 1px 2px rgba(15,23,42,.06),0 1px 3px rgba(15,23,42,.1)}
+.card.outline{box-shadow:none;border:1px solid var(--slate200)}
+.card-head{padding:24px 24px 0}
+.card-head h3{font-size:16px;font-weight:600}
+.card-body{padding:20px}
+.card-body.lg{padding:24px}
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;height:40px;padding:0 16px;
+  border-radius:8px;font-size:14px;font-weight:500;transition:background .15s,opacity .15s;white-space:nowrap;
+}
+.btn-primary{background:var(--slate900);color:#fff}
+.btn-primary:hover{background:#1e293b}
+.btn-outline{border:1px solid var(--slate200);background:#fff}
+.btn-outline:hover{background:var(--slate100)}
+.btn-ghost:hover{background:var(--slate100)}
+.btn-cyan{background:#06b6d4;color:#020617;font-weight:600}
+.btn-cyan:hover{background:#22d3ee}
+.btn-dark-outline{border:1px solid #475569;color:#fff}
+.btn-dark-outline:hover{background:#334155}
+.btn-emerald{background:#059669;color:#fff}
+.btn-emerald:hover{background:#047857}
+.btn-sm{height:34px;padding:0 12px;font-size:13px}
+.btn-block{width:100%}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+.badge{
+  display:inline-flex;align-items:center;border-radius:999px;padding:3px 10px;
+  font-size:12px;font-weight:600;border:1px solid transparent;
+}
+.badge-outline{border-color:var(--slate200);color:var(--slate700);background:#fff}
+.s-Certified{background:#d1fae5;color:#047857}
+.s-Validated{background:#dbeafe;color:#1d4ed8}
+.s-Proposed{background:#fef3c7;color:#92400e}
+.s-NeedsReview{background:#ffe4e6;color:#be123c}
+
+.progress{height:8px;width:100%;background:var(--slate200);border-radius:999px;overflow:hidden}
+.progress>div{height:100%;background:var(--blue);border-radius:999px;transition:width .4s ease}
+.progress.sm{height:6px}
+
+.level{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:500}
+.dot{height:10px;width:10px;border-radius:999px;flex:none}
+
+/* ---------- grid ---------- */
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.g5{grid-template-columns:repeat(5,minmax(0,1fr))}
+.span2{grid-column:span 2}
+.span3{grid-column:span 3}
+.mt20{margin-top:20px}
+
+/* ---------- section header ---------- */
+.section{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:20px}
+.section h2{font-size:20px;font-weight:600}
+.section p{font-size:14px;color:var(--slate500);margin-top:4px}
+
+/* ---------- metric card ---------- */
+.metric{display:flex;justify-content:space-between;align-items:flex-start}
+.metric .k{font-size:12px;font-weight:500;color:var(--slate500);text-transform:uppercase;letter-spacing:.05em}
+.metric .v{font-size:30px;font-weight:600;color:var(--slate900);margin-top:8px;line-height:1.1}
+.metric .s{font-size:12px;color:var(--slate500);margin-top:4px}
+.metric .icon{height:40px;width:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:none}
+.t-blue{background:#eff6ff;color:#1d4ed8}
+.t-teal{background:#f0fdfa;color:#0f766e}
+.t-violet{background:#f5f3ff;color:#6d28d9}
+.t-rose{background:#fff1f2;color:#be123c}
+
+/* ---------- table ---------- */
+table{width:100%;border-collapse:collapse;font-size:14px}
+thead{background:var(--slate50);color:var(--slate500)}
+th{text-align:left;padding:12px 16px;font-weight:500;white-space:nowrap}
+td{padding:12px 16px;border-top:1px solid var(--slate200);vertical-align:middle}
+tbody tr:hover{background:rgba(239,246,255,.6)}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.id{font-size:12px;color:#1d4ed8}
+.sub{font-size:12px;color:var(--slate400);margin-top:2px}
+.scroll-x{overflow-x:auto}
+
+/* ---------- lineage ---------- */
+.tree{position:relative;min-height:480px}
+.tree svg.links{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.node{
+  position:absolute;width:208px;padding:16px;border-radius:16px;color:#fff;text-align:left;
+  box-shadow:0 10px 15px -3px rgba(15,23,42,.25);transition:transform .15s;
+}
+.node:hover{transform:translateY(-2px)}
+.node.sel{outline:3px solid #0f172a;outline-offset:2px}
+.node .tag{font-size:10px;opacity:.75;letter-spacing:.04em}
+.node .nm{font-weight:600;margin-top:4px}
+.node .meta{font-size:12px;opacity:.8;margin-top:4px}
+.n-parent{background:var(--blue)}
+.n-derived{background:#7c3aed}
+.n-child{background:#0d9488;width:192px}
+.kv{display:flex;justify-content:space-between;border-bottom:1px solid var(--slate200);padding-bottom:12px;margin-bottom:12px}
+.kv span:first-child{color:var(--slate500)}
+.kv span:last-child{font-weight:500;color:var(--slate900)}
+
+/* ---------- formula ---------- */
+select.picker{width:100%;border:1px solid var(--slate200);border-radius:8px;padding:9px;font:inherit;background:#fff}
+pre.code{
+  background:#172033;padding:20px;border-radius:12px;font-size:13px;min-height:144px;
+  white-space:pre-wrap;word-break:break-word;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;line-height:1.6;
+}
+pre.mstr{color:#fed7aa}
+pre.sem{color:#a5f3fc}
+.check-tile{padding:12px;border-radius:12px}
+.check-tile.ok{background:#ecfdf5}
+.check-tile.warn{background:#fffbeb}
+.check-tile .hd{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:500;color:var(--slate900)}
+.check-tile .bd{font-size:12px;color:var(--slate500);margin-top:4px;margin-left:24px}
+.chip{background:var(--slate50);border-radius:12px;padding:12px}
+.chip .t{font-size:10px;text-transform:uppercase;color:var(--slate400);margin-bottom:4px;letter-spacing:.05em}
+
+/* ---------- standardization ---------- */
+.score{
+  height:56px;width:56px;border-radius:999px;background:#eff6ff;color:#1d4ed8;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;flex:none;
+}
+.score b{font-size:14px}
+.score span{font-size:9px}
+.variant{display:flex;align-items:center;justify-content:space-between;padding:12px;background:var(--slate50);border-radius:12px;margin-top:8px}
+.guide{border:1px solid var(--slate200);border-radius:12px;padding:12px}
+.guide p:first-child{font-weight:500;color:var(--slate900)}
+.guide p:last-child{font-size:12px;color:var(--slate500);margin-top:4px}
+
+/* ---------- impact ---------- */
+.report-row{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--slate200);border-radius:12px;padding:16px;margin-bottom:12px}
+.report-row .ic{height:36px;width:36px;border-radius:10px;background:#eff6ff;color:#1d4ed8;display:flex;align-items:center;justify-content:center;flex:none}
+.b-high{background:#ffe4e6;color:#be123c}
+.b-mute{background:var(--slate100);color:var(--slate500)}
+
+/* ---------- certification ---------- */
+.queue-item{width:100%;padding:12px;border-radius:12px;text-align:left;border:1px solid var(--slate200);margin-bottom:8px}
+.queue-item:hover{background:var(--slate50)}
+.queue-item.active{border-color:var(--blue);background:#eff6ff}
+.queue-item .hd{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.queue-item .hd p{font-size:14px;font-weight:500;color:var(--slate900)}
+.queue-item .id{font-size:10px;color:var(--slate400);margin-top:4px}
+.panel{border:1px solid var(--slate200);border-radius:12px;padding:16px}
+.panel .t{font-size:12px;text-transform:uppercase;color:var(--slate400);letter-spacing:.05em}
+.check{display:flex;align-items:center;gap:12px;padding:16px;border:1px solid var(--slate200);border-radius:12px;text-align:left;width:100%}
+.check:hover{background:var(--slate50)}
+.check.on{border-color:#10b981;background:#ecfdf5}
+.box{height:20px;width:20px;border-radius:6px;border:1px solid var(--slate200);display:flex;align-items:center;justify-content:center;flex:none;background:#fff}
+.check.on .box{background:#059669;border-color:#059669;color:#fff}
+textarea{
+  width:100%;border:1px solid var(--slate200);border-radius:12px;padding:12px;margin-top:8px;
+  font:inherit;min-height:96px;resize:vertical;color:var(--slate900);
+}
+textarea:focus{outline:2px solid var(--blue);outline-offset:1px}
+
+/* ---------- journey / misc ---------- */
+.step{padding:16px;border-radius:12px;border:1px solid var(--slate200);background:#fff}
+.step.on{border-color:#bfdbfe;background:#eff6ff}
+.step .n{font-size:12px;color:var(--slate500)}
+.step .t{font-weight:600;color:var(--slate900);margin-top:4px}
+.step .d{font-size:12px;color:var(--slate400);margin-top:4px}
+.legend{display:flex;gap:20px;justify-content:center;font-size:12px;margin-top:-12px;flex-wrap:wrap}
+.legend span{display:flex;align-items:center;gap:6px}
+.empty{padding:56px 24px;text-align:center;color:var(--slate400)}
+.muted{color:var(--slate500)}
+.fs12{font-size:12px}
+.fs13{font-size:13px}
+.mb8{margin-bottom:8px}
+.stack>*+*{margin-top:12px}
+.flex-between{display:flex;align-items:center;justify-content:space-between;gap:16px}
+
+#view{animation:fade .2s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+#toast{
+  position:fixed;right:24px;bottom:24px;background:var(--slate900);color:#fff;padding:12px 18px;
+  border-radius:12px;font-size:13px;box-shadow:0 10px 25px rgba(0,0,0,.25);opacity:0;
+  transform:translateY(10px);transition:opacity .2s,transform .2s;pointer-events:none;z-index:60;max-width:360px;
+}
+#toast.show{opacity:1;transform:none}
+
+@media (max-width:1180px){
+  .g4,.g5{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .g3,.g2{grid-template-columns:minmax(0,1fr)}
+  .span2,.span3{grid-column:span 1}
+}
+@media print{
+  aside,header.top .btn,.toolbar{display:none}
+  body{background:#fff}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand">
+    <div class="brand-mark" data-icon="layers" data-size="22"></div>
+    <div>
+      <h1>CARL KPI Discovery &amp; Standardization Workbench</h1>
+      <p>Business validation prototype • MSTR metadata to semantic KPI layer</p>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px">
+    <button class="btn btn-dark-outline" data-action="export"><i data-icon="download"></i>Export sample</button>
+    <button class="btn btn-cyan" data-action="nav" data-value="certification"><i data-icon="shield"></i>Governance view</button>
+  </div>
+</header>
+
+<div class="layout">
+  <aside>
+    <p class="label">Workbench pages</p>
+    <div id="nav"></div>
+    <div class="pipeline">
+      <h4>Pipeline status</h4>
+      <div class="row">
+        <div><span>Metadata analyzed</span><span>78%</span></div>
+        <div class="progress sm"><div style="width:78%"></div></div>
+      </div>
+      <div class="row">
+        <div><span>Business validated</span><span id="bv-pct">36%</span></div>
+        <div class="progress sm"><div id="bv-bar" style="width:36%"></div></div>
+      </div>
+    </div>
+    <p class="disclaimer">Prototype uses synthetic sample KPI data for design illustration. Values are not production metrics.</p>
+  </aside>
+
+  <main>
+    <div class="toolbar">
+      <div class="search">
+        <i data-icon="search" data-size="18"></i>
+        <input id="search" type="search" placeholder="Search KPI, ID, domain or formula..." autocomplete="off"/>
+      </div>
+      <div class="segmented" id="areas"></div>
+    </div>
+    <div id="view"></div>
+  </main>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ============================ sample data ============================ */
+const KPIS = [
+  {id:"ADS-REV-001",name:"Total Ad Revenue",area:"Ad Sales",domain:"Revenue",level:"Parent",status:"Proposed",owner:"Ad Sales Finance",reports:42,confidence:94,formula:"SUM(gross_revenue) - SUM(makegood_value)",mstr:"Sum([Gross Revenue]) - Sum([Makegood Value])",grain:"Day / Market",source:"MSTR",recommendation:"Standardize",risk:"Medium",children:["ADS-REV-002","ADS-REV-003"]},
+  {id:"ADS-REV-002",name:"Net Ad Revenue",area:"Ad Sales",domain:"Revenue",level:"Derived",status:"Validated",owner:"Ad Sales Finance",reports:29,confidence:97,formula:"SUM(gross_revenue) - SUM(discounts) - SUM(agency_fees)",mstr:"Revenue - Discount - Agency Fee",grain:"Day / Advertiser",source:"MSTR",recommendation:"Certify",risk:"Low",children:["ADS-REV-004","ADS-REV-005"]},
+  {id:"ADS-REV-003",name:"Revenue Growth %",area:"Ad Sales",domain:"Revenue",level:"Derived",status:"Needs Review",owner:"Commercial Analytics",reports:18,confidence:79,formula:"(current_revenue - prior_revenue) / NULLIF(prior_revenue,0)",mstr:"(Revenue - Revenue LY) / Revenue LY",grain:"Month / Market",source:"MSTR",recommendation:"Review time logic",risk:"High",children:[]},
+  {id:"ADS-REV-004",name:"Linear Revenue",area:"Ad Sales",domain:"Revenue",level:"Child",status:"Certified",owner:"Linear Sales Ops",reports:31,confidence:99,formula:"SUM(net_revenue) FILTER channel='Linear'",mstr:"Net Revenue {Channel=Linear}",grain:"Day / Market",source:"MSTR",recommendation:"Reuse",risk:"Low",children:[]},
+  {id:"ADS-REV-005",name:"Digital Revenue",area:"Ad Sales",domain:"Revenue",level:"Child",status:"Certified",owner:"Digital Sales Ops",reports:36,confidence:98,formula:"SUM(net_revenue) FILTER channel='Digital'",mstr:"Net Revenue {Channel=Digital}",grain:"Day / Platform",source:"MSTR",recommendation:"Reuse",risk:"Low",children:[]},
+  {id:"ADS-DEL-001",name:"Impression Delivery %",area:"Ad Sales",domain:"Delivery",level:"Derived",status:"Proposed",owner:"Campaign Operations",reports:55,confidence:93,formula:"delivered_impressions / NULLIF(booked_impressions,0)",mstr:"Delivered Imps / Booked Imps",grain:"Day / Campaign",source:"MSTR",recommendation:"Standardize",risk:"Medium",children:[]},
+  {id:"ADS-YLD-001",name:"Effective CPM",area:"Ad Sales",domain:"Yield",level:"Derived",status:"Needs Review",owner:"Yield Management",reports:24,confidence:87,formula:"net_revenue * 1000 / NULLIF(delivered_impressions,0)",mstr:"Revenue / Impressions * 1000",grain:"Day / Inventory",source:"MSTR",recommendation:"Validate revenue basis",risk:"High",children:[]},
+  {id:"FIN-REV-001",name:"Total Revenue",area:"Finance",domain:"Revenue",level:"Parent",status:"Proposed",owner:"FP&A",reports:48,confidence:91,formula:"SUM(recognized_revenue)",mstr:"Sum([Recognized Revenue])",grain:"Month / Legal Entity",source:"MSTR",recommendation:"Standardize",risk:"Medium",children:["FIN-REV-002"]},
+  {id:"FIN-REV-002",name:"Revenue Variance %",area:"Finance",domain:"Planning",level:"Derived",status:"Needs Review",owner:"FP&A",reports:22,confidence:82,formula:"(actual_revenue-budget_revenue)/NULLIF(budget_revenue,0)",mstr:"(Actual - Budget) / Budget",grain:"Month / Cost Center",source:"MSTR",recommendation:"Validate scenario mapping",risk:"High",children:[]},
+  {id:"FIN-MAR-001",name:"Gross Margin %",area:"Finance",domain:"Profitability",level:"Derived",status:"Validated",owner:"Controllership",reports:33,confidence:96,formula:"(revenue-cogs)/NULLIF(revenue,0)",mstr:"Gross Margin / Revenue",grain:"Month / Product",source:"MSTR",recommendation:"Certify",risk:"Low",children:[]},
+  {id:"FIN-EXP-001",name:"Operating Expense",area:"Finance",domain:"Expense",level:"Parent",status:"Certified",owner:"FP&A",reports:39,confidence:99,formula:"SUM(operating_expense)",mstr:"Sum([OpEx])",grain:"Month / Cost Center",source:"MSTR",recommendation:"Reuse",risk:"Low",children:[]},
+  {id:"MKT-CAM-001",name:"Campaign ROI",area:"Marketing",domain:"Campaign",level:"Derived",status:"Proposed",owner:"Marketing Analytics",reports:27,confidence:89,formula:"(incremental_revenue-marketing_cost)/NULLIF(marketing_cost,0)",mstr:"(Incremental Revenue - Spend) / Spend",grain:"Campaign / Channel",source:"MSTR",recommendation:"Validate attribution",risk:"High",children:[]},
+  {id:"MKT-AWR-001",name:"Brand Awareness Lift",area:"Marketing",domain:"Brand",level:"Parent",status:"Needs Review",owner:"Brand Insights",reports:14,confidence:73,formula:"post_awareness_pct-pre_awareness_pct",mstr:"Post Awareness - Pre Awareness",grain:"Study / Audience",source:"MSTR",recommendation:"Keep study-specific",risk:"High",children:[]},
+  {id:"MKT-ENG-001",name:"Engagement Rate",area:"Marketing",domain:"Digital",level:"Derived",status:"Validated",owner:"Digital Marketing",reports:41,confidence:95,formula:"engagements / NULLIF(impressions,0)",mstr:"Engagements / Impressions",grain:"Day / Channel",source:"MSTR",recommendation:"Certify",risk:"Low",children:[]},
+  {id:"MKT-CAC-001",name:"Customer Acquisition Cost",area:"Marketing",domain:"Acquisition",level:"Derived",status:"Proposed",owner:"Growth Marketing",reports:19,confidence:88,formula:"acquisition_spend / NULLIF(new_customers,0)",mstr:"Acq Spend / New Customers",grain:"Month / Channel",source:"MSTR",recommendation:"Standardize",risk:"Medium",children:[]}
+];
+
+const CLUSTERS = [
+  {canonical:"Total Ad Revenue",canonicalId:"ADS-REV-001",variants:["Ad Revenue","Total Revenue - Ads","Gross Ad Rev"],score:94,action:"Merge / alias",area:"Ad Sales"},
+  {canonical:"Impression Delivery %",canonicalId:"ADS-DEL-001",variants:["Delivery Rate","Imps Delivered %","Fulfillment %"],score:91,action:"Review denominator",area:"Ad Sales"},
+  {canonical:"Operating Expense",canonicalId:"FIN-EXP-001",variants:["OpEx","Operating Costs","Total OPEX"],score:97,action:"Merge / alias",area:"Finance"},
+  {canonical:"Campaign ROI",canonicalId:"MKT-CAM-001",variants:["Marketing ROI","Return on Campaign Spend"],score:86,action:"Validate attribution",area:"Marketing"}
+];
+
+const PAGES = [
+  ["overview","Overview","chart"],["inventory","KPI Inventory","layers"],["lineage","Logic Levels","branch"],
+  ["formula","Formula Intelligence","calc"],["standardization","Standardization","copycheck"],
+  ["impact","Report Impact","network"],["certification","Validation Center","shield"]
+];
+const AREAS = ["All","Ad Sales","Finance","Marketing"];
+const LEVEL_COLORS = {Parent:"#2563eb",Derived:"#8b5cf6",Child:"#14b8a6"};
+const PIE = ["#2563eb","#8b5cf6","#14b8a6"];
+const REPORTS = ["Executive Revenue Summary","Campaign Delivery Monitor","Sales Performance Scorecard","Finance Revenue Reconciliation","Digital Marketplace Trends"];
+const CHECKS = [["definition","Business definition is correct"],["formula","Formula and filters are correct"],["grain","Grain and aggregation are correct"],["lineage","Source and report lineage are complete"]];
+
+/* ============================ icons ============================ */
+const P = {
+  chart:'<path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6"/><rect x="12" y="7" width="3" height="10"/><rect x="17" y="13" width="3" height="4"/>',
+  layers:'<path d="M12 3 3 7.5 12 12l9-4.5L12 3Z"/><path d="m3 12.5 9 4.5 9-4.5"/><path d="m3 17 9 4.5 9-4.5"/>',
+  branch:'<circle cx="6" cy="5" r="2.5"/><circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="8" r="2.5"/><path d="M6 7.5v9"/><path d="M18 10.5c0 4-5 2.5-5 6.5"/>',
+  calc:'<rect x="4" y="2.5" width="16" height="19" rx="2.5"/><path d="M8 7h8"/><path d="M8 12h.01M12 12h.01M16 12h.01M8 16.5h.01M12 16.5h.01M16 16.5h.01"/>',
+  copycheck:'<rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/><path d="m12.5 14.5 2 2 4-4"/>',
+  network:'<rect x="9" y="2" width="6" height="6" rx="1.5"/><rect x="2" y="16" width="6" height="6" rx="1.5"/><rect x="16" y="16" width="6" height="6" rx="1.5"/><path d="M12 8v4M5 16v-2h14v2"/>',
+  shield:'<path d="M12 2.5 4.5 5.5v6c0 5 3.3 8.5 7.5 10 4.2-1.5 7.5-5 7.5-10v-6L12 2.5Z"/><path d="m9 12 2 2 4-4"/>',
+  search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+  download:'<path d="M12 3v12"/><path d="m7.5 10.5 4.5 4.5 4.5-4.5"/><path d="M4 20h16"/>',
+  chevron:'<path d="m9 5 7 7-7 7"/>',
+  checkcircle:'<circle cx="12" cy="12" r="9.5"/><path d="m8 12.5 2.5 2.5 5.5-5.5"/>',
+  alert:'<path d="M10.3 4 2.5 18a2 2 0 0 0 1.7 3h15.6a2 2 0 0 0 1.7-3L13.7 4a2 2 0 0 0-3.4 0Z"/><path d="M12 9.5v4"/><path d="M12 17.2h.01"/>',
+  arrow:'<path d="M4 12h15"/><path d="m13 6 6 6-6 6"/>',
+  database:'<ellipse cx="12" cy="5.5" rx="8" ry="3.2"/><path d="M4 5.5v6c0 1.8 3.6 3.2 8 3.2s8-1.4 8-3.2v-6"/><path d="M4 11.5v6c0 1.8 3.6 3.2 8 3.2s8-1.4 8-3.2v-6"/>',
+  file:'<path d="M14 2.5H7a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7.5l-5-5Z"/><path d="M14 2.5v5h5"/><path d="M8.5 13h7M8.5 17h5"/>',
+  users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16.5 5.2a3.5 3.5 0 0 1 0 6.6"/><path d="M18 14.6a6.5 6.5 0 0 1 3.5 5.4"/>',
+  circledot:'<circle cx="12" cy="12" r="9.5"/><circle cx="12" cy="12" r="3.2"/>',
+  sliders:'<path d="M3 7h12M19 7h2M3 17h4M11 17h10"/><circle cx="17" cy="7" r="2.2"/><circle cx="9" cy="17" r="2.2"/>',
+  check:'<path d="m5 12.5 5 5 9-10"/>',
+  rotate:'<path d="M3 12a9 9 0 1 0 2.6-6.4L3 8"/><path d="M3 3v5h5"/>'
+};
+function icon(name,size){
+  const d=P[name]; if(!d) return "";
+  return '<svg width="'+(size||18)+'" height="'+(size||18)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" '+
+         'stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+d+'</svg>';
+}
+function paintIcons(root){
+  (root||document).querySelectorAll("[data-icon]").forEach(function(el){
+    el.innerHTML = icon(el.getAttribute("data-icon"), +el.getAttribute("data-size")||18);
+    el.removeAttribute("data-icon");
+  });
+}
+
+/* ============================ state ============================ */
+const state = {
+  page:"overview", area:"All", search:"",
+  selectedId:"ADS-REV-001", lineageId:"ADS-REV-001",
+  validation:{definition:false,formula:false,grain:false,lineage:false},
+  notes:"", validatedCount:0
+};
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const kpiById = id => KPIS.find(k => k.id === id);
+const selected = () => kpiById(state.selectedId) || KPIS[0];
+const statusClass = s => "s-" + s.replace(/\s/g,"");
+
+function filtered(){
+  const q = state.search.trim().toLowerCase();
+  return KPIS.filter(k =>
+    (state.area === "All" || k.area === state.area) &&
+    (k.name + " " + k.id + " " + k.domain + " " + k.formula).toLowerCase().includes(q)
+  );
+}
+
+/* ============================ small builders ============================ */
+function sectionTitle(title, desc, action){
+  return '<div class="section"><div><h2>'+title+'</h2><p>'+desc+'</p></div><div>'+(action||"")+'</div></div>';
+}
+function metricCard(label, value, sub, ic, tone){
+  return '<div class="card"><div class="card-body"><div class="metric"><div>'+
+    '<p class="k">'+label+'</p><p class="v">'+value+'</p><p class="s">'+sub+'</p></div>'+
+    '<div class="icon t-'+(tone||"blue")+'">'+icon(ic,20)+'</div></div></div></div>';
+}
+function statusBadge(s){ return '<span class="badge '+statusClass(s)+'">'+s+'</span>'; }
+function levelBadge(l){ return '<span class="level"><span class="dot" style="background:'+LEVEL_COLORS[l]+'"></span>'+l+'</span>'; }
+function progress(v, cls){ return '<div class="progress '+(cls||"")+'"><div style="width:'+v+'%"></div></div>'; }
+
+function barChart(data){
+  const W=520,H=250,L=42,R=12,T=14,B=34;
+  const max = Math.max.apply(null, data.map(d=>d.value).concat([1]));
+  const top = Math.max(2, Math.ceil(max/2)*2);
+  const iw = W-L-R, ih = H-T-B, cw = iw/data.length;
+  let s = '<svg viewBox="0 0 '+W+' '+H+'" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" font-family="inherit">';
+  for(let i=0;i<=4;i++){
+    const y = T + ih*(i/4), val = Math.round(top*(1-i/4));
+    s += '<line x1="'+L+'" y1="'+y+'" x2="'+(W-R)+'" y2="'+y+'" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="3 3"/>';
+    s += '<text x="'+(L-10)+'" y="'+(y+4)+'" text-anchor="end" font-size="11" fill="#94a3b8">'+val+'</text>';
+  }
+  data.forEach(function(d,i){
+    const bw = Math.min(74, cw*0.55);
+    const x = L + cw*i + (cw-bw)/2;
+    const h = (d.value/top)*ih;
+    const y = T + ih - h;
+    s += '<rect x="'+x+'" y="'+y+'" width="'+bw+'" height="'+Math.max(h,0)+'" rx="8" fill="#2563eb"><title>'+esc(d.name)+': '+d.value+'</title></rect>';
+    s += '<text x="'+(x+bw/2)+'" y="'+(y-8)+'" text-anchor="middle" font-size="12" font-weight="600" fill="#1e293b">'+d.value+'</text>';
+    s += '<text x="'+(L+cw*i+cw/2)+'" y="'+(H-12)+'" text-anchor="middle" font-size="12" fill="#64748b">'+esc(d.name)+'</text>';
+  });
+  return s + '</svg>';
+}
+
+function donutChart(data){
+  const total = data.reduce((a,d)=>a+d.value,0);
+  if(!total) return '<div class="empty">No KPIs in the current scope</div>';
+  const r=70, C=2*Math.PI*r, gap=3;
+  let off=0;
+  let s = '<svg viewBox="0 0 200 200" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">'+
+          '<g transform="rotate(-90 100 100)">';
+  data.forEach(function(d,i){
+    if(!d.value) return;
+    const len = (d.value/total)*C;
+    s += '<circle cx="100" cy="100" r="'+r+'" fill="none" stroke="'+PIE[i]+'" stroke-width="26" '+
+         'stroke-dasharray="'+Math.max(len-gap,.5)+' '+(C-Math.max(len-gap,.5))+'" stroke-dashoffset="'+(-off)+'">'+
+         '<title>'+esc(d.name)+': '+d.value+'</title></circle>';
+    off += len;
+  });
+  s += '</g><text x="100" y="96" text-anchor="middle" font-size="26" font-weight="600" fill="#0f172a">'+total+'</text>'+
+       '<text x="100" y="116" text-anchor="middle" font-size="11" fill="#94a3b8">KPIs</text></svg>';
+  return s;
+}
+
+/* ============================ pages ============================ */
+function pageOverview(){
+  const f = filtered();
+  const stats = {
+    candidate: f.length,
+    reports: f.reduce((a,k)=>a+k.reports,0),
+    certified: f.filter(k=>k.status==="Certified").length,
+    review: f.filter(k=>k.status==="Needs Review").length
+  };
+  const areaData = ["Ad Sales","Finance","Marketing"].map(a=>({name:a,value:KPIS.filter(k=>k.area===a).length}));
+  const levelData = ["Parent","Derived","Child"].map(l=>({name:l,value:f.filter(k=>k.level===l).length}));
+  const steps = [["Discovered",15],["Mapped",13],["Proposed",7],["Validated",4],["Certified",3]];
+
+  return sectionTitle("KPI Landscape Overview",
+      "Executive view of discovered KPI candidates, validation state, and standardization opportunity.",
+      '<span class="badge badge-outline">Scope: '+esc(state.area)+'</span>') +
+    '<div class="grid g4">'+
+      metricCard("Candidate KPIs",stats.candidate,"Across selected scope","circledot","blue")+
+      metricCard("Report Associations",stats.reports,"Not deduplicated","file","violet")+
+      metricCard("Certified KPIs",stats.certified,"Approved sample state","checkcircle","teal")+
+      metricCard("Needs Review",stats.review,"Logic or ownership gap","alert","rose")+
+    '</div>'+
+    '<div class="grid g5 mt20">'+
+      '<div class="card span3"><div class="card-head"><h3>KPI candidates by business area</h3></div>'+
+        '<div class="card-body" style="height:288px">'+barChart(areaData)+'</div></div>'+
+      '<div class="card span2"><div class="card-head"><h3>Logic level mix</h3></div>'+
+        '<div class="card-body" style="height:240px">'+donutChart(levelData)+'</div>'+
+        '<div class="legend">'+levelData.map((x,i)=>'<span><span class="dot" style="background:'+PIE[i]+'"></span>'+x.name+' ('+x.value+')</span>').join("")+'</div>'+
+        '<div style="height:16px"></div></div>'+
+    '</div>'+
+    '<div class="card mt20"><div class="card-body">'+
+      '<div class="flex-between"><div><p style="font-weight:600;color:#0f172a">Standardization journey</p>'+
+      '<p class="fs12 muted" style="margin-top:4px">Each candidate progresses through evidence-based business and technical gates.</p></div>'+
+      '<button class="btn btn-outline" data-action="nav" data-value="certification">Open validation center '+icon("arrow",15)+'</button></div>'+
+      '<div class="grid g5" style="margin-top:20px">'+
+        steps.map(function(s,i){
+          return '<div class="step'+(i<2?" on":"")+'"><p class="n">0'+(i+1)+'</p><p class="t">'+s[0]+'</p>'+
+                 '<p class="d">'+s[1]+' sample records</p></div>';
+        }).join("")+
+      '</div>'+
+    '</div></div>';
+}
+
+function pageInventory(){
+  const f = filtered();
+  const head = ["KPI ID","KPI name","Area / domain","Logic level","Status","Reports","Confidence","Recommendation",""];
+  const rows = f.length ? f.map(function(k){
+    return '<tr><td class="mono id">'+k.id+'</td>'+
+      '<td><p style="font-weight:500;color:#0f172a">'+esc(k.name)+'</p><p class="sub">Owner: '+esc(k.owner)+'</p></td>'+
+      '<td><p>'+k.area+'</p><p class="sub">'+k.domain+'</p></td>'+
+      '<td>'+levelBadge(k.level)+'</td><td>'+statusBadge(k.status)+'</td><td>'+k.reports+'</td>'+
+      '<td><div style="display:flex;align-items:center;gap:8px"><div class="progress sm" style="width:56px">'+
+        '<div style="width:'+k.confidence+'%"></div></div><span class="fs12">'+k.confidence+'%</span></div></td>'+
+      '<td class="fs12">'+esc(k.recommendation)+'</td>'+
+      '<td><button class="btn btn-ghost btn-sm" data-action="review" data-value="'+k.id+'">Review '+icon("chevron",14)+'</button></td></tr>';
+  }).join("") : '<tr><td colspan="9"><div class="empty">No KPIs match this search and scope.</div></td></tr>';
+
+  return sectionTitle("KPI Inventory Explorer",
+      "Review extracted metric candidates, proposed logic levels, ownership, usage, and standardization recommendation.",
+      '<button class="btn btn-outline" data-action="toast" data-value="Column configuration is illustrative in this prototype.">'+icon("sliders",15)+'Configure columns</button>')+
+    '<div class="card" style="overflow:hidden"><div class="scroll-x"><table><thead><tr>'+
+      head.map(h=>'<th>'+h+'</th>').join("")+
+    '</tr></thead><tbody>'+rows+'</tbody></table></div></div>';
+}
+
+function pageLineage(){
+  const sel = kpiById(state.lineageId) || KPIS[0];
+  const nodes = [
+    {id:"ADS-REV-001",cls:"n-parent",tag:"PARENT • ADS-REV-001",name:"Total Ad Revenue",meta:"42 report associations",style:"top:20px;left:50%;transform:translateX(-50%)"},
+    {id:"ADS-REV-002",cls:"n-derived",tag:"DERIVED • ADS-REV-002",name:"Net Ad Revenue",meta:"Calculated from 3 inputs",style:"top:160px;left:16%"},
+    {id:"ADS-REV-003",cls:"n-derived",tag:"DERIVED • ADS-REV-003",name:"Revenue Growth %",meta:"Time comparison logic",style:"top:160px;right:16%"},
+    {id:"ADS-REV-004",cls:"n-child",tag:"CHILD • ADS-REV-004",name:"Linear Revenue",meta:"",style:"top:330px;left:4%"},
+    {id:"ADS-REV-005",cls:"n-child",tag:"CHILD • ADS-REV-005",name:"Digital Revenue",meta:"",style:"top:330px;left:31%"}
+  ];
+  const kv = [["Relationship", sel.children.length ? "Has component" : "Leaf metric"],
+              ["Business area", sel.area],["Domain", sel.domain],["Proposed owner", sel.owner],
+              ["Logic level", sel.level],["Validation risk", sel.risk]];
+
+  return sectionTitle("KPI Logic Levels &amp; Dependency View",
+      "Explore proposed parent, derived, and child KPI relationships before business certification. Select any node to inspect it.")+
+    '<div class="grid g3">'+
+      '<div class="card span2"><div class="card-body lg">'+
+        '<div style="display:flex;gap:16px;font-size:12px;margin-bottom:28px;flex-wrap:wrap">'+
+          Object.keys(LEVEL_COLORS).map(l=>'<span style="display:flex;align-items:center;gap:8px"><span class="dot" style="height:12px;width:12px;background:'+LEVEL_COLORS[l]+'"></span>'+l+' KPI</span>').join("")+
+        '</div>'+
+        '<div class="tree">'+
+          '<svg class="links">'+
+            '<line x1="50%" y1="92" x2="27%" y2="172" stroke="#cbd5e1" stroke-width="2"/>'+
+            '<line x1="50%" y1="92" x2="73%" y2="172" stroke="#cbd5e1" stroke-width="2"/>'+
+            '<line x1="27%" y1="262" x2="15%" y2="342" stroke="#cbd5e1" stroke-width="2"/>'+
+            '<line x1="27%" y1="262" x2="39%" y2="342" stroke="#cbd5e1" stroke-width="2"/>'+
+          '</svg>'+
+          nodes.map(function(n){
+            return '<button class="node '+n.cls+(state.lineageId===n.id?" sel":"")+'" style="'+n.style+'" '+
+              'data-action="lineage" data-value="'+n.id+'">'+
+              '<span class="tag">'+n.tag+'</span><p class="nm">'+n.name+'</p>'+
+              (n.meta?'<p class="meta">'+n.meta+'</p>':"")+'</button>';
+          }).join("")+
+        '</div>'+
+      '</div></div>'+
+      '<div class="card"><div class="card-head"><h3>Relationship inspector</h3></div><div class="card-body">'+
+        '<p class="fs12 muted">Selected KPI</p>'+
+        '<p style="font-weight:600;font-size:18px;color:#0f172a;margin-top:4px">'+esc(sel.name)+'</p>'+
+        '<p class="mono id" style="margin-top:4px">'+sel.id+'</p>'+
+        '<div style="margin-top:20px">'+kv.map(r=>'<div class="kv"><span>'+r[0]+'</span><span>'+esc(r[1])+'</span></div>').join("")+'</div>'+
+        (sel.children.length ? '<p class="fs12 muted" style="margin-bottom:12px">Components: '+sel.children.join(", ")+'</p>' : "")+
+        '<button class="btn btn-primary btn-block" data-action="review" data-value="'+sel.id+'">Inspect formula logic</button>'+
+      '</div></div>'+
+    '</div>';
+}
+
+function pageFormula(){
+  const s = selected(), f = filtered();
+  const options = (f.some(k=>k.id===s.id) ? f : KPIS)
+    .map(k=>'<option value="'+k.id+'"'+(k.id===s.id?" selected":"")+'>'+esc(k.name)+'</option>').join("");
+  const nullSafe = s.formula.indexOf("NULLIF") !== -1;
+  const tiles = [
+    ["Aggregation","Match",true],
+    ["Filter logic", s.risk==="High"?"Review":"Match", s.risk!=="High"],
+    ["Grain","Declared",true],
+    ["Null handling", nullSafe?"Protected":"Review", nullSafe]
+  ];
+
+  return sectionTitle("Formula Intelligence",
+      "Compare extracted MSTR logic with the proposed semantic definition and inspect standardization gaps.")+
+    '<div class="grid g3">'+
+      '<div class="card"><div class="card-head"><h3>Selected KPI</h3></div><div class="card-body">'+
+        '<select class="picker" data-action="pick">'+options+'</select>'+
+        '<div style="margin-top:20px"><p style="font-weight:600;font-size:18px;color:#0f172a">'+esc(s.name)+'</p>'+
+        '<p class="mono id" style="margin-top:4px">'+s.id+'</p></div>'+
+        '<div class="grid g2" style="margin-top:20px;gap:12px">'+
+          '<div class="chip"><p class="t">Level</p>'+levelBadge(s.level)+'</div>'+
+          '<div class="chip"><p class="t">Confidence</p><p style="font-weight:600;color:#0f172a">'+s.confidence+'%</p></div>'+
+        '</div>'+
+        '<div class="stack fs13" style="margin-top:20px">'+
+          '<p><span class="muted">Grain:</span> '+esc(s.grain)+'</p>'+
+          '<p><span class="muted">Owner:</span> '+esc(s.owner)+'</p>'+
+          '<p><span class="muted">Reports:</span> '+s.reports+'</p>'+
+          '<p><span class="muted">Source:</span> '+s.source+'</p>'+
+        '</div>'+
+      '</div></div>'+
+      '<div class="card span2"><div class="card-body lg">'+
+        '<div class="grid g2">'+
+          '<div><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;color:#f97316">'+icon("database",16)+
+            '<p style="font-weight:600;color:#0f172a">Extracted MSTR logic</p></div>'+
+            '<pre class="code mstr">'+esc(s.mstr)+'</pre></div>'+
+          '<div><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;color:#0891b2">'+icon("layers",16)+
+            '<p style="font-weight:600;color:#0f172a">Proposed semantic logic</p></div>'+
+            '<pre class="code sem">'+esc(s.formula)+'</pre></div>'+
+        '</div>'+
+        '<div class="grid g4" style="margin-top:20px;gap:12px">'+
+          tiles.map(function(t){
+            return '<div class="check-tile '+(t[2]?"ok":"warn")+'"><div class="hd">'+
+              '<span style="color:'+(t[2]?"#059669":"#d97706")+'">'+icon(t[2]?"checkcircle":"alert",15)+'</span>'+t[0]+
+              '</div><p class="bd">'+t[1]+'</p></div>';
+          }).join("")+
+        '</div>'+
+        '<div class="panel flex-between" style="margin-top:20px">'+
+          '<div><p style="font-weight:600;font-size:14px;color:#0f172a">System recommendation</p>'+
+          '<p class="fs12 muted" style="margin-top:4px">'+esc(s.recommendation)+'. Business confirmation is required before certification.</p></div>'+
+          statusBadge(s.status)+
+        '</div>'+
+        '<div style="display:flex;gap:8px;margin-top:16px;justify-content:flex-end">'+
+          '<button class="btn btn-outline" data-action="nav" data-value="impact">View report impact '+icon("arrow",15)+'</button>'+
+          '<button class="btn btn-primary" data-action="validate-go" data-value="'+s.id+'">Send to validation</button>'+
+        '</div>'+
+      '</div></div>'+
+    '</div>';
+}
+
+function pageStandardization(){
+  const list = CLUSTERS.filter(c => state.area==="All" || c.area===state.area);
+  const guide = [["Reuse","Definition already approved"],["Standardize","Align name, logic or grain"],
+                 ["Merge","Same business meaning"],["Keep local","Report-specific by design"],["Retire","Obsolete or superseded"]];
+  const cards = list.length ? list.map(function(c){
+    return '<div class="card"><div class="card-body">'+
+      '<div style="display:flex;justify-content:space-between;gap:16px">'+
+        '<div><span class="badge badge-outline">'+c.area+'</span>'+
+        '<h3 style="font-weight:600;margin-top:12px;font-size:15px">Canonical candidate: '+esc(c.canonical)+'</h3></div>'+
+        '<div class="score"><b>'+c.score+'%</b><span>match</span></div>'+
+      '</div>'+
+      '<div style="margin-top:12px">'+c.variants.map(v=>'<div class="variant"><span class="fs13">'+esc(v)+'</span>'+
+        '<span class="badge badge-outline">Legacy variant</span></div>').join("")+'</div>'+
+      '<div class="flex-between" style="margin-top:16px;border-top:1px solid var(--slate200);padding-top:16px">'+
+        '<p class="fs13"><span class="muted">Suggested action:</span> <b style="color:#0f172a">'+esc(c.action)+'</b></p>'+
+        '<button class="btn btn-outline btn-sm" data-action="review" data-value="'+c.canonicalId+'">Open cluster</button>'+
+      '</div></div></div>';
+  }).join("") : '<div class="card"><div class="empty">No duplicate clusters detected for '+esc(state.area)+'.</div></div>';
+
+  return sectionTitle("KPI Standardization Analysis",
+      "Review candidate duplicates and aliases identified from names, formulas, grain, filters, and report usage.")+
+    '<div class="grid g2">'+cards+'</div>'+
+    '<div class="card mt20"><div class="card-body">'+
+      '<h3 style="font-size:15px;font-weight:600">Standardization decision guide</h3>'+
+      '<div class="grid g5" style="margin-top:16px;gap:12px">'+
+        guide.map(g=>'<div class="guide"><p>'+g[0]+'</p><p>'+g[1]+'</p></div>').join("")+
+      '</div></div></div>';
+}
+
+function pageImpact(){
+  const s = selected();
+  const readiness = [["Lineage mapped",82],["Formula reconciled",68],["Owner identified",100],["Consumer notified",25]];
+  return sectionTitle("Report Impact Analysis",
+      "Understand downstream associations before changing, certifying, replacing, or retiring a KPI.",
+      '<span class="badge badge-outline">'+esc(s.name)+'</span>')+
+    '<div class="grid g4">'+
+      metricCard("Report associations",s.reports,"For "+esc(s.name),"file","blue")+
+      metricCard("Business areas","2","Direct or shared usage","users","violet")+
+      metricCard("Semantic models","3","Proposed mappings","database","teal")+
+      metricCard("Change risk",s.risk,"Illustrative assessment","alert","rose")+
+    '</div>'+
+    '<div class="grid g3 mt20">'+
+      '<div class="card span2"><div class="card-head"><h3>Representative report associations</h3></div><div class="card-body">'+
+        REPORTS.map(function(r,i){
+          return '<div class="report-row"><div style="display:flex;gap:12px;align-items:center">'+
+            '<div class="ic">'+icon("file",16)+'</div><div>'+
+            '<p style="font-size:14px;font-weight:500;color:#0f172a">'+r+'</p>'+
+            '<p class="sub">MSTR report • '+(i%2?"Derived formula":"Direct metric reference")+'</p></div></div>'+
+            '<span class="badge '+(i<2?"b-high":"b-mute")+'">'+(i<2?"High impact":"Review")+'</span></div>';
+        }).join("")+
+      '</div></div>'+
+      '<div class="card"><div class="card-head"><h3>Change readiness</h3></div><div class="card-body">'+
+        readiness.map(function(r){
+          return '<div style="margin-bottom:20px"><div class="flex-between fs12" style="margin-bottom:6px">'+
+            '<span>'+r[0]+'</span><span>'+r[1]+'%</span></div>'+progress(r[1])+'</div>';
+        }).join("")+
+        '<button class="btn btn-primary btn-block" data-action="validate-go" data-value="'+s.id+'">Start validation</button>'+
+      '</div></div>'+
+    '</div>';
+}
+
+function pageCertification(){
+  const s = selected(), f = filtered();
+  const queue = (f.length ? f : KPIS).slice(0,8);
+  const allChecked = CHECKS.every(c => state.validation[c[0]]);
+  return sectionTitle("Business Validation Center",
+      "Capture business decisions and evidence before promoting a metric candidate into the certified semantic KPI layer.")+
+    '<div class="grid g3">'+
+      '<div class="card"><div class="card-head"><h3>Validation queue</h3></div><div class="card-body">'+
+        queue.map(function(k){
+          return '<button class="queue-item'+(k.id===s.id?" active":"")+'" data-action="queue" data-value="'+k.id+'">'+
+            '<div class="hd"><p>'+esc(k.name)+'</p>'+icon("chevron",15)+'</div>'+
+            '<p class="id">'+k.id+' • '+k.area+'</p></button>';
+        }).join("")+
+      '</div></div>'+
+      '<div class="card span2"><div class="card-body lg">'+
+        '<div style="display:flex;justify-content:space-between;gap:16px;align-items:flex-start">'+
+          '<div><p class="mono id">'+s.id+'</p>'+
+          '<h3 style="font-size:20px;font-weight:600;margin-top:4px">'+esc(s.name)+'</h3>'+
+          '<p class="fs13 muted" style="margin-top:4px">'+s.area+' / '+s.domain+' • Proposed owner: '+esc(s.owner)+'</p></div>'+
+          statusBadge(s.status)+
+        '</div>'+
+        '<div class="grid g2" style="margin-top:24px">'+
+          '<div class="panel"><p class="t">Business definition</p>'+
+          '<p class="fs13" style="margin-top:8px">Standard business description to be confirmed by the accountable domain owner.</p></div>'+
+          '<div class="panel"><p class="t">Proposed semantic formula</p>'+
+          '<p class="mono fs12" style="margin-top:8px;word-break:break-word">'+esc(s.formula)+'</p></div>'+
+        '</div>'+
+        '<div style="margin-top:24px"><p style="font-weight:600;font-size:14px;color:#0f172a">Required validation checks</p>'+
+          '<div class="grid g2" style="margin-top:12px;gap:12px">'+
+            CHECKS.map(function(c){
+              const on = state.validation[c[0]];
+              return '<button class="check'+(on?" on":"")+'" data-action="check" data-value="'+c[0]+'">'+
+                '<span class="box">'+(on?icon("check",13):"")+'</span><span class="fs13">'+c[1]+'</span></button>';
+            }).join("")+
+          '</div>'+
+        '</div>'+
+        '<div style="margin-top:24px"><label style="font-size:14px;font-weight:500;color:#0f172a">Reviewer notes</label>'+
+          '<textarea data-action="notes" placeholder="Document rationale, exceptions, or required changes...">'+esc(state.notes)+'</textarea></div>'+
+        '<div class="flex-between" style="margin-top:20px">'+
+          '<button class="btn btn-outline" data-action="reset">'+icon("rotate",15)+'Reset</button>'+
+          '<div style="display:flex;gap:8px">'+
+            '<button class="btn btn-outline" data-action="return">Return for change</button>'+
+            '<button class="btn btn-emerald" data-action="certify"'+(allChecked?"":" disabled")+'>'+icon("shield",16)+'Mark business validated</button>'+
+          '</div>'+
+        '</div>'+
+      '</div></div>'+
+    '</div>';
+}
+
+const RENDERERS = {
+  overview:pageOverview, inventory:pageInventory, lineage:pageLineage, formula:pageFormula,
+  standardization:pageStandardization, impact:pageImpact, certification:pageCertification
+};
+
+/* ============================ render ============================ */
+function renderChrome(){
+  document.getElementById("nav").innerHTML = PAGES.map(function(p){
+    return '<button class="nav-item'+(state.page===p[0]?" active":"")+'" data-action="nav" data-value="'+p[0]+'">'+
+      icon(p[2],17)+'<span>'+p[1]+'</span>'+(state.page===p[0]?'<span class="chev">'+icon("chevron",15)+'</span>':"")+'</button>';
+  }).join("");
+  document.getElementById("areas").innerHTML = AREAS.map(function(a){
+    return '<button class="'+(state.area===a?"active":"")+'" data-action="area" data-value="'+a+'">'+a+'</button>';
+  }).join("");
+  const pct = Math.min(100, 36 + state.validatedCount*8);
+  document.getElementById("bv-pct").textContent = pct + "%";
+  document.getElementById("bv-bar").style.width = pct + "%";
+}
+
+function render(){
+  renderChrome();
+  const view = document.getElementById("view");
+  view.innerHTML = RENDERERS[state.page]();
+  paintIcons(view);
+  view.style.animation = "none";
+  void view.offsetWidth;
+  view.style.animation = "";
+}
+
+let toastTimer;
+function toast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove("show"), 2600);
+}
+
+function exportCsv(){
+  const cols = Object.keys(KPIS[0]).filter(k => k !== "children");
+  const rows = [cols.join(",")].concat(filtered().map(k =>
+    cols.map(c => '"' + String(k[c]).split('"').join('""') + '"').join(",")));
+  const blob = new Blob([rows.join("\n")], {type:"text/csv;charset=utf-8"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = "sample_kpi_catalog.csv";
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 1000);
+  toast("Exported " + filtered().length + " KPI rows to sample_kpi_catalog.csv");
+}
+
+/* ============================ interactions ============================ */
+document.addEventListener("click", function(e){
+  const el = e.target.closest("[data-action]");
+  if(!el) return;
+  const action = el.getAttribute("data-action");
+  const value = el.getAttribute("data-value");
+
+  if(action === "nav"){ state.page = value; render(); window.scrollTo({top:0,behavior:"smooth"}); }
+  else if(action === "area"){ state.area = value; render(); }
+  else if(action === "review"){ state.selectedId = value; state.lineageId = value; state.page = "formula"; render(); window.scrollTo({top:0,behavior:"smooth"}); }
+  else if(action === "lineage"){ state.lineageId = value; render(); }
+  else if(action === "queue"){ state.selectedId = value; state.validation = {definition:false,formula:false,grain:false,lineage:false}; render(); }
+  else if(action === "validate-go"){ state.selectedId = value; state.page = "certification"; render(); window.scrollTo({top:0,behavior:"smooth"}); }
+  else if(action === "check"){ state.validation[value] = !state.validation[value]; render(); }
+  else if(action === "reset"){ state.validation = {definition:false,formula:false,grain:false,lineage:false}; state.notes = ""; render(); toast("Validation checklist reset"); }
+  else if(action === "return"){
+    const k = selected(); k.status = "Needs Review";
+    state.validation = {definition:false,formula:false,grain:false,lineage:false};
+    render(); toast(k.name + " returned for change");
+  }
+  else if(action === "certify"){
+    const k = selected();
+    if(k.status !== "Certified") state.validatedCount++;
+    k.status = "Certified"; k.confidence = Math.max(k.confidence, 99);
+    state.validation = {definition:false,formula:false,grain:false,lineage:false}; state.notes = "";
+    render(); toast(k.name + " marked business validated and certified");
+  }
+  else if(action === "export"){ exportCsv(); }
+  else if(action === "toast"){ toast(value); }
+});
+
+document.addEventListener("change", function(e){
+  const el = e.target.closest('[data-action="pick"]');
+  if(el){ state.selectedId = el.value; state.lineageId = el.value; render(); }
+});
+
+document.addEventListener("input", function(e){
+  if(e.target.id === "search"){ state.search = e.target.value; render(); }
+  else if(e.target.matches('[data-action="notes"]')){ state.notes = e.target.value; }
+});
+
+paintIcons(document);
+render();
+</script>
+</body>
+</html>

@@ -8,7 +8,9 @@ const Approval = ({S}) => {
   const { st, up, log } = S;
   const toast = useToast();
   const [ask, setAsk] = useState(null);
-  const [tab, setTab] = useState("lines");
+  const [tab, setTab] = useState(["lines","position","inventory","package"].includes(HASH[3]) ? HASH[3] : "lines");
+  const [invOpen, setInv] = useState(null);   // which line's inventory position is open
+  const [wfOpen, setWf]   = useState(null);   // which line's waterfall is open
   const ver = st.versions.find(v=>v.id===st.committed);
 
   if (!ver) return (
@@ -28,6 +30,20 @@ const Approval = ({S}) => {
   const gate = useMemo(() => evaluateGate("approval", st, {}), [st]);
   const apSpend = approved.reduce((s,l)=>s+l.spend,0);
   const dpSpend = disapproved.reduce((s,l)=>s+l.spend,0);
+
+  /* A fresh Constrained run supersedes the previous one rather than replacing
+     it — both remain readable with their run dates, so the delta between them
+     is visible (T4, Forecast §10). P&I can ask for one when the figures are
+     older than the staleness threshold; the planner then accepts a new version
+     or proceeds with the existing one. */
+  const rerun = (line) => {
+    const fresh = constrainedFor(PRODUCTS.find(p=>p.id===line.pid), line.custom);
+    const delta = (fresh.availK - line.constrainedK) / Math.max(line.constrainedK, 1);
+    log("sys", `Fresh Constrained run requested on ${line.name} at approval. ${imps(fresh.availK)} against ${imps(line.constrainedK)} on the ${line.forecastRunAt} pass — ${pctn(delta*100,1)}. The earlier run is superseded, not replaced; both stay readable.`);
+    toast(Math.abs(delta) > 0.05
+      ? `Inventory moved ${pctn(delta*100,1)} — the planner sees the delta`
+      : `Re-run: ${pctn(delta*100,1)}, no material change`);
+  };
 
   const decide = (line, d, reason, weight) => {
     up(s => ({ decisions: {...s.decisions, [line.pid]: { d, reason, weight, at: NOW(), spend: line.spend }} }));
@@ -99,13 +115,19 @@ const Approval = ({S}) => {
                   <div>
                     <div className="lbl">What it does to inventory</div>
                     <div className="tiny" style={{marginBottom:5}}>
-                      Takes <b>{pct(l.availUse,0)}</b> of sellable avails for the flight.</div>
+                      Takes <b>{pct(l.availUse,0)}</b> of the net available this line was forecast against.</div>
                     <div className="row tiny" style={{gap:7}}>
                       <span className="dim">{l.region} {l.medium} sellout</span>
                       <b>{pctn(inv.selloutBefore,0)}</b><span className="dim">→</span>
                       <b style={{color: inv.selloutAfter>85?"var(--warn)":"var(--good)"}}>{pctn(inv.selloutAfter,0)}</b>
                     </div>
                     <Bar v={inv.selloutAfter/100} c={inv.selloutAfter>85?"a":"g"}/>
+                    <div className="row" style={{gap:6, marginTop:7}}>
+                      <Btn c="xs" onClick={()=>setInv(inv2 => inv2===l.pid ? null : l.pid)}>
+                        {invOpen===l.pid ? "Hide the inventory position" : "Project onto real-time inventory"}</Btn>
+                      <Btn c="xs gho" onClick={()=>setWf(w => w===l.pid ? null : l.pid)}>
+                        {wfOpen===l.pid ? "Hide derivation" : "How this number was derived"}</Btn>
+                    </div>
                   </div>
                   <div>
                     <div className="lbl">Against your position</div>
@@ -118,6 +140,32 @@ const Approval = ({S}) => {
                       posture — {POSTURE_LABEL[(PRODUCTS.find(p=>p.id===l.pid)||{}).yieldPosture]?.toLowerCase()}.</div>}
                   </div>
                 </div>
+
+                {/* The plan under review projected onto the real inventory
+                    position — this line running alongside everything already
+                    booked and pressured, and everything else in flight. */}
+                {invOpen===l.pid && (
+                  <div className="card" style={{marginBottom:10}}><div className="card-b">
+                    <div className="row" style={{marginBottom:8}}>
+                      <div className="lbl" style={{margin:0}}>Real-time inventory · {l.name.split(" — ")[0]}</div>
+                      <div style={{flex:1}}/>
+                      <StaleBadge runAt={l.forecastRunAt} onRerun={()=>rerun(l)}/>
+                    </div>
+                    <SellThrough line={l}/>
+                    <div className="mini dim" style={{marginTop:9, lineHeight:1.5}}>
+                      The reserved figure is a live read at the moment of decision. The forecast figures are
+                      as at the optimiser run date above — re-running the waterfall and re-reading the current
+                      inventory position are two different things.
+                    </div>
+                  </div></div>
+                )}
+
+                {wfOpen===l.pid && (
+                  <div className="card" style={{marginBottom:10}}><div className="card-b">
+                    <div className="lbl">Constrained avails — the derivation</div>
+                    <WaterfallView w={l.waterfall}/>
+                  </div></div>
+                )}
 
                 {l.overridden && (
                   <div className="banner b" style={{marginBottom:10}}>
@@ -179,7 +227,42 @@ const Approval = ({S}) => {
           </div>
         )}
 
-        {tab==="inventory" && (
+        {tab==="inventory" && (<>
+          <Card title="Forecast the decision rests on"
+            sub="Two fidelity classes reach planning. Only one of them is admissible here."
+            right={<StaleBadge runAt={versionFidelity(ver).runAt}/>}>
+            <div className="g2" style={{gap:13}}>
+              {["indicative","constrained"].map(k => {
+                const d = FIDELITY[k];
+                const n = k === "constrained" ? versionFidelity(ver).constrainedLines : versionFidelity(ver).indicativeLines.length;
+                return (
+                  <div key={k} className="card"><div className="card-b">
+                    <div className="row" style={{marginBottom:6}}>
+                      <FidelityChip f={k}/>
+                      <b style={{fontSize:12.5}}>{d.label}</b>
+                      <div style={{flex:1}}/>
+                      <span className="tiny dim">{n} line{n===1?"":"s"}</span>
+                    </div>
+                    <div className="tiny muted" style={{marginBottom:7, lineHeight:1.55}}>{d.what}</div>
+                    <dl className="kv mini" style={{gridTemplateColumns:"88px 1fr"}}>
+                      <dt>Granularity</dt><dd>{d.granularity}</dd>
+                      <dt>Targeting</dt><dd>{d.targeting}</dd>
+                      <dt>Computed</dt><dd>{d.computed}</dd>
+                      <dt>Admissible</dt><dd>{d.admissible}</dd>
+                    </dl>
+                  </div></div>
+                );
+              })}
+            </div>
+            <div className="banner b" style={{marginTop:12}}>
+              <span className="bi">The binding rule</span>
+              <div>A plan version cannot be committed for approval while any line still rests on an Indicative
+                figure. That is T5 applied to inventory rather than to advertiser requirements — an inferred value
+                is a proposal and must be confirmed before approval. It is what lets Discovery be fast and
+                approximate without making this package indefensible.</div>
+            </div>
+          </Card>
+
           <Card title="What the whole plan does to inventory" tight
             sub="Sellout before and after, and yield against floor, for every line.">
             <XL name="inventory_effect" height={380} rows={ver.lines.map(l=>{
@@ -201,9 +284,19 @@ const Approval = ({S}) => {
               { key:"selloutBefore", label:"Sellout now", w:88, align:"r", get:l=>pctn(l.selloutBefore,0) },
               { key:"selloutAfter", label:"Sellout after", w:92, align:"r", get:l=>pctn(l.selloutAfter,0),
                 cell:l=><b style={{color:l.selloutAfter>85?"var(--warn)":null}}>{pctn(l.selloutAfter,0)}</b> },
+              { key:"fidelity", label:"Class", w:58, align:"c", get:l=>l.fidelity||"indicative",
+                cell:l=><FidelityChip f={l.fidelity} runAt={l.forecastRunAt}/> },
+              { key:"umpPid", label:"UMP placement ID", w:130, get:l=>l.umpPid||"—" },
+              { key:"indicativeK", label:"Was · ind", w:80, align:"r", get:l=>imps(l.indicativeK), raw:l=>l.indicativeK,
+                help:"The Indicative pre-screen Discovery ranked on, before this line's targeting was applied." },
+              { key:"forecastRunAt", label:"Forecast run", w:118, get:l=>l.forecastRunAt||"—" },
             ]}/>
+            <div className="tiny dim" style={{marginTop:9, lineHeight:1.55}}>
+              Every Constrained figure above has a ten-step derivation behind it and a run date attached.
+              Open any line on the Lines tab to read it.
+            </div>
           </Card>
-        )}
+        </>)}
 
         {tab==="package" && (
           <div className="brief">
@@ -234,10 +327,16 @@ const Approval = ({S}) => {
                       <span className="why">“{ver.justifications[pid]}”</span></div></div>;
                 })}
 
-            <h4>The rubric read</h4>
-            {RUBRIC.map(r=>(
-              <div className="bl" key={r.k}><div className="bk">{r.label}</div>
-                <div className="bv"><b>{ver.rubric.parts[r.k].toFixed(0)}</b><span className="why">{r.help}</span></div></div>))}
+            <h4>The rubric read — {ver.rubric.clear} of {ver.rubric.of} dimensions clear</h4>
+            {RUBRIC.map(r=>{
+              const v = ver.rubric.parts[r.k], clear = v >= r.bar;
+              return (
+                <div className="bl" key={r.k}><div className="bk">{r.label}</div>
+                  <div className="bv"><b style={{color: clear?null:"var(--warn)"}}>{v.toFixed(0)}</b>
+                    <span className="dim"> against {r.bar} for this RFP{clear ? "" : ` — ${(r.bar-v).toFixed(0)} short`}</span>
+                    <span className="why">{r.help}</span></div></div>
+              );
+            })}
           </div>
         )}
       </div>
@@ -280,7 +379,7 @@ const Approval = ({S}) => {
         <Gate gate={gate}
           note="P&I's own handoff. The orchestrator scores the approval package the same way it scored the planner's work — a disapproval that does not say what would make the line approvable is not a decision the planner can act on."/>
 
-        <Assist title="What I would look at">
+        <Assist title="Worth looking at">
           {(() => {
             const thin = ver.lines.map(l=>({l, inv:inventoryImpact({...l, p:PRODUCTS.find(p=>p.id===l.pid)})}))
               .filter(x=>x.inv.vsFloor < 0.10).sort((a,b)=>a.inv.vsFloor-b.inv.vsFloor)[0];
@@ -308,7 +407,10 @@ const Approval = ({S}) => {
               <dt>Linear share</dt><dd>{pct(ver.roll.linearPct,1)}</dd>
               <dt>3+ reach</dt><dd>{pct(ver.roll.reach3,1)} vs {pct(FRAME.reachGoal3,1)} goal</dd>
               <dt>Overrides</dt><dd>{Object.keys(ver.overrides).length}, each justified</dd>
-              <dt>Rubric</dt><dd>{ver.rubric.total.toFixed(0)}</dd>
+              <dt>Rubric</dt><dd>{ver.rubric.clear} of {ver.rubric.of} dimensions clear
+                {ver.rubric.below.length ? ` · short on ${ver.rubric.below[0].label}` : ""}</dd>
+              <dt>Forecast</dt><dd>{versionFidelity(ver).constrainedLines} of {ver.lines.length} lines constrained
+                <span className="dim">, run {versionFidelity(ver).runAt || "—"}</span></dd>
             </dl>
           </div>
         </Card>

@@ -1,0 +1,36 @@
+# Initiative / domain / project placement for epics that are NOT in the initiative
+# workbook (CARL_Epic_SP_by_Status_20261023_Mapped_Ping_v4.xlsx).
+#
+# The workbook is the source of truth. This file only covers epics created after
+# it was exported, so each entry is a stated inference: it copies the placement
+# of a sibling epic (`like`) and may override the analytics domain (`d`). Every
+# entry lands on the page flagged "mapping inferred" so nobody mistakes it for
+# the workbook. Delete an entry once the workbook is re-exported with that epic.
+#
+# Applied by tools/place_new_epics.py after each refresh.
+epics:
+  # Nielsen / measurement Bronze
+  '4292': {like: '3500'}                       # MIT panel history -> Nielsen Big MIT Bronze
+  '4293': {like: '4289'}                       # AMRLD: source team unconfirmed -> generic Measurement Bronze
+  # iDeal CMP
+  '4302': {like: '351'}                        # split of the CMP MWAA DAG
+  # Linear & Digital Revenue phase 2
+  '4315': {like: '312'}                        # Silver
+  '4316': {like: '313'}                        # Gold
+  # MicroStrategy migration
+  '4317': {like: '3790'}                       # Ad Sales batch 2.4
+  '4332': {like: '3790'}                       # Ad Sales batch 2.5
+  '4318': {like: '4158', d: ''}                # Hive reports: no Hive domain defined yet
+  '4615': {like: '1693'}                       # Lumos prod readiness
+  # IBM DataStage migration (DS-MIG)
+  '4420': {like: '3562', d: 'Ad Sales'}
+  '4436': {like: '3562', d: 'Ad Sales'}
+  '4437': {like: '3562', d: 'Ad Sales'}
+  '4438': {like: '3562', d: 'Ad Sales'}
+  '4439': {like: '3562', d: 'Ad Sales'}
+  '4440': {like: '3562', d: 'Ad Sales'}
+  '4516': {like: '3562', d: ''}
+  '4517': {like: '3562', d: ''}
+  '4518': {like: '3562', d: ''}
+  # Platform
+  '4603': {like: '2'}                          # repo restructure under CARL Infrastructure

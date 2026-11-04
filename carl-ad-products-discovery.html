@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CARL · Ad Products Discovery — Week 35 Data Requirements</title>
+<style>
+  :root{
+    --ink:#14171a; --ink2:#3d454d; --ink3:#6b7580; --ink4:#98a1ab;
+    --line:#e3e7ea; --line2:#eef1f3; --bg:#ffffff; --bg2:#f7f9fa; --bg3:#fbfcfd;
+    --red:#b4232a; --redbg:#fdf3f3; --amber:#96650d; --amberbg:#fdf8ef;
+    --green:#1c6b45; --greenbg:#f1f8f4; --blue:#1d4e89; --bluebg:#f2f6fb;
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font:15px/1.62 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{display:grid; grid-template-columns:252px minmax(0,1fr); gap:0; max-width:1500px; margin:0 auto}
+
+  /* ---- nav ---- */
+  nav{
+    position:sticky; top:0; align-self:start; height:100vh; overflow-y:auto;
+    border-right:1px solid var(--line); padding:30px 20px 40px; background:var(--bg3);
+  }
+  nav .navtitle{font-size:11px; letter-spacing:.09em; text-transform:uppercase; color:var(--ink4); font-weight:700; margin-bottom:14px}
+  nav ol{list-style:none; margin:0; padding:0; counter-reset:n}
+  nav ol li{counter-increment:n; margin-bottom:1px}
+  nav ol li a{
+    display:block; padding:6px 9px 6px 30px; text-decoration:none; color:var(--ink2);
+    font-size:13.5px; border-radius:5px; position:relative; line-height:1.4;
+  }
+  nav ol li a::before{
+    content:counter(n); position:absolute; left:9px; color:var(--ink4);
+    font-variant-numeric:tabular-nums; font-size:11.5px; top:7px;
+  }
+  nav ol li a:hover{background:#eceff2; color:var(--ink)}
+
+  /* ---- main ---- */
+  main{padding:44px 52px 120px; min-width:0}
+  header.doc{border-bottom:2px solid var(--ink); padding-bottom:22px; margin-bottom:34px}
+  .eyebrow{font-size:11.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink3); font-weight:700}
+  h1{font-size:30px; line-height:1.2; margin:9px 0 12px; letter-spacing:-.4px; font-weight:700}
+  .sub{color:var(--ink2); font-size:15.5px; max-width:84ch; margin:0}
+  .meta{margin-top:18px; display:flex; flex-wrap:wrap; gap:7px 9px; font-size:12.5px}
+  .meta span{background:var(--bg2); border:1px solid var(--line); border-radius:4px; padding:3px 9px; color:var(--ink2)}
+
+  h2{font-size:21px; margin:52px 0 6px; letter-spacing:-.2px; padding-top:6px; font-weight:700}
+  h2 .num{color:var(--ink4); font-weight:600; margin-right:9px; font-variant-numeric:tabular-nums}
+  h3{font-size:15.5px; margin:30px 0 8px; font-weight:700}
+  h4{font-size:13.5px; margin:20px 0 6px; font-weight:700; color:var(--ink2)}
+  p{margin:9px 0; max-width:92ch}
+  .lede{color:var(--ink2); max-width:92ch}
+  code,.c{font-family:var(--mono); font-size:.875em; background:var(--bg2); border:1px solid var(--line2); border-radius:3px; padding:1px 4px; color:#1f2937; white-space:nowrap}
+  .hr{height:1px; background:var(--line); border:0; margin:46px 0 0}
+
+  /* ---- stat strip ---- */
+  .stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(132px,1fr)); gap:0; border:1px solid var(--line); border-radius:7px; overflow:hidden; margin:22px 0 4px}
+  .stats div{padding:14px 16px; border-right:1px solid var(--line); background:var(--bg3)}
+  .stats div:last-child{border-right:0}
+  .stats .v{font-size:21px; font-weight:700; letter-spacing:-.4px; font-variant-numeric:tabular-nums; line-height:1.2}
+  .stats .l{font-size:11.5px; color:var(--ink3); margin-top:3px; line-height:1.35}
+  .stats .v.red{color:var(--red)} .stats .v.amber{color:var(--amber)} .stats .v.green{color:var(--green)}
+
+  /* ---- tables ---- */
+  table{width:100%; border-collapse:collapse; margin:14px 0 6px; font-size:13.3px; line-height:1.5}
+  caption{caption-side:top; text-align:left; font-size:12px; color:var(--ink3); padding-bottom:7px}
+  th{
+    text-align:left; font-weight:700; font-size:11.5px; letter-spacing:.045em; text-transform:uppercase;
+    color:var(--ink3); border-bottom:1.5px solid var(--ink); padding:0 11px 7px; vertical-align:bottom;
+  }
+  td{border-bottom:1px solid var(--line2); padding:9px 11px; vertical-align:top; color:var(--ink2)}
+  tbody tr:hover td{background:var(--bg3)}
+  td:first-child,th:first-child{padding-left:2px}
+  td strong{color:var(--ink); font-weight:600}
+  .num{text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap}
+  .ctr{text-align:center}
+  .mono td:first-child, td.mono{font-family:var(--mono); font-size:12.4px; color:var(--ink); white-space:nowrap}
+  .tight td{padding:7px 11px}
+  .sm{font-size:12.4px}
+
+  /* ---- tags ---- */
+  .t{display:inline-block; font-size:10.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase;
+     padding:2.5px 7px; border-radius:3px; white-space:nowrap; border:1px solid}
+  .t.crit{background:var(--redbg); color:var(--red); border-color:#f0cdcf}
+  .t.mat{background:var(--amberbg); color:var(--amber); border-color:#f0e0c0}
+  .t.low{background:var(--bluebg); color:var(--blue); border-color:#cfdcec}
+  .t.ok{background:var(--greenbg); color:var(--green); border-color:#c6e2d1}
+  .t.p0{background:var(--redbg); color:var(--red); border-color:#f0cdcf}
+  .t.p1{background:var(--amberbg); color:var(--amber); border-color:#f0e0c0}
+  .t.p2,.t.p3{background:var(--bg2); color:var(--ink3); border-color:var(--line)}
+  .t.have{background:var(--greenbg); color:var(--green); border-color:#c6e2d1}
+  .t.part{background:var(--amberbg); color:var(--amber); border-color:#f0e0c0}
+  .t.gap{background:var(--redbg); color:var(--red); border-color:#f0cdcf}
+
+  /* ---- callouts ---- */
+  .box{border:1px solid var(--line); border-left:3px solid var(--ink3); border-radius:0 6px 6px 0; padding:14px 18px; margin:20px 0; background:var(--bg3)}
+  .box.crit{border-left-color:var(--red); background:var(--redbg); border-color:#f2d8da}
+  .box.warn{border-left-color:var(--amber); background:var(--amberbg); border-color:#f1e6d0}
+  .box.info{border-left-color:var(--blue); background:var(--bluebg); border-color:#d8e3ef}
+  .box .bt{font-weight:700; color:var(--ink); margin-bottom:5px; font-size:14px}
+  .box p{margin:5px 0; font-size:13.6px; max-width:none}
+  .box p:last-child{margin-bottom:0}
+
+  /* ---- report card ---- */
+  .rep{border:1px solid var(--line); border-radius:8px; margin:22px 0; overflow:hidden}
+  .rep > .h{display:flex; align-items:center; gap:11px; flex-wrap:wrap; padding:12px 16px; background:var(--bg2); border-bottom:1px solid var(--line)}
+  .rep > .h .id{font-family:var(--mono); font-size:12.5px; font-weight:700; color:var(--ink)}
+  .rep > .h .nm{font-weight:700; font-size:14.5px; color:var(--ink)}
+  .rep > .h .sp{margin-left:auto; font-size:12.3px; color:var(--ink3)}
+  .rep > .b{padding:4px 16px 14px}
+  .rep table{margin-top:10px}
+  .grain{font-size:12.8px; color:var(--ink2); background:var(--bg3); border:1px solid var(--line2); border-radius:5px; padding:9px 12px; margin:12px 0 0}
+  .grain b{color:var(--ink)}
+
+  ul.tk{margin:9px 0; padding-left:20px; max-width:92ch}
+  ul.tk li{margin:4px 0; color:var(--ink2)}
+  ul.tk li b{color:var(--ink)}
+
+  footer{margin-top:60px; padding-top:18px; border-top:1px solid var(--line); font-size:12.4px; color:var(--ink3); max-width:96ch}
+
+  @media print{
+    nav{display:none} .wrap{grid-template-columns:1fr; max-width:none} main{padding:0}
+    body{font-size:10.3pt} h2{page-break-after:avoid; margin-top:24px} table{page-break-inside:auto; font-size:8.6pt}
+    tr{page-break-inside:avoid} .rep,.box{page-break-inside:avoid} a{color:inherit; text-decoration:none}
+  }
+  @media(max-width:1000px){ .wrap{grid-template-columns:1fr} nav{position:static; height:auto; border-right:0; border-bottom:1px solid var(--line)} main{padding:28px 22px 80px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<nav>
+  <div class="navtitle">Contents</div>
+  <ol>
+    <li><a href="#s1">Executive summary</a></li>
+    <li><a href="#s2">Current lineage</a></li>
+    <li><a href="#s3">Formula inventory</a></li>
+    <li><a href="#s4">Data quality findings</a></li>
+    <li><a href="#s5">Looker reports required</a></li>
+    <li><a href="#s6">Reference tables required</a></li>
+    <li><a href="#s7">What's missing — gap register</a></li>
+    <li><a href="#s8">Target Iceberg model</a></li>
+    <li><a href="#s9">Data quality gate</a></li>
+    <li><a href="#s10">User stories</a></li>
+    <li><a href="#s11">Open questions for SME</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<header class="doc">
+  <div class="eyebrow">CARL · Ad Products · Discovery Output</div>
+  <h1>2026 ALL Ad Innovation Revenue — Week 35<br>Data Requirements &amp; Iceberg Remodel</h1>
+  <p class="sub">Formula-level extraction of the manual weekly revenue and yield model, the exact field-level data
+  required to replace it, the Looker reports needed to source that data, and the gaps that block a P0 build.</p>
+  <div class="meta">
+    <span>Source: <code>2026 ALL Ad Innovation Revenue - Week 35.xlsx</code></span>
+    <span>871 KB · 19 sheets · 20,936 formulas</span>
+    <span>Workbook dated 8.25.26</span>
+    <span>Cross-referenced: <code>CARL_AdProducts_PRD_v0.2.docx</code></span>
+    <span>Intake template v1.1</span>
+    <span>SME: Jamie Jackette (Finance — Ad Products)</span>
+  </div>
+</header>
+
+<!-- ============================= 1 ============================= -->
+<h2 id="s1"><span class="num">1</span>Executive summary</h2>
+<p class="lede">The workbook is not a source of data. It is a third-order derivative that reads two other
+week-stamped manual workbooks from SharePoint, applies bucketing and dedup logic across 20,936 formulas, and
+produces the bi-weekly executive package. Three defects in it change reported numbers today, which means
+"reconcile to the current Excel model" cannot be used as an acceptance criterion without first agreeing which
+of the current numbers are wrong.</p>
+
+<div class="stats">
+  <div><div class="v">20,936</div><div class="l">Formulas across 19 sheets</div></div>
+  <div><div class="v">56</div><div class="l">Rows of actual booked data</div></div>
+  <div><div class="v">2</div><div class="l">Upstream manual workbooks</div></div>
+  <div><div class="v red">5</div><div class="l">Critical defects</div></div>
+  <div><div class="v amber">6</div><div class="l">Looker reports required</div></div>
+  <div><div class="v red">9</div><div class="l">Required fields with no source</div></div>
+</div>
+
+<table>
+  <caption>Reported figures as cached in the Week 35 workbook, dated 8.25.26</caption>
+  <thead><tr><th>Measure</th><th>Sheet · cell</th><th class="num">Value</th><th>Note</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Full-year booked revenue</strong></td><td class="mono">EXEC Summary!O26</td><td class="num">$157,288,062</td><td>Sum of 18 premium products</td></tr>
+    <tr><td>Full-year forecast</td><td class="mono">EXEC Summary!P26</td><td class="num">$211,571,453</td><td>Sourced from external FC Model; no PRD story covers forecast</td></tr>
+    <tr><td>Full-year impressions</td><td class="mono">EXEC Summary!Q26</td><td class="num">5,243,956,022</td><td>Includes the 1.9&times; In-front adjustment</td></tr>
+    <tr><td><strong>Yield %</strong></td><td class="mono">EXEC Summary!O27</td><td class="num">130.9%</td><td>Corrupted by DQ-1 — see finding below</td></tr>
+    <tr><td>DAT revenue</td><td class="mono">EXEC Summary!O29</td><td class="num">$290,660,082</td><td>From external Advanced Advertising FC Model</td></tr>
+    <tr><td>Operative revenue, all rows</td><td class="mono">Data!BN1</td><td class="num">$164,846,751</td><td></td></tr>
+    <tr><td>Operative revenue, flagged Include</td><td class="mono">Data!BN2</td><td class="num">$142,649,967</td><td>$22,196,785 excluded as Display</td></tr>
+    <tr><td>GAM display revenue, total</td><td class="mono">DISPLAY DATA!AC3</td><td class="num">$80,378,174</td><td>Gross, not net — see DQ-4</td></tr>
+    <tr><td>GAM display impressions</td><td class="mono">DISPLAY DATA!AD3</td><td class="num">16,137,945,319</td><td></td></tr>
+    <tr><td>In-front revenue, full year</td><td class="mono">EXEC Summary!O7</td><td class="num">$75,085,614</td><td>48% of all ad product revenue, in one product</td></tr>
+  </tbody>
+</table>
+
+<div class="box crit">
+  <div class="bt">The report's headline metric is wrong for two compounding reasons</div>
+  <p>139 formulas across the four Product Info sheets filter <code>Data!$B:$B</code> for <code>"Infornt"</code> — a
+  misspelling of "Infront" that never appears in the data. Those sheets feed the yield adjustment term on the quarter
+  sheets, so the error lands directly in Yield&nbsp;$ and Yield&nbsp;%.</p>
+  <p>The same formulas also filter <code>Data!$G:$G = "Sports"</code>. That column holds free-text sponsorship package
+  names such as <code>"2026 March Madness | Custom"</code> and can never equal "Sports". Correcting the spelling alone
+  still returns $0. Both need an SME decision on the intended value before any reconciliation tolerance is meaningful.</p>
+</div>
+
+<div class="box info">
+  <div class="bt">Ad Innovation is a reclassification, not incremental revenue</div>
+  <p>The bucket identity on the quarter sheets is <code>Q = G + (E − I) + (M − (G − I))</code>, which reduces
+  algebraically to <code>E + M</code>. Ad Innovation revenue is already contained within DAT and Traditional Digital.
+  Summing the three headline buckets naively overcounts by exactly the Ad Innovation figure — $3.22M on Entertainment
+  1Q alone. This is PRD risk&nbsp;#6, and it is why the dedup identity must be an asserted test rather than a convention.</p>
+</div>
+
+<!-- ============================= 2 ============================= -->
+<h2 id="s2"><span class="num">2</span>Current lineage</h2>
+<p class="lede">Everything the report produces traces back through two intermediate manual workbooks stored under a
+folder named for the reporting week. The links must be repointed every cycle, and neither upstream workbook is under
+version control.</p>
+
+<table>
+  <caption>Data sources feeding the Week 35 workbook</caption>
+  <thead><tr><th>Ultimate source</th><th>Path into this workbook</th><th class="num">Refs</th><th>What it carries</th></tr></thead>
+  <tbody>
+    <tr><td><strong>OP1 / Operative</strong></td><td class="mono">Data sheet</td><td class="num">—</td>
+        <td>Booked revenue. Net Revenue, Contracted Quantity, Booked Contracted Production Quantity by <em>Calendar Quarter</em> &times; Audience Flag</td></tr>
+    <tr><td><strong>GAM</strong></td><td class="mono">DISPLAY DATA sheet</td><td class="num">—</td>
+        <td>Delivered display. Total Monetized Impressions (Standardized), Total Gross Revenue (Adjusted) by <em>Activity Quarter</em> &times; Is Audience</td></tr>
+    <tr><td>Manual entry</td><td class="mono">INFRONT sheet</td><td class="num">92</td>
+        <td>Hand-keyed In-front detail, referenced 23&times; from each quarter sheet. No system of record</td></tr>
+    <tr><td><strong>Advanced Advertising 2026 FC Model - Week 35.xlsx</strong><br><span class="sm">SharePoint · USAdSalesFinance · 39 sheets</span></td>
+        <td class="mono">external link [1]</td><td class="num">317</td>
+        <td>DAT model, DAT Booked/Delivered Data, DDL data, YIELD, advertiser lists, forecast summary. Feeds Executive Summary, Detail FC, "Do not use &gt;&gt;&gt;"</td></tr>
+    <tr><td><strong>Digital Engage Model 2026 - Week 35.xlsx</strong><br><span class="sm">SharePoint · USAdSalesFinance · 16 sheets</span></td>
+        <td class="mono">external link [2]</td><td class="num">356</td>
+        <td>Traditional Digital baseline — the denominator of the yield calculation. Feeds all four quarter sheets and 2026</td></tr>
+    <tr><td><strong>FreeWheel</strong></td><td class="mono">not present</td><td class="num">0</td>
+        <td>Named as a P0 source in PRD AP-1.1 but appears nowhere in the Week 35 workbook</td></tr>
+  </tbody>
+</table>
+
+<p class="sm" style="color:var(--ink3)">Internal dependency chain: <code>Data</code> + <code>DISPLAY DATA</code> feed
+the four Product Info sheets (1,398–1,460 references each) and <code>ALL AD INNO REVENUE</code> (782 refs);
+<code>ALL AD INNO REVENUE</code> feeds <code>EXEC Summary</code> (719 refs). <code>Data</code> + external&nbsp;[2] feed
+the quarter sheets, which feed <code>2026</code> and <code>Detail FC</code>.</p>
+
+<table class="tight">
+  <caption>Sheet inventory — role and formula count</caption>
+  <thead><tr><th>Sheet</th><th>Role</th><th class="num">Formulas</th><th>Note</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">Data</td><td>Source — Operative booked</td><td class="num">3,429</td><td>56 rows &times; 104 cols. Crosstab: 6 dimension columns, then measures pivoted by quarter &times; audience flag</td></tr>
+    <tr><td class="mono">DISPLAY DATA</td><td>Source — GAM delivered</td><td class="num">1,132</td><td>73 rows &times; 67 cols. Different grain and calendar from Data</td></tr>
+    <tr><td class="mono">INFRONT</td><td>Source — manual</td><td class="num">378</td><td>Hand-keyed</td></tr>
+    <tr><td class="mono">1Q / 2Q / 3Q / 4Q</td><td>Bucket + yield engine</td><td class="num">413–450</td><td>The horizontal bucket algebra and CPM premium live here</td></tr>
+    <tr><td class="mono">1Q–4Q Product Info</td><td>Per-product detail</td><td class="num">1,654–1,674</td><td>Feeds the yield adjustment back into the quarter sheets. Contains DQ-1 and DQ-2</td></tr>
+    <tr><td class="mono">2026 · 2026 Product Info</td><td>Annual roll-up</td><td class="num">458 · 1,674</td><td>Sums the four quarters</td></tr>
+    <tr><td class="mono">ALL AD INNO REVENUE</td><td>Reporting layer</td><td class="num">425</td><td>18 products &times; quarter &times; property</td></tr>
+    <tr><td class="mono">EXEC Summary </td><td>Executive output</td><td class="num">447</td><td>The bi-weekly senior-management package</td></tr>
+    <tr><td class="mono">Executive Summary </td><td>Duplicate exec output</td><td class="num">322</td><td>Older variant fed from external&nbsp;[1]. No marker of which is authoritative</td></tr>
+    <tr><td class="mono">Detail  FC</td><td>Forecast detail</td><td class="num">2,124</td><td>Near-duplicate of "Do not use &gt;&gt;&gt;"</td></tr>
+    <tr><td class="mono">Do not use &gt;&gt;&gt;</td><td>Abandoned, still live</td><td class="num">2,090</td><td>Named "do not use" yet still recalculates and is still referenced</td></tr>
+    <tr><td class="mono">CHECK - REDO</td><td>Manual reconciliation</td><td class="num">46</td><td>Uses row bound 7..83 where the rest of the book uses 7..100</td></tr>
+  </tbody>
+</table>
+
+<!-- ============================= 3 ============================= -->
+<h2 id="s3"><span class="num">3</span>Formula inventory</h2>
+<p class="lede">The shape of this mix is itself a finding. A model built from <code>SUMIFS</code> over hand-typed text
+literals, with <code>XLOOKUP</code> against cell-range maps, and one in five formulas wrapped in <code>IFERROR</code>,
+has no mechanism to distinguish a real zero from a broken reference.</p>
+
+<table>
+  <caption>Function usage across all 20,936 formulas</caption>
+  <thead><tr><th>Function</th><th class="num">Count</th><th class="num">Share</th><th>What it is doing</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">IFERROR</td><td class="num">4,472</td><td class="num">21.4%</td><td>Suppresses every <code>#DIV/0</code>, <code>#N/A</code> and <code>#REF</code> rather than surfacing it</td></tr>
+    <tr><td class="mono">SUMIFS</td><td class="num">2,406</td><td class="num">11.5%</td><td>The aggregation engine. Filters on text literals typed by hand into each formula</td></tr>
+    <tr><td class="mono">IF</td><td class="num">1,543</td><td class="num">7.4%</td><td>Bucket assignment, the 1.9&times; multiplier, and Include/Exclude gating</td></tr>
+    <tr><td class="mono">XLOOKUP</td><td class="num">793</td><td class="num">3.8%</td><td>Dimension mapping against lookup tables embedded in <code>Data!CS:CZ</code></td></tr>
+    <tr><td class="mono">SUM</td><td class="num">296</td><td class="num">1.4%</td><td>Quarter roll-ups</td></tr>
+    <tr><td class="mono">TEXTJOIN</td><td class="num">76</td><td class="num">0.4%</td><td>Builds concatenated mapping keys</td></tr>
+    <tr><td class="mono">SUMIF</td><td class="num">12</td><td class="num">0.1%</td><td>Legacy single-criterion totals</td></tr>
+  </tbody>
+</table>
+
+<h3>The bucket algebra that has to be reproduced</h3>
+<p>Column comments authored by Jamie Jackette document the intent of each bucket. The arithmetic resolves to a clean
+dedup identity which should become an asserted test in the pipeline.</p>
+
+<table class="tight">
+  <caption>Horizontal bucket derivation — quarter sheets (1Q / 2Q / 3Q / 4Q), row 5 onward</caption>
+  <thead><tr><th>Col</th><th>Bucket</th><th>Derivation</th><th>SME comment on the sheet</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">E</td><td>DAT — all</td><td class="mono">external [2]</td><td>—</td></tr>
+    <tr><td class="mono">G</td><td>Ad Innovation, incl. DAT for premium formats</td><td class="mono">SUMIFS on mapped vertical &times; buy type</td><td>"Ad Inno including DAT for Premium Formats"</td></tr>
+    <tr><td class="mono">I</td><td>Ad Innovation ∩ DAT overlap</td><td class="mono">SUMIFS where BU = True</td><td>"DAT overlap with Ad Inno … broken out so it can be subtracted from DAT"</td></tr>
+    <tr><td class="mono">K</td><td>DAT excluding overlap</td><td class="mono">= E − I</td><td>"DAT excluding the DAT that is also Ad Inno Premium Formats"</td></tr>
+    <tr><td class="mono">M</td><td>Traditional Digital</td><td class="mono">external [2]</td><td>"Trad Digital excluding all DAT"</td></tr>
+    <tr><td class="mono">O</td><td>Traditional excl. all Ad Inno and DAT</td><td class="mono">= M − (G − I)</td><td>"Trad Digital excluding ALL AD Inno and ALL DAT. Used as Baseline for YIELD"</td></tr>
+    <tr><td class="mono">Q</td><td><strong>All revenue, deduplicated</strong></td><td class="mono">= G + K + O</td><td>—</td></tr>
+  </tbody>
+</table>
+
+<p>Yield is the CPM premium of Ad Innovation over that Traditional baseline:</p>
+<p class="grain"><code>Yield $ = ((AdInnoRev − ProductInfoAdj) − ((AdInnoImps / 1000 − ImpsAdj) &times; TradCPM)) / 1e6</code><br>
+<code>Yield % = Yield $ ÷ (AdInnoRev − Yield $)</code><br>
+<span class="sm">The <b>ProductInfoAdj</b> term is the one corrupted by DQ-1.</span></p>
+
+<!-- ============================= 4 ============================= -->
+<h2 id="s4"><span class="num">4</span>Data quality findings</h2>
+<p class="lede">Twelve findings from the extraction. Five are critical: they change reported numbers today, or they
+will fail an Iceberg load. All line references are to the Week 35 workbook.</p>
+
+<table>
+  <caption>Defect register</caption>
+  <thead><tr><th style="width:52px">ID</th><th style="width:78px">Severity</th><th>Finding</th><th>Evidence</th><th>Impact</th></tr></thead>
+  <tbody>
+    <tr>
+      <td class="mono">DQ-1</td><td><span class="t crit">Critical</span></td>
+      <td><strong>Misspelled criteria literal <code>"Infornt"</code> in 139 formulas</strong></td>
+      <td>All four Product Info sheets, e.g. <code>1Q Product Info!E20</code> and <code>!CW20</code>, filter
+          <code>Data!$B:$B</code> for <code>"Infornt"</code>. <code>Data!B</code> only ever contains "Infront".
+          Counts: 36 / 35 / 34 / 34 by quarter.</td>
+      <td>Every "Max Sports" line returns $0. Product Info feeds the yield adjustment on the quarter sheets, so the
+          error propagates into Yield&nbsp;$ and Yield&nbsp;%.</td>
+    </tr>
+    <tr>
+      <td class="mono">DQ-2</td><td><span class="t crit">Critical</span></td>
+      <td><strong>Predicate <code>G="Sports"</code> can never match its column</strong></td>
+      <td><code>Data!G</code> holds free-text sponsorship package names — 49 blanks plus 7 values like
+          <code>"2026 March Madness | Custom"</code>, <code>"2026-27 NFL Regular Season | Hard Knocks - In-Season"</code>.
+          It never equals "Sports". Correcting DQ-1 alone still returns $0.</td>
+      <td>The Sports carve-out is structurally dead. "Total x Sports" identifies sports by whether a package name is
+          blank, so sports classification has no data model behind it.</td>
+    </tr>
+    <tr>
+      <td class="mono">DQ-3</td><td><span class="t crit">Critical</span></td>
+      <td><strong>Unmapped dimension value silently resolves to 0</strong></td>
+      <td><code>Data</code> row 34 — Virtual Product Placement / Other-Intl / Uncategorized Revenue /
+          <em>Production&nbsp;Fee</em>. "Production Fee" is absent from the buy-type map, so <code>XLOOKUP</code>
+          returns 0 and the mapping key becomes <code>"Virtual Product Placement-Entertainment-0"</code>.</td>
+      <td>$108,507 is flagged Include but is dropped by every <code>SUMIFS</code> that filters buy type. It is in the
+          total and absent from every breakdown.</td>
+    </tr>
+    <tr>
+      <td class="mono">DQ-4</td><td><span class="t crit">Critical</span></td>
+      <td><strong>Net revenue and gross revenue are summed together</strong></td>
+      <td><code>ALL AD INNO REVENUE!C8 = SUMIFS(Data!$BF…) + SUMIFS('DISPLAY DATA'!$U…)</code>.
+          <code>Data!H6</code> is <em>"Net Revenue"</em> (Operative); <code>DISPLAY DATA!E7</code> is
+          <em>"Total Gross Revenue (Adjusted)"</em> (GAM). The two are added in one expression.</td>
+      <td>Every product line that has both Operative and GAM revenue mixes revenue bases. Overstates the combined
+          figure by the gross-to-net difference on the GAM portion.</td>
+    </tr>
+    <tr>
+      <td class="mono">DQ-5</td><td><span class="t crit">Critical</span></td>
+      <td><strong>Text sentinel <code>"$0"</code> in a numeric measure column</strong></td>
+      <td><code>DISPLAY DATA!AJ8 = IFS(AG8="ADIN", E8+G8, AG8="DAT", E8, AG8="TRAD", "$0")</code> — the TRAD branch
+          returns the <em>string</em> <code>"$0"</code>, not the number 0. Confirmed present in
+          <code>AS8</code> and <code>BB8</code> as well.</td>
+      <td>Works by accident in Excel, which coerces text to 0 inside <code>SUM</code>. A typed
+          <code>decimal</code> column in Iceberg will reject the row or null it.</td>
+    </tr>
+    <tr>
+      <td class="mono">DQ-6</td><td><span class="t mat">Material</span></td>
+      <td>Case and spelling variants across criteria literals</td>
+      <td><code>"HBO MAX"</code> in 5 casings; <code>"Streaming"</code> in 3 including <code>"STraming"</code>; also
+          ENT/Ent, INCLUDE/Include, TRUE/True, NEWS/News, Sports/SPORTS, Rotational/rotational,
+          Sponsorship/sponsorship, plus a stray <code>"ENTS"</code>.</td>
+      <td>Harmless in Excel, which matches text case-insensitively. In Spark or Trino the comparison is case-sensitive,
+          so each variant becomes a silent zero. The single largest lift-and-shift risk.</td>
+    </tr>
+    <tr>
+      <td class="mono">DQ-7</td><td><span class="t mat">Material</span></td>
+      <td>4,472 <code>IFERROR</code> wrappers mask errors instead of raising them</td>
+      <td>21.4% of all formulas. Concentrated in the Product Info sheets (659–681 each) and quarter sheets (113–132 each).</td>
+      <td>A broken reference renders as 0 or a dash, indistinguishable from a genuine zero. No way to tell a real $0
+          from a failed lookup.</td>
+    </tr>
+    <tr>
+      <td class="mono">DQ-8</td><td><span class="t mat">Material</span></td>
+      <td>Hard-coded 1.9&times; impression multiplier in 560 formulas</td>
+      <td><code>Data</code> columns AI, AL, AO, AR, AU, AX, BA, BD each carry
+          <code>=IF($B7="Infront",J7*1.9,J7)</code>. Raw In-front impressions 757,821,180 become 1,439,860,243.</td>
+      <td>682,039,063 impressions injected by a constant with no effective date, owner or rationale in the data.
+          Keyed on the same text literal that is misspelled in DQ-1.</td>
+    </tr>
+    <tr>
+      <td class="mono">DQ-9</td><td><span class="t mat">Material</span></td>
+      <td>Stale entries in the product&nbsp;→&nbsp;format map from past renames</td>
+      <td><code>Data!CW:CX</code> still carries <code>Homepage Discovery</code>, <code>Max Brand Suitability</code> and
+          <code>Shop With HBO Max</code>, none of which exist in the data. The data instead has
+          <code>HBO Max Brand Suitability</code> and <code>Shop HBO Max</code>, appended as new rows.</td>
+      <td>Live evidence of PRD risk&nbsp;#3. Products were renamed and the map was appended to rather than updated, so
+          it now holds both old and new names with no effective dating.</td>
+    </tr>
+    <tr>
+      <td class="mono">DQ-10</td><td><span class="t mat">Material</span></td>
+      <td>Inconsistent and unbounded aggregation ranges</td>
+      <td>Bounds <code>7..100</code>, <code>7..83</code>, <code>7..115</code> and
+          <code>8..161/165/168/180/184/187</code> coexist against 56 actual data rows. A further 6,379
+          <code>SUMIFS</code> use whole-column references such as <code>Data!CK:CK</code>.</td>
+      <td>No current loss — the block is small enough. Latent silent truncation the moment data outgrows the tightest
+          bound, and whole-column refs will absorb header and total rows.</td>
+    </tr>
+    <tr>
+      <td class="mono">DQ-11</td><td><span class="t low">Housekeeping</span></td>
+      <td>Live <code>#VALUE!</code> errors in the GAM site map</td>
+      <td><code>DISPLAY DATA!AF</code> resolves via <code>XLOOKUP($C8,BL:BL,BM:BM,#N/A)</code>. Rows 75–77 return
+          <code>#VALUE!</code> for ad units <code>Ad Exchange Display</code>, <code>INTL_CNNI_FW_MMP</code>,
+          <code>INTL_CNNi_TEST</code>; row 73 returns <code>0</code>.</td>
+      <td>Those rows drop out of every vertical filter. Dollar exposure is trivial today — $109.90 — but the mechanism
+          is unguarded.</td>
+    </tr>
+    <tr>
+      <td class="mono">DQ-12</td><td><span class="t low">Housekeeping</span></td>
+      <td>Untracked manual override recorded only in a cell comment</td>
+      <td>Comment on <code>AJ9</code> across two sheets, author Jamie Jackette: <em>"Deleted 2M per Bridget"</em>.</td>
+      <td>A $2M adjustment exists only as prose. Invisible to any consumer and unreproducible.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="box warn">
+  <div class="bt">One inconsistency to confirm rather than assert</div>
+  <p>In <code>DISPLAY DATA!AJ8</code>, the ADIN branch returns <code>E8+G8</code> — the non-audience <em>and</em>
+  audience revenue columns — while the DAT branch returns <code>E8</code> alone, which is the <strong>non-audience</strong>
+  column. Given that DAT is audience-targeted inventory, the DAT branch appears to reference the wrong side of the pair.
+  This needs Jamie to confirm intent before it is either ported or fixed.</p>
+</div>
+
+<!-- ============================= 5 ============================= -->
+<h2 id="s5"><span class="num">5</span>Looker reports required</h2>
+<p class="lede">The PRD describes the current process as pulling "two Looker reports". Six are actually needed to
+reproduce the model, because the DAT baseline, the Traditional Digital baseline, the forecast and the In-front detail
+all currently arrive through manual workbooks rather than through Looker at all.</p>
+
+<table class="tight">
+  <caption>Summary — reports required, current status, and which PRD requirement they unblock</caption>
+  <thead><tr><th>ID</th><th>Report</th><th>System</th><th>Status today</th><th>Priority</th><th>Unblocks</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">L-1</td><td>Ad Product Booked Revenue</td><td>OP1 / Operative</td><td><span class="t part">Exists, wrong shape</span></td><td><span class="t p0">P0</span></td><td>AP-1.1, AP-1.2, AP-1.3</td></tr>
+    <tr><td class="mono">L-2</td><td>Display Delivered Revenue</td><td>GAM</td><td><span class="t part">Exists, unclassified</span></td><td><span class="t p0">P0</span></td><td>AP-1.4, AP-3.3</td></tr>
+    <tr><td class="mono">L-3</td><td>Video Delivered Revenue</td><td>FreeWheel</td><td><span class="t gap">Does not exist</span></td><td><span class="t p0">P0</span></td><td>AP-1.1</td></tr>
+    <tr><td class="mono">L-4</td><td>DAT / Advanced Advertising Revenue</td><td>Operative + DDL</td><td><span class="t gap">Manual workbook</span></td><td><span class="t p0">P0</span></td><td>AP-2.1</td></tr>
+    <tr><td class="mono">L-5</td><td>Traditional Digital Baseline</td><td>Digital Engage</td><td><span class="t gap">Manual workbook</span></td><td><span class="t p0">P0</span></td><td>AP-3.1</td></tr>
+    <tr><td class="mono">L-6</td><td>Ad Product Forecast</td><td>FC Model</td><td><span class="t gap">Manual workbook</span></td><td><span class="t p1">P1</span></td><td>Not in PRD</td></tr>
+  </tbody>
+</table>
+
+<div class="box crit">
+  <div class="bt">The structural blocker: both existing reports are crosstabs, not extracts</div>
+  <p>In <code>Data</code>, <strong>quarter and audience flag are encoded in header rows 3 and 5</strong>, not as
+  columns — the same three measures repeat 8 times across columns H through AE. <code>DISPLAY DATA</code> does the same
+  in rows 5 and 6. Both Looker reports must be re-specified to return <strong>long format</strong>, one row per
+  dimension combination per period, with quarter and audience as columns. No pivot, no merged headers, no totals rows.
+  Everything downstream depends on this.</p>
+</div>
+
+<!-- L-1 -->
+<div class="rep">
+  <div class="h"><span class="id">L-1</span><span class="nm">Ad Product Booked Revenue</span>
+    <span class="sp">OP1 / Operative &nbsp;·&nbsp; replaces <code>Data</code> sheet &nbsp;·&nbsp; <span class="t p0">P0</span></span></div>
+  <div class="b">
+    <div class="grain"><b>Required grain:</b> one row per order line item per calendar month per audience flag.
+    Today the sheet is pre-aggregated to 56 rows at product &times; vertical &times; site &times; buy type &times; cost
+    type &times; package &times; quarter &times; audience. <b>Deliver at line-item grain and let CARL aggregate.</b></div>
+    <table class="tight">
+      <thead><tr><th>Field required</th><th>Current location</th><th>Status</th><th>Type</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">line_item_id</td><td>—</td><td><span class="t gap">Missing</span></td><td>string</td><td><strong>No key exists anywhere.</strong> <code>Data!A</code> is a 1–56 sequence with a blank header</td></tr>
+        <tr><td class="mono">order_id</td><td>—</td><td><span class="t gap">Missing</span></td><td>string</td><td>Needed for restatement handling and drill-through</td></tr>
+        <tr><td class="mono">advertiser_name</td><td>—</td><td><span class="t gap">Missing</span></td><td>string</td><td>Advertiser lists exist in external&nbsp;[1] (<code>DAT Advertiser List</code>, <code>DDL Advertiser List</code>) but not in this report</td></tr>
+        <tr><td class="mono">agency_name</td><td>—</td><td><span class="t gap">Missing</span></td><td>string</td><td>Intake records "no mapping of advertisers with agencies" as a pain point</td></tr>
+        <tr><td class="mono">premium_product</td><td class="mono">Data!B</td><td><span class="t have">Have</span></td><td>string</td><td>18 distinct values. Must be accompanied by a stable ID — see DQ-9</td></tr>
+        <tr><td class="mono">premium_product_id</td><td>—</td><td><span class="t gap">Missing</span></td><td>string</td><td>Stable surrogate so renames do not break mapping (PRD risk&nbsp;#3)</td></tr>
+        <tr><td class="mono">vertical</td><td class="mono">Data!C</td><td><span class="t have">Have</span></td><td>string</td><td>7 values: Streaming, Sports, News, Entertainment, Turner Network, Other/Intl, DCI S&amp;S</td></tr>
+        <tr><td class="mono">site</td><td class="mono">Data!D</td><td><span class="t have">Have</span></td><td>string</td><td>11 values: HBO Max, Bleacher Report, CNN.com, Discovery+, DCI ENT, DCI S&amp;S, The Turner Network, Turner Entertainment, Turner News, NCAA.com, Uncategorized Revenue</td></tr>
+        <tr><td class="mono">ad_type_buy_type</td><td class="mono">Data!E</td><td><span class="t have">Have</span></td><td>string</td><td>5 values: Video (35), Display (16), DTC (3), Native (1), <strong>Production Fee (1 — unmapped, DQ-3)</strong></td></tr>
+        <tr><td class="mono">cost_type</td><td class="mono">Data!F</td><td><span class="t have">Have</span></td><td>string</td><td>Rotational (37), Sponsorship (19)</td></tr>
+        <tr><td class="mono">sponsorship_package_name</td><td class="mono">Data!G</td><td><span class="t part">Free text</span></td><td>string</td><td>Blank on 49 of 56 rows. Values like <code>"2026 NBA Postseason | Custom"</code>. Needs parsing into league and season</td></tr>
+        <tr><td class="mono">is_sports</td><td>—</td><td><span class="t gap">Missing</span></td><td>boolean</td><td><strong>No source field.</strong> Currently inferred from the package name being non-blank. Required for the "Total x Sports" view — see DQ-2</td></tr>
+        <tr><td class="mono">league / sport</td><td>—</td><td><span class="t gap">Missing</span></td><td>string</td><td>Intake records "no grouping of sports types or sports leagues identifiers"</td></tr>
+        <tr><td class="mono">calendar_quarter</td><td class="mono">Data!row 3</td><td><span class="t part">Header-encoded</span></td><td>string</td><td>Must become a column. Values <code>2026-Q1</code> … <code>2026-Q4</code></td></tr>
+        <tr><td class="mono">calendar_month</td><td>—</td><td><span class="t gap">Missing</span></td><td>date</td><td>Intake asks for monthly cadence; only quarter is available today</td></tr>
+        <tr><td class="mono">broadcast_quarter / month</td><td>—</td><td><span class="t gap">Missing</span></td><td>string</td><td>Intake flags broadcast-week skew as a live YOY accuracy problem</td></tr>
+        <tr><td class="mono">audience_flag</td><td class="mono">Data!row 5</td><td><span class="t part">Header-encoded</span></td><td>boolean</td><td>Must become a column. <strong>This is the DAT axis</strong> — Yes/No</td></tr>
+        <tr><td class="mono">net_revenue</td><td class="mono">Data!H,K,N,Q,T,W,Z,AC</td><td><span class="t have">Have</span></td><td>decimal(18,2)</td><td>8 pivoted columns = 4 quarters &times; 2 audience states</td></tr>
+        <tr><td class="mono">gross_revenue</td><td>—</td><td><span class="t gap">Missing</span></td><td>decimal(18,2)</td><td><strong>Required to resolve DQ-4.</strong> GAM reports gross; without gross here the two sources cannot be reconciled</td></tr>
+        <tr><td class="mono">contracted_quantity</td><td class="mono">Data!J,M,P,S,V,Y,AB,AE</td><td><span class="t have">Have</span></td><td>bigint</td><td>Impressions. The 1.9&times; multiplier is applied to this measure only</td></tr>
+        <tr><td class="mono">booked_contracted_production_quantity</td><td class="mono">Data!I,L,O,R,U,X,AA,AD</td><td><span class="t have">Have</span></td><td>bigint</td><td>Third measure; used in the Product Info detail</td></tr>
+        <tr><td class="mono">currency_code</td><td>—</td><td><span class="t gap">Missing</span></td><td>string</td><td>External&nbsp;[1] has a <code>DDL-Currency-Segment details</code> sheet, implying multi-currency exists upstream</td></tr>
+        <tr><td class="mono">as_of_date</td><td>—</td><td><span class="t gap">Missing</span></td><td>date</td><td><strong>The reporting week exists only in the filename.</strong> Required for snapshot tagging and restatement</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- L-2 -->
+<div class="rep">
+  <div class="h"><span class="id">L-2</span><span class="nm">Display Delivered Revenue</span>
+    <span class="sp">GAM &nbsp;·&nbsp; replaces <code>DISPLAY DATA</code> sheet &nbsp;·&nbsp; <span class="t p0">P0</span></span></div>
+  <div class="b">
+    <div class="grain"><b>Required grain:</b> one row per line item per ad unit per calendar month per audience flag.
+    <b>Note the calendar difference:</b> this source reports <em>Activity Quarter</em> while L-1 reports
+    <em>Calendar Quarter</em>. They must be modelled as distinct facts and never joined naively.</div>
+    <table class="tight">
+      <thead><tr><th>Field required</th><th>Current location</th><th>Status</th><th>Type</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">line_item_id</td><td>—</td><td><span class="t gap">Missing</span></td><td>string</td><td>No key. <code>DISPLAY DATA!A</code> is a row sequence</td></tr>
+        <tr><td class="mono">advertiser_name</td><td>—</td><td><span class="t gap">Missing</span></td><td>string</td><td></td></tr>
+        <tr><td class="mono">ad_unit</td><td class="mono">DISPLAY DATA!C</td><td><span class="t have">Have</span></td><td>string</td><td>60 distinct raw GAM names — <code>Ad Exchange Display</code>, <code>CNNi_FAST</code>, <code>Blockthrough</code>, <code>EPU</code>, <code>DGO</code> …</td></tr>
+        <tr><td class="mono">premium_product</td><td class="mono">DISPLAY DATA!B</td><td><span class="t gap">Largely absent</span></td><td>string</td><td><strong>Only 13 of 73 rows carry a product.</strong> See callout below</td></tr>
+        <tr><td class="mono">activity_quarter</td><td class="mono">DISPLAY DATA!row 6</td><td><span class="t part">Header-encoded</span></td><td>string</td><td>Must become a column</td></tr>
+        <tr><td class="mono">activity_month</td><td>—</td><td><span class="t gap">Missing</span></td><td>date</td><td></td></tr>
+        <tr><td class="mono">is_audience</td><td class="mono">DISPLAY DATA!row 5</td><td><span class="t part">Header-encoded</span></td><td>boolean</td><td>Must become a column</td></tr>
+        <tr><td class="mono">total_monetized_impressions_standardized</td><td class="mono">D,F,H,J,L,N,P,R</td><td><span class="t have">Have</span></td><td>bigint</td><td>8 pivoted columns</td></tr>
+        <tr><td class="mono">total_gross_revenue_adjusted</td><td class="mono">E,G,I,K,M,O,Q,S</td><td><span class="t have">Have</span></td><td>decimal(18,2)</td><td><strong>Gross.</strong> Currently summed with Operative net — DQ-4</td></tr>
+        <tr><td class="mono">net_revenue</td><td>—</td><td><span class="t gap">Missing</span></td><td>decimal(18,2)</td><td><strong>Required to resolve DQ-4</strong></td></tr>
+        <tr><td class="mono">format</td><td class="mono">DISPLAY DATA!AG</td><td><span class="t part">Derived</span></td><td>string</td><td>Array formula mapping product → ADIN / DAT / TRAD. Belongs in a rule table, not the extract</td></tr>
+        <tr><td class="mono">as_of_date</td><td>—</td><td><span class="t gap">Missing</span></td><td>date</td><td></td></tr>
+      </tbody>
+    </table>
+    <div class="box crit" style="margin-bottom:6px">
+      <div class="bt">82% of GAM revenue cannot be attributed to an ad product</div>
+      <p>Of $80.38M GAM display revenue, <strong>$65.74M across 60 rows sits under the product value
+      <code>"Other"</code></strong> and is bucketed as Traditional by default via
+      <code>IF(B="Other","Exclude","Include")</code>. Only 13 rows carry a real product: RE/FORM $14.14M,
+      News Brand Suitability $0.35M, Native $0.16M.</p>
+      <p>This is the structural reason the PRD defers GAM to P2. If a premium format runs in GAM inventory there is
+      currently no field that identifies it, so it is silently counted as traditional display. <strong>L-2 must add a
+      product or placement classification at the line-item level</strong>, otherwise AP-3.3 (yield by ad product) cannot
+      be completed for display.</p>
+    </div>
+  </div>
+</div>
+
+<!-- L-3 -->
+<div class="rep">
+  <div class="h"><span class="id">L-3</span><span class="nm">Video Delivered Revenue</span>
+    <span class="sp">FreeWheel &nbsp;·&nbsp; no current equivalent &nbsp;·&nbsp; <span class="t p0">P0</span></span></div>
+  <div class="b">
+    <p class="sm">FreeWheel is named as a P0 source in PRD AP-1.1 — <em>"As a PM, I want Operative &amp; FreeWheel data
+    ingested into Iceberg"</em> — but there is <strong>no trace of FreeWheel anywhere in the Week 35 workbook</strong>.
+    TVE and VOD delivery currently arrives only as Operative booked quantities, not as delivered impressions.</p>
+    <table class="tight">
+      <thead><tr><th>Field required</th><th>Status</th><th>Type</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">line_item_id · order_id</td><td><span class="t gap">To confirm</span></td><td>string</td><td>Must join to L-1 on the Operative order key</td></tr>
+        <tr><td class="mono">network · site</td><td><span class="t gap">To confirm</span></td><td>string</td><td>Must reconcile to the 11 site values in L-1</td></tr>
+        <tr><td class="mono">format</td><td><span class="t gap">To confirm</span></td><td>string</td><td>TVE vs VOD — the split the quarter sheets report on</td></tr>
+        <tr><td class="mono">delivered_impressions</td><td><span class="t gap">To confirm</span></td><td>bigint</td><td>Needed for a true delivered CPM rather than a booked-quantity CPM</td></tr>
+        <tr><td class="mono">activity_month · quarter</td><td><span class="t gap">To confirm</span></td><td>date</td><td></td></tr>
+        <tr><td class="mono">audience_flag</td><td><span class="t gap">To confirm</span></td><td>boolean</td><td>Required to place FreeWheel volume on the DAT axis</td></tr>
+      </tbody>
+    </table>
+    <p class="sm" style="color:var(--amber)"><strong>Action:</strong> SPIKE required. The field list above is inferred
+    from what the model consumes, not from the FreeWheel schema. Confirm with Ping Feng and the SME whether FreeWheel is
+    genuinely P0 or whether AP-1.1 should be re-scoped to Operative only.</p>
+  </div>
+</div>
+
+<!-- L-4 -->
+<div class="rep">
+  <div class="h"><span class="id">L-4</span><span class="nm">DAT / Advanced Advertising Revenue</span>
+    <span class="sp">Operative + DDL &nbsp;·&nbsp; replaces external&nbsp;[1] &nbsp;·&nbsp; <span class="t p0">P0</span></span></div>
+  <div class="b">
+    <p class="sm">Supplies bucket <code>E</code> (DAT — all) and the $290.66M DAT figure. Today it arrives via 317
+    formula references into <code>Advanced Advertising 2026 FC Model- Week 35.xlsx</code>. Relevant sheets in that
+    workbook: <code>DAT Model</code>, <code>DAT Booked Data</code>, <code>DAT Delivered Data</code>,
+    <code>DDL-Data</code>, <code>ADU-Data</code>, <code>YIELD</code>, <code>GUR TABLE</code>,
+    <code>DDL Advertiser List</code>, <code>DDL-Currency-Segment details</code>, <code>Detailed FC SUMMARY</code>.</p>
+    <table class="tight">
+      <thead><tr><th>Field required</th><th>Status</th><th>Type</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">line_item_id</td><td><span class="t gap">Missing</span></td><td>string</td><td>Must join to L-1 to resolve the Ad Inno ∩ DAT overlap at line level rather than by judgement</td></tr>
+        <tr><td class="mono">vertical · site · format</td><td><span class="t part">Aggregated</span></td><td>string</td><td>Currently only available pre-summarised by quarter</td></tr>
+        <tr><td class="mono">audience_segment</td><td><span class="t gap">Missing</span></td><td>string</td><td>The "what sold the deal" signal PRD AP-2.1 depends on</td></tr>
+        <tr><td class="mono">dat_revenue (net and gross)</td><td><span class="t part">Net only</span></td><td>decimal(18,2)</td><td></td></tr>
+        <tr><td class="mono">dat_impressions</td><td><span class="t part">Aggregated</span></td><td>bigint</td><td></td></tr>
+        <tr><td class="mono">is_premium_format_overlap</td><td><span class="t gap">Derived in Excel</span></td><td>boolean</td><td>Currently <code>XLOOKUP</code> on format → True/False in <code>Data!CY:CZ</code></td></tr>
+      </tbody>
+    </table>
+    <p class="sm" style="color:var(--amber)"><strong>Action:</strong> PRD AP-2.1 assumes overlap can be auto-assigned by
+    a "what sold the deal" rule. Without a line-item key shared between L-1 and L-4 that rule cannot be evaluated
+    per line — it can only be applied at bucket level, as Excel does today. Confirm with Derek Katz's team.</p>
+  </div>
+</div>
+
+<!-- L-5 -->
+<div class="rep">
+  <div class="h"><span class="id">L-5</span><span class="nm">Traditional Digital Baseline</span>
+    <span class="sp">Digital Engage &nbsp;·&nbsp; replaces external&nbsp;[2] &nbsp;·&nbsp; <span class="t p0">P0</span></span></div>
+  <div class="b">
+    <p class="sm">Supplies bucket <code>M</code> (Traditional Digital) — <strong>the denominator of the entire yield
+    calculation</strong>. Today it arrives via 356 formula references into
+    <code>Digital Engage Model 2026 - Week 35.xlsx</code>, overwhelmingly to a single sheet,
+    <code>Digital Engage Summary - 2026</code>. Other relevant sheets: <code>ALL Booked Data</code>,
+    <code>ALL Delivered Data</code>, <code>Engage Pivot</code>, <code>Ad Innovation</code>, <code>Top Accounts</code>.</p>
+    <table class="tight">
+      <thead><tr><th>Field required</th><th>Status</th><th>Type</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">vertical</td><td><span class="t part">Aggregated</span></td><td>string</td><td>Referenced by fixed cell address, e.g. <code>'[2]Digital Engage Summary - 2026'!Q114</code></td></tr>
+        <tr><td class="mono">format</td><td><span class="t part">Aggregated</span></td><td>string</td><td>Video / VOD / Display</td></tr>
+        <tr><td class="mono">calendar_quarter</td><td><span class="t part">Column-encoded</span></td><td>string</td><td></td></tr>
+        <tr><td class="mono">traditional_revenue (net and gross)</td><td><span class="t part">Net only</span></td><td>decimal(18,2)</td><td></td></tr>
+        <tr><td class="mono">traditional_impressions</td><td><span class="t part">Aggregated</span></td><td>bigint</td><td>Needed to derive the traditional CPM used as the yield baseline</td></tr>
+        <tr><td class="mono">excludes_dat_flag</td><td><span class="t gap">Implicit</span></td><td>boolean</td><td>The sheet comment states "Trad Digital excluding all DAT" but nothing in the data asserts it</td></tr>
+      </tbody>
+    </table>
+    <div class="box crit" style="margin-bottom:6px">
+      <div class="bt">Highest-risk dependency in the whole model</div>
+      <p>Every yield number depends on cells addressed by <strong>fixed position</strong> in an external manual
+      workbook — <code>Q113</code>, <code>Q114</code>, <code>$R$123</code>, <code>$CC6</code>. Inserting a single row
+      in that upstream workbook silently changes every yield figure in this report, with no error raised. This should
+      be the first dependency retired.</p>
+    </div>
+  </div>
+</div>
+
+<!-- L-6 -->
+<div class="rep">
+  <div class="h"><span class="id">L-6</span><span class="nm">Ad Product Forecast</span>
+    <span class="sp">FC Model &nbsp;·&nbsp; not covered by any PRD story &nbsp;·&nbsp; <span class="t p1">P1</span></span></div>
+  <div class="b">
+    <p class="sm"><code>EXEC Summary!P</code> carries a $211.57M full-year forecast alongside $157.29M booked, sourced
+    from <code>'[1]Detailed FC SUMMARY'</code>. The executive package reports both. <strong>No PRD requirement covers
+    forecast ingestion</strong>, so as written the CARL exec view could not reproduce the current pack.</p>
+    <table class="tight">
+      <thead><tr><th>Field required</th><th>Status</th><th>Type</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">premium_product · vertical · quarter</td><td><span class="t part">Aggregated</span></td><td>string</td><td>Forecast grain must match the booked grain to be comparable</td></tr>
+        <tr><td class="mono">forecast_revenue</td><td><span class="t part">Cell-addressed</span></td><td>decimal(18,2)</td><td></td></tr>
+        <tr><td class="mono">forecast_version · as_of_date</td><td><span class="t gap">Missing</span></td><td>date</td><td>Required to compare forecast vintages week over week</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ============================= 6 ============================= -->
+<h2 id="s6"><span class="num">6</span>Reference tables required</h2>
+<p class="lede">All mapping logic currently lives in spreadsheet cell ranges read by <code>XLOOKUP</code>, with no
+version history, no owner and no referential integrity. These seven become effective-dated reference tables in Silver,
+editable by the SME per PRD AP-3.4.</p>
+
+<table class="tight">
+  <caption>Mapping logic to be extracted from cells into reference tables</caption>
+  <thead><tr><th>Target table</th><th>Currently at</th><th class="num">Rows</th><th>Purpose</th><th>Issue to fix on migration</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">ref_vertical_map</td><td class="mono">Data!CS:CT</td><td class="num">7</td><td>Vertical → adjusted vertical</td><td>Collapses DCI S&amp;S, Turner Network and Other/Intl into Entertainment. Business rule, must be documented</td></tr>
+    <tr><td class="mono">ref_buytype_map</td><td class="mono">Data!CU:CV</td><td class="num">5</td><td>Buy type → adjusted buy type</td><td>Missing <em>Production Fee</em> (DQ-3). Carries unused <em>Social</em>. Native folds into Display</td></tr>
+    <tr><td class="mono">ref_product_format_map</td><td class="mono">Data!CW:CX</td><td class="num">21</td><td>Premium product → format bucket</td><td>3 stale entries from renames (DQ-9). Needs effective dating and an alias table</td></tr>
+    <tr><td class="mono">ref_format_dat_rule</td><td class="mono">Data!CY:CZ</td><td class="num">3</td><td>Format → include DAT as Ad Inno</td><td>Premium Format → True; Contextual and Brand Suitability → False. This is the overlap rule of AP-2.1</td></tr>
+    <tr><td class="mono">ref_gam_site_map</td><td class="mono">DISPLAY DATA!BL:BM</td><td class="num">67</td><td>GAM ad unit → vertical</td><td>Produces live <code>#VALUE!</code> errors on 3 unmatched ad units (DQ-11)</td></tr>
+    <tr><td class="mono">ref_gam_format_map</td><td class="mono">DISPLAY DATA!BN:BO</td><td class="num">22</td><td>GAM product → ADIN / DAT / TRAD</td><td>Only 13 of 73 GAM rows match a product at all</td></tr>
+    <tr><td class="mono">ref_adjustment_rule</td><td><em>does not exist</em></td><td class="num">0</td><td>The 1.9&times; In-front impression factor</td><td>Currently 560 hard-coded formulas. Becomes product, metric, factor, effective_from, effective_to, rationale</td></tr>
+  </tbody>
+</table>
+
+<h3>Exact contents of the two most contested maps</h3>
+<table class="tight" style="max-width:720px">
+  <caption><code>ref_format_dat_rule</code> — the overlap rule behind PRD AP-2.1</caption>
+  <thead><tr><th>Format bucket</th><th>Include DAT as Ad Inno</th><th>Meaning on the sheet</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">Premium Format</td><td><span class="t ok">True</span></td><td>Count all revenue, non-DAT and DAT</td></tr>
+    <tr><td class="mono">Contextual</td><td><span class="t low">False</span></td><td>Count only non-DAT revenue</td></tr>
+    <tr><td class="mono">Brand Suitability</td><td><span class="t low">False</span></td><td>Count only non-DAT revenue</td></tr>
+  </tbody>
+</table>
+
+<table class="tight" style="max-width:720px">
+  <caption><code>ref_product_format_map</code> — 18 live products plus 3 stale entries</caption>
+  <thead><tr><th>Premium product</th><th>Format bucket</th><th>Status</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">Brand Block</td><td>Premium Format</td><td><span class="t ok">Live</span></td></tr>
+    <tr><td class="mono">Co-Branded Promo Bumper</td><td>Premium Format</td><td><span class="t ok">Live</span></td></tr>
+    <tr><td class="mono">Collections</td><td>Contextual</td><td><span class="t ok">Live</span></td></tr>
+    <tr><td class="mono">HBO Max Brand Suitability</td><td>Brand Suitability</td><td><span class="t ok">Live</span></td></tr>
+    <tr><td class="mono">Infront</td><td>Premium Format</td><td><span class="t ok">Live</span></td></tr>
+    <tr><td class="mono">Interactive Video</td><td>Premium Format</td><td><span class="t ok">Live</span></td></tr>
+    <tr><td class="mono">Live Entry Slate</td><td>Premium Format</td><td><span class="t ok">Live</span></td></tr>
+    <tr><td class="mono">Moments</td><td>Contextual</td><td><span class="t ok">Live</span></td></tr>
+    <tr><td class="mono">Native</td><td>Premium Format</td><td><span class="t ok">Live</span></td></tr>
+    <tr><td class="mono">News Brand Suitability</td><td>Brand Suitability</td><td><span class="t ok">Live</span></td></tr>
+    <tr><td class="mono">News Contextual</td><td>Contextual</td><td><span class="t ok">Live</span></td></tr>
+    <tr><td class="mono">Pause</td><td>Premium Format</td><td><span class="t ok">Live</span></td></tr>
+    <tr><td class="mono">Promotional Frame</td><td>Premium Format</td><td><span class="t ok">Live</span></td></tr>
+    <tr><td class="mono">RE/FORM</td><td>Premium Format</td><td><span class="t ok">Live</span></td></tr>
+    <tr><td class="mono">Sequential</td><td>Premium Format</td><td><span class="t ok">Live</span></td></tr>
+    <tr><td class="mono">Shop HBO Max</td><td>Premium Format</td><td><span class="t ok">Live</span></td></tr>
+    <tr><td class="mono">Video Takeover</td><td>Premium Format</td><td><span class="t ok">Live</span></td></tr>
+    <tr><td class="mono">Virtual Product Placement</td><td>Premium Format</td><td><span class="t ok">Live</span></td></tr>
+    <tr><td class="mono">Homepage Discovery</td><td>Premium Format</td><td><span class="t gap">Stale — not in data</span></td></tr>
+    <tr><td class="mono">Max Brand Suitability</td><td>Brand Suitability</td><td><span class="t gap">Stale — renamed to HBO Max Brand Suitability</span></td></tr>
+    <tr><td class="mono">Shop With HBO Max</td><td>Premium Format</td><td><span class="t gap">Stale — renamed to Shop HBO Max</span></td></tr>
+  </tbody>
+</table>
+
+<!-- ============================= 7 ============================= -->
+<h2 id="s7"><span class="num">7</span>What's missing — gap register</h2>
+<p class="lede">Nine required fields have no source anywhere in the current data, and six pieces of business logic exist
+in the workbook but are not covered by any PRD requirement. These are the items that need an owner before P0 build
+sign-off.</p>
+
+<table>
+  <caption>A · Required fields with no source in any current feed</caption>
+  <thead><tr><th style="width:52px">ID</th><th>Missing field</th><th>Needed for</th><th>Blocks</th><th>Owner to confirm</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">G-1</td><td><strong>Line-item / order key on any source</strong></td><td>Grain integrity, restatement, line-level dedup</td><td><span class="t p0">AP-2.1</span></td><td>Jamie + Operative admin</td></tr>
+    <tr><td class="mono">G-2</td><td><strong>Stable product ID</strong> (surrogate, not the display name)</td><td>Rename resilience — PRD risk&nbsp;#3</td><td><span class="t p0">AP-1.2</span></td><td>Jamie</td></tr>
+    <tr><td class="mono">G-3</td><td><strong><code>is_sports</code> flag and league/sport</strong></td><td>The "Total x Sports" reporting view</td><td><span class="t p0">AP-1.3</span></td><td>Jamie + Sports sales</td></tr>
+    <tr><td class="mono">G-4</td><td><strong>Gross revenue on Operative; net revenue on GAM</strong></td><td>Resolving DQ-4 so the two sources are comparable</td><td><span class="t p0">AP-1.2</span></td><td>Finance</td></tr>
+    <tr><td class="mono">G-5</td><td><strong>Product classification on GAM line items</strong></td><td>Attributing $65.74M of display revenue</td><td><span class="t p2">AP-3.3</span></td><td>Ad Ops + Jamie</td></tr>
+    <tr><td class="mono">G-6</td><td><strong>Monthly grain</strong> on both revenue feeds</td><td>Intake asks for monthly; only quarter exists</td><td><span class="t p1">AP-3.2</span></td><td>Jamie</td></tr>
+    <tr><td class="mono">G-7</td><td><strong><code>as_of_date</code> / snapshot date on every row</strong></td><td>Snapshot tagging, time travel, restatement</td><td><span class="t p0">AP-1.1</span></td><td>CARL</td></tr>
+    <tr><td class="mono">G-8</td><td><strong>Advertiser and agency</strong></td><td>Any advertiser-level analysis; intake pain point</td><td><span class="t p2">—</span></td><td>Jamie</td></tr>
+    <tr><td class="mono">G-9</td><td><strong>Delivered impressions for TVE / VOD</strong> (FreeWheel)</td><td>True delivered CPM rather than booked-quantity CPM</td><td><span class="t p0">AP-1.1</span></td><td>Ping Feng — SPIKE</td></tr>
+  </tbody>
+</table>
+
+<table>
+  <caption>B · Logic in the workbook not covered by PRD v0.2</caption>
+  <thead><tr><th style="width:52px">ID</th><th>Gap</th><th>Detail</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">G-10</td><td><strong>Sports has no data model</strong></td>
+        <td>Sports is identified by whether a free-text sponsorship package name is blank. "Total x Sports" is a
+        required reporting view and the PRD does not mention sports classification at all.</td></tr>
+    <tr><td class="mono">G-11</td><td><strong>Booked and delivered are different grains on different calendars</strong></td>
+        <td><code>Data</code> is Calendar Quarter on booked revenue; <code>DISPLAY DATA</code> is Activity Quarter on
+        delivered impressions. The PRD treats both as "revenue". Joining them naively will misstate CPM.</td></tr>
+    <tr><td class="mono">G-12</td><td><strong>DAT is modelled as an audience flag, not a bucket</strong></td>
+        <td>Both sources already carry Audience Flag / Is Audience, so DAT is derivable as
+        <code>f(audience_flag, premium_product)</code>. The PRD describes DAT only as a bucket, which understates how
+        much is already present in the data.</td></tr>
+    <tr><td class="mono">G-13</td><td><strong>Three measures on the booked side, not one</strong></td>
+        <td>Net Revenue, Contracted Quantity and Booked Contracted Production Quantity are all carried and all used
+        downstream. The PRD says "revenue".</td></tr>
+    <tr><td class="mono">G-14</td><td><strong>Forecast is in scope but unnamed</strong></td>
+        <td><code>EXEC Summary!P</code> carries a $211.57M full-year forecast from the FC Model. No PRD story covers
+        forecast ingestion, so the CARL exec view could not reproduce the current pack.</td></tr>
+    <tr><td class="mono">G-15</td><td><strong>The reconciliation baseline is itself a moving target</strong></td>
+        <td>Both upstream workbooks are week-stamped on SharePoint, and two pairs of near-duplicate sheets exist with
+        no marker of which is authoritative. SPIKE-2 must pin which week's file and which sheet is the baseline before
+        a tolerance percentage means anything.</td></tr>
+  </tbody>
+</table>
+
+<!-- ============================= 8 ============================= -->
+<h2 id="s8"><span class="num">8</span>Target Iceberg model</h2>
+<p class="lede">Medallion layout on the existing CARL lakehouse. Two facts from the workbook drive the design: booked
+and delivered data are different grains on different calendars and must not be merged into one table, and every piece
+of mapping logic currently in spreadsheet cells must become effective-dated reference data.</p>
+
+<h3>Bronze — raw landing</h3>
+<table class="tight">
+  <thead><tr><th>Table</th><th>From</th><th>Partition</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">bronze.operative_booked_revenue</td><td>L-1</td><td class="mono">ingest_date, source_system</td><td>Append-only, schema as delivered</td></tr>
+    <tr><td class="mono">bronze.gam_display_delivered</td><td>L-2</td><td class="mono">ingest_date, source_system</td><td></td></tr>
+    <tr><td class="mono">bronze.freewheel_delivered</td><td>L-3</td><td class="mono">ingest_date, source_system</td><td>Pending SPIKE</td></tr>
+    <tr><td class="mono">bronze.dat_revenue</td><td>L-4</td><td class="mono">ingest_date</td><td>Replaces external&nbsp;[1]</td></tr>
+    <tr><td class="mono">bronze.traditional_digital</td><td>L-5</td><td class="mono">ingest_date</td><td>Replaces external&nbsp;[2]</td></tr>
+    <tr><td class="mono">bronze.ad_product_forecast</td><td>L-6</td><td class="mono">ingest_date, forecast_version</td><td></td></tr>
+  </tbody>
+</table>
+
+<h3>Silver — conformed dimensions and rule tables</h3>
+<table class="tight">
+  <thead><tr><th>Table</th><th>Type</th><th class="num">Members</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">dim_ad_product</td><td>SCD2 + alias table</td><td class="num">18</td><td>Stable surrogate key survives renames. Alias table absorbs the "Infornt" class of typo and the 3 stale map entries</td></tr>
+    <tr><td class="mono">dim_property</td><td>SCD2</td><td class="num">7</td><td>Streaming, Sports, News, Entertainment, Turner Network, Other/Intl, DCI S&amp;S</td></tr>
+    <tr><td class="mono">dim_site</td><td>SCD2</td><td class="num">11</td><td>Plus 60 GAM ad units mapped in via <code>ref_gam_site_map</code></td></tr>
+    <tr><td class="mono">dim_format</td><td>static</td><td class="num">5</td><td>Video/TVE, VOD, Display, Native, DTC — plus Production Fee, currently unmapped</td></tr>
+    <tr><td class="mono">dim_cost_type</td><td>static</td><td class="num">2</td><td>Sponsorship, Rotational</td></tr>
+    <tr><td class="mono">dim_sponsorship_package</td><td>SCD2</td><td class="num">7+</td><td><strong>Replaces free-text <code>Data!G</code>.</strong> Carries a real <code>is_sports</code> boolean plus league and season — fixes DQ-2 and G-3</td></tr>
+    <tr><td class="mono">dim_date</td><td>static</td><td class="num">—</td><td>Calendar and broadcast quarter. Intake flags broadcast-week skew as a live YOY problem</td></tr>
+    <tr><td class="mono">dim_advertiser</td><td>SCD2</td><td class="num">—</td><td>Pending G-8</td></tr>
+    <tr><td class="mono">ref_bucket_rule</td><td>effective-dated</td><td class="num">3</td><td>Ad Inno / DAT / Traditional / Overlap assignment. SME-editable, versioned</td></tr>
+    <tr><td class="mono">ref_adjustment_rule</td><td>effective-dated</td><td class="num">1</td><td>The 1.9&times; factor as data: product, metric, factor, effective_from, rationale</td></tr>
+  </tbody>
+</table>
+
+<h3>Gold — facts and aggregates</h3>
+<table class="tight">
+  <thead><tr><th>Table</th><th>Grain</th><th>Measures</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">fct_ad_revenue_booked</td>
+        <td>line_item &times; product &times; property &times; site &times; format &times; cost_type &times; package &times; audience_flag &times; <strong>calendar</strong> month &times; source</td>
+        <td>net_revenue, gross_revenue, contracted_qty, booked_contracted_production_qty</td></tr>
+    <tr><td class="mono">fct_ad_delivery</td>
+        <td>line_item &times; product &times; site &times; ad_unit &times; format &times; audience_flag &times; <strong>activity</strong> month &times; source</td>
+        <td>monetized_impressions, gross_revenue_adjusted, net_revenue</td></tr>
+    <tr><td class="mono">fct_ad_revenue_bucketed</td><td>one row per booked line &times; assigned bucket</td>
+        <td>net_revenue, impressions, bucket_key, overlap_flag, rule_id</td></tr>
+    <tr><td class="mono">fct_ad_product_forecast</td><td>product &times; property &times; quarter &times; forecast_version</td><td>forecast_revenue</td></tr>
+    <tr><td class="mono">agg_yield_by_bucket</td><td>vertical &times; format &times; quarter</td><td>adinno_cpm, traditional_cpm, yield_dollars, yield_pct</td></tr>
+    <tr><td class="mono">agg_yield_by_product</td><td>product &times; quarter</td><td>yield_dollars, yield_pct — PRD AP-3.3</td></tr>
+  </tbody>
+</table>
+
+<h3>Iceberg capabilities this design depends on</h3>
+<table class="tight">
+  <thead><tr><th>Capability</th><th>Why it is needed here</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Snapshot tags</strong></td><td>Tag each weekly close as <code>week_35_2026</code> and query
+        <code>FOR VERSION AS OF</code>. Retires the entire "Week 35" SharePoint folder pattern and makes any past week
+        reproducible — the direct fix for G-15.</td></tr>
+    <tr><td><strong>Write-audit-publish branches</strong></td><td>Land to an audit branch, run the DQ suite, publish
+        only on pass. This is the mechanism that satisfies "ensure data quality during the remodel".</td></tr>
+    <tr><td><strong>Schema evolution by column ID</strong></td><td>Renames and adds are metadata-only operations.
+        Answers PRD risk&nbsp;#3 and DQ-9 directly.</td></tr>
+    <tr><td><strong>MERGE INTO with row-level deletes</strong></td><td>Operative restates booked revenue after the
+        fact. Merge-on-read handles restatement without full table rewrites.</td></tr>
+    <tr><td><strong>Hidden partitioning</strong></td><td>Partition by month and source system without Quick needing
+        partition predicates in every query.</td></tr>
+    <tr><td><strong>Metadata tables</strong></td><td>Read <code>.history</code> and <code>.snapshots</code> to drive
+        the "last updated per source" freshness indicator the intake asks for.</td></tr>
+  </tbody>
+</table>
+
+<!-- ============================= 9 ============================= -->
+<h2 id="s9"><span class="num">9</span>Data quality gate</h2>
+<p class="lede">Blocking tests run on the audit branch and must pass before publish. Warning tests publish but notify.
+This is the concrete answer to the intake's request for automated ongoing accuracy monitoring and a weekly backend
+audit with notification.</p>
+
+<table>
+  <caption>Controls, with the specific defect each one would have caught</caption>
+  <thead><tr><th>Control</th><th style="width:88px">Severity</th><th>Assertion</th><th>Catches</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Grain uniqueness</strong></td><td><span class="t crit">Blocking</span></td><td>Fact PK is unique. Today's 56 rows are 56 distinct keys — lock that invariant in</td><td class="mono">G-1</td></tr>
+    <tr><td><strong>Referential integrity</strong></td><td><span class="t crit">Blocking</span></td><td>Every dimension FK resolves. No 0-valued or null surrogate keys permitted</td><td class="mono">DQ-3, DQ-11</td></tr>
+    <tr><td><strong>Dedup identity</strong></td><td><span class="t crit">Blocking</span></td><td><code>abs((adinno + dat_excl_overlap + trad_excl_both) − total) &lt; $1</code> per vertical, format and quarter</td><td class="mono">PRD risk #6</td></tr>
+    <tr><td><strong>Bucket exhaustivity</strong></td><td><span class="t crit">Blocking</span></td><td>Bucketed revenue sums to source revenue. No line unassigned, none double-assigned</td><td class="mono">DQ-3</td></tr>
+    <tr><td><strong>Unmapped-revenue alert</strong></td><td><span class="t crit">Blocking</span></td><td>Any revenue whose product, format or vertical fails to map raises with the dollar amount attached</td><td class="mono">DQ-3, DQ-9, G-5</td></tr>
+    <tr><td><strong>Revenue-basis consistency</strong></td><td><span class="t crit">Blocking</span></td><td>Net and gross are never summed. Every measure carries an explicit basis</td><td class="mono">DQ-4</td></tr>
+    <tr><td><strong>Type conformance</strong></td><td><span class="t crit">Blocking</span></td><td>Measure columns reject non-numeric values. No text sentinels</td><td class="mono">DQ-5</td></tr>
+    <tr><td><strong>Source reconciliation</strong></td><td><span class="t crit">Blocking</span></td><td>Gold vs source within the tolerance SPIKE-2 sets. Intake precedent elsewhere is ±3%</td><td class="mono">G-15</td></tr>
+    <tr><td><strong>Silent-zero regression</strong></td><td><span class="t mat">Warning</span></td><td>Any (product, bucket) that had revenue last snapshot and is now 0</td><td class="mono">DQ-1, DQ-2, DQ-6</td></tr>
+    <tr><td><strong>CPM plausibility band</strong></td><td><span class="t mat">Warning</span></td><td>CPM within a per-format band. PRD expects In-front near $90; the book currently shows $51–55</td><td class="mono">DQ-8</td></tr>
+    <tr><td><strong>Adjustment audit</strong></td><td><span class="t mat">Warning</span></td><td>The 1.9&times; applies only to rows the rule table selects, and the factor comes from the table</td><td class="mono">DQ-8, DQ-12</td></tr>
+    <tr><td><strong>Canonical value enforcement</strong></td><td><span class="t mat">Warning</span></td><td>Facts reference dimension keys, never text literals. Unrecognised values fail the load</td><td class="mono">DQ-6</td></tr>
+    <tr><td><strong>Freshness</strong></td><td><span class="t mat">Warning</span></td><td>Snapshot age per source, surfaced on the dashboard</td><td class="mono">Intake NFR</td></tr>
+  </tbody>
+</table>
+
+<!-- ============================= 10 ============================= -->
+<h2 id="s10"><span class="num">10</span>User stories</h2>
+<p class="lede">Written to extend the existing AP-1.x through AP-4.x backlog rather than replace it. The AP-0.x and
+AP-DQ.x IDs cover discovery and data quality, which the current backlog leaves implicit.</p>
+
+<table>
+  <caption>Proposed backlog additions</caption>
+  <thead><tr><th style="width:72px">ID</th><th>User story</th><th style="width:52px">Pri</th><th class="num" style="width:44px">SP</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">AP-0.1</td>
+        <td><strong>Priority needs traced to the workbook.</strong> As a data/BI stakeholder reviewing the Ad Products
+        intake, I want the priority needs ranked against what the Week 35 workbook actually does, so we build the
+        load-bearing logic first rather than the logic that is merely documented.
+        <ul class="tk">
+          <li>Every sheet classified as source, engine, reporting layer or abandoned</li>
+          <li>Each requirement AP-1.1 through AP-4.1 traced to the sheets, columns and formulas it replaces</li>
+          <li>Logic present in the workbook but absent from the PRD logged as a gap with a named owner</li>
+          <li>Ranking reviewed with Jamie and Ping Feng, with disagreements recorded</li>
+        </ul></td>
+        <td><span class="t p0">P0</span></td><td class="num">5</td></tr>
+    <tr><td class="mono">AP-0.2</td>
+        <td><strong>Formula logic reduced to a written spec.</strong> As a BI engineer, I want the workbook's 20,936
+        formulas reduced to a specification of dimensions, measures, grain and bucket algebra, so the Iceberg model is
+        built from an agreed spec rather than by reading spreadsheet cells.
+        <ul class="tk">
+          <li>Booked and delivered grains documented separately, with their differing quarter semantics called out</li>
+          <li>The identity <code>Q = G + K + O</code> written as SQL and confirmed with the SME</li>
+          <li>The yield formula, including its Product Info adjustment term, reproduced and tied to Week 35 figures</li>
+          <li>All 18 products, 7 verticals, 11 sites and 5 formats enumerated as candidate dimension members</li>
+        </ul></td>
+        <td><span class="t p0">P0</span></td><td class="num">8</td></tr>
+    <tr><td class="mono">AP-0.3</td>
+        <td><strong>Looker reports re-specified as long-format extracts.</strong> As a BI engineer, I want the two
+        existing Looker reports re-specified to return one row per dimension combination per period, so CARL ingests
+        extracts rather than crosstabs.
+        <ul class="tk">
+          <li>Quarter and audience flag returned as columns, not header rows</li>
+          <li>No merged headers, no totals rows, no pivoted measure blocks</li>
+          <li>Line-item and order keys included on both reports (G-1)</li>
+          <li>Row counts and revenue totals reconcile to the current crosstab before cutover</li>
+        </ul></td>
+        <td><span class="t p0">P0</span></td><td class="num">5</td></tr>
+    <tr><td class="mono">AP-DQ.1</td>
+        <td><strong>Existing defects catalogued before migration.</strong> As a data/BI stakeholder, I want the defects
+        already present in the Excel model catalogued and quantified, so we do not port them into Iceberg and call the
+        result reconciled.
+        <ul class="tk">
+          <li>DQ-1 through DQ-5 each confirmed with the SME and a correct-value decision recorded</li>
+          <li>Reconciliation targets stated against corrected figures wherever a defect is confirmed</li>
+          <li>Every manual override, including the $2M in a cell comment, moved into a dated adjustment record</li>
+          <li>Defect list signed off by Jamie before P0 build sign-off</li>
+        </ul></td>
+        <td><span class="t p0">P0</span></td><td class="num">5</td></tr>
+    <tr><td class="mono">AP-DQ.2</td>
+        <td><strong>Write-audit-publish gate.</strong> As a data/BI stakeholder, I want the Iceberg remodel to publish
+        only through write-audit-publish, so a failing data quality run can never reach a BI consumer.
+        <ul class="tk">
+          <li>Each load writes to an audit branch and publishes only when the blocking suite passes</li>
+          <li>Blocking tests cover grain uniqueness, referential integrity, the dedup identity, bucket exhaustivity,
+              unmapped revenue, revenue basis, type conformance and source reconciliation</li>
+          <li>A failed run notifies the SME and pipeline owner, naming the failing test and the dollar variance</li>
+          <li>The published snapshot is tagged with the reporting week so any prior week is reproducible</li>
+        </ul></td>
+        <td><span class="t p0">P0</span></td><td class="num">8</td></tr>
+    <tr><td class="mono">AP-DQ.3</td>
+        <td><strong>Unmapped revenue raises rather than zeroes.</strong> As an analyst, I want revenue that fails to map
+        to raise an alert with its dollar value attached, so an unmapped product or format can never silently resolve to
+        zero the way it does in Excel today.
+        <ul class="tk">
+          <li>Dimension lookups fail loudly — no 0 or null fallback surrogate key</li>
+          <li>Unmapped revenue reported as a dollar amount and row count, per dimension, on every load</li>
+          <li>Total unmapped revenue surfaced on the dashboard alongside the figures it is excluded from</li>
+          <li>A product rename resolves through the alias table without engineering work</li>
+        </ul></td>
+        <td><span class="t p0">P0</span></td><td class="num">5</td></tr>
+    <tr><td class="mono">AP-DQ.4</td>
+        <td><strong>Canonical dimension values enforced by key.</strong> As an analyst, I want canonical dimension
+        values enforced by foreign key, so the case and spelling variants that are harmless in Excel cannot become
+        silent zeros in SQL.
+        <ul class="tk">
+          <li>Facts reference dimension keys, never text literals. "HBO MAX", "Hbo MAx" and "HBO Max" resolve to one member</li>
+          <li>Loading an unrecognised text value fails the load rather than inserting a new member</li>
+          <li>The canonical value list is catalogued in the semantic layer and visible to the SME</li>
+        </ul></td>
+        <td><span class="t p1">P1</span></td><td class="num">3</td></tr>
+    <tr><td class="mono">AP-1.5</td>
+        <td><strong>Sports classification modelled properly.</strong> As an analyst, I want sports inventory identified
+        by a real flag rather than by whether a free-text package name is blank, so the "Total x Sports" view is
+        trustworthy.
+        <ul class="tk">
+          <li><code>dim_sponsorship_package</code> carries <code>is_sports</code>, league and season</li>
+          <li>Package names parsed from the 7 existing free-text values and validated with Sports sales</li>
+          <li>Sports-excluded totals reconcile to the current "Total x Sports" figures, or the variance is explained</li>
+        </ul></td>
+        <td><span class="t p0">P0</span></td><td class="num">5</td></tr>
+    <tr><td class="mono">AP-2.2a</td>
+        <td><strong>In-front adjustment as reference data.</strong> As an analyst, I want the In-front impression
+        adjustment expressed as effective-dated reference data rather than a constant in 560 formulas, so it can be
+        changed, audited and explained.
+        <ul class="tk">
+          <li><code>ref_adjustment_rule</code> carries product, metric, factor, effective_from, effective_to, rationale</li>
+          <li>Seeded from the current model and reproduces the Week 35 adjusted impressions of 1,439,860,243</li>
+          <li>Changing the factor changes downstream CPM and yield with no code deployment</li>
+          <li>A test asserts the rule applied only to the rows it selects</li>
+        </ul></td>
+        <td><span class="t p1">P1</span></td><td class="num">5</td></tr>
+    <tr><td class="mono">AP-3.2a</td>
+        <td><strong>Executive package served from Quick.</strong> As a Finance stakeholder, I want the bi-weekly
+        executive package served from Quick on gold-layer tables, so the pack is generated rather than hand-sorted.
+        <ul class="tk">
+          <li>Product, quarter, property and CPM layout matches the approved EXEC Summary format</li>
+          <li>Revenue, impressions, CPM, forecast and yield percent reconcile to the agreed tolerance</li>
+          <li>Refresh scheduled, with last-updated per source visible on the dashboard</li>
+          <li>Sports-excluded views backed by <code>is_sports</code> rather than a blank package name</li>
+        </ul></td>
+        <td><span class="t p1">P1</span></td><td class="num">5</td></tr>
+  </tbody>
+</table>
+
+<div class="box warn">
+  <div class="bt">One reordering to propose</div>
+  <p>PRD v0.2 carries reconciliation and data quality only as acceptance criteria on other stories. Given that five
+  defects in the current model change reported numbers or would fail a typed load, the reconciliation baseline itself
+  is unsound. Data quality should be promoted to its own P0 story so that "reconciles to the Excel model" does not
+  become a requirement to faithfully reproduce known errors.</p>
+</div>
+
+<!-- ============================= 11 ============================= -->
+<h2 id="s11"><span class="num">11</span>Open questions for the SME</h2>
+<p class="lede">Ordered by what blocks the most downstream work. Each needs an answer before the corresponding P0 story
+can be estimated.</p>
+
+<table>
+  <thead><tr><th style="width:44px">#</th><th>Question</th><th>Blocks</th><th>Ask</th></tr></thead>
+  <tbody>
+    <tr><td class="num">1</td><td>What was the <code>"Infornt"</code> / <code>G="Sports"</code> line intended to return? Is there real Max Sports revenue that should appear, or is $0 correct?</td><td class="mono">DQ-1, DQ-2, AP-3.1</td><td>Jamie</td></tr>
+    <tr><td class="num">2</td><td>Should Operative net and GAM gross continue to be summed, or does one need converting? Which basis does the executive pack represent?</td><td class="mono">DQ-4, G-4</td><td>Jamie + Finance</td></tr>
+    <tr><td class="num">3</td><td>In <code>DISPLAY DATA!AJ</code>, should the DAT branch reference the audience column rather than the non-audience column?</td><td class="mono">DQ-5</td><td>Jamie</td></tr>
+    <tr><td class="num">4</td><td>How should <em>Production Fee</em> be classified for buy type? It is currently unmapped and worth $108,507.</td><td class="mono">DQ-3</td><td>Jamie</td></tr>
+    <tr><td class="num">5</td><td>Is there any system field that identifies sports inventory, or is the sponsorship package name genuinely the only signal?</td><td class="mono">G-3, AP-1.5</td><td>Jamie + Sports sales</td></tr>
+    <tr><td class="num">6</td><td>Can Operative expose a line-item or order key on the Looker extract? Without it, line-level dedup is impossible.</td><td class="mono">G-1, AP-2.1</td><td>Operative admin</td></tr>
+    <tr><td class="num">7</td><td>Can GAM line items carry a premium-product or placement classification, so the $65.74M under "Other" can be attributed?</td><td class="mono">G-5, AP-3.3</td><td>Ad Ops</td></tr>
+    <tr><td class="num">8</td><td>Is FreeWheel genuinely P0, or should AP-1.1 be re-scoped to Operative only? It appears nowhere in the current model.</td><td class="mono">G-9, AP-1.1</td><td>Ping Feng — SPIKE-1</td></tr>
+    <tr><td class="num">9</td><td>Which sheet is authoritative — <code>EXEC Summary </code> or <code>Executive Summary </code>? And <code>Detail  FC</code> or <code>Do not use &gt;&gt;&gt;</code>?</td><td class="mono">G-15, SPIKE-2</td><td>Jamie</td></tr>
+    <tr><td class="num">10</td><td>Which week's upstream workbooks constitute the reconciliation baseline, and what tolerance applies?</td><td class="mono">G-15, SPIKE-2</td><td>Finance + Jamie</td></tr>
+    <tr><td class="num">11</td><td>Should the $2M "Deleted 2M per Bridget" adjustment carry forward, and under what rule?</td><td class="mono">DQ-12</td><td>Jamie + Bridget</td></tr>
+    <tr><td class="num">12</td><td>Is monthly grain available from Operative and GAM, or is quarter a hard constraint upstream?</td><td class="mono">G-6</td><td>Jamie</td></tr>
+  </tbody>
+</table>
+
+<footer>
+  <p>Extraction covered all 19 worksheets, both external link definitions, 8 comment parts, the embedded mapping ranges
+  and the full calculation chain. All figures are cached values from <code>2026 ALL Ad Innovation Revenue - Week
+  35.xlsx</code>, workbook dated 8.25.26. Sheet and cell references are given so every finding can be verified directly
+  in the source file.</p>
+  <p>Prepared as CARL Ad Products discovery output, aligned to <code>CARL_AdProducts_PRD_v0.2.docx</code> and the CARL
+  Discovery Intake Template v1.1. Requirement IDs AP-1.x through AP-4.x and SPIKE-1/2 refer to the existing Jira import;
+  AP-0.x, AP-DQ.x, AP-1.5, AP-2.2a and AP-3.2a are proposed additions.</p>
+</footer>
+
+</main>
+</div>
+</body>
+</html>

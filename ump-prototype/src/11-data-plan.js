@@ -202,12 +202,12 @@ const PORTFOLIO = [
 const AGENTS = [
   /* Added from the Flow Architecture note (6 Sep 2026). The orchestrator is
      first because everything else runs inside the state machine it holds. */
-  { id:"A0", name:"Orchestrator", phase:"All", role:"Holds the state machine, knows every evaluation point inside it, and scores the intermediate status at each one. Below par it loops the phase or surfaces for strategic input.",
-    inputs:["Phase state","Every evaluation point and its weight","Justification scores"], outputs:["Gate score","Blocking points and their remedies","Handoff to the next phase"],
-    guard:"Its only power is to refuse a handoff. It cannot advance the plan, edit an artifact, or overrule the planner, and no point it raises can be waived silently.", learns:"Which blocking points planners routinely argue past — a point argued past every time is a badly written point." },
-  { id:"A0b", name:"Justification Eval", phase:"All", role:"Scores the argument behind a change, never the change itself. A reason that would not survive being read by someone outside the room goes back to its author with the specific thing it is missing.",
-    inputs:["The planner's or approver's written reason","What is being changed"], outputs:["Argument score","What the argument is missing","Pass, thin, or sent back"],
-    guard:"Judges form, not conclusion. It has no view on whether the change is right — a planner can argue anything, but not weakly.", learns:"Reasons that passed and were later vindicated or overturned at approval." },
+  { id:"A0", name:"Orchestrator", phase:"All", role:"Holds the state machine, knows every evaluation point inside it, and scores the intermediate status at each one. It separates what is missing from what is merely weak, and only the first of those holds a handoff.",
+    inputs:["Phase state","Every evaluation point and its weight","Justification scores"], outputs:["Gate score","What is absent, and its remedy","What is weak, scored and carried forward"],
+    guard:"It can hold a handoff only for absence — something the next phase would have to guess at. It has no power over quality: a weak argument goes forward carrying its score, to be read by P&I at the only gate that can stop a plan (OQ-17, OQ-22).", learns:"Which binding points planners routinely find ways around — a point worked around every time is a badly written point." },
+  { id:"A0b", name:"Justification Eval", phase:"All", role:"Scores the argument behind a change, never the change itself, and names what a stronger argument would say.",
+    inputs:["The planner's or approver's written reason","What is being changed"], outputs:["Argument score","What the argument is missing","Pass, thin, or flagged thin"],
+    guard:"Judges form, not conclusion, and refuses nothing. It has no view on whether the change is right, and no power to stop a weak one — the score travels with the change into the approval package instead.", learns:"Reasons that passed and were later vindicated or overturned at approval." },
   { id:"A0c", name:"Evidence Eval", phase:"Intake", role:"Scores the strengths and weaknesses of every record on the RFP graph and writes the probability back onto it. Re-scores the graph whenever a human resolves something on it.",
     inputs:["Every record on the RFP graph","Adjudications and corrections"], outputs:["Per-record confidence","What would strengthen the weak ones"],
     guard:"Every point of a confidence score is attributable to source directness, citation, corroboration, contest and age. Nothing is a model output that cannot be argued with.", learns:"Which weak records turned out to matter, and which strong ones were wrong." },

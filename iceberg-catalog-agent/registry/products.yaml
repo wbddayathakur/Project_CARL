@@ -1,0 +1,389 @@
+# Data product registry — the curated tier of the CARL Iceberg catalog.
+#
+# This is the only hand-maintained file in the agent, and it is what makes the
+# published catalog usable by someone who does not know the schema. Everything
+# else is collected. Adding an entry here is the act that promotes a table from
+# "exists in Glue" to "you may build on this".
+#
+# status has four values and they are promises, not labels:
+#   certified  an owner is accountable for it, the grain is fixed, breaking
+#              changes get announced. Safe to cite in an intake request.
+#   beta       real and refreshing, but the contract is not frozen yet.
+#   proposed   designed, not built. Listed so intake can see it is coming and
+#              attach demand to it instead of opening a duplicate request.
+#   deprecated still there, do not build anything new on it.
+#
+# `answers` must be written as a question a business person would actually ask.
+# If you cannot write one, the product is not ready to be listed.
+#
+# `tables` are physical bindings as database.table. The agent resolves them
+# against the live catalog on every run, so a typo or a dropped table shows up
+# as a broken binding in the report rather than silently passing.
+
+meta:
+  version: 1
+  maintainer: Daya Thakur
+  review_cadence: weekly
+  source_of_truth: >-
+    Physical tables are resolved live from the Glue catalog. Grain, owner and
+    freshness promises come from this file and are only as good as its review.
+
+products:
+
+  # ---------------------------------------------------------------------
+  # Linear & Digital Revenue — the built, running estate
+  # ---------------------------------------------------------------------
+
+  - product_id: LDR-PACING-001
+    name: Pacing, Revenue & Budget by Month
+    domain: Linear & Digital Revenue
+    answers: >-
+      How is each sales team pacing against budget this month, by network
+      account and account executive?
+    status: certified
+    owner: CARL Data Engineering
+    steward: Ad Sales Finance
+    tables:
+      - linear_digital_revenue_gold.fact_pacing_revenue_budget_month
+      - linear_digital_revenue_silver.fact_pacing_revenue_budget_month
+    cube_views:
+      - finance_view_pacing_revenue_budget
+    measures: [Budget Amount, Booked Revenue, Pacing Percent]
+    dimensions: [Team, Net Account, AE Combo, Agency, Calendar Month]
+    grain: One row per net account per AE combo per calendar month
+    cadence: Daily at 10:00 ET
+    freshness_sla_hours: 30
+    environments: [dev, qa, stage, prod]
+    query_athena: |
+      SELECT * FROM linear_digital_revenue_gold.fact_pacing_revenue_budget_month
+      WHERE calendar_month = date_trunc('month', current_date)
+    related_requirements: [AP-2.1]
+
+  - product_id: LDR-REVENUE-002
+    name: Combined Revenue & Sales Holes
+    domain: Linear & Digital Revenue
+    answers: >-
+      Where is revenue booked across linear and digital, and where are the
+      unsold holes in the schedule?
+    status: certified
+    owner: CARL Data Engineering
+    steward: Ad Sales Finance
+    tables:
+      - linear_digital_revenue_gold.combined_revenue_sales_holes_totals
+      - linear_digital_revenue_silver.combined_revenue_sales_holes_totals
+    cube_views:
+      - finance_view_combined_revenue
+    measures: [Combined Revenue, Sales Holes Total]
+    dimensions: [Net Account, Sell Division, Network, Calendar Month]
+    grain: One row per account per division per month
+    cadence: Daily at 10:00 ET
+    freshness_sla_hours: 30
+    environments: [dev, qa, stage, prod]
+    query_athena: |
+      SELECT * FROM linear_digital_revenue_gold.combined_revenue_sales_holes_totals
+
+  - product_id: LDR-TEAMS-003
+    name: Sales Teams Hierarchy
+    domain: Linear & Digital Revenue
+    answers: >-
+      Who rolls up to whom in ad sales — AE to VP to SVP to EVP — as of any
+      given reporting period?
+    status: certified
+    owner: CARL Data Engineering
+    steward: Ad Sales Operations
+    tables:
+      - linear_digital_revenue_gold.dim_teams
+      - linear_digital_revenue_silver.dim_teams
+    cube_views:
+      - finance_view_dim_teams
+    dimensions: [AE, VP, SVP, EVP, Sales Group]
+    grain: One row per AE per effective period
+    cadence: Daily at 10:00 ET
+    freshness_sla_hours: 30
+    environments: [dev, qa, stage, prod]
+    known_gaps:
+      - >-
+        Built from Salesforce comp tables. An AE who changes team mid-month is
+        reflected at next refresh, not immediately.
+
+  - product_id: LDR-ACCOUNT-004
+    name: Net Account & Agency Conformed Dimensions
+    domain: Linear & Digital Revenue
+    answers: >-
+      What is the canonical advertiser, agency and net-account list that every
+      revenue report should join to?
+    status: beta
+    owner: CARL Data Engineering
+    steward: Ad Sales Operations
+    tables:
+      - linear_digital_revenue_silver.dim_net_account
+      - linear_digital_revenue_silver.dim_net_account_ae_combo
+      - linear_digital_revenue_silver.dim_agency
+    dimensions: [Net Account, Agency, Mega Agency, AE Combo]
+    grain: One row per account, one per agency
+    cadence: Daily at 10:00 ET
+    freshness_sla_hours: 30
+    environments: [dev, qa, stage, prod]
+    known_gaps:
+      - Gold equivalents exist but have no catalogued producer job yet.
+
+  - product_id: LDR-EXEC-005
+    name: Executive Revenue by Month
+    domain: Linear & Digital Revenue
+    answers: What does the monthly revenue roll-up look like at executive level?
+    status: beta
+    owner: CARL Data Engineering
+    steward: Ad Sales Finance
+    tables:
+      - linear_digital_revenue_silver.fact_executive_revenue_month
+    grain: One row per executive rollup per month
+    cadence: Daily at 10:00 ET
+    freshness_sla_hours: 30
+    environments: [dev, qa, stage, prod]
+    known_gaps:
+      - Silver only. No Gold fact and no Cube view, so there is no governed path
+        to it for a business user today.
+
+  # ---------------------------------------------------------------------
+  # Measurement
+  # ---------------------------------------------------------------------
+
+  - product_id: MIT-VIEWING-101
+    name: Program Viewing & Universe Estimates
+    domain: Measurement
+    answers: >-
+      What did a programme deliver by quarter hour and selling demo, and what
+      universe should it be rated against?
+    status: beta
+    owner: CARL Data Engineering
+    steward: Research & Measurement
+    tables:
+      - big_mit_bronze.program_viewing
+      - big_mit_bronze.program_viewing_quarterhour
+      - big_mit_bronze.program_viewing_sellingdemos
+      - big_mit_bronze.universe_estimate
+      - big_mit_bronze.timeperiod_quarterhour
+      - big_mit_bronze.program_descriptor
+      - big_mit_bronze.intab
+    grain: One row per programme per quarter hour per demo
+    cadence: snowflake_to_bronze_iceberg, plus manual runs
+    freshness_sla_hours: 48
+    environments: [dev, qa, stage, prod]
+    known_gaps:
+      - >-
+        Bronze only. There is no Silver or Gold on top, so every consumer is
+        re-deriving the same aggregations. First candidate for a Gold build.
+      - Stage has been behind since mid-July; treat stage as unusable.
+
+  # ---------------------------------------------------------------------
+  # Ad Products — designed against the Week 35 workbook, not yet built
+  # ---------------------------------------------------------------------
+
+  - product_id: ADP-BOOKED-201
+    name: Ad Product Booked Revenue
+    domain: Ad Products
+    answers: >-
+      What ad-innovation revenue has been booked by product, property, site and
+      format, and on what basis?
+    status: proposed
+    owner: Daya Thakur
+    steward: Jamie Jackette — Ad Products Finance
+    tables:
+      - adproducts_gold.fct_ad_revenue_booked
+    cube_views:
+      - adproducts_view_ad_revenue_booked
+    measures:
+      - Net Revenue
+      - Gross Revenue
+      - Contracted Quantity
+      - Booked Contracted Production Quantity
+      - Adjusted Impressions
+    dimensions:
+      [Ad Product, Property, Site, Format, Cost Type, Sponsorship Package, Audience Flag, Calendar Month]
+    grain: >-
+      line_item x product x property x site x format x cost_type x package x
+      audience_flag x calendar month
+    cadence: Weekly close
+    environments: []
+    known_gaps:
+      - >-
+        Blocked on Operative exposing a line-item or order key. Without one
+        there is no grain integrity and overlap can only be resolved at bucket
+        level.
+      - Audience flag is a header row in the workbook today, not a column.
+    related_requirements: [AP-1.1, AP-1.2, ADP-ICE-01, ADP-ICE-07, ADP-SEM-02]
+
+  - product_id: ADP-DELIVERY-202
+    name: Ad Product Delivery
+    domain: Ad Products
+    answers: What did display actually deliver, by line item and ad unit?
+    status: proposed
+    owner: Daya Thakur
+    steward: Jamie Jackette — Ad Products Finance
+    tables:
+      - adproducts_gold.fct_ad_delivery
+    cube_views:
+      - adproducts_view_ad_delivery
+    measures: [Monetized Impressions, Gross Revenue Adjusted, Net Revenue]
+    dimensions: [Ad Product, Site, Ad Unit, Format, Audience Flag, Activity Month]
+    grain: line_item x product x site x ad_unit x format x audience_flag x activity month
+    cadence: Weekly close
+    environments: []
+    known_gaps:
+      - >-
+        Kept deliberately separate from booked revenue because the two run on
+        different calendars — booked on calendar quarter, delivered on activity
+        quarter. Merging them silently is the failure mode this product exists
+        to prevent.
+      - >-
+        $65.74M of $80.38M GAM revenue sits under product "Other", so yield by
+        product cannot be completed for display until GAM line items carry a
+        placement classification.
+    related_requirements: [AP-1.2, ADP-ICE-08, ADP-SEM-03]
+
+  - product_id: ADP-BUCKETED-203
+    name: Deduplicated Revenue Buckets
+    domain: Ad Products
+    answers: >-
+      Split across Ad Innovation, DAT and Traditional, with the overlap removed
+      — how much revenue is in each, without double counting?
+    status: proposed
+    owner: Daya Thakur
+    steward: Jamie Jackette — Ad Products Finance
+    tables:
+      - adproducts_gold.fct_ad_revenue_bucketed
+    cube_views:
+      - adproducts_view_ad_revenue_bucketed
+    measures:
+      - Ad Innovation Revenue
+      - DAT Revenue (All)
+      - Overlap Revenue
+      - DAT Revenue excl Overlap
+      - Traditional Revenue
+      - Total Deduplicated Revenue
+    grain: One row per booked line per bucket
+    cadence: Weekly close
+    environments: []
+    known_gaps:
+      - The six bucket names still need business sign-off.
+    related_requirements: [ADP-ICE-09, ADP-SEM-05]
+
+  - product_id: ADP-YIELD-204
+    name: Ad Product Yield
+    domain: Ad Products
+    answers: What is CPM and yield by vertical, format and quarter?
+    status: proposed
+    owner: Daya Thakur
+    steward: Jamie Jackette — Ad Products Finance
+    cube_views:
+      - adproducts_view_yield
+    measures: [CPM, Ad Innovation CPM, Traditional CPM, Yield $, Yield %]
+    dimensions: [Property, Format, Calendar Quarter]
+    grain: Vertical x format x quarter
+    cadence: Weekly close
+    environments: []
+    known_gaps:
+      - >-
+        Depends on the In-front 1.9x impression multiplier becoming an
+        effective-dated rule row rather than a constant repeated in 560
+        formulas.
+      - >-
+        "Production Fee" is unmapped in the buy-type map, so $108,507 drops out
+        of every breakdown while staying in the total.
+    related_requirements: [ADP-SEM-06, ADP-ICE-10]
+
+  # ---------------------------------------------------------------------
+  # Research Market Share (intake Use Case 3(a)) — designed in CARL-3776,
+  # detail in marketshare-research-discovery/out/*.xlsx
+  # ---------------------------------------------------------------------
+
+  - product_id: MSI-SUPPLY-DEMAND-301
+    name: Telecast Supply & Demand (Nielsen C3 x Guideline spend)
+    domain: Research Market Share
+    answers: >-
+      How is WBD doing against peers on C3 impressions and benchmark ad spend,
+      and what are WBD's share and power ratio by network, genre and quarter?
+    status: proposed
+    owner: Daya Thakur
+    steward: Eric Yarsinsky / Maggie Mullane — ASR Marketplace Insights
+    tables:
+      - marketplace_insights_gold.fct_telecast_supply
+      - marketplace_insights_gold.fct_telecast_demand
+    cube_views:
+      - marketplace_view_telecast_supply_demand
+    measures: [Gross Impressions, Gross Spend, EQ30 Spot Count, CPM, Share of Spend, Power Ratio]
+    dimensions: [Ownership, Network, Programming Genre, Program, Telecast, Buy Type, ADU, Demo, Viewing Methodology, Broadcast Month]
+    grain: Telecast x broad demo (supply); telecast x buy type x ADU x spot length (demand)
+    cadence: Monthly on Guideline delivery; weekly for MIT
+    environments: []
+    known_gaps:
+      - Guideline Telecast is not landed in CARL (Bronze guideline_bronze proposed).
+      - Panel Only MIT history before Big MIT reaches CARL only through marketshare_bronze.factprogram.
+      - VAMI breakout ranking is contradictory between code and documentation (Q-01).
+    related_requirements: [PN-01, PN-02, PN-03, PN-05, MSD-06, MSD-08, MSD-09]
+
+  - product_id: MSI-CATEGORY-302
+    name: Category Spend (Guideline AccuTV)
+    domain: Research Market Share
+    answers: Which product categories are spending on national TV, with whom, and how is that trending?
+    status: proposed
+    owner: Daya Thakur
+    steward: ASR Marketplace Insights
+    tables:
+      - marketplace_insights_gold.fct_category_spend
+    cube_views:
+      - marketplace_view_category_spend
+    measures: [Gross Media Spend, EQ30 Spot Count, Share of Spend]
+    dimensions: [Media Parent Owner, Network, Category Group, Category, Subcategory, Buy Type, Broadcast Month]
+    grain: AccuTV delivered grain (layout to be confirmed)
+    cadence: Monthly on Guideline delivery
+    environments: []
+    known_gaps:
+      - AccuTV is not landed in CARL and its file layout is undocumented.
+    related_requirements: [PN-07, MSD-11]
+
+  - product_id: MSI-ADINTEL-303
+    name: Advertiser Spend Estimates (Nielsen Ad Intel)
+    domain: Research Market Share
+    answers: >-
+      What are competitors and categories spending on linear TV by brand,
+      network and program, and how is it trending?
+    status: proposed
+    owner: Daya Thakur
+    steward: ASR Marketplace Insights
+    tables:
+      - marketplace_insights_gold.fct_adintel_spend
+    cube_views:
+      - marketplace_view_adintel_spend
+      - marketplace_view_adintel_sales
+    measures: [Estimated Spend, Units, Share of Spend]
+    dimensions: [Parent Company, Subsidiary, Brand, Category, Network, Ownership, Program, Media Type, Broadcast Month]
+    grain: Ad date x network x program x advertiser brand x media type x duration
+    cadence: Weekly (MarketShare refresh Wednesday night)
+    environments: []
+    known_gaps:
+      - >-
+        Bronze factadintel carries surrogate keys only, so revisions cannot be
+        proven to replace originals; duplicates are detected, not prevented,
+        until the direct occurrence feed lands.
+      - Rows before ~10-Jun-2024 are a static copy whose network keys are never refreshed.
+    related_requirements: [PN-04, PN-13, MSD-10, MSD-17, MSD-18]
+
+  - product_id: MSI-FRESHNESS-304
+    name: Market Share Data Freshness & Quality
+    domain: Research Market Share
+    answers: When did each source last arrive, did the last load pass its checks, and can I trust today's numbers?
+    status: proposed
+    owner: CARL Data Engineering
+    steward: ASR Marketplace Insights
+    tables:
+      - marketplace_insights_gold.data_freshness
+      - marketplace_insights_gold.dq_results
+    cube_views:
+      - marketplace_view_data_freshness
+    measures: [Hours Since Last Delivery, Hours Since Last Publish, Checks Failed]
+    dimensions: [Source, Layer, Check, Severity, Run Date]
+    grain: Source x layer; check x run
+    cadence: Every pipeline run
+    environments: []
+    related_requirements: [PN-02, PN-06, MSD-12]

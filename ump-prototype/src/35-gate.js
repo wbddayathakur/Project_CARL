@@ -1,15 +1,21 @@
 /* =============================================================================
    35-gate.js — the Orchestrator's two surfaces.
 
-   `Gate`     — the handoff panel. Score, evaluation points, and the button that
-                stays shut until the phase is defensible.
+   `Gate`     — the handoff panel. Score, evaluation points, and a button that
+                shuts only when something the next phase needs is absent.
    `JustifyG` — Justify, with `Eval Justifications` wired in. The planner writes
-                an argument, the orchestrator scores it live, and a weak one is
-                sent back with the specific thing it is missing rather than
-                accepted and quietly passed downstream.
+                an argument and the orchestrator scores it live, naming what a
+                stronger one would say.
 
-   Neither surface decides. The gate says what is not yet sound; the evaluator
-   says what an argument lacks. A human still moves the plan (T7).
+   Both surfaces separate absent from weak, and treat them differently. Absent
+   holds: a gap nobody adjudicated, an override with no reason, a line still on
+   an Indicative forecast — the next phase would have to guess. Weak does not
+   hold: it is scored, it travels into the rubric and the approval package, and
+   P&I reads it at the only gate in the design that can stop a plan (OQ-17).
+
+   The system never blocks a weak argument. It proposes a better one and records
+   the departure (OQ-22). A gate the desk could not get past under deadline is a
+   gate that gets worked around, which is worse than not having one.
    ============================================================================= */
 
 const GATE_TONE = (score, par) =>
@@ -31,53 +37,71 @@ const GateRing = ({score, par}) => {
 const Gate = ({gate, verb, onGo, note}) => {
   const [open, setOpen] = useState(false);
   const g = gate;
-  const cls = g.verdict === "handoff" ? "ok" : g.verdict === "surface" ? "warn" : "bad";
+  const tone = g.verdict === "clean" ? "g" : g.verdict === "open-with-notes" ? "a" : "r";
+  const nB = g.blockers.length, nA = g.advisory.length;
+
+  /* Binding points first, then advisory — the order makes the distinction
+     legible without having to read the labels. */
+  const groups = [
+    ["What the next phase cannot work without", g.points.filter(p => p.kind === "binding")],
+    ["What travels forward and will be read", g.points.filter(p => p.kind === "advisory")],
+  ];
+
   return (
     <Card title="Handoff gate"
       sub={`${g.meta.from} · ${g.meta.asks}`}
-      right={<Chip c={cls === "ok" ? "g" : cls === "warn" ? "a" : "r"}>
-        {g.verdict === "handoff" ? "READY" : g.verdict === "surface" ? "SURFACED" : "BELOW PAR"}</Chip>}>
+      right={<Chip c={tone}>
+        {g.verdict === "clean" ? "CLEAN" : g.verdict === "open-with-notes" ? "OPEN · NOTES" : "INCOMPLETE"}</Chip>}>
 
       <div className="row" style={{gap:13, alignItems:"center", marginBottom:12}}>
         <GateRing score={g.score} par={g.par}/>
         <div style={{minWidth:0}}>
           <div style={{fontSize:12.5, lineHeight:1.5}}>
-            {g.verdict === "handoff"
-              ? <>Every evaluation point is met. The handoff to <b>{g.meta.to}</b> is open.</>
-              : g.verdict === "surface"
-              ? <>Above par at <b>{g.score}</b>, but {g.blockers.length} point{g.blockers.length>1?"s":""} {g.blockers.length>1?"are":"is"} unmet.
-                  Surfaced for your judgement rather than run again.</>
-              : <>Below par at <b>{g.score}</b> against {g.par}. The orchestrator holds the handoff and
-                  loops back rather than passing this to <b>{g.meta.to}</b>.</>}
+            {g.verdict === "clean"
+              ? <>Nothing missing and nothing thin. The handoff to <b>{g.meta.to}</b> is open.</>
+              : g.verdict === "open-with-notes"
+              ? <>The handoff to <b>{g.meta.to}</b> is open. {nA} thing{nA>1?"s":""} {nA>1?"are":"is"} thinner
+                  than it could be — {nA>1?"they travel":"it travels"} forward and P&amp;I will read {nA>1?"them":"it"}.</>
+              : <>{nB} thing{nB>1?"s":""} {nB>1?"are":"is"} <b>missing</b>, not weak. {nB>1?"They":"It"} cannot be
+                  inferred or argued around, so <b>{g.meta.to}</b> has nothing to work from until {nB>1?"they are":"it is"} there.</>}
           </div>
         </div>
       </div>
 
-      <div className="col" style={{gap:7}}>
-        {g.points.map(p => (
-          <div key={p.id} className="row" style={{gap:8, alignItems:"flex-start"}}>
-            <Chip c={p.ok ? "g" : p.score >= 60 ? "a" : "r"}>{p.ok ? "✓" : p.score}</Chip>
-            <div style={{minWidth:0, flex:1}}>
-              <div style={{fontSize:12}}>{p.label}{" "}
-                <span className="tiny dim">· weight {p.w}%{p.bar < 100 ? ` · bar ${p.bar}` : ""}</span></div>
-              <div className="tiny muted">{p.detail}</div>
-              {!p.ok && p.fix && <div className="tiny" style={{color:"var(--accent)", marginTop:2}}>→ {p.fix}</div>}
-            </div>
+      {groups.map(([heading, pts]) => pts.length === 0 ? null : (
+        <div key={heading} style={{marginBottom:11}}>
+          <div className="lbl">{heading}</div>
+          <div className="col" style={{gap:7}}>
+            {pts.map(p => (
+              <div key={p.id} className="row" style={{gap:8, alignItems:"flex-start"}}>
+                <Chip c={p.ok ? "g" : p.kind === "binding" ? "r" : "a"}>{p.ok ? "✓" : p.score}</Chip>
+                <div style={{minWidth:0, flex:1}}>
+                  <div style={{fontSize:12}}>{p.label}{" "}
+                    <span className="tiny dim">· weight {p.w}%{p.kind === "advisory" ? ` · bar ${p.bar} · advisory` : ""}</span></div>
+                  <div className="tiny muted">{p.detail}</div>
+                  {!p.ok && p.fix && <div className="tiny" style={{color:"var(--accent)", marginTop:2}}>→ {p.fix}</div>}
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
 
       {note && <div className="tiny muted" style={{marginTop:11}}>{note}</div>}
 
       {onGo && <>
         <div className="hr"/>
         <Btn c="pri" style={{width:"100%"}} disabled={!g.open} onClick={onGo}>
-          {g.open ? verb : `${verb} — held at ${g.score}`}
+          {g.open ? verb : `${verb} — ${nB} thing${nB>1?"s":""} missing`}
         </Btn>
-        {!g.open && <div className="tiny dim" style={{marginTop:6}}>
-          The button opens when every point is met. Nothing here can be waived —
-          the gate is what makes the next phase's inputs trustworthy.
-        </div>}
+        <div className="tiny dim" style={{marginTop:6}}>
+          {g.open
+            ? <>Advisory points never hold the handoff. A weak argument goes forward carrying its
+                weakness, because a gate the desk could not get past under deadline would simply be
+                worked around.</>
+            : <>Only the points above the line hold the handoff, and only because something is absent
+                rather than weak. Nothing here is a judgement about whether you are right.</>}
+        </div>
       </>}
 
       {!onGo && <div className="tiny dim" style={{marginTop:10}}>
@@ -87,10 +111,12 @@ const Gate = ({gate, verb, onGo, note}) => {
       <div style={{marginTop:10}}>
         <Btn c="xs gho" onClick={()=>setOpen(o=>!o)}>{open ? "Hide" : "What is this?"}</Btn>
         {open && <div className="tiny muted" style={{marginTop:8, lineHeight:1.6}}>
-          The orchestrator knows the whole state machine and the evaluation points inside it, and it
-          scores the intermediate status at each one. Below par it loops the phase again or surfaces
-          for your input; it never advances the plan on its own and never overrules you. Its one
-          power is to refuse a handoff.
+          The orchestrator knows the whole state machine and scores the intermediate status at every
+          evaluation point inside it. It distinguishes two things and treats them differently.
+          Something <b>missing</b> stops the handoff, because the next phase would have to guess.
+          Something <b>weak</b> does not: it is scored, it travels into the rubric and the approval
+          package, and P&amp;I reads it at the only gate that can actually stop a plan. The system
+          never blocks a weak argument — it proposes a better one and records the departure.
         </div>}
       </div>
     </Card>
@@ -102,42 +128,37 @@ const Gate = ({gate, verb, onGo, note}) => {
    with feedback, YES lets the change through. */
 const JustifyG = ({title, what, onCancel, onConfirm, verb="Record change", hints=[], kind="change"}) => {
   const [t, setT] = useState("");
-  const [tries, setTries] = useState(0);
-  const [sent, setSent] = useState(null);          // the evaluation that came back
   const ev = useMemo(() => evalJustification(t, {kind}), [t, kind]);
+
+  /* Absence blocks; weakness does not. A change with no reason at all cannot be
+     read by P&I, so it is not accepted. A weakly argued one goes forward
+     carrying its score — the system proposes a better argument and records the
+     departure, it does not refuse the change (OQ-22). */
   const canSubmit = t.trim().length >= 20;
-
-  const submit = () => {
-    const e = evalJustification(t, {kind});
-    if (e.verdict === "revise"){ setSent(e); setTries(n=>n+1); return; }
-    onConfirm(t.trim(), e);
-  };
-
   const tone = ev.verdict === "pass" ? "g" : ev.verdict === "thin" ? "a" : "r";
 
   return (
     <Modal title={title}
-      sub="The reason is evaluated before the change is accepted. A weak argument comes back to you rather than going forward (Flow architecture — Eval Justifications)."
+      sub="The reason is scored as you write it, and the score travels with the change. A thin argument is not refused — it arrives at P&I visibly thin."
       onClose={onCancel}
       footer={<>
         <div className="tiny dim">
-          {ev.verdict === "pass" ? "Defensible. This travels into the brief and the approval package."
-            : ev.verdict === "thin" ? "This will travel, but a reader would have to ask you a question."
-            : "Not yet defensible."}
+          {!canSubmit ? "A change with no reason cannot be read by P&I at all."
+            : ev.verdict === "pass" ? "Defensible on its own. Travels into the brief and the approval package."
+            : ev.verdict === "thin" ? "Goes forward, and a reader would have to ask you one question."
+            : "Goes forward flagged. P&I sees the score alongside the change."}
         </div>
         <div style={{flex:1}}/>
         <Btn onClick={onCancel}>Cancel</Btn>
-        {tries >= 2 && ev.verdict === "revise" &&
-          <Btn onClick={()=>onConfirm(t.trim(), ev)} title="Recorded as a weak argument and flagged wherever it is read">
-            Record as weak
-          </Btn>}
-        <Btn c="pri" disabled={!canSubmit} onClick={submit}>{verb}</Btn>
+        <Btn c="pri" disabled={!canSubmit} onClick={()=>onConfirm(t.trim(), ev)}>
+          {ev.verdict === "revise" && canSubmit ? `${verb} — flagged thin` : verb}
+        </Btn>
       </>}>
 
       <div className="banner b" style={{marginBottom:14}}><span className="bi">Change</span><div>{what}</div></div>
 
       <label className="lbl">Why</label>
-      <textarea className="inp" autoFocus value={t} onChange={e=>{setT(e.target.value); setSent(null);}}
+      <textarea className="inp" autoFocus value={t} onChange={e=>setT(e.target.value)}
         placeholder="State what the system got wrong, what you know that it does not, and what your change costs. This is what P&I will read." />
 
       {/* live evaluation — the four tests, scored as you type */}
@@ -160,18 +181,18 @@ const JustifyG = ({title, what, onCancel, onConfirm, verb="Record change", hints
         ))}
       </div>
 
-      {/* the NO edge: sent back with feedback */}
-      {sent && <div className="banner r" style={{marginTop:13}}>
-        <span className="bi">Sent back</span>
+      {/* What a better argument would say. A proposal, not a refusal. */}
+      {ev.verdict === "revise" && t.trim().length >= 20 && <div className="banner a" style={{marginTop:13}}>
+        <span className="bi">Thin</span>
         <div>
-          <b>The orchestrator did not accept this reason.</b> {sent.feedback}
-          {sent.missing.length > 0 && <ul style={{margin:"7px 0 0 16px", padding:0}}>
-            {sent.missing.map(m => <li key={m.id} style={{marginBottom:3}}>{m.ask}</li>)}
+          {ev.feedback}
+          {ev.missing.length > 0 && <ul style={{margin:"7px 0 0 16px", padding:0}}>
+            {ev.missing.map(m => <li key={m.id} style={{marginBottom:3}}>{m.ask}</li>)}
           </ul>}
-          {tries >= 2 && <div className="tiny" style={{marginTop:7}}>
-            You can record it as a weak argument instead. It goes forward flagged, and P&I sees that
-            it was flagged — the change is not blocked, only its quality is on the record.
-          </div>}
+          <div className="tiny" style={{marginTop:7}}>
+            Record it as it stands if that is the argument. It is not blocked — it arrives at P&amp;I
+            scored {ev.score}, and the score is part of what they decide on.
+          </div>
         </div>
       </div>}
 
@@ -179,7 +200,7 @@ const JustifyG = ({title, what, onCancel, onConfirm, verb="Record change", hints
         <div className="lbl">Reasons used on this deal before</div>
         <div className="row wrap" style={{gap:6}}>
           {hints.map((h,i)=><button key={i} className="chip o" style={{cursor:"pointer"}}
-            onClick={()=>{setT(h); setSent(null);}}>{h.slice(0,64)}…</button>)}
+            onClick={()=>setT(h)}>{h.slice(0,64)}…</button>)}
         </div>
       </div>}
     </Modal>

@@ -1,0 +1,6 @@
+# Raw Jira dumps contain comments, people and watchers. Keep them local;
+# data/jira_snapshot.json is the distilled, committable form.
+data/raw/
+__pycache__/
+*.pyc
+.venv/

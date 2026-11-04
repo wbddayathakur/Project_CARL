@@ -1,0 +1,179 @@
+
+===== 00 Executive
+Operative One Master Analysis: Current State, Findings and Migration |  |  | 
+Explore | Open Looker Explore | Jira / Tracking | Open tracking
+Topic | Finding | Status | Evidence
+Explore identity | eg_order_management / oper_sales_order_line_items_t | Confirmed | User-provided URL
+Primary base | DAAP_RPT.OM_CON_DY | Confirmed | SQL/LookML
+Current layer state | 81 Operative One Bronze tables reported live/QA signed off; program tracker also says zero Silver/Gold at the documented baseline | Partial | Master trackers and intake communication
+Selected query vs model | Selected SQL is only one query path; appended model includes contracted, historical, invoice and delivery Explores | Confirmed | Operative document and full model analysis
+Cache/freshness | LookML invalidates against OM_CON_DY LAST_ALTERED with 24-hour max cache age | Confirmed | Full LookML
+Mandatory Explore filters | Default media plan Yes; Linear Addressable No; line status in sent_to_production/active/incomplete/modified | Confirmed | Full LookML
+Temp bridge use | OP1 Digital Orders is one of four manual inputs to the temporary converged process | Confirmed | Temporary upload email
+Target design | Contracted line-day, historical snapshots, invoice lines and delivery-day must remain separate facts | Proposed | Grain analysis
+Architecture gap | Bronze availability does not equal certified business readiness; demand-driven Silver/Gold remains required | Confirmed program principle | Data demand communication
+Critical model risk | Targeting is noted as technically many-to-many while model relationship is declared many_to_one | Confirmed | Full LookML comments
+Operational finding | Public Slack examples show an opportunity may not receive an Operative order until prerequisite processes complete | Confirmed limited examples | Public Slack; not a general rule
+
+===== 01 Current State
+Operative Current Layer and Explore State |  |  |  | 
+Layer / surface | Object | Current evidence | Status | Source
+Bronze | Operative One | 81 tables reported available; QA sign-off stated | Available | Master tracker / executive status
+Silver | Canonical sales order/line model | Baseline says zero Silver; design/examples exist in story artifacts | Not complete | CARL usage baseline
+Gold | Contracted/pacing product | Not certified at baseline | Not complete | CARL usage baseline
+Temporary bridge | OP1 Digital Orders export | Manual source export feeding daily script | Done in dev | Temporary process email
+Contracted Explore | oper_sales_order_line_items_t | Live Looker source | Confirmed | Explore
+Historical Explore | oper_etl_orders_activity_t | Separate snapshot Explore | Confirmed | LookML
+Invoice Explore | oper_invoice_line_item_t | Separate finance Explore | Confirmed | LookML
+Delivery Explore | oper_sales_line_item_booked_delivered_t | Separate delivery Explore | Confirmed | LookML
+
+===== 02 New Findings
+Newer Operative Findings and Their Impact |  |  |  |  | 
+ID | Area | Finding | Evidence status | Severity | Required response
+OP-NF-01 | Scope | Full model covers contracted, historical, invoice and delivery products, not one table | Confirmed | Critical | Split delivery roadmap by grain/product
+OP-NF-02 | Bronze gap | 81 Bronze tables does not prove the specific LookML dependency set and columns are complete | Confirmed boundary | Critical | Map every P0 dependency to Glue/Iceberg
+OP-NF-03 | Silver gap | Program baseline says Operative has zero Silver/Gold | Confirmed | Critical | Prioritize canonical order/line Silver
+OP-NF-04 | Targeting fanout | Relationship declared many_to_one but comment says technically many-to-many | LookML confirmed | Critical | Long bridge plus certified one-row rollup
+OP-NF-05 | Custom fields | Many aliased joins pivot order/line custom fields | LookML confirmed | Critical | Deduplicate effective value before pivot
+OP-NF-06 | Inner joins | Optional enrichments use inner joins in several paths | LookML confirmed | Critical | Quantify anti-join loss before parity
+OP-NF-07 | Freshness | Cache watches LAST_ALTERED, not FILE_DATE/CREATE_DTS | LookML confirmed | High | Define data SLA and run watermark separately
+OP-NF-08 | Report filters | Status/default-plan/addressable filters are Explore eligibility rules | LookML confirmed | High | Do not apply to Bronze; materialize flags
+OP-NF-09 | Allocation | Business requires allocation of Operative based on delivery or strong estimate; manual % is acceptable initial phase | Confirmed | Critical | Model pre/post allocation with rule version
+OP-NF-10 | Opportunity linking | Order custom fields expose opportunity and Warner SF deal IDs | Confirmed in analysis | High | Bridge to Salesforce with match provenance
+OP-NF-11 | Operational prerequisites | Public Slack examples link missing OP order creation to account credit-check prerequisite | Confirmed examples only | Medium | Record as operational exception, not universal rule
+OP-NF-12 | Revision semantics | Order Mapping says audit_no 0 identifies active revision | Confirmed in mapping file | High | Validate source behavior and retain revision history
+OP-NF-13 | Future demand | Ad products stories require order-line, product, advertiser/agency, booked/delivered and invoice facts | Confirmed | High | Sequence reusable Silver products rather than report-specific wide table
+
+===== 03 Explore Inventory
+Operative Full LookML Explore Inventory |  |  |  |  | 
+Explore | Label | Purpose | Candidate grain | Persistence | Treatment
+oper_sales_order_line_items_t | Op1 Contracted Data | Latest contracted/pacing snapshot | OM_CON_DY line-day | Datagroup / 24h max | Primary MVP
+oper_etl_orders_activity_t | Op1 Historical Orders | Historical snapshots | snapshot + order/line | persist_for 9h | Phase 2
+oper_invoice_line_item_t | Op1 Invoice Data | Invoiced revenue | invoice line | persist_for 18h | Separate finance fact
+oper_sales_line_item_booked_delivered_t | Op1 Line Item Delivery | Booked/delivered pacing | line item + delivery date/source | persist_for 1h | Separate delivery fact
+op1_order_pacing | Hidden | Active order pacing | order | Not specified | Support
+suggestion explores | Hidden | AE/AM/AC/advertiser/agency/classification suggestions | lookup | Commented weekly cadence | Semantic-only
+
+===== 04 Source Objects
+Operative Physical and Logical Source Families |  | 
+Source | Role | Priority
+DAAP_RPT.OM_CON_DY | Contracted line-day | P0
+OPERATIVE_SALES_ORDER_V | Order header | P0
+OPERATIVE_SALES_ORDER_LINE_ITEMS_V | Line item | P0
+OPERATIVE_SALES_ORDER_CUSTOM_FIELD_V | Order custom fields | P0
+OPERATIVE_SALES_ORDER_LINE_ITEM_CUSTOM_FIELD | Line custom fields | P0
+OPERATIVE_SALES_LINE_ITEM_TARGETING_V | Targeting bridge | P0
+OPERATIVE_SLI_TEXT_TARGETING_V | Text targeting | P1
+UPFRONT_TYPE_OP_V | Classification | P0
+OPPORTUNITY_STAGE_V | Salesforce enrichment | P0
+INSIGHT_DIMAGENCY / Salesforce agency mapping | Agency hierarchy | P0
+OPER_PRODUCTS_V / product custom fields | Product | P1
+OPER_CURRENCY_DT_MAP / rates | Currency | P1
+OPER_ETL_ORDERS_ACTIVITY_T | Historical snapshots | P1
+OPER_INVOICE_LINE_ITEM_T / OPER_INVOICE_T | Invoices | P1
+OPER_SALES_LINE_ITEM_BOOKED_DELIVERED_T | Delivery | P1
+
+===== 05 Rules Filters
+Operative Rules, Filters and Placement |  |  | 
+Rule | Current behavior | Target | Priority
+Freshness | OM_CON_DY LAST_ALTERED; 24h max cache | Operational | P0
+Source normalization | LWM/WM normalization repeated in model/query | Silver | P0
+Contracted eligibility | Default plan, statuses, addressable exclusion | Gold/Cube | P0
+Query exclusions | Named REM combinations and programmatic discovery sold exclusion | Report contract | P0
+Market type | Upfront/DR/Scatter priority logic | Gold | P0
+Forecast category | Uncategorized + Discovery targeting override | Gold | P0
+Cost allocation | Divide pacing amount by counts with fallback | Silver/Gold | P0
+Opportunity link | Opportunity/Warner SF ID fallback external opportunity ID | Silver bridge | P0
+Agency hierarchy | Clean name then parent/mega agency | Silver dimension | P0
+Historical filters | Statuses, cost types, default plan, file-date default | Historical Cube | P1
+Invoice filters | Payment/cost types and billing month threshold | Invoice Cube | P1
+Delivery filters | Status/default plan/can invoice/produce | Delivery Cube | P1
+
+===== 06 Join Risks
+Operative Join and Grain Risk Register |  |  |  | 
+ID | Risk | Impact | Priority | Control
+J-01 | Targeting many-to-many vs declared many_to_one | Measure fanout | P0 | Long bridge and pre-aggregated certified rollup
+J-02 | Repeated aliased custom-field joins | Duplicate active values fan out facts | P0 | Effective-row dedup before pivot
+J-03 | Inner joins on optional enrichments | Valid base facts can disappear | P0 | Anti-join counts and business approval
+J-04 | Full outer joins in delivery Explore | Orphan rows and mixed grains | P0 | Separate conformed facts/bridges
+J-05 | Name-based agency/office joins | Collision and stale hierarchy | P0 | Durable ID mapping where possible
+J-06 | String parsing placement joins | Brittle linkage | P1 | Persist parsed key and exceptions
+J-07 | Unresolved cardinality comments | Uncertified model behavior | P0 | Profile every relationship
+J-08 | Audit/revision behavior | Wrong active revision | P0 | Validate audit_no and retain history
+
+===== 07 Target Model
+Operative Iceberg and Cube Target Model |  |  | 
+Layer | Object | Purpose | Candidate grain/key
+Bronze | op1_order_line_day_raw | Full source-faithful contracted rows | source + line + date + revision
+Bronze | op1_order_raw | Order header history | source + order + revision
+Bronze | op1_order_custom_field_raw | Long order attributes | source + order + field + effective key
+Bronze | op1_line_custom_field_raw | Long line attributes | source + line + field + effective key
+Bronze | op1_line_targeting_raw | Long targeting options | source + line + target + option
+Silver | fact_op1_order_line_day | Canonical contracted fact | source + line + date
+Silver | dim_op1_order_effective | Effective order dimension | source + order + valid_from
+Silver | bridge_op1_order_attribute | Deduped governed attributes | source + order + attribute + valid_from
+Silver | bridge_op1_line_targeting | Many-to-many targeting bridge | source + line + target option
+Silver | wide_op1_line_targeting_current | Only certified one-row targeting rollups | source + line
+Silver | fact_op1_invoice_line | Invoice line fact | source + invoice + line
+Silver | fact_op1_delivery_day | Delivery-day fact | source + line + date + delivery source
+Gold | fact_ad_sales_contracted_pacing_day | Current contracted/pacing product | date + source + order + line + allocation grain
+Gold | fact_ad_sales_historical_snapshot | Historical product | snapshot + source + order + line
+Gold | fact_ad_sales_invoice | Invoice product | invoice grain
+Gold | fact_ad_sales_delivery | Delivery product | delivery grain
+Cube | op1_contracted_data | Certified primary Explore | Gold key
+
+===== 08 DQ Controls
+Operative Data Quality and Reconciliation Controls |  | 
+ID | Control | Failure action
+DQ-OP-01 | Base contracted grain uniqueness | Block
+DQ-OP-02 | Every wide enrichment ≤1 row per fact key | Block
+DQ-OP-03 | Inner-join row-loss exception report | Block
+DQ-OP-04 | Allocation divisor null/zero/fallback parity | Block
+DQ-OP-05 | Net/gross/quantity/production measure parity | Block
+DQ-OP-06 | Mandatory Explore filter parity | Block
+DQ-OP-07 | Custom-field effective-value uniqueness | Quarantine
+DQ-OP-08 | Targeting LISTAGG/rollup parity | Block dimensions
+DQ-OP-09 | Source LAST_ALTERED vs Iceberg watermark | Alert/block SLA
+DQ-OP-10 | Historical snapshot isolation | Block historical
+DQ-OP-11 | Opportunity/iDeal/placement link coverage | Report/block claims
+DQ-OP-12 | Schema drift and revision handling | Quarantine
+
+===== 09 Roadmap
+Operative Delivery Roadmap |  |  | 
+Seq | Workstream | Exit criterion | Priority
+1 | Scope lock | Selected Explore parity vs full model product roadmap | P0
+2 | Dependency mapping | Every P0 LookML source mapped to Glue/Iceberg object | P0
+3 | Grain profiling | Uniqueness, join fanout, inner loss and revisions approved | P0
+4 | Bronze closure | All contracted dependencies/columns available | P0
+5 | Canonical Silver | Order-line fact, order dimension, attribute/targeting bridges | P0
+6 | MVP Gold | Contracted/pacing fields and filters reproduced | P0
+7 | Cube parity | Certified calculations and defaults | P0
+8 | Historical | Separate snapshot product | P1
+9 | Invoice | Separate invoice product | P1
+10 | Delivery | Separate delivery product and external delivery bridges | P1
+11 | Allocation | Pre/post allocation with effective rule version | P0
+12 | Cutover | Parallel validation and controlled retirement | P1
+
+===== 10 Jira Links
+Operative and UC1 Jira Crosswalk |  |  | 
+Jira | Scope | Evidence note | Link
+CARL-3638 | UC1 Silver | Operative feeds contribute to source-standardized Silver | https://wbdprod.atlassian.net/browse/CARL-3638
+CARL-3639 | UC1 Gold | Converged Gold | https://wbdprod.atlassian.net/browse/CARL-3639
+CARL-4033 | Fast-track phase 1 | Temporary bridge | https://wbdprod.atlassian.net/browse/CARL-4033
+CARL-4055 | Fast-track phase 2 | Automation | https://wbdprod.atlassian.net/browse/CARL-4055
+CARL-3954 | Ad Products target epic | Target-state evidence | https://wbdprod.atlassian.net/browse/CARL-3954
+CARL-3748 | Ad Products dependency | Target-state evidence | https://wbdprod.atlassian.net/browse/CARL-3748
+
+===== 11 Evidence
+Operative Evidence Register |  |  |  | 
+Ref | Artifact | Supports | Type | Reference / URL
+E-OP-01 | User supplied Operative Explore | Explore identity | User input | https://looker.wbd.com/explore/eg_order_management/oper_sales_order_line_items_t?qid=9JxjMi36ru3Q7JP6GNqjMx&origin_space=9783&toggle=vis
+E-OP-02 | Operative1- Ad Sales.docx | SQL + appended LookML | M365 file | turn7search117
+E-OP-03 | Operative_OP1_Full_LookML_Iceberg_Analysis.xlsx | Parsed model analysis | M365 file | turn7search116
+E-OP-04 | CARL program usage/tracker | 81 Bronze / zero Silver-Gold baseline | M365 files | turn7search168/169/180
+E-OP-05 | Temporary upload email | OP1 export input and manual process | Email | turn7search92
+E-OP-06 | Allocation requirements | Delivery allocation requirement | Email | turn7search115
+E-OP-07 | Order Mapping.xlsx | Order/line keys and audit revision note | M365 file | turn7search122
+E-OP-08 | CARL Ad Products stories/spec | Target reusable facts/dimensions | M365 files | turn7search118/124
+E-OP-09 | Public Slack Salesforce support | Opportunity/credit-check/Operative order examples | Slack | turn7search187
+E-OP-10 | CARL data-demand communication | Bronze/Silver/Gold/Cube consumption rules | Email | turn7search95

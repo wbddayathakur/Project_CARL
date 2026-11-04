@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CARL Delivery Roadmap — Sub-projects, Milestones &amp; Dates</title>
+<style>
+:root{--ink:#0f172a;--mut:#64748b;--bg:#f8fafc;--line:#e2e8f0;--G:#16a34a;--A:#f59e0b;--R:#dc2626;--done:#16a34a;--build:#f59e0b;--block:#dc2626;--req:#3b82f6;--ext:#7c3aed}
+*{box-sizing:border-box}body{margin:0;font-family:Segoe UI,system-ui,-apple-system,sans-serif;color:var(--ink);background:var(--bg);font-size:13px}
+header{background:linear-gradient(120deg,#0b1220,#1e293b 55%,#312e81);color:#fff;padding:18px 28px 0}header h1{margin:0;font-size:21px}header .sub{opacity:.8;margin:4px 0 12px;font-size:12px;max-width:1200px}
+.tabs{display:flex;gap:2px;flex-wrap:wrap}.tab{padding:9px 14px;cursor:pointer;border-radius:8px 8px 0 0;background:rgba(255,255,255,.08);color:#cbd5e1;font-weight:600}.tab.on{background:var(--bg);color:var(--ink)}
+section{display:none;padding:18px 28px 40px}section.on{display:block}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:14px}.kpi{background:#fff;border-radius:12px;padding:10px 14px;box-shadow:0 1px 3px rgba(0,0,0,.08)}.kpi b{font-size:24px;display:block}.kpi span{color:var(--mut);font-size:12px}
+.card{background:#fff;border-radius:12px;padding:14px 18px;box-shadow:0 1px 3px rgba(0,0,0,.08);margin-bottom:14px}.card h3{margin:0 0 8px;font-size:15px}
+.small{font-size:11px;color:var(--mut)}.rag{width:11px;height:11px;border-radius:50%;display:inline-block;vertical-align:middle}.rG{background:var(--G)}.rA{background:var(--A)}.rR{background:var(--R)}
+.pill{display:inline-block;padding:1px 8px;border-radius:99px;font-size:11px;font-weight:600;white-space:nowrap}
+.chip{display:inline-block;padding:1px 6px;border-radius:4px;font-size:10.5px;font-weight:600;white-space:nowrap}
+.c-delivered{background:#dcfce7;color:#166534}.c-onplan{background:#e0f2fe;color:#075985}.c-slipped{background:#fef3c7;color:#92400e}.c-fcpassed{background:#fee2e2;color:#991b1b}.c-overdue{background:#fee2e2;color:#991b1b}.c-nodate{background:#f1f5f9;color:#475569;border:1px dashed #94a3b8}.c-external{background:#ede9fe;color:#5b21b6}.c-ongoing{background:#f1f5f9;color:#475569}
+table{width:100%;border-collapse:collapse}th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{background:#f1f5f9;font-size:11px;text-transform:uppercase;color:#475569;position:sticky;top:0;z-index:2}
+tr.cl{cursor:pointer}tr.cl:hover td{background:#f8fafc}
+details.grp{background:#fff;border-radius:12px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.08);border-left:6px solid}details.grp>summary{padding:12px 16px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:12px;align-items:center}
+details.grp>summary b{font-size:15px}.tw{overflow:auto}
+.lad{display:flex;flex-wrap:wrap;gap:3px;max-width:380px}.st{font-size:10px;padding:1px 6px;border-radius:4px;white-space:nowrap;font-weight:600}
+.s-done{background:#dcfce7;color:#166534}.s-build{background:#fef3c7;color:#92400e}.s-risk{background:#ffedd5;color:#9a3412}.s-block{background:#fee2e2;color:#991b1b}.s-todo{background:#f1f5f9;color:#64748b}
+.bar{height:8px;background:#e2e8f0;border-radius:4px;overflow:hidden;display:flex;min-width:90px}.bar i{display:block;height:100%}
+.ctl{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}.ctl button,.ctl select,.ctl input[type=text]{padding:6px 10px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;font:inherit;cursor:pointer}.ctl button.on{background:#0f172a;color:#fff}
+.ans{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:8px}.ans div{padding:8px 10px;border-radius:8px;background:#f8fafc;border:1px solid var(--line);cursor:pointer}.ans div:hover{border-color:#94a3b8}
+#drawer{position:fixed;right:0;top:0;bottom:0;width:min(780px,96vw);background:#fff;box-shadow:-6px 0 24px rgba(0,0,0,.18);transform:translateX(100%);transition:.25s;z-index:50;padding:20px 22px;overflow:auto}#drawer.on{transform:none}#drawer .x{float:right;cursor:pointer;font-size:22px;line-height:1}
+#drawer h2{margin:6px 0 4px;font-size:18px}#drawer h4{margin:16px 0 6px;font-size:13px}
+.bk{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:5px}
+/* timeline */
+.tl{background:#fff;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.08);overflow:auto;max-height:78vh}
+.tlh{display:flex;position:sticky;top:0;z-index:6;background:#fff;border-bottom:2px solid #cbd5e1}.tlh .lab{width:320px;min-width:320px;position:sticky;left:0;background:#fff;z-index:7;padding:8px 10px;font-weight:700;font-size:11px;color:#475569}
+.mo{border-left:1px solid var(--line);text-align:center;font-weight:700;font-size:11px;padding:8px 0;color:#475569}
+.band{padding:6px 12px;color:#fff;font-weight:700;font-size:12px;position:sticky;left:0}
+.lane{display:flex;border-bottom:1px solid var(--line)}.lane .lab{width:320px;min-width:320px;position:sticky;left:0;background:#fff;z-index:3;padding:6px 10px;border-right:1px solid var(--line);font-size:12px;font-weight:600;cursor:pointer}.lane.child .lab{font-weight:400;padding-left:28px;color:#334155;cursor:default}
+.track{position:relative;height:34px}.lane.child .track{height:26px}
+.gbar{position:absolute;top:11px;height:12px;border-radius:6px;opacity:.28}.lane.child .gbar{top:7px;opacity:.5}
+.mk{position:absolute;top:10px;width:14px;height:14px;transform:rotate(45deg);border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.25);z-index:3}.lane.child .mk{top:6px}
+.mk.od{box-shadow:0 0 0 2px var(--R)}.mk.ex{border-radius:50%;transform:none;background:var(--ext)!important}.mk.dn{border-radius:50%;transform:none}
+.nd{position:absolute;top:5px;height:16px;border:1px dashed #94a3b8;border-radius:4px;font-size:10px;color:#64748b;padding:0 5px;line-height:14px;background:repeating-linear-gradient(45deg,#fff,#fff 5px,#f1f5f9 5px,#f1f5f9 10px);white-space:nowrap}
+.today{position:absolute;top:0;bottom:0;width:2px;background:var(--R);z-index:5;pointer-events:none}
+.gl{position:absolute;top:0;bottom:0;border-left:1px solid #f1f5f9}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:1000px){.g2{grid-template-columns:1fr}}
+a{color:#0b5cad;text-decoration:none}a:hover{text-decoration:underline}
+.warn{background:#fffbeb;border:1px solid #fcd34d;border-radius:8px;padding:8px 12px;margin-bottom:12px}
+.lg{display:flex;gap:14px;flex-wrap:wrap;color:var(--mut);margin:4px 0 10px;align-items:center}
+</style></head><body>
+<header>
+<h1>CARL Delivery Roadmap — Sub-projects → Milestones → Deliverables</h1>
+<div class="sub" id="sub"></div>
+<div class="tabs" id="tabs"></div>
+</header>
+<section id="plan"></section><section id="timeline"></section><section id="when"></section><section id="sources"></section><section id="reconfirm"></section><section id="method"></section>
+<div id="drawer"></div>
+<script>
+const D=/*__DATA__*/null;
+const TODAY=new Date(D.today+"T00:00:00"),MO=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const dt=x=>new Date(x+"T00:00:00");
+const fd=(x,ap)=>{if(!x)return"—";const t=dt(x);return ap?MO[t.getMonth()]+" "+t.getFullYear():t.getDate()+" "+MO[t.getMonth()]+(t.getFullYear()!==2026?" "+t.getFullYear():"")};
+const RC={G:"#16a34a",A:"#f59e0b",R:"#dc2626"},BC={done:"#16a34a",build:"#f59e0b",block:"#dc2626",req:"#3b82f6",excluded:"#94a3b8"};
+const SUB=Object.fromEntries(D.subs.map(s=>[s.id,s])),GR=Object.fromEntries(D.groups.map(g=>[g.id,g]));
+const STL={delivered:"Delivered",onplan:"On plan",slipped:"Slipped",fcpassed:"Forecast passed",overdue:"Overdue",nodate:"No date",external:"Product date",ongoing:"Ongoing"};
+const chip=(st,extra)=>`<span class="chip c-${st}">${STL[st]}${extra?" · "+extra:""}</span>`;
+const lnk=r=>r.key&&/^CARL-\d+$/.test(r.key)?`<a href="${D.jira}${r.key.slice(5)}" target="_blank">${r.key}</a>`:(r.key?esc(r.key):"");
+const days=x=>Math.round((dt(x)-TODAY)/864e5);
+const endText=s=>{if(s.delivered)return`<b>Delivered</b>${s.last_done?" · "+fd(s.last_done):""}`;
+ if(!s.end)return`<b>No committed date</b><div class="small">${s.undated} open item${s.undated==1?"":"s"} undated</div>`;
+ return`<b style="${s.end_past?"color:var(--R)":""}">${fd(s.end)}</b>${s.end_past?` <span class="chip c-overdue">past due</span>`:""}<div class="small">${esc(s.end_who||"")}${s.undated?` · +${s.undated} undated`:""}</div>`};
+const ladder=s=>`<div class="lad">${s.ladder.map(l=>`<span class="st s-${l[1]}" title="${l[1]}">${esc(l[0])}</span>`).join("")}</div>`;
+const sbar=sp=>{if(!sp.total)return`<span class="small">unsized</span>`;const w=v=>(100*v/sp.total).toFixed(1)+"%";return`<div class="bar" title="done ${sp.done} · in build ${sp.build} · requirements/to-do ${sp.req} of ${sp.total} SP"><i style="width:${w(sp.done)};background:var(--done)"></i><i style="width:${w(sp.build)};background:var(--build)"></i><i style="width:${w(sp.req)};background:var(--req)"></i></div><div class="small">${sp.pct}% done · ${sp.total} SP</div>`};
+
+$("#sub").innerHTML=`Status as of ${fd(D.today)} 2026 · Jira (CARL): ${D.report.epics} epics, ${D.report.tickets} tickets, ${D.report.points} SP — snapshot 21 Oct 14:56 with live epic status overlaid · Dates: Q4 Planning workbook, Confluence planning minutes (7 Oct), weekly status (19 Oct), leadership review (30 Sep). Grouping follows Ranjeeta's ask: sub-projects first, epics underneath.`;
+const TABS=[["plan","Delivery plan"],["timeline","Timeline"],["when","What comes when"],["sources","Sources × layers"],["reconfirm","Reconfirm &amp; decisions"],["method","Method &amp; sources"]];
+$("#tabs").innerHTML=TABS.map((t,i)=>`<div class="tab ${i?"":"on"}" data-t="${t[0]}">${t[1]}</div>`).join("");
+const go=t=>{$$(".tab").forEach(e=>e.classList.toggle("on",e.dataset.t==t));$$("section").forEach(e=>e.classList.toggle("on",e.id==t));history.replaceState(null,"","#"+t)};
+$$(".tab").forEach(e=>e.onclick=()=>go(e.dataset.t));
+
+/* ---------- Delivery plan ---------- */
+(()=>{const S=D.subs,cnt=r=>S.filter(s=>s.rag==r).length;
+ const openN=S.reduce((a,s)=>a+s.n_open,0),od=S.reduce((a,s)=>a+s.overdue,0),und=S.reduce((a,s)=>a+s.undated,0);
+ const K=[[S.length,"sub-projects"],[cnt("R"),"red"],[cnt("A"),"amber"],[cnt("G"),"green"],[openN,"open deliverables"],[od,"past their date"],[und,"open, no date"]];
+ const ask=["mstr","sf","uc1","fin","ump","venus","neo","fw","niel","gam"];
+ let h=`<div class="kpis">${K.map(k=>`<div class="kpi"><b>${k[0]}</b><span>${k[1]}</span></div>`).join("")}</div>
+<div class="card"><h3>"When will X be delivered?" — the short answer</h3><div class="ans">${ask.map(i=>{const s=SUB[i];return`<div data-open="${i}"><span class="rag r${s.rag}"></span> <b>${esc(s.name)}</b><div>${s.delivered?"Delivered":s.end?`Latest dated item <b>${fd(s.end)}</b>${s.end_past?" (already past)":""}${s.undated?`; <span style="color:var(--R)">${s.undated} item${s.undated>1?"s":""} with no date</span>`:""}`:`<span style="color:var(--R)">No committed date</span> — ${s.undated} item${s.undated>1?"s":""} undated`}${s.ext_next?`<div class="small">Product milestone: ${esc(s.ext_next.n)} — ${fd(s.ext_next.eff,s.ext_next.approx)}</div>`:""}</div></div>`}).join("")}</div>
+<p class="small">"Latest dated item" is the last date anyone has written down, not a forecast. Where items are undated, the sub-project cannot honestly be given an end date. Click a tile for the deliverables behind it.</p></div>
+<div class="lg"><span><span class="bk" style="background:var(--done)"></span>Done SP</span><span><span class="bk" style="background:var(--build)"></span>In build</span><span><span class="bk" style="background:var(--req)"></span>To Do / In Triage (in progress, still being defined with PM)</span><span class="st s-done">done</span><span class="st s-build">in progress</span><span class="st s-risk">at risk</span><span class="st s-block">blocked</span><span class="st s-todo">not started</span></div>`;
+ h+=D.groups.map(g=>{const ss=S.filter(s=>s.g==g.id);return`<details class="grp" open style="border-color:${g.c}"><summary><span><b style="color:${g.c}">${esc(g.n)}</b> <span class="small">— ${esc(g.d)}</span></span><span class="small">${ss.length} sub-projects</span></summary><div class="tw"><table><tr><th style="width:22px"></th><th style="min-width:230px">Sub-project</th><th>Milestone ladder</th><th style="min-width:110px">Progress</th><th style="min-width:170px">Next milestone</th><th style="min-width:150px">Delivery date</th><th style="min-width:130px">Owner</th><th style="min-width:230px">Top blocker</th></tr>${ss.map(s=>`<tr class="cl" data-open="${s.id}"><td><span class="rag r${s.rag}"></span></td><td><b>${esc(s.name)}</b><div class="small">${esc(s.outcome)}</div></td><td>${ladder(s)}</td><td>${sbar(s.sp)}</td><td>${s.nxt?`${esc(s.nxt.n)}<div>${fd(s.nxt.eff)} ${chip(s.nxt.state)}</div>`:`<span class="small">No dated milestone</span>`}</td><td>${endText(s)}</td><td class="small">${esc(s.owner)}</td><td class="small">${esc(s.blocker)}</td></tr>`).join("")}</table></div></details>`}).join("");
+ $("#plan").innerHTML=h;$$("[data-open]").forEach(e=>e.onclick=()=>openSub(e.dataset.open))})();
+
+/* ---------- Drawer ---------- */
+function openSub(id){const s=SUB[id],g=GR[s.g],dr=$("#drawer");
+ const rows=s.items.map(r=>{const date=r.a&&r.bucket=="done"?`<b>${fd(r.a)}</b> <span class="small">actual</span>`:r.fc?`<s class="small">${fd(r.t)}</s> <b>${fd(r.fc)}</b>`:r.eff?`<b>${fd(r.eff,r.approx)}</b>`:"—";
+  return`<tr><td><span class="bk" style="background:${r.kind=="ext"?"var(--ext)":BC[r.bucket]}"></span>${esc(r.n)}${r.key?`<div class="small">${lnk(r)}${r.kind=="rm"?"":""}</div>`:`<div class="small">${r.kind=="ext"?"product / dependency milestone":"no Jira epic"}</div>`}</td><td>${esc(r.st||"")}${r.sp&&r.sp[0]?`<div class="small">${r.sp[1]}/${r.sp[0]} SP</div>`:""}</td><td class="small">${esc(r.o||"")}</td><td class="small">${r.s?fd(r.s):"—"}</td><td>${date}</td><td>${chip(r.state)}</td><td class="small">${esc(r.note||"")}${r.src?` <i>[${esc(r.src)}]</i>`:""}</td></tr>`}).join("");
+ dr.innerHTML=`<span class="x" onclick="$('#drawer').classList.remove('on')">×</span><span class="pill" style="background:${g.c};color:#fff">${esc(g.n)}</span><h2><span class="rag r${s.rag}"></span> ${esc(s.name)}</h2><div class="small">${esc(s.outcome)}</div>
+<p><b>Phase:</b> ${esc(s.phase)}<br><b>Why ${{G:"green",A:"amber",R:"red"}[s.rag]}:</b> ${esc(s.why)}</p>${ladder(s)}
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px"><div class="card" style="margin:0"><div class="small">Delivery date</div>${endText(s)}</div><div class="card" style="margin:0"><div class="small">Progress (Jira SP)</div>${sbar(s.sp)}</div></div>
+<h4>Deliverables (${s.items.length}) — ${s.n_done} done · ${s.n_open} open</h4><div class="tw"><table><tr><th>Deliverable</th><th>Status</th><th>Owner</th><th>Start</th><th>Target</th><th>Date state</th><th>Note [source]</th></tr>${rows}</table></div>
+${s.ask?`<h4>Decision / ask</h4><div class="warn">${esc(s.ask)}</div>`:""}${s.blocker?`<h4>Top blocker</h4><p>${esc(s.blocker)}</p>`:""}
+${s.docs.length?`<h4>Confluence</h4>${s.docs.map(x=>`<div><a href="${x.u}" target="_blank">${esc(x.t)}</a></div>`).join("")}`:""}`;dr.classList.add("on")}
+document.addEventListener("keydown",e=>{if(e.key=="Escape")$("#drawer").classList.remove("on")});
+
+/* ---------- Timeline ---------- */
+(()=>{const T0=dt("2026-06-01"),T1=dt("2027-03-01"),PX=135,MN=9,W=PX*MN,x=v=>(dt(v)-T0)/(T1-T0)*W;let exp=new Set(),all=false,fg="ALL";
+ const itemDate=r=>r.bucket=="done"?(r.a||null):r.eff;
+ function draw(){const subs=D.subs.filter(s=>fg=="ALL"||s.g==fg);
+  let h=`<div class="ctl"><button id="tgAll" class="${all?"on":""}">${all?"Hide":"Show"} deliverables</button><select id="tgG"><option value="ALL">All groups</option>${D.groups.map(g=>`<option value="${g.id}" ${fg==g.id?"selected":""}>${esc(g.n)}</option>`).join("")}</select><span class="small">Bar = first start → latest open date. Marker = one deliverable's date. Click a sub-project name to expand it.</span></div>
+<div class="lg"><span><span class="mk dn" style="position:static;display:inline-block;background:var(--done)"></span> delivered</span><span><span class="mk" style="position:static;display:inline-block;background:var(--build)"></span> in build</span><span><span class="mk" style="position:static;display:inline-block;background:var(--req)"></span> to do / triage</span><span><span class="mk" style="position:static;display:inline-block;background:var(--block)"></span> blocked</span><span><span class="mk od" style="position:static;display:inline-block;background:#fff"></span> past its date</span><span><span class="mk ex" style="position:static;display:inline-block"></span> product milestone (month-level dates shown at month end)</span><span><span class="today" style="position:static;display:inline-block;height:12px"></span> today</span><span>(dates before June are pinned to the left edge)</span></div>
+<div class="tl"><div class="tlh"><div class="lab">Sub-project</div><div style="display:flex;width:${W}px">${Array.from({length:MN},(_,i)=>{const m=(5+i)%12;return`<div class="mo" style="width:${PX}px">${MO[m]}${m==0||i==0?" "+(i<7?2026:2027):""}</div>`}).join("")}</div></div>`;
+  D.groups.forEach(g=>{const ss=subs.filter(s=>s.g==g.id);if(!ss.length)return;h+=`<div class="band" style="background:${g.c}">${esc(g.n)}</div>`;
+   ss.forEach(s=>{const its=s.items.filter(r=>itemDate(r)||r.s);const starts=s.items.filter(r=>r.kind!="ext"&&r.s).map(r=>r.s),ends=s.items.filter(r=>r.kind!="ext"&&itemDate(r)).map(itemDate);
+    const a=starts.length?starts.sort()[0]:(ends.length?ends.sort()[0]:null),b=ends.length?ends.sort().slice(-1)[0]:null;
+    const bar=a&&b?`<div class="gbar" style="left:${Math.max(0,x(a))}px;width:${Math.max(6,x(b)-Math.max(0,x(a)))}px;background:${RC[s.rag]}"></div>`:"";
+    const mk=r=>{const v=itemDate(r);if(!v)return"";const od=r.bucket!="done"&&r.kind!="ext"&&(r.state=="overdue"||r.state=="fcpassed");let vv=v;if(r.approx){const q=dt(v);vv=new Date(q.getFullYear(),q.getMonth()+1,0).toISOString().slice(0,10)}
+     return`<div class="mk ${r.kind=="ext"?"ex":r.bucket=="done"?"dn":""} ${od?"od":""}" style="left:${Math.max(2,x(vv)-7)}px;background:${BC[r.bucket]}" title="${esc(r.n)} — ${esc(r.st||"")} — ${fd(v,r.approx)}"></div>`};
+    const grid=Array.from({length:MN},(_,i)=>`<div class="gl" style="left:${i*PX}px"></div>`).join(""),tl=`<div class="today" style="left:${x(D.today)}px"></div>`;
+    const isE=all||exp.has(s.id);
+    h+=`<div class="lane"><div class="lab" data-x="${s.id}"><span class="rag r${s.rag}"></span> ${isE?"▾":"▸"} ${esc(s.name)}${s.undated?` <span class="chip c-nodate">${s.undated} undated</span>`:""}</div><div class="track" style="width:${W}px">${grid}${bar}${tl}${s.items.map(mk).join("")}</div></div>`;
+    if(isE)s.items.forEach(r=>{const v=itemDate(r),st=r.s?x(r.s):null;const barC=r.s&&v?`<div class="gbar" style="left:${Math.max(0,st)}px;width:${Math.max(4,x(v)-Math.max(0,st))}px;background:${r.kind=="ext"?"var(--ext)":BC[r.bucket]}"></div>`:"";
+     h+=`<div class="lane child"><div class="lab" title="${esc(r.n)}">${r.kind=="ext"?"◇ ":""}${esc(r.n.length>46?r.n.slice(0,45)+"…":r.n)} ${r.key?`<span class="small">${r.key}</span>`:""}</div><div class="track" style="width:${W}px">${grid}${tl}${barC}${mk(r)}${v?"":`<div class="nd" style="left:${x(D.today)+8}px">${r.state=="ongoing"?"ongoing":"no date"}</div>`}</div></div>`})});
+  });
+  $("#timeline").innerHTML=h+`</div>`;
+  $("#tgAll").onclick=()=>{all=!all;draw()};$("#tgG").onchange=e=>{fg=e.target.value;draw()};
+  $$("#timeline [data-x]").forEach(e=>e.onclick=ev=>{const i=e.dataset.x;if(ev.shiftKey||ev.metaKey){openSub(i);return}exp.has(i)?exp.delete(i):exp.add(i);draw()})}
+ draw()})();
+
+/* ---------- What comes when ---------- */
+(()=>{const rows=[];D.subs.forEach(s=>s.items.forEach(r=>{if(r.bucket=="done")return;rows.push({s,r})}));
+ const bucket=({r})=>{if(r.state=="overdue")return"1 · Past its date, no new forecast";if(r.state=="fcpassed")return"2 · Forecast date already passed";if(!r.eff)return r.state=="ongoing"?"9 · Ongoing (no end date by design)":"8 · No date set";
+  const n=days(r.eff);if(n<=7)return"3 · Next 7 days (to 28 Oct)";const q=dt(r.eff);if(q.getFullYear()==2026&&q.getMonth()==9)return"4 · Rest of October";if(q.getFullYear()==2026&&q.getMonth()==10)return"5 · November";if(q.getFullYear()==2026&&q.getMonth()==11)return"6 · December";return"7 · 2027"};
+ let q="",fg="ALL",ext=true,nod=true;
+ function draw(){let list=rows.filter(o=>(fg=="ALL"||o.s.g==fg)&&(ext||o.r.kind!="ext")&&(nod||o.r.eff)&&(!q||(o.s.name+o.r.n+(o.r.o||"")+(o.r.key||"")).toLowerCase().includes(q)));
+  const B={};list.forEach(o=>(B[bucket(o)]=B[bucket(o)]||[]).push(o));
+  let h=`<div class="ctl"><input type="text" id="wq" placeholder="Search deliverable, owner, Jira key…" value="${esc(q)}" style="width:280px"><select id="wg"><option value="ALL">All groups</option>${D.groups.map(g=>`<option value="${g.id}" ${fg==g.id?"selected":""}>${esc(g.n)}</option>`).join("")}</select><label><input type="checkbox" id="we" ${ext?"checked":""}> product milestones</label><label><input type="checkbox" id="wn" ${nod?"checked":""}> undated items</label><span class="small">${list.length} open deliverables</span></div>`;
+  Object.keys(B).sort().forEach(k=>{const L=B[k].sort((a,b)=>(a.r.eff||"9").localeCompare(b.r.eff||"9"));h+=`<div class="card"><h3>${esc(k.slice(4))} <span class="small">(${L.length})</span></h3><div class="tw"><table><tr><th style="width:110px">Date</th><th style="min-width:200px">Sub-project</th><th style="min-width:300px">Deliverable</th><th>Status</th><th>Owner</th><th>State</th></tr>${L.map(o=>`<tr class="cl" data-open="${o.s.id}"><td><b>${fd(o.r.eff,o.r.approx)}</b>${o.r.fc?`<div class="small">was ${fd(o.r.t)}</div>`:""}</td><td><span class="rag r${o.s.rag}"></span> ${esc(o.s.name)}</td><td>${o.r.kind=="ext"?"◇ ":""}${esc(o.r.n)} ${lnk(o.r)?`<span class="small">${lnk(o.r)}</span>`:""}</td><td class="small">${esc(o.r.st||"")}</td><td class="small">${esc(o.r.o||"")}</td><td>${chip(o.r.state)}</td></tr>`).join("")}</table></div></div>`});
+  $("#when").innerHTML=h;$("#wq").oninput=e=>{q=e.target.value.toLowerCase();draw();const i=$("#wq");i.focus();i.setSelectionRange(i.value.length,i.value.length)};$("#wg").onchange=e=>{fg=e.target.value;draw()};$("#we").onchange=e=>{ext=e.target.checked;draw()};$("#wn").onchange=e=>{nod=e.target.checked;draw()};
+  $$("#when [data-open]").forEach(e=>e.onclick=()=>openSub(e.dataset.open))}
+ draw()})();
+
+/* ---------- Sources x layers ---------- */
+(()=>{const cell=c=>`<td><span class="st s-${c[0]}">${esc(c[1])}</span></td>`;
+ $("#sources").innerHTML=`<div class="card"><h3>Every source, by layer — and where it is tracked</h3><p class="small">Layer state comes from Jira epics and the Confluence source-layer tables (30 Sep, refreshed with the 19 Oct weekly status). "Next date" is the earliest open dated epic for that source; "undated" counts open epics with no date.</p><div class="tw"><table><tr><th>Source</th><th>Bronze</th><th>Silver</th><th>Gold</th><th>Consumers</th><th>Next date</th><th>Tracked under</th></tr>${D.sources.map(r=>`<tr class="${r.sub?"cl":""}" ${r.sub?`data-open="${r.sub}"`:""}><td><b>${esc(r.src)}</b></td>${cell(r.b)}${cell(r.s)}${cell(r.g)}<td class="small">${esc(r.use)}</td><td>${r.next?`<b>${fd(r.next.eff)}</b> ${chip(r.next.state)}`:`<span class="small">—</span>`}${r.undated?` <span class="chip c-nodate">${r.undated} undated</span>`:""}</td><td class="small">${esc(r.sub_name)}</td></tr>`).join("")}</table></div></div>`;
+ $$("#sources [data-open]").forEach(e=>e.onclick=()=>openSub(e.dataset.open))})();
+
+/* ---------- Reconfirm ---------- */
+(()=>{const all=[];D.subs.forEach(s=>s.items.forEach(r=>{if(r.bucket!="done"&&r.kind!="ext")all.push({s,r})}));
+ const pick=f=>all.filter(o=>f(o.r)).sort((a,b)=>(a.r.eff||"").localeCompare(b.r.eff||""));
+ const tbl=(L,cols)=>`<div class="tw"><table><tr>${cols.map(c=>`<th>${c}</th>`).join("")}</tr>${L.map(o=>`<tr class="cl" data-open="${o.s.id}"><td>${esc(o.s.name)}</td><td>${esc(o.r.n)} ${lnk(o.r)?`<span class="small">${lnk(o.r)}</span>`:""}</td><td class="small">${esc(o.r.st||"")}</td><td class="small">${esc(o.r.o||o.s.owner)}</td><td>${o.r.eff?`${o.r.fc?`<s class="small">${fd(o.r.t)}</s> `:""}<b>${fd(o.r.eff)}</b> <span class="small">${Math.abs(days(o.r.eff))}d ago</span>`:chip("nodate")}</td></tr>`).join("")}</table></div>`;
+ const od=pick(r=>r.state=="overdue"||r.state=="fcpassed"),nd=pick(r=>r.state=="nodate");
+ const byS={};nd.forEach(o=>(byS[o.s.id]=byS[o.s.id]||[]).push(o));
+ $("#reconfirm").innerHTML=`<div class="warn"><b>${od.length}</b> open deliverables are past their date with no new commitment, and <b>${nd.length}</b> open deliverables have no date at all. These are the ones to reconfirm with owners before this goes to Nage.</div>
+<div class="card"><h3>1 · Past their date (target or forecast already passed)</h3>${tbl(od,["Sub-project","Deliverable","Status","Owner","Date"])}</div>
+<div class="g2"><div class="card"><h3>2 · Sources disagree</h3><div class="tw"><table><tr><th>Area</th><th>What differs</th><th>Ask</th></tr>${D.conflicts.map(c=>`<tr><td><b>${esc(c[0])}</b></td><td>${esc(c[1])}<div class="small">${esc(c[3])}</div></td><td class="small">${esc(c[2])}</td></tr>`).join("")}</table></div></div>
+<div class="card"><h3>3 · Decisions needed</h3><div class="tw"><table><tr><th>Area</th><th>Decision</th><th>Owner</th></tr>${D.decisions.map(c=>`<tr><td><b>${esc(c[0])}</b></td><td>${esc(c[1])}</td><td class="small">${esc(c[2])}</td></tr>`).join("")}</table></div></div></div>
+<div class="card"><h3>4 · Open with no date (${nd.length}) — by sub-project</h3>${Object.values(byS).sort((a,b)=>b.length-a.length).map(L=>`<details style="margin-bottom:6px"><summary style="cursor:pointer"><b>${esc(L[0].s.name)}</b> <span class="chip c-nodate">${L.length} undated</span></summary>${tbl(L,["Sub-project","Deliverable","Status","Owner","Date"])}</details>`).join("")}</div>`;
+ $$("#reconfirm [data-open]").forEach(e=>e.onclick=()=>openSub(e.dataset.open))})();
+
+/* ---------- Method ---------- */
+$("#method").innerHTML=`<div class="g2"><div class="card"><h3>How this is organised</h3><ul>
+<li><b>Sub-project first.</b> Each row on the Delivery plan is something a stakeholder asks about — MicroStrategy, Salesforce dashboards, UMP, Venus/iDeal, NEO, Nielsen, FreeWheel, GAM. Jira epics, stories and roadmap-only items sit underneath it as deliverables.</li>
+<li><b>Five groups:</b> business deliverables, legacy BI migration, internal products CARL feeds, data sources, platform. A source (Nielsen, FreeWheel…) is tracked once, under Data sources; the products that consume it point to it.</li>
+<li><b>Each epic appears once.</b> ${D.subs.reduce((a,s)=>a+s.items.filter(r=>r.kind=="epic").length,0)} Jira epics are placed in exactly one sub-project. The build fails if one is missing or doubled.</li>
+<li><b>Delivery date</b> = the latest date anyone has written for an open CARL deliverable. It is <i>not</i> a forecast. If any open item is undated the cell says so, because the sub-project cannot honestly be given an end date.</li>
+<li><b>Product milestones</b> (purple) come from Confluence planning minutes. They are shown but never move a CARL delivery date.</li>
+<li><b>Progress</b> uses Jira story points. To Do and In Triage count as in progress (the PM is gathering requirements), shown in blue so "being defined" stays distinct from "being built".</li>
+<li><b>RAG</b> is a judgement written against evidence, with the reason in each sub-project's drawer. Jira's own RAG is not used as-is.</li></ul></div>
+<div class="card"><h3>Source precedence</h3><ol>
+<li>Status and story points — live Jira (CARL), snapshot 21 Oct 14:56; live epic pull on 21 Oct corrected CARL-2778 to Done.</li>
+<li>Scope, owners, committed dates — CARL_2026Q4_QuarterlyPlanning,Status&amp;Roadmap.xlsx.</li>
+<li>Epic detail and SP — CARL_Epic_SP_by_Status_20260930_Mapped_Ping_v2.xlsx (30 Sep; mapping only).</li>
+<li>Product milestones and risks — Confluence: Q4/Q1 Planning minutes (7 Oct), weekly status (19 Oct), Leadership Review (30 Sep), Product Tracking and Readiness (30 Sep), FreeWheel Silver design, NEO 2.0 status.</li></ol>
+<h3 style="margin-top:14px">Not available when this was built</h3><ul>
+<li>The Slack channel "CARL Program Status" and the old <i>CARL_Delivery_Roadmap.html</i> — layout here is rebuilt from the description of what Ranjeeta found useful.</li>
+<li><i>CARL_Weekly_Program_Status_Oct16_2026.docx</i> — dates tagged PACK16 come from the Slack summary and should be checked against the document.</li>
+<li>The 19 Oct UC1 email — tagged EML19, same caveat.</li>
+<li>Comscore — no Jira epic or Confluence page was found.</li></ul>
+<p class="small">Rebuild: <code>python build.py</code> in <code>carl-delivery-roadmap/</code>. Edit <code>subprojects.py</code> for structure; the numbers refresh from the roadmap agent's Jira snapshot.</p></div></div>`;
+{const [t,sid]=location.hash.slice(1).split("/");go(TABS.some(x=>x[0]==t)?t:"plan");if(sid&&SUB[sid])openSub(sid)}
+</script></body></html>

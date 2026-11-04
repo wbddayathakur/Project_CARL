@@ -55,7 +55,10 @@ const Strategize = ({S}) => {
       strategyVersion: s.strategyVersion,
       lines: res.lines.map(l=>({ pid:l.pid, name:l.p.name, region:l.region, medium:l.p.medium, brand:l.p.brand,
         spend:l.spend, cpm:l.cpm, impsK:l.impsK, comp:l.comp, availUse:l.availUse,
-        overridden:l.overridden, systemSpend:l.systemSpend, floorCpm:l.p.floorCpm })),
+        overridden:l.overridden, systemSpend:l.systemSpend, floorCpm:l.p.floorCpm,
+        /* the forecast class the line rests on, and its derivation */
+        fidelity:l.fidelity, umpPid:l.umpPid, forecastRunAt:l.forecastRunAt,
+        indicativeK:l.indicativeK, constrainedK:l.constrainedK, waterfall:l.waterfall, custom:l.custom })),
       roll: { spend:res.spend, impsK:res.impsK, reach1:res.reach1, reach3:res.reach3, avgFreq:res.avgFreq,
               blendedCpm:res.blendedCpm, digCpm:res.digCpm, linearPct:res.linearPct, hhi:res.hhi, byRegion:res.byRegion },
       rubric: rub, cons,
@@ -364,19 +367,22 @@ const Strategize = ({S}) => {
       <div className="col sticky" style={{gap:14}}>
         <Card title="Save a version">
           <div className="row" style={{gap:12, marginBottom:11}}>
-            <div className="scorebadge" style={{borderColor: rub.total>=80?"var(--good)":rub.total>=65?"var(--warn)":"var(--bad)"}}>
-              <b>{rub.total.toFixed(0)}</b><span>RUBRIC</span>
+            <div className="scorebadge" style={{borderColor: rub.below.length===0?"var(--good)":rub.below.length<=1?"var(--warn)":"var(--bad)"}}>
+              <b>{rub.clear}<span style={{fontSize:11, fontWeight:400}}>/{rub.of}</span></b><span>CLEAR</span>
             </div>
-            <div className="grow tiny muted">Scored against the proposed good-plan rubric. [OQ-2] the content of that
-              rubric is not settled — the shape is.</div>
+            <div className="grow tiny muted">Dimensions clearing the threshold this RFP set. Scored separately, not
+              added up — the trade-off between them is the thing worth seeing. [OQ-2] the content is not settled.</div>
           </div>
-          {RUBRIC.map(r=>(
-            <div key={r.k} className="row" style={{marginBottom:6}}>
-              <span className="tiny" style={{width:118}} title={r.help}>{r.label}</span>
-              <div className="grow"><Bar v={rub.parts[r.k]/100} c={rub.parts[r.k]>75?"g":rub.parts[r.k]>50?"":"a"}/></div>
-              <span className="tiny dim" style={{width:26, textAlign:"right"}}>{rub.parts[r.k].toFixed(0)}</span>
-            </div>
-          ))}
+          {RUBRIC.map(r=>{
+            const v = rub.parts[r.k], clear = v >= r.bar;
+            return (
+              <div key={r.k} className="row" style={{marginBottom:6}}>
+                <span className="tiny" style={{width:118}} title={`${r.help}\n\nNeeds ${r.bar} for this RFP.`}>{r.label}</span>
+                <div className="grow"><Bar v={v/100} c={clear?"g":"a"}/></div>
+                <span className="tiny" style={{width:26, textAlign:"right", color: clear?"var(--ink-3)":"var(--warn)"}}>{v.toFixed(0)}</span>
+              </div>
+            );
+          })}
           <div className="hr"/>
           {unjustified.length > 0 && <div className="banner r" style={{marginBottom:9}}>
             <span className="bi">Blocked</span><div>{unjustified.length} override without a justification. A version
@@ -416,7 +422,9 @@ const Strategize = ({S}) => {
                 <div key={v.id} className="row" style={{marginBottom:7}}>
                   <Chip c="n">{v.id}</Chip>
                   <div className="grow tiny">{v.name}<div className="mini dim">{v.at}</div></div>
-                  <b className="tiny">{v.rubric.total.toFixed(0)}</b>
+                  <b className="tiny" title={v.rubric.below.length
+                    ? "Short on: " + v.rubric.below.map(b=>`${b.label} ${b.score}/${b.bar}`).join("; ")
+                    : "Every dimension clears."}>{v.rubric.clear}<span className="dim">/{v.rubric.of}</span></b>
                 </div>))}
           </div>
         </Card>

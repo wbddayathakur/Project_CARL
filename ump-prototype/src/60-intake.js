@@ -437,7 +437,7 @@ const Intake = ({S}) => {
             toast("Handoff accepted — Discovery orchestrator has the brief"); }}
           note="The gate asks whether planning would be invalidated by what is missing — not whether everything is present."/>
 
-        <Assist title="What I would look at first">
+        <Assist title="Worth looking at first">
           {openGaps.length > 0 ? <>
             <b>{openGaps[0].attr}</b> is the one that blocks the solve. {openGaps[0].why} The recommendation is drawn
             from {openGaps[0].cohortSet.length ? `${openGaps[0].cohortSet.length} comparable advertisers` : "this advertiser's own record"},
