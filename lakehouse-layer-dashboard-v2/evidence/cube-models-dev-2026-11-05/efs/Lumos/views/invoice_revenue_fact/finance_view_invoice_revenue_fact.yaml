@@ -1,0 +1,166 @@
+views:
+  - name: finance_view_invoice_revenue_fact
+    public: true
+    title: Finance — Invoice Revenue Fact
+    description: Business view for finance on invoice_revenue_fact.
+    meta:
+      view_scope: business
+      business: finance
+      fact_table: invoice_revenue_fact
+    cubes:
+      - join_path: cube_carl_dwhprd_gold_invoice_revenue_fact
+        includes:
+          - acm_hh_cpm
+          - acm_hh_imps_000
+          - acm_net_corp_imps_000
+          - as_sold_unequiv_rate
+          - avg_equiv30_unit_rate
+          - buy_type_key
+          - deal_revenue_snapshot_key
+          - episode_version_key
+          - eqv30_spots
+          - guar_target_cpm
+          - guar_target_demo_key
+          - guar_target_imps_000
+          - hh_imps_000
+          - market_key
+          - natl_comm_acm_net_corp_cpm
+          - natl_comm_acm_net_corp_imps_000
+          - natl_comm_pal_net_corp_cpm
+          - natl_comm_pal_net_corp_imps_000
+          - natl_comm_revenue
+          - natl_comm_revenue_tracked
+          - net_corp_cpm
+          - net_corp_imps_000
+          - network_key
+          - product_key
+          - program_key
+          - property_key
+          - ratecard_pct
+          - ratecard_unequiv_rate
+          - rateclass_key
+          - revenue
+          - revenue_area_key
+          - revenue_eff_bcast_qtr_key
+          - revenue_eff_cal_month_key
+          - revenue_eff_cal_qtr_key
+          - revenue_over_ratecard_rate
+          - revenue_effective_day_key
+          - unit_type_group_key
+          - unit_type_key
+          - name: act_air_daypart_day_time_name
+            description: actual_air_daypart_dim.act_air_daypart_day_time_name looked up by actual_air_daypart_key via a correlated subquery, for the same reason as net_name_fact above.
+              See that member's description.
+          - name: act_air_daypart_selling_desc
+            description: actual_air_daypart_dim.act_air_daypart_selling_desc looked up by actual_air_daypart_key via a correlated subquery, for the same reason as net_name_fact above.
+              See that member's description.
+          - adv_default_prod_cat_key
+          - name: adv_default_prod_cat_name
+            title: Advertiser Default Product Category
+          - adv_id
+          - adv_name
+          - adv_name_id
+          - bcast_qtr_desc
+          - name: revenue_effective_day_broadcast_month_name
+            alias: broadcast_month_name
+          - broadcast_qtr_num
+          - broadcast_week_key
+          - name: revenue_effective_broadcast_week_num
+            alias: broadcast_week_num
+          - name: revenue_eff_bcast_qtr_broadcast_year
+            alias: broadcast_year
+          - buy_type_desc
+          - buy_type_sales_group_desc
+          - buy_type_sales_group_key
+          - buying_agency_id
+          - buying_agency_name
+          - buying_agency_name_id
+          - buying_mega_agency_name
+          - cal_qtr_desc
+          - name: revenue_eff_calendar_month_name
+            alias: calendar_month_name
+          - calendar_qtr_num
+          - name: revenue_eff_cal_month_calendar_year
+            alias: calendar_year
+          - name: program_airing_common_property_series_name
+            alias: common_property_series_name
+            title: Series Title
+          - name: revenue_effective_day_date
+            alias: day_date
+            description: 'revenue_effective_day_dim.day_date looked up by revenue_effective_day_key via a correlated subquery, for the same reason as net_name_fact above. This one matters
+              for pivot columns specifically: QuickSight emits a second DENSE_RANK over the truncated column field (for example DATE_TRUNC(''week'', day_date + INTERVAL ''1'' DAY) -
+              INTERVAL ''1'' DAY). When that expression resolved through the revenue_effective_day_dim join, Cube planned it as a multiplied measure and Athena rejected the generated
+              SQL with EXPRESSION_NOT_AGGREGATE, because the rank expression no longer matched the grouped one. Resolving it on this cube keeps rank and GROUP BY expressions identical.'
+          - deal_create_date
+          - deal_partner_key
+          - deal_revenue_snapshot_desc
+          - deal_revenue_status_desc
+          - deal_type_desc
+          - deal_year
+          - demo_name
+          - name: episode_desc
+            title: Episode Title
+          - episode_key
+          - name: episode_pds_name
+            title: Episode
+          - name: corp_episode_title
+            title: Corp Episode Title
+          - name: corp_episode_id
+            title: Corp Episode ID
+          - first_time_to_hold_date
+          - first_time_to_order_date
+          - gab_deal_id
+          - name: program_grid_title_desc
+            alias: grid_title_desc
+          - grid_title_key
+          - guaranteed_ind
+          - name: inventory_cat_desc
+            description: inventory_type_dim.inventory_cat_desc looked up by inventory_type_key via a correlated subquery, for the same reason as net_name_fact above. See that member's
+              description.
+          - name: inventory_type_desc
+            description: inventory_type_dim.inventory_type_desc looked up by inventory_type_key via a correlated subquery, for the same reason as net_name_fact above. See that member's
+              description.
+          - invoice_type_desc
+          - name: market_desc
+            description: market_dim.market_desc looked up by market_key via a correlated subquery, for the same reason as net_name_fact above. See that member's description.
+          - master_selling_title_desc
+          - name: net_name
+            description: 'network_dim.net_name looked up by network_key via a correlated subquery, so the value is resident on this fact cube and usable in QuickSight pivot row/column
+              ranking. See the comment above this block for why. Identical value and NULL semantics to the network_dim join: NULL when network_key has no matching dimension row.'
+          - order_status_desc
+          - order_status_key
+          - original_order_date
+          - name: primary_ae
+            title: Buying AE
+          - name: primary_ae_office
+            title: Buying AE Office
+          - name: primary_ae_sales_region_name
+            title: Buying AE Sales Region
+          - name: primary_ae_sales_team
+            title: Buying AE Sales Team
+          - name: primary_ae_sales_team_sname
+            title: Buying AE Sales Team Short Name
+          - prod_cat_name
+          - prod_cat_name_id
+          - prog_avg_daypart_selling_desc
+          - program_desc
+          - property_category
+          - property_category_id
+          # CARL-4313 (2026 - Ent & News Rev): selling-title role of property category
+          # (fact-resident, DENSE_RANK-safe) + sub_account, both report grid attributes.
+          - sell_property_category
+          - sub_account
+          - property_desc
+          - property_desc_id
+          - property_id
+          - rateclass_desc
+          - revenue_area_desc
+          - revenue_group_desc
+          - season_number
+          - selling_title_desc
+          - name: unit_sched_bday_date
+            title: Broadcast Date
+          - unit_type_desc
+          - name: unit_type_group_desc
+            description: unit_type_group_dim.unit_type_group_desc looked up by unit_type_group_key via a correlated subquery, for the same reason as net_name_fact above. See that member's
+              description.

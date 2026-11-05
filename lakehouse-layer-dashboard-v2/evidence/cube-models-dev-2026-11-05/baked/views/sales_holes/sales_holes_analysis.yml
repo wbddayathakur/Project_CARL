@@ -1,0 +1,45 @@
+views:
+  - name: sales_holes_analysis
+    public: true
+    title: "Sales Holes Analysis"
+    description: "Converged revenue and sales holes analysis across linear and digital sources. Designed for QuickSight dashboards and ad-hoc revenue gap analysis."
+
+    cubes:
+      - join_path: combined_revenue_sales_holes_totals
+        includes:
+          # Key segmentation dimensions
+          - business_source
+          - division
+          - network
+          - market
+          - revenue_type
+          - year
+          - month
+
+          # Advertiser/agency hierarchy
+          - advertiser
+          - advertiser_reporting_parent
+          - agency
+          - agency_reporting_parent
+          - mega_agency
+
+          # Operational
+          - office
+          - ae_name
+
+          # Revenue measures
+          - total_revenue
+          - booked_revenue
+          - working_revenue
+          - linear_revenue
+          - digital_revenue
+          - sales_hole
+
+          # Counts
+          - record_count
+          - unique_advertisers
+          - unique_agencies
+          - unique_networks
+
+# CARL-2967: inert edit to exercise the whole-tree sync's incremental path (partial
+# delta: one file changed, rest unchanged) against live dev EFS. No semantic effect.

@@ -1,0 +1,783 @@
+cubes:
+  - name: cube_carl_dwhprd_gold_digital_fact
+    sql: >
+      SELECT df.*,
+             curr.exchange_factor AS plan_curr_exchange_factor
+        FROM {{ catalog('dwhprd_gold') }}.digital_fact df
+        LEFT JOIN {{ catalog('dwhprd_gold') }}.plan_curr_currency_rate curr
+          ON df.campaign_currency_key = curr.base_currency_key
+    data_source: default
+    public: false
+    title: Carl Dwhprd Gold — Digital Fact
+    description: >-
+      Digital placement revenue and delivery for the Digital Analysis report (MSTR
+      DIGITAL_FACT_VW over BTSDWH.DIGITAL_FACT). One row is a digital placement slice:
+      region, year, month, campaign, channel, site, section, format, product, item, line,
+      action type, business type, holding company, booking status, currency, agency, and
+      client, plus the week and ad-server attributes carried on the fact. The exported
+      SQL inner-joins every dimension, so a fact row with a missing region-scoped key
+      (action type, either ad server, format, section, site) drops out of the report.
+      Cube joins below are many_to_one, which keep the fact row and null the dimension.
+      Apply source_system_region_key = 21 and calendar_year_key = 2026 in QuickSight;
+      they are the report filter (Discovery Latin America, year 2026), not a cube filter.
+      Master Channel, Holding Company, and Business Type were unanswered prompts and stay
+      attributes. DIGITAL_FACT_VW exposes PLAN_CURR_RATE as EXCHANGE_FACTOR from
+      PLAN_CURR_CURRENCY_RATE_VW, outer-joined on campaign_currency_key. Gold
+      plan_curr_currency_rate is that view and is unique on base_currency_key.
+      The three current-rate measures multiply by plan_curr_exchange_factor
+      inside this cube's SQL. The rate table is unique on base_currency_key,
+      so the left join does not fan the fact out. Gross and net current-rate
+      USD sum the local amount times the factor. Current-rate price averages
+      local price times the factor. A placement with no rate keeps a null
+      factor and drops out of those three measures. Product name is
+      bts_product_dim.product_name.
+      Campaign currency is bts_currency_dim.currency_code. Dev probe, region 21 and
+      year 2026 (97,772 rows): every new dimension key is unique, so the joins do not
+      fan out. campaign_dim matches 95,730. The other joins match all 97,772.
+    dimensions:
+      - name: action_type_basis
+        sql: |-
+          (
+            SELECT hop1.action_type_basis
+            FROM {{ catalog('dwhprd_gold') }}.action_type_dim hop1
+            WHERE {CUBE}.action_type_key = hop1.action_type_key AND {CUBE}.source_system_region_key = hop1.source_system_region_key
+          )
+        type: string
+        title: Action Type Basis
+        description: Basis the action type is priced or delivered on.
+      - name: action_type_desc
+        sql: |-
+          (
+            SELECT hop1.action_type_desc
+            FROM {{ catalog('dwhprd_gold') }}.action_type_dim hop1
+            WHERE {CUBE}.action_type_key = hop1.action_type_key AND {CUBE}.source_system_region_key = hop1.source_system_region_key
+          )
+        type: string
+        title: Action Type
+        description: Action type description shown on the Digital Analysis template.
+      - name: action_type_factor
+        sql: |-
+          (
+            SELECT hop1.action_type_factor
+            FROM {{ catalog('dwhprd_gold') }}.action_type_dim hop1
+            WHERE {CUBE}.action_type_key = hop1.action_type_key AND {CUBE}.source_system_region_key = hop1.source_system_region_key
+          )
+        type: string
+        title: Action Type Factor
+        description: Factor associated with the action type.
+      - name: action_type_id
+        sql: |-
+          (
+            SELECT hop1.action_type_id
+            FROM {{ catalog('dwhprd_gold') }}.action_type_dim hop1
+            WHERE {CUBE}.action_type_key = hop1.action_type_key AND {CUBE}.source_system_region_key = hop1.source_system_region_key
+          )
+        type: number
+        title: Action Type ID
+        description: Natural identifier for the action type.
+      - name: agency_id
+        sql: |-
+          (
+            SELECT hop1.agency_id
+            FROM {{ catalog('dwhprd_gold') }}.agency_dim hop1
+            WHERE {CUBE}.agency_key = hop1.agency_key
+          )
+        type: string
+        title: Agency ID
+        description: Natural identifier for the agency.
+      - name: agency_name
+        sql: |-
+          (
+            SELECT hop1.agency_name
+            FROM {{ catalog('dwhprd_gold') }}.agency_dim hop1
+            WHERE {CUBE}.agency_key = hop1.agency_key
+          )
+        type: string
+        title: Agency Name
+        description: Human-readable value "Agency".
+      - name: campaign_currency_code
+        sql: |-
+          (
+            SELECT hop1.currency_code
+            FROM {{ catalog('dwhprd_gold') }}.bts_currency_dim hop1
+            WHERE {CUBE}.campaign_currency_key = hop1.currency_key
+          )
+        type: string
+        title: Currency Code
+        description: Currency code on BTSDWH.CURRENCY_DIM. The Break Analysis template shows the symbol, not this code.
+      - name: product_category_1
+        sql: |-
+          (
+            SELECT hop1.product_category_1
+            FROM {{ catalog('dwhprd_gold') }}.bts_product_dim hop1
+            WHERE {CUBE}.product_key = hop1.product_key
+          )
+        type: string
+        title: Product Category 1
+        description: Product category 1. Selected in the Digital Analysis SQL and rolled up before the grid is drawn.
+      - name: product_category_2
+        sql: |-
+          (
+            SELECT hop1.product_category_2
+            FROM {{ catalog('dwhprd_gold') }}.bts_product_dim hop1
+            WHERE {CUBE}.product_key = hop1.product_key
+          )
+        type: string
+        title: Product Category 2
+        description: Product category 2. Selected in the Digital Analysis SQL and rolled up before the grid is drawn.
+      - name: product_category_3
+        sql: |-
+          (
+            SELECT hop1.product_category_3
+            FROM {{ catalog('dwhprd_gold') }}.bts_product_dim hop1
+            WHERE {CUBE}.product_key = hop1.product_key
+          )
+        type: string
+        title: Product Category 3
+        description: Product category 3. Selected in the Digital Analysis SQL and rolled up before the grid is drawn.
+      - name: product_id
+        sql: |-
+          (
+            SELECT hop1.product_id
+            FROM {{ catalog('dwhprd_gold') }}.bts_product_dim hop1
+            WHERE {CUBE}.product_key = hop1.product_key
+          )
+        type: string
+        title: Product ID
+        description: Business identifier for the product.
+      - name: product_name
+        sql: |-
+          (
+            SELECT hop1.product_name
+            FROM {{ catalog('dwhprd_gold') }}.bts_product_dim hop1
+            WHERE {CUBE}.product_key = hop1.product_key
+          )
+        type: string
+        title: Product
+        description: Product name. Digital Analysis shows this as Product.
+      - name: business_type_id
+        sql: |-
+          (
+            SELECT hop1.business_type_id
+            FROM {{ catalog('dwhprd_gold') }}.business_type_dim hop1
+            WHERE {CUBE}.business_type_key = hop1.business_type_key
+          )
+        type: string
+        title: Business Type ID
+        description: Natural identifier for the business type.
+      - name: business_type_name
+        sql: |-
+          (
+            SELECT hop1.business_type_name
+            FROM {{ catalog('dwhprd_gold') }}.business_type_dim hop1
+            WHERE {CUBE}.business_type_key = hop1.business_type_key
+          )
+        type: string
+        title: Business Type Name
+        description: Human-readable name of the business type.
+      - name: calendar_month_label
+        sql: |-
+          (
+            SELECT hop1.calendar_month_name || ' ' || CAST(hop1.calendar_year AS VARCHAR)
+            FROM {{ catalog('dwhprd_gold') }}.calendar_month_dim hop1
+            WHERE {CUBE}.calendar_month_key = hop1.calendar_month_key
+          )
+        type: string
+        title: Month
+        description: 'Formatted "<Month Name> <Year>" label, reproducing MSTR''s custom column (CustCol_400/CustCol_3). Both operands now explicitly cube-qualified — RESOLVED 2026-08-27:
+          the previous unqualified `calendar_year` reference compiled fine and worked via the REST API, but broke both sox_view_campaign_fact and sox_view_affiliate_fact live against
+          Cube''s SQL API (what QuickSight''s data source speaks) with `AMBIGUOUS_NAME: Column ''calendar_year'' is ambiguous` — Trino/Athena resolves unqualified column references
+          against every physical table in the generated JOIN, not just the cube that declares the dimension, and at least one sibling table joined alongside calendar_month_dim on
+          each of those two views also carries a raw `calendar_year` column (e.g. calendar_year_dim on sox_view_affiliate_fact). Confirmed via live dev CloudWatch logs on both views.
+          Always qualify cross-column references in multi-column derived dimensions with the cube-reference prefix to avoid this class of bug.'
+      - name: calendar_month_num
+        sql: |-
+          (
+            SELECT hop1.calendar_month_num
+            FROM {{ catalog('dwhprd_gold') }}.calendar_month_dim hop1
+            WHERE {CUBE}.calendar_month_key = hop1.calendar_month_key
+          )
+        type: number
+        title: Calendar Month Number
+        description: Month number (1-12). Present on calendar_month_dim in Glue (int). The Digital Analysis report reads this from the month dimension.
+      - name: cal_qtr_desc
+        sql: |-
+          (
+            SELECT hop2.cal_qtr_desc
+            FROM {{ catalog('dwhprd_gold') }}.calendar_month_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.calendar_qtr_dim hop2
+              ON hop1.calendar_qtr_key = hop2.calendar_qtr_key
+            WHERE {CUBE}.calendar_month_key = hop1.calendar_month_key
+          )
+        type: string
+        title: Calendar Quarter Description
+        description: Human-readable calendar quarter, e.g. Q1 2024.
+      - name: calendar_year
+        sql: |-
+          (
+            SELECT hop1.calendar_year
+            FROM {{ catalog('dwhprd_gold') }}.calendar_year_dim hop1
+            WHERE {CUBE}.calendar_year_key = hop1.calendar_year_key
+          )
+        type: number
+        title: Calendar Year
+        description: Four-digit calendar year.
+      - name: campaign_delivery_type_name
+        sql: |-
+          (
+            SELECT hop2.campaign_delivery_type_name
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.campaign_delivery_type_dim hop2
+              ON hop1.campaign_delivery_type_key = hop2.campaign_delivery_type_key
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Campaign Delivery Type Name
+        description: Human-readable name of the campaign delivery type.
+      - name: campaign_master_id
+        sql: |-
+          (
+            SELECT hop1.campaign_id
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Campaign ID
+        description: Natural identifier for the campaign.
+      - name: display_channel_name
+        sql: |-
+          (
+            SELECT hop1.display_channel_name
+            FROM {{ catalog('dwhprd_gold') }}.channel_dim hop1
+            WHERE {CUBE}.channel_key = hop1.channel_key
+          )
+        type: string
+        title: Channel Name
+        description: Display-formatted channel name, distinct from the raw channel_name column.
+      - name: master_channel
+        sql: |-
+          (
+            SELECT hop1.master_channel
+            FROM {{ catalog('dwhprd_gold') }}.channel_dim hop1
+            WHERE {CUBE}.channel_key = hop1.channel_key
+          )
+        type: string
+        title: Master Channel
+        description: Parent network grouping, e.g. Animal Planet, Discovery Channel, Discovery ID, Discovery Science, Discovery Turbo, TLC.
+      - name: client_id
+        sql: |-
+          (
+            SELECT hop1.client_id
+            FROM {{ catalog('dwhprd_gold') }}.client_dim hop1
+            WHERE {CUBE}.client_key = hop1.client_key
+          )
+        type: string
+        title: Client ID
+        description: Natural identifier for the client.
+      - name: client_name
+        sql: |-
+          (
+            SELECT hop1.client_name
+            FROM {{ catalog('dwhprd_gold') }}.client_dim hop1
+            WHERE {CUBE}.client_key = hop1.client_key
+          )
+        type: string
+        title: Client Name
+        description: Human-readable name of the client.
+      - name: digital_item_adserver_desc
+        sql: |-
+          (
+            SELECT hop1.digital_item_adserver_desc
+            FROM {{ catalog('dwhprd_gold') }}.digital_item_adserver_dim hop1
+            WHERE {CUBE}.digital_item_adserver_key = hop1.digital_item_adserver_key AND {CUBE}.source_system_region_key = hop1.source_system_region_key
+          )
+        type: string
+        title: Digital Item Ad Server
+        description: Item ad server description.
+      - name: digital_item_adserver_id
+        sql: |-
+          (
+            SELECT hop1.digital_item_adserver_id
+            FROM {{ catalog('dwhprd_gold') }}.digital_item_adserver_dim hop1
+            WHERE {CUBE}.digital_item_adserver_key = hop1.digital_item_adserver_key AND {CUBE}.source_system_region_key = hop1.source_system_region_key
+          )
+        type: string
+        title: Digital Item Ad Server ID
+        description: Natural identifier for the item ad server.
+      - name: digital_line_adserver_desc
+        sql: |-
+          (
+            SELECT hop1.digital_line_adserver_desc
+            FROM {{ catalog('dwhprd_gold') }}.digital_line_adserver_dim hop1
+            WHERE {CUBE}.digital_line_adserver_key = hop1.digital_line_adserver_key AND {CUBE}.source_system_region_key = hop1.source_system_region_key
+          )
+        type: string
+        title: Digital Line Ad Server
+        description: Line ad server description.
+      - name: digital_line_adserver_id
+        sql: |-
+          (
+            SELECT hop1.digital_line_adserver_id
+            FROM {{ catalog('dwhprd_gold') }}.digital_line_adserver_dim hop1
+            WHERE {CUBE}.digital_line_adserver_key = hop1.digital_line_adserver_key AND {CUBE}.source_system_region_key = hop1.source_system_region_key
+          )
+        type: string
+        title: Digital Line Ad Server ID
+        description: Natural identifier for the line ad server.
+      - name: format_id
+        sql: |-
+          (
+            SELECT hop1.format_id
+            FROM {{ catalog('dwhprd_gold') }}.format_dim hop1
+            WHERE {CUBE}.format_key = hop1.format_key AND {CUBE}.source_system_region_key = hop1.source_system_region_key
+          )
+        type: number
+        title: Format ID
+        description: Natural identifier for the format.
+      - name: format_name
+        sql: |-
+          (
+            SELECT hop1.format_name
+            FROM {{ catalog('dwhprd_gold') }}.format_dim hop1
+            WHERE {CUBE}.format_key = hop1.format_key AND {CUBE}.source_system_region_key = hop1.source_system_region_key
+          )
+        type: string
+        title: Format
+        description: Format name shown on the Digital Analysis template.
+      - name: holding_company_name
+        sql: |-
+          (
+            SELECT hop1.holding_company_name
+            FROM {{ catalog('dwhprd_gold') }}.holding_company_dim hop1
+            WHERE {CUBE}.holding_company_key = hop1.holding_company_key
+          )
+        type: string
+        title: Holding Company Name
+        description: Human-readable name of the holding company.
+      - name: section_id
+        sql: |-
+          (
+            SELECT hop1.section_id
+            FROM {{ catalog('dwhprd_gold') }}.section_dim hop1
+            WHERE {CUBE}.section_key = hop1.section_key AND {CUBE}.source_system_region_key = hop1.source_system_region_key
+          )
+        type: number
+        title: Section ID
+        description: Natural identifier for the section.
+      - name: section_name
+        sql: |-
+          (
+            SELECT hop1.section_name
+            FROM {{ catalog('dwhprd_gold') }}.section_dim hop1
+            WHERE {CUBE}.section_key = hop1.section_key AND {CUBE}.source_system_region_key = hop1.source_system_region_key
+          )
+        type: string
+        title: Section
+        description: Section name shown on the Digital Analysis template.
+      - name: site_id
+        sql: |-
+          (
+            SELECT hop1.site_id
+            FROM {{ catalog('dwhprd_gold') }}.site_dim hop1
+            WHERE {CUBE}.site_key = hop1.site_key AND {CUBE}.source_system_region_key = hop1.source_system_region_key
+          )
+        type: number
+        title: Site ID
+        description: Natural identifier for the site.
+      - name: site_name
+        sql: |-
+          (
+            SELECT hop1.site_name
+            FROM {{ catalog('dwhprd_gold') }}.site_dim hop1
+            WHERE {CUBE}.site_key = hop1.site_key AND {CUBE}.source_system_region_key = hop1.source_system_region_key
+          )
+        type: string
+        title: Site
+        description: Site name shown on the Digital Analysis template.
+      - name: source_region_name
+        sql: |-
+          (
+            SELECT hop1.source_region_name
+            FROM {{ catalog('dwhprd_gold') }}.source_system_region_dim hop1
+            WHERE {CUBE}.source_system_region_key = hop1.source_system_region_key
+          )
+        type: string
+        title: Source Region Name
+        description: Human-readable name of the source region.
+      - name: spot_booking_status_desc
+        sql: |-
+          (
+            SELECT hop1.spot_booking_status_desc
+            FROM {{ catalog('dwhprd_gold') }}.spot_booking_status_dim hop1
+            WHERE {CUBE}.spot_booking_status_key = hop1.spot_booking_status_key
+          )
+        type: string
+        title: Spot Booking Status
+        description: Spot booking status description shown on the Digital Analysis template.
+      - name: row_id
+        sql: >-
+          concat(cast({CUBE}.source_system_region_key as varchar), '|',
+          cast({CUBE}.calendar_year_key as varchar), '|',
+          cast({CUBE}.calendar_month_key as varchar), '|',
+          cast({CUBE}.campaign_key as varchar), '|',
+          cast({CUBE}.channel_key as varchar), '|',
+          cast({CUBE}.site_key as varchar), '|',
+          cast({CUBE}.section_key as varchar), '|',
+          cast({CUBE}.format_key as varchar), '|',
+          cast({CUBE}.product_key as varchar), '|',
+          cast({CUBE}.digital_item_num as varchar), '|',
+          cast({CUBE}.digital_line_num as varchar), '|',
+          cast({CUBE}.action_type_key as varchar), '|',
+          cast({CUBE}.business_type_key as varchar), '|',
+          cast({CUBE}.holding_company_key as varchar), '|',
+          cast({CUBE}.spot_booking_status_key as varchar), '|',
+          cast({CUBE}.campaign_currency_key as varchar), '|',
+          cast({CUBE}.agency_key as varchar), '|',
+          cast({CUBE}.client_key as varchar), '|',
+          cast({CUBE}.digital_item_adserver_key as varchar), '|',
+          cast({CUBE}.digital_line_adserver_key as varchar), '|',
+          cast({CUBE}.calendar_week_num as varchar), '|',
+          cast({CUBE}.cal_month_week_start_dt as varchar), '|',
+          cast({CUBE}.cal_month_week_end_dt as varchar), '|',
+          cast({CUBE}.digital_placement_id as varchar))
+        type: string
+        primary_key: true
+        title: Row Id (synthetic)
+        description: >-
+          Technical surrogate so this cube can declare joins. Digital fact has no single
+          natural key. This concat follows the report grain. calendar_week_num alone is
+          not enough: the same placement can be a full week and a boundary day, with
+          different cal_month_week_start_dt and cal_month_week_end_dt. Dev probe
+          2026-10-08: with both dates in the key, region 21 / year 2026 is 98,977
+          distinct of 98,977 rows, and the full table is 387,553 distinct of 387,553.
+      - name: source_system_region_key
+        sql: source_system_region_key
+        type: number
+        title: Source System Region Key
+        description: >-
+          Foreign key to source_system_region_dim. Report filter value 21 is Discovery
+          Latin America. Also part of the region-scoped dimension joins.
+      - name: calendar_year_key
+        sql: calendar_year_key
+        type: number
+        title: Calendar Year Key
+        description: Foreign key to calendar_year_dim. Report filter value 2026.
+      - name: calendar_month_key
+        sql: calendar_month_key
+        type: number
+        title: Calendar Month Key
+        description: Foreign key to calendar_month_dim. Quarter is reached from that dim, not from this fact.
+      - name: campaign_key
+        sql: campaign_key
+        type: number
+        title: Campaign Key
+        description: >-
+          Foreign key to campaign_dim. Delivery type is reached through campaign_dim.
+          For source_system_region_key 21 and calendar_year_key 2026, 95,730 of 97,772
+          fact rows match (probed 2026-10-05).
+      - name: campaign_id
+        sql: campaign_id
+        type: string
+        title: Campaign ID (fact)
+        description: >-
+          Campaign identifier denormalized on the fact. The view shows campaign_dim.campaign_id
+          so the two do not collide.
+      - name: channel_key
+        sql: channel_key
+        type: number
+        title: Channel Key
+        description: Foreign key to channel_dim.
+      - name: site_key
+        sql: site_key
+        type: number
+        title: Site Key
+        description: Foreign key to site_dim. The report also matches source_system_region_key.
+      - name: section_key
+        sql: section_key
+        type: number
+        title: Section Key
+        description: Foreign key to section_dim. The report also matches source_system_region_key.
+      - name: format_key
+        sql: format_key
+        type: number
+        title: Format Key
+        description: Foreign key to format_dim. The report also matches source_system_region_key.
+      - name: product_key
+        sql: product_key
+        type: number
+        title: Product Key
+        description: >-
+          Foreign key to bts_product_dim (BTSDWH.PRODUCT_DIM). product_dim is the
+          ADSALESDWH product master and has no product name. product_key is unique
+          on bts_product_dim: 41,804 of 41,804 rows on 2026-10-15.
+      - name: action_type_key
+        sql: action_type_key
+        type: number
+        title: Action Type Key
+        description: Foreign key to action_type_dim. The report also matches source_system_region_key.
+      - name: business_type_key
+        sql: business_type_key
+        type: number
+        title: Business Type Key
+        description: Foreign key to business_type_dim. Unanswered prompt; not a filter.
+      - name: holding_company_key
+        sql: holding_company_key
+        type: number
+        title: Holding Company Key
+        description: >-
+          Foreign key to holding_company_dim on this fact, not through campaign_dim.
+          Unanswered prompt; not a filter.
+      - name: spot_booking_status_key
+        sql: spot_booking_status_key
+        type: number
+        title: Spot Booking Status Key
+        description: Foreign key to spot_booking_status_dim.
+      - name: campaign_currency_key
+        sql: campaign_currency_key
+        type: number
+        title: Campaign Currency Key
+        description: >-
+          Foreign key to bts_currency_dim. CAMPAIGN_CURRENCY_DIM is a view over
+          BTSDWH.CURRENCY_DIM. currency_dim is a different currency master, and joining
+          it on this key returns the wrong code. Dev probe 2026-10-15, region 21 and
+          years 2025-2026: every fact row matches bts_currency_dim once, and the codes
+          are USD, ARS, BRL, CLP, MXN, COP, and EUR.
+      - name: agency_key
+        sql: agency_key
+        type: number
+        title: Agency Key
+        description: Foreign key to agency_dim.
+      - name: client_key
+        sql: client_key
+        type: number
+        title: Client Key
+        description: Foreign key to client_dim.
+      - name: digital_item_adserver_key
+        sql: digital_item_adserver_key
+        type: number
+        title: Digital Item Ad Server Key
+        description: Foreign key to digital_item_adserver_dim. The report also matches source_system_region_key.
+      - name: digital_line_adserver_key
+        sql: digital_line_adserver_key
+        type: number
+        title: Digital Line Ad Server Key
+        description: Foreign key to digital_line_adserver_dim. The report also matches source_system_region_key.
+      - name: calendar_week_num
+        sql: calendar_week_num
+        type: number
+        title: Cal Month Week Number
+        description: >-
+          Week number stored as calendar_week_num. DIGITAL_FACT_VW selects this column
+          under the alias CAL_MONTH_WEEK_NUM. Rolled up by the MSTR analytical engine
+          before display.
+      - name: cal_month_week_start_dt
+        sql: cal_month_week_start_dt
+        type: time
+        title: Cal Month Week Start Date
+        description: Week start date on the fact. Rolled up by the MSTR analytical engine before display.
+      - name: cal_month_week_end_dt
+        sql: cal_month_week_end_dt
+        type: time
+        title: Cal Month Week End Date
+        description: Week end date on the fact. Rolled up by the MSTR analytical engine before display.
+      - name: digital_item_num
+        sql: digital_item_num
+        type: string
+        title: Digital Item Number
+        description: Digital item number on the fact. Rolled up by the MSTR analytical engine before display.
+      - name: digital_item_start_dt
+        sql: digital_item_start_dt
+        type: time
+        title: Digital Item Start Date
+        description: Digital item start date.
+      - name: digital_item_end_dt
+        sql: digital_item_end_dt
+        type: time
+        title: Digital Item End Date
+        description: Digital item end date.
+      - name: digital_line_num
+        sql: digital_line_num
+        type: string
+        title: Digital Line Number
+        description: Digital line number on the fact. Rolled up by the MSTR analytical engine before display.
+      - name: digital_line_start_dt
+        sql: digital_line_start_dt
+        type: time
+        title: Digital Line Start Date
+        description: Digital line start date.
+      - name: digital_line_end_dt
+        sql: digital_line_end_dt
+        type: time
+        title: Digital Line End Date
+        description: Digital line end date.
+      - name: digital_buffer_pct
+        sql: digital_buffer_pct
+        type: string
+        title: Digital Buffer Pct
+        description: Buffer percent on the placement. Rolled up by the MSTR analytical engine before display.
+      - name: digital_frequency_cap
+        sql: digital_frequency_cap
+        type: string
+        title: Digital Frequency Cap
+        description: Frequency cap on the placement. Rolled up by the MSTR analytical engine before display.
+      - name: digital_placement_id
+        sql: digital_placement_id
+        type: number
+        title: Digital Placement ID
+        description: Placement identifier on the fact. Rolled up by the MSTR analytical engine before display.
+      - name: digital_restrictions
+        sql: digital_restrictions
+        type: string
+        title: Digital Restrictions
+        description: Restriction text on the fact. Shown on the Digital Analysis template.
+      - name: region_name
+        sql: region_name
+        type: string
+        title: Region Name
+        description: >-
+          Region name stored on the fact. This is not source_region_name from
+          source_system_region_dim.
+      - name: campaign_sales_reps
+        sql: campaign_sales_reps
+        type: string
+        title: Campaign Sales Reps
+        description: Sales-rep list stored on the fact. No sales-rep dimension is joined.
+    joins:
+      - name: cube_carl_dwhprd_gold_source_system_region_dim
+        sql: '{CUBE}.source_system_region_key = {cube_carl_dwhprd_gold_source_system_region_dim}.source_system_region_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_calendar_year_dim
+        sql: '{CUBE}.calendar_year_key = {cube_carl_dwhprd_gold_calendar_year_dim}.calendar_year_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_calendar_month_dim
+        sql: '{CUBE}.calendar_month_key = {cube_carl_dwhprd_gold_calendar_month_dim}.calendar_month_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_campaign_dim
+        sql: '{CUBE}.campaign_key = {cube_carl_dwhprd_gold_campaign_dim}.campaign_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_channel_dim
+        sql: '{CUBE}.channel_key = {cube_carl_dwhprd_gold_channel_dim}.channel_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_agency_dim
+        sql: '{CUBE}.agency_key = {cube_carl_dwhprd_gold_agency_dim}.agency_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_business_type_dim
+        sql: '{CUBE}.business_type_key = {cube_carl_dwhprd_gold_business_type_dim}.business_type_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_client_dim
+        sql: '{CUBE}.client_key = {cube_carl_dwhprd_gold_client_dim}.client_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_bts_product_dim
+        sql: '{CUBE}.product_key = {cube_carl_dwhprd_gold_bts_product_dim}.product_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_holding_company_dim
+        sql: '{CUBE}.holding_company_key = {cube_carl_dwhprd_gold_holding_company_dim}.holding_company_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_bts_currency_dim
+        sql: '{CUBE}.campaign_currency_key = {cube_carl_dwhprd_gold_bts_currency_dim}.currency_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_spot_booking_status_dim
+        sql: '{CUBE}.spot_booking_status_key = {cube_carl_dwhprd_gold_spot_booking_status_dim}.spot_booking_status_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_action_type_dim
+        sql: >-
+          {CUBE}.action_type_key = {cube_carl_dwhprd_gold_action_type_dim}.action_type_key AND
+          {CUBE}.source_system_region_key = {cube_carl_dwhprd_gold_action_type_dim}.source_system_region_key
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_digital_item_adserver_dim
+        sql: >-
+          {CUBE}.digital_item_adserver_key = {cube_carl_dwhprd_gold_digital_item_adserver_dim}.digital_item_adserver_key AND
+          {CUBE}.source_system_region_key = {cube_carl_dwhprd_gold_digital_item_adserver_dim}.source_system_region_key
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_digital_line_adserver_dim
+        sql: >-
+          {CUBE}.digital_line_adserver_key = {cube_carl_dwhprd_gold_digital_line_adserver_dim}.digital_line_adserver_key AND
+          {CUBE}.source_system_region_key = {cube_carl_dwhprd_gold_digital_line_adserver_dim}.source_system_region_key
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_format_dim
+        sql: >-
+          {CUBE}.format_key = {cube_carl_dwhprd_gold_format_dim}.format_key AND
+          {CUBE}.source_system_region_key = {cube_carl_dwhprd_gold_format_dim}.source_system_region_key
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_section_dim
+        sql: >-
+          {CUBE}.section_key = {cube_carl_dwhprd_gold_section_dim}.section_key AND
+          {CUBE}.source_system_region_key = {cube_carl_dwhprd_gold_section_dim}.source_system_region_key
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_site_dim
+        sql: >-
+          {CUBE}.site_key = {cube_carl_dwhprd_gold_site_dim}.site_key AND
+          {CUBE}.source_system_region_key = {cube_carl_dwhprd_gold_site_dim}.source_system_region_key
+        relationship: many_to_one
+    measures:
+      - name: record_count
+        sql: '*'
+        type: count
+        title: Record Count
+        description: Row count for smoke queries.
+      - name: digital_gross_revenue_loc
+        sql: '{CUBE}.digital_gross_revenue_loc'
+        type: sum
+        title: Digital Gross Revenue LOC
+        description: Sum of local-currency digital gross revenue.
+      - name: digital_net_revenue_loc
+        sql: '{CUBE}.digital_net_revenue_loc'
+        type: sum
+        title: Digital Net Revenue LOC
+        description: Sum of local-currency digital net revenue.
+      - name: digital_impressions
+        sql: '{CUBE}.digital_impressions'
+        type: sum
+        title: Digital Impressions
+        description: Sum of digital impressions.
+      - name: digital_price_loc_avg
+        sql: '{CUBE}.digital_price_loc'
+        type: avg
+        title: Digital Price LOC
+        description: >-
+          Average of row-level local digital price. The report SQL is AVG, so this is not a sum.
+          An MSTR grand total tagged with dynamic aggregation may not equal this average.
+      - name: agency_commission_pct_avg
+        sql: '{CUBE}.agency_commission_pct'
+        type: avg
+        title: Agency Commission %
+        description: >-
+          Average of row-level agency commission percent. The report SQL is AVG (alias WJXBFS1).
+          This is not a sum, and it is not an amount.
+      - name: rep_commission_pct_avg
+        sql: '{CUBE}.rep_commission_pct'
+        type: avg
+        title: Rep Commission %
+        description: >-
+          Average of row-level rep commission percent. The report SQL is AVG.
+      - name: agency_incentive_pct_avg
+        sql: '{CUBE}.agency_incentive_pct'
+        type: avg
+        title: Agency Incentive %
+        description: >-
+          Average of row-level agency incentive percent. The report SQL is AVG.
+      - name: digital_gross_revenue_current_rate_usd
+        sql: "{CUBE}.digital_gross_revenue_loc * {CUBE}.plan_curr_exchange_factor"
+        type: sum
+        title: Digital Gross Revenue Current Rate(USD)
+        description: >-
+          Sum of local gross revenue times the current planned exchange factor
+          joined by campaign currency. The rate stays inside the sum.
+          PLAN_CURR_RATE on DIGITAL_FACT_VW.
+      - name: digital_net_revenue_current_rate_usd
+        sql: "{CUBE}.digital_net_revenue_loc * {CUBE}.plan_curr_exchange_factor"
+        type: sum
+        title: Digital Net Revenue Current Rate(USD)
+        description: >-
+          Sum of local net revenue times the current planned exchange factor
+          joined by campaign currency. The rate stays inside the sum.
+          PLAN_CURR_RATE on DIGITAL_FACT_VW.
+      - name: digital_price_current_rate_usd
+        sql: "{CUBE}.digital_price_loc * {CUBE}.plan_curr_exchange_factor"
+        type: avg
+        title: Digital Price Current Rate(USD)
+        description: >-
+          Average of local price times the current planned exchange factor
+          joined by campaign currency. The report SQL is AVG, so this is not
+          a sum. The rate stays inside the average. PLAN_CURR_RATE on
+          DIGITAL_FACT_VW.

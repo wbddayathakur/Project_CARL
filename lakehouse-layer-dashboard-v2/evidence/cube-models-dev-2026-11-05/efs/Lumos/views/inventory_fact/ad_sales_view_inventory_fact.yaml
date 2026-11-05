@@ -1,0 +1,90 @@
+views:
+  - name: ad_sales_view_inventory_fact
+    public: true
+    title: Ad Sales — Inventory Fact
+    description: Business view for ad_sales on inventory_fact.
+    meta:
+      view_scope: business
+      business: ad_sales
+      fact_table: inventory_fact
+    cubes:
+      - join_path: cube_carl_dwhprd_gold_inventory_fact
+        includes:
+          - name: available_seconds_eqv30
+            title: Total Avails Equiv :30
+          - name: inventory_status_key
+            title: Inventory Status (ID)
+          - name: inventory_type_key
+            title: Inventory Type (ID)
+          - name: selling_title_key
+            title: Selling Title (ID)
+          - sell_title_dpart_selling_desc
+          - name: selling_title_daypart_key
+            title: Selling Title Selling Daypart (ID)
+          - act_air_total_day_ind_desc
+          - name: act_air_total_day_ind_key
+            title: Actual Aired Total Day Ind (ID)
+          - name: unit_sched_bcast_qtr_desc
+            alias: bcast_qtr_desc
+            title: Unit Broadcast Quarter
+          - name: broadcast_qtr_key
+            title: Unit Broadcast Quarter (ID)
+          - name: broadcast_week_num
+            title: Unit Broadcast Week
+          - name: unit_sched_broadcast_year
+            alias: broadcast_year
+          - name: cal_qtr_desc
+            title: Unit Calendar Quarter
+          - name: unit_sched_calendar_year
+            alias: calendar_year
+          - day_date
+          - name: division
+            title: Sell Division
+          - name: division_id
+            title: Sell Division (ID)
+          - inventory_status_desc
+          - inventory_type_desc
+          - master_selling_title_desc
+          - net_name
+          - name: property_category
+            title: Sell Property Category
+          - selling_title_desc
+          # CARL-3056 Inventory Report — Avails Count: already-modeled cube member, not yet on
+          # this view. available_seconds_eqv30 above already covers this report's metric.
+          # (Also needed by CARL-3055 below — landed first via CARL-3056's merge, so CARL-3055
+          # doesn't re-add it; see that PR's description for the duplicate-add note.)
+          - name: act_air_daypart_day_time_name
+            title: Actual Aired Daytime Daypart
+          # CARL-3055 Inventory Report — Market Track Analysis ADU by Week: already-modeled
+          # cube member (same formula as MSTR's "Booked Inventory Equiv:30 Spots"), not yet on
+          # this view. Title override to match MSTR naming, same convention as
+          # available_seconds_eqv30 above.
+          - name: booked_pressure_eqv30_spots
+            title: Booked Inventory Equiv:30 Spots
+          # revenue_area_key is already on the fact cube, not yet on this view. Its descriptive
+          # field (revenue_area_desc) is added via the join-hop below. Probed against dev data:
+          # the MSTR SQL's INVENTORY_UNIT_LOG_STATUS_DIM.UNIT_GROUP_KEY not in (2) filter is
+          # fully redundant with inventory_status_key = 0, already enforced by
+          # available_seconds_eqv30/booked_pressure_eqv30_spots above — no new join needed for it.
+          - name: revenue_area_key
+            title: Revenue Area (ID)
+          # CARL-3055/CARL-3056: already on the fact cube, not yet on this view. Found while
+          # building parity (mstr-parity `map`) against each report's real sql.sql, which
+          # GROUP BYs on the network key (not just net_name) and the broadcast week range.
+          - name: network_key
+            title: Network Key
+      # revenue_area_dim is already joined on the fact cube's joins:, just not yet hopped to
+      # from this view.
+      - join_path: cube_carl_dwhprd_gold_inventory_fact.cube_carl_dwhprd_gold_revenue_area_dim
+        includes:
+          - revenue_area_desc
+      # CARL-3055/CARL-3056: unit_sched_bday_dim is already joined on the fact cube's joins:
+      # (via unit_sched_bday_key), just not yet hopped to from this view. Both reports' SQL
+      # group by broadcast_week_key and compute a "MM/DD/YYYY - MM/DD/YYYY" week label from
+      # begin/end date -- that label itself isn't a stored column, melt/compare build it from
+      # these two dates.
+      - join_path: cube_carl_dwhprd_gold_inventory_fact.cube_carl_dwhprd_gold_unit_sched_bday_dim
+        includes:
+          - broadcast_week_key
+          - broadcast_week_begin_date
+          - broadcast_week_end_date

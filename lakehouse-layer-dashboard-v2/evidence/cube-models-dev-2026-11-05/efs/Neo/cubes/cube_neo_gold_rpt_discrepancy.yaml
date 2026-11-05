@@ -1,0 +1,74 @@
+cubes:
+  - name: cube_neo_gold_rpt_discrepancy
+    sql_table: "{{ catalog('neo_gold') }}.rpt_discrepancy"
+    public: false
+    data_source: default
+    title: NEO Impression Discrepancy
+    description: 'First-party vs third-party verification discrepancies from neo_gold.rpt_discrepancy.
+
+      '
+    dimensions:
+      - name: event_date_et
+        sql: CAST({CUBE}.event_date_et AS TIMESTAMP)
+        type: time
+        title: Event Date
+        description: Event Date dimension for neo_discrepancy
+      - name: deal_id
+        sql: '{CUBE}.deal_id'
+        type: number
+        title: Deal ID
+        description: Deal Id dimension for neo_discrepancy
+      - name: deal_name
+        sql: '{CUBE}.deal_name'
+        type: string
+        title: Deal Name
+        description: Deal Name dimension for neo_discrepancy
+      - name: advertiser_id
+        sql: '{CUBE}.advertiser_id'
+        type: string
+        title: Advertiser ID
+        description: Advertiser identifier in NEO (for filters and RLS)
+      - name: advertiser_name
+        sql: '{CUBE}.advertiser_name'
+        type: string
+        title: Advertiser Name
+        description: Advertiser Name dimension for neo_discrepancy
+      - name: agency_id
+        sql: '{CUBE}.agency_id'
+        type: number
+        title: Agency ID
+        description: Agency identifier in NEO (for filters and RLS)
+      - name: agency_name
+        sql: '{CUBE}.agency_name'
+        type: string
+        title: Agency Name
+        description: Agency Name dimension for neo_discrepancy
+      - name: has_discrepancy_flag
+        sql: >
+          CASE
+            WHEN {CUBE}.discrepancy_abs <> 0 OR {CUBE}.discrepancy_pct <> 0 THEN 'Y'
+            ELSE 'N'
+          END
+        type: string
+        title: Has Discrepancy Flag
+        description: Derived Y/N flag when 1P vs 3P impressions differ (not a warehouse column)
+    measures:
+      - name: count
+        type: count
+        title: Row Count
+        description: Row Count aggregated measure for neo_discrepancy
+      - name: total_1p_impressions
+        sql: '{CUBE}.impressions_1p'
+        type: sum
+        title: 1P Impressions
+        description: 1P Impressions aggregated measure for neo_discrepancy
+      - name: total_3p_impressions
+        sql: '{CUBE}.impressions_3p'
+        type: sum
+        title: 3P Impressions
+        description: 3P Impressions aggregated measure for neo_discrepancy
+      - name: avg_discrepancy_pct
+        sql: '{CUBE}.discrepancy_pct'
+        type: avg
+        title: Average Discrepancy (%)
+        description: Average Discrepancy (%) aggregated measure for neo_discrepancy

@@ -1,0 +1,73 @@
+# Executive roadmap: lanes -> rows -> roadmap items.
+#
+# `items` are ids from roadmap_v3_relationships.json (CARL Strategic Roadmap v3).
+# Dates and scope come from those items; status and progress are re-read from
+# live Jira on every build (pull_jira.py), so only the grouping lives here.
+#
+# `dbs` are Glue database patterns whose live table counts are shown as the
+# row's lakehouse footprint, on both the roadmap and the relationship map.
+#
+# `extra_keys` adds Jira epics that are not in the v3 item list.
+
+window: {start: "2026-04-01", end: "2027-06-30"}
+
+lanes:
+  - id: src
+    name: Source onboarding
+    blurb: New data sources landed in Bronze and modelled into canonical Silver.
+    rows:
+      - {id: op1, name: Operative One, items: [F-OP1B, F-OP1S], dbs: [operative_bronze, operative1_bronze]}
+      - {id: fw, name: FreeWheel, items: [F-FWB, F-FWAPI, F-FWP2, F-FWS], dbs: ["freewheel_*"]}
+      - {id: ideal, name: iDeal / CMP (deal management), items: [F-IDDB, F-IDMSA, F-IDDCI, F-IDLDR, F-CMP, F-IDS], dbs: ["venus_*"]}
+      - {id: sf, name: Salesforce / Metropolis & WRR, items: [F-SF1, F-SF2, F-WRR]}
+      - {id: ldr, name: Linear & Digital Revenue, items: [F-LDR, F-DFC, F-FFF, F-OTB], dbs: ["linear_digital_revenue_*", "ddl_forecasting_*", "linear_forecasting_*"]}
+      - {id: nielsen, name: Nielsen (NRLD, Big MIT, Ad Intel, Stewardship), items: [F-NRLD, F-MIT, F-ADI, F-STW], dbs: [big_mit_bronze, mit_bronze, nrld_bronze, marketshare_bronze]}
+      - {id: gam, name: Google Ad Manager (GAM), items: [F-GAM]}
+      - {id: bp, name: Blueprint (Aurora DB), items: [F-BPB]}
+      - {id: tp, name: Third-party & measurement vendors, items: [F-STAQ, F-VA, F-LIC, F-CLR, F-PERM], note: "STAQ, VideoAmp, LoopMe, iSpot, CAPI, Clearline, Permutive"}
+
+  - id: prod
+    name: Internal products
+    blurb: Ad-tech products that run the business on CARL data.
+    rows:
+      - {id: ump, name: UMP — Unified Media Plan, items: [P-UMP], dbs: ["ump_*"]}
+      - {id: aip, name: AIP — Audience Intelligence, items: [P-AIP]}
+      - {id: neo, name: Neo, items: [P-NEO], dbs: ["neo_*"]}
+      - {id: venus, name: Venus — iDeal modernization, items: [P-VEN], dbs: ["venus_*"]}
+      - {id: fc, name: Forecasting (DDL, linear, digital), items: [P-FC], dbs: ["ddl_forecasting_*", "linear_forecasting_*"]}
+      - {id: bpm, name: Blueprint, items: [P-BP]}
+      - {id: intl, name: International, items: [P-INTL], dbs: ["intnl_*"]}
+      - {id: cnn, name: CNN RFP insight assistant (AI), items: [P-CNN]}
+
+  - id: dom
+    name: Business domains
+    blurb: Gold models, dashboards and BI migration for each business team.
+    rows:
+      - {id: adsales, name: Ad Sales, items: [D-UC1S, D-UC1G, D-UC1P2, D-SFD, D-SFDB, D-BV, D-INC, D-HOL, D-DR, D-CPD, D-MAS2], dbs: ["linear_digital_revenue_gold"]}
+      - {id: fin, name: Finance, items: [D-FPD, D-MFIN, D-FAP]}
+      - {id: res, name: Research & Measurement, items: [D-MSI, D-RLK, D-RSD, D-NG, D-TB, D-GR]}
+      - {id: adp, name: Ad Product, items: [D-ADP]}
+      - {id: aff, name: Affiliate, items: [D-MAFF, D-AFFS]}
+      - {id: sox, name: Accounting & SOX, items: [D-MAS]}
+      - {id: intld, name: International reporting, items: [D-MINT]}
+      - {id: hive, name: HIVE, items: [D-HIVE]}
+
+  - id: gov
+    name: Governance
+    blurb: Controls that make CARL data trusted, discoverable and compliant.
+    rows:
+      - {id: access, name: Access control & environment governance, items: [E-GOV]}
+      - {id: dq, name: Data quality framework, items: [E-DQ]}
+      - {id: obs, name: Observability & alerting, items: [E-OBS]}
+      - {id: cat, name: Catalog, certification & data dictionary, items: [E-CAT]}
+      - {id: intake, name: Demand intake & CARL playbook, items: [E-INT]}
+
+  - id: ci
+    name: Continuous improvement
+    blurb: Platform capabilities that compound across every source, product and domain.
+    rows:
+      - {id: sem, name: Semantic layer at scale (Cube), items: [E-SEM, E-SEMD]}
+      - {id: bi, name: BI modernization (Lumos, IBM DataStage), items: [E-LUM, F-IBM], dbs: ["carl_dwhprd_gold_*"]}
+      - {id: rt, name: Real-time & CDC ingestion, items: [E-CDC, E-RT]}
+      - {id: fed, name: Catalog federation (Snowflake → Iceberg), items: [E-FED]}
+      - {id: ai, name: AI access — API & MCP server, items: [E-API]}

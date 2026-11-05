@@ -1,0 +1,25 @@
+views:
+  - name: ad_sales_view_neo_discrepancy
+    public: true
+    title: "NEO Impression Discrepancy Report"
+    description: >
+      Curated view of 1P vs 3P verification discrepancies and variance flags.
+    meta:
+      view_scope: business
+      business: ad_sales
+      fact_table: rpt_discrepancy
+    cubes:
+      - join_path: cube_neo_gold_rpt_discrepancy
+        includes:
+          - event_date_et
+          - deal_id
+          - deal_name
+          - advertiser_id
+          - advertiser_name
+          - agency_id
+          - agency_name
+          - has_discrepancy_flag
+          - count
+          - total_1p_impressions
+          - total_3p_impressions
+          - avg_discrepancy_pct

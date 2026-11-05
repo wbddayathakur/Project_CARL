@@ -1,0 +1,199 @@
+views:
+  - name: international_view_audit_file_clientes_regulares_digital
+    public: true
+    title: International — Audit File Clientes Regulares DIGITAL
+    description: >-
+      Audit File Clientes Regulares DIGITAL for Discovery Latin America. Digital gross revenue of the
+      MEXICO holding company by SAP GL account, month, campaign, sales rep, channel, agency, client,
+      deal, product, invoice holding company and base currency, with the campaign measures in local
+      currency, current-rate USD and historical-rate USD. Reads cube_carl_dwhprd_gold_campaign_fact.
+      Apply in QuickSight: source_system_region_key = 21, holding_company_key = 11 and
+      calendar_month_key 202401 to 202412, plus the report's view filter sap_gl_account in DIGITAL,
+      DIGITALREP and DPLUSDLA. The report grid shows Sap GL Account, Campaign Status, Month, Holding
+      Company, Invoice Holding Company, Sales Rep, Channel, Agency, Client, Deal Name, Campaign,
+      Product, Campaign Desc and Base Currency, with Gross Revenue LOC. Every other column is a report
+      object outside the grid.
+    meta:
+      view_scope: business
+      business: international
+      fact_table: audit_file_clientes_regulares_digital
+      mstr_report_name: Audit File Clientes Regulares DIGITAL
+      catalog_key: lumos_carl_dwhprd_gold
+      ai_context: >
+        Use this view for the Audit File Clientes Regulares DIGITAL report. Filter
+        source_system_region_key = 21, holding_company_key = 11 (MEXICO, the campaign's holding
+        company) and calendar_month_key between 202401 and 202412, and keep sap_gl_account in
+        DIGITAL, DIGITALREP and DPLUSDLA (MicroStrategy's view filter). The grid grain is
+        sap_gl_account, calendar_month_key, campaign_id, sales_rep_name, channel_name, agency_name,
+        client_name, deal_name, product_name, invoice_holding_company_name and base_currency_code.
+        Measures are multiplied by sales_rep_revenue_share, with a missing share treated as 1, the
+        same as CAMPAIGN_FACT_VW; Sales Rep is on the grid, so each row is that rep's share. A campaign
+        with no sales rep reads DLA N/A. Holding Company is read through the campaign; Invoice Holding
+        Company is the fact's invoice-side holding company (names like INV DISCOVERY NETWORKS MEXICO).
+        Deal Name holds the deal code (D0010650). Base Currency is on the grid, so a row never mixes
+        currencies but a grand total does. The Month label is calendar_month_name, one space and
+        calendar_year, padded to nine characters ("January   2024"); filter on calendar_month_key, not
+        on the label.
+    cubes:
+      - join_path: cube_carl_dwhprd_gold_campaign_fact
+        includes:
+          - sap_gl_account
+          - name: campaign_status_name
+            title: Campaign Status
+          - calendar_year_key
+          - calendar_month_key
+          - name: calendar_month_label
+            title: Month
+          - holding_company_key
+          - name: holding_company_name
+            title: Holding Company
+          - invoice_holding_company_key
+          - name: invoice_holding_company_name
+            title: Invoice Holding Company
+          - name: sales_rep_key
+            title: Sales Rep Key
+          - name: bts_sales_rep_name
+            alias: sales_rep_name
+            title: Sales Rep
+          - channel_key
+          - name: display_channel_name
+            alias: channel_name
+            title: Channel
+          - agency_key
+          - name: agency_name
+            title: Agency
+          - client_key
+          - name: client_name
+            title: Client
+          - deal_key
+          - deal_id
+          - deal_name
+          - campaign_key
+          - name: campaign_id
+            title: Campaign
+          - product_key
+          - product_name
+          - name: campaign_desc
+            title: Campaign Desc
+          - base_currency_key
+          - name: bts_base_currency_code
+            alias: base_currency_code
+            title: Base Currency
+          - name: source_system_region_key
+            title: Source System Region
+          - name: source_region_name
+            title: Source Region
+          - calendar_qtr_key
+          - name: cal_qtr_desc
+            title: Quarter
+          - campaign_start_end_date
+          - name: campaign_delivery_type_name
+            title: Campaign Delivery Type
+          - campaign_commission_pct
+          - campaign_tax_pct
+          - campaign_disc_sur_pct
+          - campaign_ccp
+          - campaign_cps
+          - campaign_cpt
+          - name: day_date
+            alias: campaign_invoice_date
+            title: Campaign Invoice Date
+          - name: agency_commission_pct_display
+            title: Agency Commission % (attribute)
+          - business_type_key
+          - name: business_type_name
+            title: Business Type
+          - agency_id
+          - agency_group_key
+          - name: agency_group_name
+            title: Agency Group
+          - client_id
+          - name: client_group_name
+            title: Client Group
+          - mapped_category
+          - country_key
+          - name: country_name
+            title: Country
+          - product_category_1
+          - channel_id
+          - master_channel
+          - sales_rep_team_key
+          - name: bts_sales_rep_team_name
+            alias: sales_rep_team_name
+            title: Sales Rep Team
+          - name: bts_base_currency_name
+            alias: base_currency_name
+          - name: bts_base_currency_symbol
+            alias: base_currency_symbol
+          - name: bts_campaign_currency_code
+            alias: campaign_currency_code
+          - name: bts_campaign_currency_name
+            alias: campaign_currency_name
+          - name: bts_campaign_currency_symbol
+            alias: campaign_currency_symbol
+          - invoice_currency_key
+          - name: bts_invoice_currency_code
+            alias: invoice_currency_code
+            title: Invoice Currency
+          - name: bts_invoice_currency_name
+            alias: invoice_currency_name
+          - name: bts_invoice_currency_symbol
+            alias: invoice_currency_symbol
+          - gross_revenue_loc
+          - gross_revenue_current_rate_usd
+          - gross_revenue_hist_rate_usd
+          - campaign_budget_loc
+          - campaign_budget_current_rate_usd
+          - campaign_budget_hist_rate_usd
+          - revenue_variance
+          - campaign_spots_target
+          - campaign_spots_booked
+          - spot_variance
+          - campaign_invoice_value_loc
+          - campaign_invoice_value_current_rate_usd
+          - campaign_invoice_value_hist_rate_usd
+          - campaign_net_revenue_loc
+          - campaign_net_revenue_current_rate_usd
+          - campaign_net_revenue_hist_rate_usd
+          - campaign_net_net_revenue_loc
+          - campaign_net_net_revenue_current_rate_usd
+          - campaign_net_net_revenue_hist_rate_usd
+          - campaign_spots_price_loc
+          - campaign_spots_price_current_rate_usd
+          - campaign_spots_price_hist_rate_usd
+          - campaign_tax_value_loc
+          - campaign_tax_value_current_rate_usd
+          - campaign_tax_value_hist_rate_usd
+          - agency_commission_loc
+          - agency_commission_current_rate_usd
+          - agency_commission_hist_rate_usd
+          - agency_incentive_loc
+          - agency_incentive_current_rate_usd
+          - agency_incentive_hist_rate_usd
+          - name: sales_commission_loc
+            alias: rep_commission_loc
+            title: Rep Commission LOC
+          - name: sales_commission_current_rate_usd
+            alias: rep_commission_current_rate_usd
+            title: Rep Commission Current Rate(USD)
+          - name: sales_commission_hist_rate_usd
+            alias: rep_commission_hist_rate_usd
+            title: Rep Commission Hist Rate(USD)
+          - campaign_ratings_booked
+          - campaign_ratings_delivered
+          - campaign_ratings_sold
+          - campaign_impacts_booked
+          - campaign_impacts_delivered
+          - campaign_impacts_sold
+          - name: agency_commission_pct_avg
+            alias: agency_commission_pct
+            title: Agency Commission %
+          - name: agency_incentive_pct_avg
+            alias: agency_incentive_pct
+            title: Agency Incentive %
+          - name: rep_commission_pct_avg
+            alias: rep_commission_pct
+            title: Rep Commission %
+          - name: sales_rep_revenue_share_avg
+            alias: sales_rep_revenue_share
+            title: Sales Rep Revenue Share

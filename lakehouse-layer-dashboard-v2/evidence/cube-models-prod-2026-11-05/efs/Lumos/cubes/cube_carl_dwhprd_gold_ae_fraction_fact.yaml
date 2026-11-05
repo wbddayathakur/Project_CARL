@@ -1,0 +1,52 @@
+cubes:
+  - name: cube_carl_dwhprd_gold_ae_fraction_fact
+    sql_table: "{{ catalog('dwhprd_gold') }}.ae_fraction_fact"
+    data_source: default
+    public: false
+    title: Carl Dwhprd Gold — AE Fraction Fact
+    description: >-
+      Gold AE allocation fractions (member + unit_sched_bcast_month_key + sales_team_member_key grain).
+      CARL-3016 reads fractions through cube_carl_dwhprd_gold_invoice_team_ae_bridge (same table,
+      month-aligned join to invoice), not directly from ad_sales views.
+    dimensions:
+      - name: unit_sched_bcast_month_key
+        sql: unit_sched_bcast_month_key
+        type: number
+        title: Unit Sched Broadcast Month Key
+        description: Part of the fact grain; join to invoice_revenue_fact.unit_sched_bcast_month_key in queries.
+        primary_key: true
+      - name: acct_cov_team_member_key
+        sql: acct_cov_team_member_key
+        type: number
+        title: Account Coverage Team Member Key
+        description: Part of the fact grain; foreign key to acct_cov_team_member_dim.
+        primary_key: true
+      - name: sales_team_member_key
+        sql: sales_team_member_key
+        type: number
+        title: Sales Team Member Key
+        description: Part of the fact grain; foreign key to sales_team_member_dim.
+        primary_key: true
+    joins:
+      - name: cube_carl_dwhprd_gold_sales_team_member_dim
+        sql: >-
+          {CUBE}.sales_team_member_key =
+          {cube_carl_dwhprd_gold_sales_team_member_dim}.sales_team_member_key
+        relationship: many_to_one
+    measures:
+      - name: record_count
+        sql: '*'
+        type: count
+        title: Record Count
+        description: Row count for smoke queries.
+        meta:
+          source: generated
+          used_by_report_ids: []
+      - name: fraction
+        sql: '{CUBE}.fraction'
+        type: sum
+        title: AE Fraction
+        description: >-
+          Sum of AE allocation fractions. Prefer cube_carl_dwhprd_gold_invoice_team_ae_bridge.fraction for
+          CARL-3016 queries from invoice_revenue_fact (month-aligned). MSTR multiplies pre-aggregated revenue
+          and fraction — validate parity.

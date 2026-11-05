@@ -1,0 +1,30 @@
+views:
+  - name: ad_sales_view_neo_creative_delivery
+    public: true
+    title: "NEO Creative Delivery Report"
+    description: >
+      Creative-level impressions, completions, VCR, and spend for campaign reporting "By creative" tables.
+    meta:
+      view_scope: business
+      business: ad_sales
+      fact_table: rpt_creative_delivery
+    cubes:
+      - join_path: cube_neo_gold_rpt_creative_delivery
+        includes:
+          - event_date_et
+          - deal_id
+          - deal_name
+          - advertiser_id
+          - advertiser_name
+          - agency_id
+          - agency_name
+          - creative_id
+          - creative_name
+          - creative_duration
+          - source
+          - count
+          - total_impressions
+          - total_completions
+          - avg_vcr
+          - total_revenue
+          - effective_cpm

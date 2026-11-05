@@ -1,0 +1,3128 @@
+cubes:
+  - name: cube_carl_dwhprd_gold_invoice_revenue_fact
+    sql_table: "{{ catalog('dwhprd_gold') }}.invoice_revenue_fact"
+    data_source: default
+    public: false
+    title: Carl Dwhprd Gold — Invoice Revenue Fact
+    description: >-
+      This fact table captures invoice-level revenue transactions for broadcast advertising, including financial metrics,
+      impressions, and deal terms. Each row represents a single unit scheduled for broadcast with associated revenue, rates,
+      and performance data across multiple dimensions.
+    dimensions:
+      - name: account_property_category
+        sql: |-
+          (
+            SELECT hop2.property_category
+            FROM {{ catalog('dwhprd_gold') }}.account_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.property_category_dim hop2
+              ON hop1.account_property_category_key = hop2.property_category_key
+            WHERE {CUBE}.account_key = hop1.account_key
+          )
+        type: string
+        title: Account Property Category
+        description: 'property_category_dim.property_category looked up by account_property_category_key via a correlated subquery, since property_category_dim is already joined
+          once directly from invoice_revenue_fact (Order Property Category role, via invoice_revenue_fact.property_category_key). MSTR''s ACCOUNT_PROPERTY_CATEGORY_DIM view
+          (ADSALESDWH.ACCOUNT_PROPERTY_CATEGORY_DIM)
+          is a pure rename over PROPERTY_CATEGORY_DIM — no join, no filter — confirming this is a role-play of the same dimension, not a distinct table. Probed against dev data:
+          property_category_dim is unique on property_category_key (no fan-out risk), and every one of 406,836 account_dim rows has a matching property_category_dim row (0% orphan).'
+      - name: account_property_category_id
+        sql: |-
+          (
+            SELECT hop2.property_category_id
+            FROM {{ catalog('dwhprd_gold') }}.account_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.property_category_dim hop2
+              ON hop1.account_property_category_key = hop2.property_category_key
+            WHERE {CUBE}.account_key = hop1.account_key
+          )
+        type: number
+        title: Account Property Category ID
+        description: property_category_dim.property_category_id looked up by account_property_category_key via a correlated subquery, for the same reason as account_property_category
+          above.
+      - name: sell_property_category
+        sql: |-
+          (
+            SELECT hop2.property_category
+            FROM {{ catalog('dwhprd_gold') }}.selling_title_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.property_category_dim hop2
+              ON hop1.sell_property_category_key = hop2.property_category_key
+            WHERE {CUBE}.selling_title_key = hop1.selling_title_key
+          )
+        type: string
+        title: Sell Property Category
+        description: >-
+          CARL-4313 (2026 - Ent & News Rev). property_category reached through
+          selling_title_dim.sell_property_category_key — the selling-title role of Order Property Category,
+          resolved as a fact-resident correlated subquery so it stays on this cube and is DENSE_RANK-safe
+          for QuickSight pivots. MSTR's SELL_PROPERTY_CATEGORY_DIM is a pure rename over
+          PROPERTY_CATEGORY_DIM (no separate gold table). Both hops are many_to_one; a missing
+          selling-title/lookup row returns NULL and does not drop the invoice row.
+      - name: sub_account
+        sql: |-
+          (
+            SELECT hop1.sub_account
+            FROM {{ catalog('dwhprd_gold') }}.account_dim hop1
+            WHERE {CUBE}.account_key = hop1.account_key
+          )
+        type: string
+        title: Sub Account
+        description: Sub-account name or identifier within the account.
+      - name: buy_ae_string
+        sql: |-
+          (
+            SELECT hop1.buy_ae_string
+            FROM {{ catalog('dwhprd_gold') }}.acct_cov_team_dim hop1
+            WHERE {CUBE}.acct_cov_team_key = hop1.acct_cov_team_key
+          )
+        type: string
+        title: Buying AE String
+        description: Buying account executive string for the coverage team (MSTR "Buying AE String").
+      - name: client_ae_string
+        sql: |-
+          (
+            SELECT hop1.client_ae_string
+            FROM {{ catalog('dwhprd_gold') }}.acct_cov_team_dim hop1
+            WHERE {CUBE}.acct_cov_team_key = hop1.acct_cov_team_key
+          )
+        type: string
+        title: Client AE String
+        description: Client account executive string for the coverage team (MSTR "Client AE String").
+      - name: plan_ae_string
+        sql: |-
+          (
+            SELECT hop1.plan_ae_string
+            FROM {{ catalog('dwhprd_gold') }}.acct_cov_team_dim hop1
+            WHERE {CUBE}.acct_cov_team_key = hop1.acct_cov_team_key
+          )
+        type: string
+        title: Planning AE String
+        description: Planning account executive string for the coverage team (MSTR "Planning AE String").
+      - name: act_air_daypart_day_time_name
+        sql: |-
+          (
+            SELECT hop1.act_air_daypart_day_time_name
+            FROM {{ catalog('dwhprd_gold') }}.actual_air_daypart_dim hop1
+            WHERE {CUBE}.actual_air_daypart_key = hop1.actual_air_daypart_key
+          )
+        type: string
+        title: Actual Aired Daytime Daypart
+        description: Human-readable name describing the daypart's day and time characteristics.
+      - name: act_air_daypart_selling_desc
+        sql: |-
+          (
+            SELECT hop1.act_air_daypart_selling_desc
+            FROM {{ catalog('dwhprd_gold') }}.actual_air_daypart_dim hop1
+            WHERE {CUBE}.actual_air_daypart_key = hop1.actual_air_daypart_key
+          )
+        type: string
+        title: Actual Aired Selling Daypart
+        description: Description of the daypart used for sales and commercial purposes.
+      - name: adv_default_prod_cat_key
+        sql: |-
+          (
+            SELECT hop1.adv_default_prod_cat_key
+            FROM {{ catalog('dwhprd_gold') }}.advertiser_dim hop1
+            WHERE {CUBE}.advertiser_key = hop1.advertiser_key
+          )
+        type: number
+        title: Advertiser Default Product Category Key
+        description: Foreign key reference to the default product category dimension for this advertiser.
+      - name: adv_default_prod_cat_name
+        sql: |-
+          (
+            SELECT hop2.prod_cat_name
+            FROM {{ catalog('dwhprd_gold') }}.advertiser_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.product_dim hop2
+              ON hop1.adv_default_prod_cat_key = hop2.product_key
+            WHERE {CUBE}.advertiser_key = hop1.advertiser_key
+          )
+        type: string
+        title: Advertiser Primary Product Category
+        description: The advertiser's standing product category, i.e. the category on the product referenced by advertiser_dim.adv_default_prod_cat_key. This is not the category
+          of the product sold on the transaction — for that use cube_carl_dwhprd_gold_product_dim.prod_cat_name.
+      - name: adv_id
+        sql: |-
+          (
+            SELECT hop1.adv_id
+            FROM {{ catalog('dwhprd_gold') }}.advertiser_dim hop1
+            WHERE {CUBE}.advertiser_key = hop1.advertiser_key
+          )
+        type: number
+        title: Advertiser ID
+        description: Business identifier for the advertiser from the source system.
+      - name: adv_name
+        sql: |-
+          (
+            SELECT hop1.adv_name
+            FROM {{ catalog('dwhprd_gold') }}.advertiser_dim hop1
+            WHERE {CUBE}.advertiser_key = hop1.advertiser_key
+          )
+        type: string
+        title: Advertiser
+        description: The legal or business name of the advertiser.
+      - name: adv_name_id
+        sql: |-
+          (
+            SELECT hop1.adv_name || ' (' || CAST(hop1.adv_id AS VARCHAR) || ')'
+            FROM {{ catalog('dwhprd_gold') }}.advertiser_dim hop1
+            WHERE {CUBE}.advertiser_key = hop1.advertiser_key
+          )
+        type: string
+        title: Advertiser (ID)
+        description: Advertiser name with its business ID suffixed in parentheses, e.g. "ABBOTT DIABETES CARE (12268)" — reproduces MicroStrategy's display format exactly. Confirmed
+          live in MSTR's own generated SQL (`"ADV_NAME"||' ('||"ADV_ID"||')' "ADV_NAME"`), which concatenates the same two fields already modeled separately here (adv_name, adv_id).
+      - name: adv_reporting_parent
+        sql: |-
+          (
+            SELECT hop1.adv_reporting_parent
+            FROM {{ catalog('dwhprd_gold') }}.advertiser_dim hop1
+            WHERE {CUBE}.advertiser_key = hop1.advertiser_key
+          )
+        type: string
+        title: Adv Reporting Parent
+        description: Identifier for the parent advertiser entity used for consolidated reporting purposes.
+      - name: brand_name
+        sql: |-
+          (
+            SELECT hop1.brand_name
+            FROM {{ catalog('dwhprd_gold') }}.brand_dim hop1
+            WHERE {CUBE}.brand_key = hop1.brand_key
+          )
+        type: string
+        title: Brand
+        description: Name of the brand (e.g. a movie-studio campaign name, or "Various" placeholder).
+      - name: buy_type_desc
+        sql: |-
+          (
+            SELECT hop1.buy_type_desc
+            FROM {{ catalog('dwhprd_gold') }}.buy_type_dim hop1
+            WHERE {CUBE}.buy_type_key = hop1.buy_type_key
+          )
+        type: string
+        title: Buy Type
+        description: Human-readable description of the purchase type.
+      - name: buy_type_sales_group_desc
+        sql: |-
+          (
+            SELECT hop1.buy_type_sales_group_desc
+            FROM {{ catalog('dwhprd_gold') }}.buy_type_dim hop1
+            WHERE {CUBE}.buy_type_key = hop1.buy_type_key
+          )
+        type: string
+        title: Sales Group
+        description: Description of the sales group associated with this purchase type.
+      - name: buy_type_sales_group_key
+        sql: |-
+          (
+            SELECT hop1.buy_type_sales_group_key
+            FROM {{ catalog('dwhprd_gold') }}.buy_type_dim hop1
+            WHERE {CUBE}.buy_type_key = hop1.buy_type_key
+          )
+        type: number
+        title: Sales Group Key
+        description: Surrogate key linking to the associated sales group dimension.
+      - name: buying_agency_country_code
+        sql: |-
+          (
+            SELECT hop1.buying_agency_country_code
+            FROM {{ catalog('dwhprd_gold') }}.buying_agency_dim hop1
+            WHERE {CUBE}.buying_agency_key = hop1.buying_agency_key
+          )
+        type: string
+        title: Buying Agency Country Code
+        description: Country code where the buying agency operates.
+      - name: buying_agency_id
+        sql: |-
+          (
+            SELECT hop1.buying_agency_id
+            FROM {{ catalog('dwhprd_gold') }}.buying_agency_dim hop1
+            WHERE {CUBE}.buying_agency_key = hop1.buying_agency_key
+          )
+        type: number
+        title: Buying Agency ID
+        description: Business identifier for the buying agency from the source system.
+      - name: buying_agency_name
+        sql: |-
+          (
+            SELECT hop1.buying_agency_name
+            FROM {{ catalog('dwhprd_gold') }}.buying_agency_dim hop1
+            WHERE {CUBE}.buying_agency_key = hop1.buying_agency_key
+          )
+        type: string
+        title: Buying Agency
+        description: Official name of the buying agency.
+      - name: buying_agency_name_id
+        sql: |-
+          (
+            SELECT hop1.buying_agency_name || ' (' || CAST(hop1.buying_agency_id AS VARCHAR) || ')'
+            FROM {{ catalog('dwhprd_gold') }}.buying_agency_dim hop1
+            WHERE {CUBE}.buying_agency_key = hop1.buying_agency_key
+          )
+        type: string
+        title: Buying Agency (ID)
+        description: Buying agency name with its business ID suffixed in parentheses, e.g. "SPARK FOUNDRY-CHI (5848)" — reproduces MicroStrategy's display format exactly. Confirmed
+          live in MSTR's own generated SQL (`"BUYING_AGENCY_NAME"||' ('||"BUYING_AGENCY_ID"||')' "BUYING_AGENCY_NAME"`), which concatenates the same two fields already modeled separately
+          here (buying_agency_name, buying_agency_id).
+      - name: buying_agency_reporting_parent
+        sql: |-
+          (
+            SELECT hop1.buying_agency_reporting_parent
+            FROM {{ catalog('dwhprd_gold') }}.buying_agency_dim hop1
+            WHERE {CUBE}.buying_agency_key = hop1.buying_agency_key
+          )
+        type: string
+        title: Buying Agency Reporting Parent
+        description: Identifier of the parent agency for reporting hierarchy purposes.
+      - name: buying_agency_state
+        sql: |-
+          (
+            SELECT hop1.buying_agency_state
+            FROM {{ catalog('dwhprd_gold') }}.buying_agency_dim hop1
+            WHERE {CUBE}.buying_agency_key = hop1.buying_agency_key
+          )
+        type: string
+        title: Buying Agency State
+        description: State or province where the buying agency is located.
+      - name: buying_mega_agency_id
+        sql: |-
+          (
+            SELECT hop1.buying_mega_agency_id
+            FROM {{ catalog('dwhprd_gold') }}.buying_agency_dim hop1
+            WHERE {CUBE}.buying_agency_key = hop1.buying_agency_key
+          )
+        type: number
+        title: Buying Mega Agency Id
+        description: Identifier for the mega agency (parent organization) to which this buying agency belongs.
+      - name: buying_mega_agency_name
+        sql: |-
+          (
+            SELECT hop1.buying_mega_agency_name
+            FROM {{ catalog('dwhprd_gold') }}.buying_agency_dim hop1
+            WHERE {CUBE}.buying_agency_key = hop1.buying_agency_key
+          )
+        type: string
+        title: Buying Mega Agency
+        description: Name of the mega agency (parent organization) to which this buying agency belongs.
+      - name: combination_ind
+        sql: |-
+          (
+            SELECT hop1.combination_ind
+            FROM {{ catalog('dwhprd_gold') }}.deal_dim hop1
+            WHERE {CUBE}.deal_revision_key = hop1.deal_revision_key
+          )
+        type: string
+        title: Combination Ind
+        description: Indicator flag showing if the deal is a combination of multiple components.
+      - name: deal_cancelled_flag
+        sql: |-
+          (
+            SELECT hop1.deal_cancelled_flag
+            FROM {{ catalog('dwhprd_gold') }}.deal_dim hop1
+            WHERE {CUBE}.deal_revision_key = hop1.deal_revision_key
+          )
+        type: string
+        title: Deal Cancelled Flag
+        description: Indicator flag showing if the deal has been cancelled.
+      - name: deal_comments
+        sql: |-
+          (
+            SELECT hop1.deal_comments
+            FROM {{ catalog('dwhprd_gold') }}.deal_dim hop1
+            WHERE {CUBE}.deal_revision_key = hop1.deal_revision_key
+          )
+        type: string
+        title: Deal Comments
+        description: Free-text comments or notes about the deal.
+      - name: deal_create_date
+        sql: |-
+          (
+            SELECT hop1.deal_create_date
+            FROM {{ catalog('dwhprd_gold') }}.deal_dim hop1
+            WHERE {CUBE}.deal_revision_key = hop1.deal_revision_key
+          )
+        type: time
+        title: Deal Create Date
+        description: Date when the deal was originally created.
+      - name: deal_current_status_desc
+        sql: |-
+          (
+            SELECT hop2.deal_current_status_desc
+            FROM {{ catalog('dwhprd_gold') }}.deal_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.deal_current_status_dim hop2
+              ON hop1.deal_current_status_key = hop2.deal_current_status_key
+            WHERE {CUBE}.deal_revision_key = hop1.deal_revision_key
+          )
+        type: string
+        title: Deal Current Status Desc
+        description: Full descriptive text for the deal status code.
+      - name: deal_eqv_ind
+        sql: |-
+          (
+            SELECT hop1.deal_eqv_ind
+            FROM {{ catalog('dwhprd_gold') }}.deal_dim hop1
+            WHERE {CUBE}.deal_revision_key = hop1.deal_revision_key
+          )
+        type: string
+        title: Deal Eqv Ind
+        description: Indicator flag for deal equivalency status.
+      - name: deal_guar_threshold_ind
+        sql: |-
+          (
+            SELECT hop1.deal_guar_threshold_ind
+            FROM {{ catalog('dwhprd_gold') }}.deal_dim hop1
+            WHERE {CUBE}.deal_revision_key = hop1.deal_revision_key
+          )
+        type: string
+        title: Deal Guar Threshold Indicator
+        description: >-
+          CARL-4373 Flighting Analysis v3. Guarantee-threshold indicator from deal_dim.
+          The column already exists on the deal dimension; this exposes it on the invoice fact
+          through the existing deal_revision_key lookup.
+      - name: deal_guar_threshold_pct
+        sql: |-
+          (
+            SELECT hop1.deal_guar_threshold_pct
+            FROM {{ catalog('dwhprd_gold') }}.deal_dim hop1
+            WHERE {CUBE}.deal_revision_key = hop1.deal_revision_key
+          )
+        type: number
+        title: Deal Guar Threshold %
+        description: >-
+          CARL-4336 Let's Make A Deal CPM. Guarantee threshold percentage set on the deal, from deal_dim.
+      - name: deal_key
+        sql: |-
+          (
+            SELECT hop1.deal_key
+            FROM {{ catalog('dwhprd_gold') }}.deal_dim hop1
+            WHERE {CUBE}.deal_revision_key = hop1.deal_revision_key
+          )
+        type: number
+        title: Deal Key
+        description: Surrogate key linking to the base deal entity.
+      - name: deal_name
+        sql: |-
+          (
+            SELECT hop1.deal_name
+            FROM {{ catalog('dwhprd_gold') }}.deal_dim hop1
+            WHERE {CUBE}.deal_revision_key = hop1.deal_revision_key
+          )
+        type: string
+        title: Deal
+        description: Business name or title of the deal.
+      - name: deal_partner_key
+        sql: |-
+          (
+            SELECT hop1.deal_partner_key
+            FROM {{ catalog('dwhprd_gold') }}.deal_dim hop1
+            WHERE {CUBE}.deal_revision_key = hop1.deal_revision_key
+          )
+        type: number
+        title: Deal Partner Key
+        description: Foreign key to a partner dimension associated with the deal.
+      - name: deal_revision_num
+        sql: |-
+          (
+            SELECT hop1.deal_revision_num
+            FROM {{ catalog('dwhprd_gold') }}.deal_dim hop1
+            WHERE {CUBE}.deal_revision_key = hop1.deal_revision_key
+          )
+        type: number
+        title: Deal Revision Number
+        description: Sequential revision number for this deal.
+      - name: deal_type_desc
+        sql: |-
+          (
+            SELECT hop1.deal_type_desc
+            FROM {{ catalog('dwhprd_gold') }}.deal_dim hop1
+            WHERE {CUBE}.deal_revision_key = hop1.deal_revision_key
+          )
+        type: string
+        title: Deal Type
+        description: Text description of the deal type or category.
+      - name: deal_year
+        sql: |-
+          (
+            SELECT hop1.deal_year
+            FROM {{ catalog('dwhprd_gold') }}.deal_dim hop1
+            WHERE {CUBE}.deal_revision_key = hop1.deal_revision_key
+          )
+        type: number
+        title: Deal Year
+        description: Fiscal or calendar year associated with the deal.
+      - name: first_time_to_hold_date
+        sql: |-
+          (
+            SELECT hop1.first_time_to_hold_date
+            FROM {{ catalog('dwhprd_gold') }}.deal_dim hop1
+            WHERE {CUBE}.deal_revision_key = hop1.deal_revision_key
+          )
+        type: time
+        title: First Time to Hold Date
+        description: Date when the deal was first placed on hold.
+      - name: first_time_to_hold_or_order_date
+        sql: |-
+          (
+            SELECT COALESCE(hop1.first_time_to_hold_date, hop1.first_time_to_order_date)
+            FROM {{ catalog('dwhprd_gold') }}.deal_dim hop1
+            WHERE {CUBE}.deal_revision_key = hop1.deal_revision_key
+          )
+        type: time
+        title: First Time to Hold/Order Date
+        description: MSTR's "First Time To Hold/Order Date" — first_time_to_hold_date, falling back to first_time_to_order_date when the hold date is null. Source SQL wraps this
+          in a DECODE with a 1/1/2500 sentinel used only for null-sort ordering, which is not modeled here.
+      - name: first_time_to_order_date
+        sql: |-
+          (
+            SELECT hop1.first_time_to_order_date
+            FROM {{ catalog('dwhprd_gold') }}.deal_dim hop1
+            WHERE {CUBE}.deal_revision_key = hop1.deal_revision_key
+          )
+        type: time
+        title: First Time to Order Date
+        description: Date when the deal was first ordered.
+      - name: gab_deal_id
+        sql: |-
+          (
+            SELECT hop1.gab_deal_id
+            FROM {{ catalog('dwhprd_gold') }}.deal_dim hop1
+            WHERE {CUBE}.deal_revision_key = hop1.deal_revision_key
+          )
+        type: number
+        title: GAB Deal ID
+        description: External identifier linking to a GAB (Global Account Business) system deal.
+      - name: guaranteed_ind
+        sql: |-
+          (
+            SELECT hop1.guaranteed_ind
+            FROM {{ catalog('dwhprd_gold') }}.deal_dim hop1
+            WHERE {CUBE}.deal_revision_key = hop1.deal_revision_key
+          )
+        type: string
+        title: Guaranteed Indicator
+        description: Indicator flag showing if the deal is guaranteed.
+      - name: last_revision_audit_num
+        sql: |-
+          (
+            SELECT hop1.last_revision_audit_num
+            FROM {{ catalog('dwhprd_gold') }}.deal_dim hop1
+            WHERE {CUBE}.deal_revision_key = hop1.deal_revision_key
+          )
+        type: number
+        title: Last Revision Audit Num
+        description: Audit number of the last revision made to the deal.
+      - name: last_revision_user
+        sql: |-
+          (
+            SELECT hop1.last_revision_user
+            FROM {{ catalog('dwhprd_gold') }}.deal_dim hop1
+            WHERE {CUBE}.deal_revision_key = hop1.deal_revision_key
+          )
+        type: string
+        title: Last Revision User
+        description: User identifier of the person who made the last revision to the deal.
+      - name: lsni_external_deal_id
+        sql: |-
+          (
+            SELECT hop1.lsni_external_deal_id
+            FROM {{ catalog('dwhprd_gold') }}.deal_dim hop1
+            WHERE {CUBE}.deal_revision_key = hop1.deal_revision_key
+          )
+        type: number
+        title: Lsni External Deal Id
+        description: External deal identifier from an LSNI (external system) integration.
+      - name: primary_ae
+        sql: |-
+          (
+            SELECT hop1.primary_ae
+            FROM {{ catalog('dwhprd_gold') }}.deal_dim hop1
+            WHERE {CUBE}.deal_revision_key = hop1.deal_revision_key
+          )
+        type: string
+        title: Primary AE
+        description: Name or identifier of the primary Account Executive responsible for the deal.
+      - name: primary_ae_office
+        sql: |-
+          (
+            SELECT hop1.primary_ae_office
+            FROM {{ catalog('dwhprd_gold') }}.deal_dim hop1
+            WHERE {CUBE}.deal_revision_key = hop1.deal_revision_key
+          )
+        type: string
+        title: Primary AE Office
+        description: Office location of the primary Account Executive.
+      - name: primary_ae_sales_region_name
+        sql: |-
+          (
+            SELECT hop1.primary_ae_sales_region_name
+            FROM {{ catalog('dwhprd_gold') }}.deal_dim hop1
+            WHERE {CUBE}.deal_revision_key = hop1.deal_revision_key
+          )
+        type: string
+        title: Primary AE Sales Region
+        description: Geographic sales region of the primary Account Executive.
+      - name: primary_ae_sales_team
+        sql: |-
+          (
+            SELECT hop1.primary_ae_sales_team
+            FROM {{ catalog('dwhprd_gold') }}.deal_dim hop1
+            WHERE {CUBE}.deal_revision_key = hop1.deal_revision_key
+          )
+        type: string
+        title: Primary Ae Sales Team
+        description: Sales team name of the primary Account Executive.
+      - name: primary_ae_sales_team_sname
+        sql: |-
+          (
+            SELECT hop1.primary_ae_sales_team_sname
+            FROM {{ catalog('dwhprd_gold') }}.deal_dim hop1
+            WHERE {CUBE}.deal_revision_key = hop1.deal_revision_key
+          )
+        type: string
+        title: Primary AE Sales Team
+        description: Short name or abbreviation of the primary Account Executive's sales team.
+      - name: deal_revenue_snapshot_desc
+        sql: |-
+          (
+            SELECT hop1.deal_revenue_snapshot_desc
+            FROM {{ catalog('dwhprd_gold') }}.deal_revenue_snapshot_dim hop1
+            WHERE {CUBE}.deal_revenue_snapshot_key = hop1.deal_revenue_snapshot_key
+          )
+        type: string
+        title: Deal Revenue Snapshot
+        description: Descriptive text or label for the deal revenue snapshot.
+      - name: deal_status_desc
+        sql: |-
+          (
+            SELECT hop1.deal_status_desc
+            FROM {{ catalog('dwhprd_gold') }}.deal_status_dim hop1
+            WHERE {CUBE}.deal_status_key = hop1.deal_status_key
+          )
+        type: string
+        title: Deal Status
+        description: >-
+          CARL-4370 Upfront Data - Current Year. Deal status from deal_status_dim.
+          invoice_revenue_fact already has deal_status_key; this exposes the description
+          through that key. No new join.
+      - name: deal_revenue_status_desc
+        sql: |-
+          (
+            SELECT hop1.deal_revenue_status_desc
+            FROM {{ catalog('dwhprd_gold') }}.deal_revenue_status_dim hop1
+            WHERE {CUBE}.deal_revenue_status_key = hop1.deal_revenue_status_key
+          )
+        type: string
+        title: Deal Revenue Status
+        description: Human-readable description of the deal revenue status (e.g., Projected, Working, Booked).
+      - name: sloa_set_user
+        sql: |-
+          (
+            SELECT hop1.sloa_set_user
+            FROM {{ catalog('dwhprd_gold') }}.deal_dim hop1
+            WHERE {CUBE}.deal_revision_key = hop1.deal_revision_key
+          )
+        type: string
+        title: Sloa Set User
+        description: User identifier of the person who set the sold Letter of Authorization.
+      - name: sold_loa_audit_num
+        sql: |-
+          (
+            SELECT hop1.sold_loa_audit_num
+            FROM {{ catalog('dwhprd_gold') }}.deal_dim hop1
+            WHERE {CUBE}.deal_revision_key = hop1.deal_revision_key
+          )
+        type: number
+        title: Sold LOA Audit Number
+        description: Audit number for the sold Letter of Authorization (LOA).
+      - name: sold_loa_last_confirmed_date
+        sql: |-
+          (
+            SELECT hop1.sold_loa_last_confirmed_date
+            FROM {{ catalog('dwhprd_gold') }}.deal_dim hop1
+            WHERE {CUBE}.deal_revision_key = hop1.deal_revision_key
+          )
+        type: time
+        title: Sold Loa Last Confirmed Date
+        description: Date when the sold Letter of Authorization was last confirmed.
+      - name: sold_loa_set_date
+        sql: |-
+          (
+            SELECT hop1.sold_loa_set_date
+            FROM {{ catalog('dwhprd_gold') }}.deal_dim hop1
+            WHERE {CUBE}.deal_revision_key = hop1.deal_revision_key
+          )
+        type: time
+        title: Sold Loa Set Date
+        description: Date when the sold Letter of Authorization was set.
+      - name: super_deal_id
+        sql: |-
+          (
+            SELECT hop2.super_deal_id
+            FROM {{ catalog('dwhprd_gold') }}.deal_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.super_deal_dim hop2
+              ON hop1.super_deal_key = hop2.super_deal_key
+            WHERE {CUBE}.deal_revision_key = hop1.deal_revision_key
+          )
+        type: number
+        title: Super Deal
+        description: Business identifier for the super deal — the "Super Deal" value.
+      - name: super_deal_status_desc
+        sql: |-
+          (
+            SELECT hop3.super_deal_status_desc
+            FROM {{ catalog('dwhprd_gold') }}.deal_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.super_deal_dim hop2
+              ON hop1.super_deal_key = hop2.super_deal_key
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.super_deal_status_dim hop3
+              ON hop2.super_deal_status_key = hop3.super_deal_status_key
+            WHERE {CUBE}.deal_revision_key = hop1.deal_revision_key
+          )
+        type: string
+        title: Super Deal Status
+        description: Human-readable description of the super deal status.
+      - name: demo_name
+        sql: |-
+          (
+            SELECT hop1.demo_name
+            FROM {{ catalog('dwhprd_gold') }}.demographics_dim hop1
+            WHERE {CUBE}.guar_target_demo_key = hop1.demographics_key
+          )
+        type: string
+        title: Demographic
+        description: Human-readable name of the demographic segment, typically including campaign or client identifiers.
+      - name: episode_key
+        sql: |-
+          (
+            SELECT hop1.episode_key
+            FROM {{ catalog('dwhprd_gold') }}.episode_version_dim hop1
+            WHERE {CUBE}.episode_version_key = hop1.episode_version_key
+          )
+        type: number
+        title: Episode Key
+        description: Foreign key reference to the parent episode dimension.
+      - name: guar_est_methodology_abbv
+        sql: |-
+          (
+            SELECT hop1.guar_est_methodology_abbv
+            FROM {{ catalog('dwhprd_gold') }}.guar_est_methodology_dim hop1
+            WHERE {CUBE}.guar_est_methodology_key = hop1.guar_est_methodology_key
+          )
+        type: string
+        title: Guar Est Methodology Abbv
+        description: Abbreviated code for the guaranteed estimate methodology (e.g., 'PAL', 'ACM 7').
+      - name: inventory_cat_desc
+        sql: |-
+          (
+            SELECT hop1.inventory_cat_desc
+            FROM {{ catalog('dwhprd_gold') }}.inventory_type_dim hop1
+            WHERE {CUBE}.inventory_type_key = hop1.inventory_type_key
+          )
+        type: string
+        title: Inventory Category
+        description: Descriptive name of the inventory category associated with this type.
+      - name: inventory_type_desc
+        sql: |-
+          (
+            SELECT hop1.inventory_type_desc
+            FROM {{ catalog('dwhprd_gold') }}.inventory_type_dim hop1
+            WHERE {CUBE}.inventory_type_key = hop1.inventory_type_key
+          )
+        type: string
+        title: Inventory Type
+        description: Full descriptive name or label for the inventory type.
+      - name: invoice_id
+        sql: |-
+          (
+            SELECT hop1.invoice_id
+            FROM {{ catalog('dwhprd_gold') }}.invoice_dim hop1
+            WHERE {CUBE}.invoice_key = hop1.invoice_key
+          )
+        type: number
+        title: Invoice Id
+        description: Business identifier for the current invoice.
+      - name: invoice_type_desc
+        sql: |-
+          (
+            SELECT hop1.invoice_type_desc
+            FROM {{ catalog('dwhprd_gold') }}.invoice_dim hop1
+            WHERE {CUBE}.invoice_key = hop1.invoice_key
+          )
+        type: string
+        title: Invoice Type
+        description: Description of the invoice type (e.g., standard, credit memo, debit memo).
+      - name: invoice_type_key
+        sql: |-
+          (
+            SELECT hop1.invoice_type_key
+            FROM {{ catalog('dwhprd_gold') }}.invoice_dim hop1
+            WHERE {CUBE}.invoice_key = hop1.invoice_key
+          )
+        type: number
+        title: Invoice Type Key
+        description: Surrogate key reference to the invoice type dimension.
+      - name: isci_code
+        sql: |-
+          (
+            SELECT hop1.isci_code
+            FROM {{ catalog('dwhprd_gold') }}.isci_code_dim hop1
+            WHERE {CUBE}.isci_code_key = hop1.isci_code_key
+          )
+        type: string
+        title: ISCI Code
+        description: Creative ISCI code.
+      - name: log_status_code
+        sql: |-
+          (
+            SELECT hop1.log_status_code
+            FROM {{ catalog('dwhprd_gold') }}.log_status_dim hop1
+            WHERE {CUBE}.log_status_key = hop1.log_status_key
+          )
+        type: string
+        title: Log Status Code
+        description: Short code for the unit log status.
+      - name: log_status_desc
+        sql: |-
+          (
+            SELECT hop1.log_status_desc
+            FROM {{ catalog('dwhprd_gold') }}.log_status_dim hop1
+            WHERE {CUBE}.log_status_key = hop1.log_status_key
+          )
+        type: string
+        title: Log Status
+        description: Human-readable unit log status.
+      - name: market_code
+        sql: |-
+          (
+            SELECT hop1.market_code
+            FROM {{ catalog('dwhprd_gold') }}.market_dim hop1
+            WHERE {CUBE}.market_key = hop1.market_key
+          )
+        type: string
+        title: Market Code
+        description: Business code or identifier for the market.
+      - name: market_desc
+        sql: |-
+          (
+            SELECT hop1.market_desc
+            FROM {{ catalog('dwhprd_gold') }}.market_dim hop1
+            WHERE {CUBE}.market_key = hop1.market_key
+          )
+        type: string
+        title: Market
+        description: Human-readable description or name of the market.
+      - name: market_group_desc
+        sql: |-
+          (
+            SELECT hop1.market_group_desc
+            FROM {{ catalog('dwhprd_gold') }}.market_dim hop1
+            WHERE {CUBE}.market_key = hop1.market_key
+          )
+        type: string
+        title: Market Group
+        description: Description of the market group to which this market belongs.
+      - name: net_call_sign
+        sql: |-
+          (
+            SELECT hop1.net_call_sign
+            FROM {{ catalog('dwhprd_gold') }}.network_dim hop1
+            WHERE {CUBE}.network_key = hop1.network_key
+          )
+        type: string
+        title: Net Call Sign
+        description: Call sign or broadcast identifier for the network.
+      - name: net_corp_demo
+        sql: |-
+          (
+            SELECT hop1.net_corp_demo
+            FROM {{ catalog('dwhprd_gold') }}.network_dim hop1
+            WHERE {CUBE}.network_key = hop1.network_key
+          )
+        type: string
+        title: Net Corp Demo
+        description: Corporate demographic classification or code for the network.
+      - name: net_name
+        sql: |-
+          (
+            SELECT hop1.net_name
+            FROM {{ catalog('dwhprd_gold') }}.network_dim hop1
+            WHERE {CUBE}.network_key = hop1.network_key
+          )
+        type: string
+        title: Network
+        description: Official name of the broadcast network.
+      - name: last_modified_date
+        sql: |-
+          (
+            SELECT hop1.last_modified_date
+            FROM {{ catalog('dwhprd_gold') }}.order_dim hop1
+            WHERE {CUBE}.order_revision_key = hop1.order_revision_key
+          )
+        type: time
+        title: Last Modified Date
+        description: Date when the order was last modified.
+      - name: order_line_num
+        sql: |-
+          (
+            SELECT hop2.order_line_num
+            FROM {{ catalog('dwhprd_gold') }}.order_line_sell_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.order_line_dim hop2
+              ON hop1.order_line_revision_key = hop2.order_line_revision_key
+            WHERE {CUBE}.order_line_sell_key = hop1.order_line_sell_key
+          )
+        type: number
+        title: Order Line Num
+        description: Human-readable line number within the parent order.
+      - name: order_flight_end_date
+        sql: |-
+          (
+            SELECT hop1.order_flight_end_date
+            FROM {{ catalog('dwhprd_gold') }}.order_dim hop1
+            WHERE {CUBE}.order_revision_key = hop1.order_revision_key
+          )
+        type: time
+        title: Order Flight End Date
+        description: End date of the order's flight or campaign period.
+      - name: order_flight_start_date
+        sql: |-
+          (
+            SELECT hop1.order_flight_start_date
+            FROM {{ catalog('dwhprd_gold') }}.order_dim hop1
+            WHERE {CUBE}.order_revision_key = hop1.order_revision_key
+          )
+        type: time
+        title: Order Flight Start Date
+        description: Start date of the order's flight or campaign period.
+      - name: order_num
+        sql: |-
+          (
+            SELECT hop1.order_num
+            FROM {{ catalog('dwhprd_gold') }}.order_dim hop1
+            WHERE {CUBE}.order_revision_key = hop1.order_revision_key
+          )
+        type: string
+        title: Order Num
+        description: Human-readable order number or reference code.
+      - name: order_sales_asst_id
+        sql: |-
+          (
+            SELECT hop1.order_sales_asst_id
+            FROM {{ catalog('dwhprd_gold') }}.order_dim hop1
+            WHERE {CUBE}.order_revision_key = hop1.order_revision_key
+          )
+        type: number
+        title: Order Sales Asst Id
+        description: Identifier for the sales assistant assigned to the order.
+      - name: order_sales_asst_name
+        sql: |-
+          (
+            SELECT hop1.order_sales_asst_name
+            FROM {{ catalog('dwhprd_gold') }}.order_dim hop1
+            WHERE {CUBE}.order_revision_key = hop1.order_revision_key
+          )
+        type: string
+        title: Order Sales Assistant
+        description: Name of the sales assistant assigned to the order.
+      - name: order_status_key
+        sql: |-
+          (
+            SELECT hop1.order_status_key
+            FROM {{ catalog('dwhprd_gold') }}.order_dim hop1
+            WHERE {CUBE}.order_revision_key = hop1.order_revision_key
+          )
+        type: number
+        title: Order Status Key
+        description: Foreign key or code representing the current status of the order.
+      - name: order_status_desc
+        sql: |-
+          (
+            SELECT hop2.order_status_desc
+            FROM {{ catalog('dwhprd_gold') }}.order_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.order_status_dim hop2
+              ON hop1.order_status_key = hop2.order_status_key
+            WHERE {CUBE}.order_revision_key = hop1.order_revision_key
+          )
+        type: string
+        title: Order Status
+        description: Human-readable description of the order status, e.g. Hold or Order.
+      - name: original_order_date
+        sql: |-
+          (
+            SELECT hop1.original_order_date
+            FROM {{ catalog('dwhprd_gold') }}.order_dim hop1
+            WHERE {CUBE}.order_revision_key = hop1.order_revision_key
+          )
+        type: time
+        title: Original Order Date
+        description: Date when the order was originally placed or created.
+      - name: sales_rep_name_first_last
+        sql: |-
+          (
+            SELECT hop2.sales_rep_name_first_last
+            FROM {{ catalog('dwhprd_gold') }}.order_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.sales_rep_dim hop2
+              ON hop1.sales_rep_key = hop2.sales_rep_key
+            WHERE {CUBE}.order_revision_key = hop1.order_revision_key
+          )
+        type: string
+        title: Sales Rep Name
+        description: Sales representative name formatted first-last.
+      - name: planning_agency_country_code
+        sql: |-
+          (
+            SELECT hop1.planning_agency_country_code
+            FROM {{ catalog('dwhprd_gold') }}.planning_agency_dim hop1
+            WHERE {CUBE}.planning_agency_key = hop1.planning_agency_key
+          )
+        type: string
+        title: Planning Agency Country Code
+        description: Country code where the planning agency operates (MSTR "Planning Agency Country Code", CARL-3002 AdSpending_JG).
+      - name: planning_agency_id
+        sql: |-
+          (
+            SELECT hop1.planning_agency_id
+            FROM {{ catalog('dwhprd_gold') }}.planning_agency_dim hop1
+            WHERE {CUBE}.planning_agency_key = hop1.planning_agency_key
+          )
+        type: number
+        title: Planning Agency Id
+        description: Source-system identifier for the planning agency.
+      - name: planning_agency_name
+        sql: |-
+          (
+            SELECT hop1.planning_agency_name
+            FROM {{ catalog('dwhprd_gold') }}.planning_agency_dim hop1
+            WHERE {CUBE}.planning_agency_key = hop1.planning_agency_key
+          )
+        type: string
+        title: Planning Agency Name
+        description: Name of the planning agency.
+      - name: planning_agency_name_id
+        sql: |-
+          (
+            SELECT hop1.planning_agency_name || ' (' || CAST(hop1.planning_agency_id AS VARCHAR) || ')'
+            FROM {{ catalog('dwhprd_gold') }}.planning_agency_dim hop1
+            WHERE {CUBE}.planning_agency_key = hop1.planning_agency_key
+          )
+        type: string
+        title: Planning Agency (ID)
+        description: Planning agency name with business ID in parentheses, e.g. "ICON MEDIA DIRECT (14930)" — matches MSTR SQL (`PLANNING_AGENCY_NAME||' ('||PLANNING_AGENCY_ID||')'`,
+          CARL-3002 AdSpending_JG).
+      - name: planning_agency_state
+        sql: |-
+          (
+            SELECT hop1.planning_agency_state
+            FROM {{ catalog('dwhprd_gold') }}.planning_agency_dim hop1
+            WHERE {CUBE}.planning_agency_key = hop1.planning_agency_key
+          )
+        type: string
+        title: Planning Agency State
+        description: State/region of the planning agency.
+      - name: prod_cat_name
+        sql: |-
+          (
+            SELECT hop1.prod_cat_name
+            FROM {{ catalog('dwhprd_gold') }}.product_dim hop1
+            WHERE {CUBE}.product_key = hop1.product_key
+          )
+        type: string
+        title: Product Category
+        description: Product category name classifying the product type.
+      - name: prod_cat_name_id
+        sql: |-
+          (
+            SELECT hop1.prod_cat_name || ' (' || CAST(hop1.prod_id AS VARCHAR) || ')'
+            FROM {{ catalog('dwhprd_gold') }}.product_dim hop1
+            WHERE {CUBE}.product_key = hop1.product_key
+          )
+        type: string
+        title: Product Category (ID)
+        description: Product Category name with its business ID suffixed in parentheses, e.g. "FINANCIAL/INVESTMENT (8)" — reproduces MicroStrategy's display format, which concatenates
+          prod_cat_name with prod_id (not a separate category-level ID, since product_dim has none), the same pattern used by adv_name_id/buying_agency_name_id over prod_cat_name
+          and prod_id.
+      - name: episode_desc
+        sql: |-
+          (
+            SELECT hop2.episode_desc
+            FROM {{ catalog('dwhprd_gold') }}.program_airing_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.episode_dim hop2
+              ON hop1.episode_key = hop2.episode_key
+            WHERE {CUBE}.program_airing_key = hop1.program_airing_key AND {CUBE}.unit_sched_bday_key = hop1.unit_sched_bday_key
+          )
+        type: string
+        title: Episode Desc
+        description: Detailed description of the episode content including series and season context.
+      - name: episode_pds_name
+        sql: |-
+          (
+            SELECT hop2.episode_pds_name
+            FROM {{ catalog('dwhprd_gold') }}.program_airing_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.episode_dim hop2
+              ON hop1.episode_key = hop2.episode_key
+            WHERE {CUBE}.program_airing_key = hop1.program_airing_key AND {CUBE}.unit_sched_bday_key = hop1.unit_sched_bday_key
+          )
+        type: string
+        title: Episode Pds Name
+        description: Short or primary display name for the episode.
+      - name: corp_episode_title
+        sql: |-
+          (
+            SELECT hop2.episode_title
+            FROM {{ catalog('dwhprd_gold') }}.program_airing_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.hivedwh_episode_dim hop2
+              ON hop1.corp_episode_key = hop2.episode_key
+            WHERE {CUBE}.program_airing_key = hop1.program_airing_key AND {CUBE}.unit_sched_bday_key = hop1.unit_sched_bday_key
+          )
+        type: string
+        title: Corp Episode Title
+        description: >-
+          Content episode title from HIVEDWH.EPISODE_DIM, reached through program_airing_dim.corp_episode_key.
+          A missing corp episode key or lookup row returns null and does not drop the invoice row.
+      - name: corp_episode_id
+        sql: |-
+          (
+            SELECT hop2.episode_id
+            FROM {{ catalog('dwhprd_gold') }}.program_airing_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.hivedwh_episode_dim hop2
+              ON hop1.corp_episode_key = hop2.episode_key
+            WHERE {CUBE}.program_airing_key = hop1.program_airing_key AND {CUBE}.unit_sched_bday_key = hop1.unit_sched_bday_key
+          )
+        type: number
+        title: Corp Episode ID
+        description: >-
+          Content episode id from HIVEDWH.EPISODE_DIM, reached through program_airing_dim.corp_episode_key.
+          A missing corp episode key or lookup row returns null and does not drop the invoice row.
+      - name: program_airing_common_property_series_name
+        sql: |-
+          (
+            SELECT hop4.common_property_series_name
+            FROM {{ catalog('dwhprd_gold') }}.program_airing_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.episode_dim hop2
+              ON hop1.episode_key = hop2.episode_key
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.property_dim hop3
+              ON hop2.property_key = hop3.property_key
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.common_property_dim hop4
+              ON hop3.common_property_key = hop4.common_property_key
+            WHERE {CUBE}.program_airing_key = hop1.program_airing_key AND {CUBE}.unit_sched_bday_key = hop1.unit_sched_bday_key
+          )
+        type: string
+        title: Common Property Series Name
+        description: Name of the series or franchise associated with the property.
+      - name: program_airing_grid_title_desc
+        sql: |-
+          (
+            SELECT hop2.grid_title_desc
+            FROM {{ catalog('dwhprd_gold') }}.program_airing_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.grid_title_dim hop2
+              ON hop1.grid_title_key = hop2.grid_title_key
+            WHERE {CUBE}.program_airing_key = hop1.program_airing_key AND {CUBE}.unit_sched_bday_key = hop1.unit_sched_bday_key
+          )
+        type: string
+        title: Grid Title
+        description: Human-readable description or name of the grid title (e.g., program or content name).
+      - name: prog_airing_start_end_time
+        sql: |-
+          (
+            SELECT hop1.prog_airing_start_end_time
+            FROM {{ catalog('dwhprd_gold') }}.program_airing_dim hop1
+            WHERE {CUBE}.program_airing_key = hop1.program_airing_key AND {CUBE}.unit_sched_bday_key = hop1.unit_sched_bday_key
+          )
+        type: string
+        title: Prog Airing Start End Time
+        description: Formatted time range of the program airing (e.g., 8:30PM-9:00PM).
+      - name: season_number
+        sql: |-
+          (
+            SELECT hop2.season_number
+            FROM {{ catalog('dwhprd_gold') }}.program_airing_dim hop1
+            LEFT JOIN (SELECT * FROM ( SELECT *, row_number() OVER (PARTITION BY season_key ORDER BY update_ts DESC) AS dedupe_rn FROM {{ catalog('dwhprd_gold') }}.season_dim ) WHERE
+            dedupe_rn = 1) hop2
+              ON hop1.season_key = hop2.season_key AND hop1.show_key = hop2.show_key
+            WHERE {CUBE}.program_airing_key = hop1.program_airing_key AND {CUBE}.unit_sched_bday_key = hop1.unit_sched_bday_key
+          )
+        type: number
+        title: Season Number
+        description: Sequential number indicating the season's position within the show series. Correct where populated, and blank on roughly 89% of recent rows. The only route to
+          it is program_airing_dim.season_key, which is 0 on 81.7% of 2023 airings and 86.1% by 2026, against 0.8% in 2021; season_dim itself resolves every key it is handed. The
+          upstream airing-to-season matching broke with the merger and will not be restored, so treat the blanks as permanent rather than as an outage to wait out.
+      - name: show_name
+        sql: |-
+          (
+            SELECT hop2.show_name
+            FROM {{ catalog('dwhprd_gold') }}.program_airing_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.show_dim hop2
+              ON hop1.show_key = hop2.show_key
+            WHERE {CUBE}.program_airing_key = hop1.program_airing_key AND {CUBE}.unit_sched_bday_key = hop1.unit_sched_bday_key
+          )
+        type: string
+        title: Show Name
+        description: Primary name or title of the show.
+      - name: prog_avg_daypart_day_time_name
+        sql: |-
+          (
+            SELECT hop1.prog_avg_daypart_day_time_name
+            FROM {{ catalog('dwhprd_gold') }}.program_avg_daypart_dim hop1
+            WHERE {CUBE}.program_avg_daypart_key = hop1.program_avg_daypart_key
+          )
+        type: string
+        title: Program Average Daytime Daypart
+        description: Human-readable name of the program average daypart time slot (e.g., 'SAT 12:00A-12:30A', 'GENRE').
+      - name: prog_avg_daypart_selling_desc
+        sql: |-
+          (
+            SELECT hop1.prog_avg_daypart_selling_desc
+            FROM {{ catalog('dwhprd_gold') }}.program_avg_daypart_dim hop1
+            WHERE {CUBE}.program_avg_daypart_key = hop1.program_avg_daypart_key
+          )
+        type: string
+        title: Program Average Selling Daypart
+        description: Description used for sales and marketing purposes to identify this daypart offering.
+      - name: program_daypart_selling_desc
+        sql: |-
+          (
+            SELECT hop2.program_daypart_selling_desc
+            FROM {{ catalog('dwhprd_gold') }}.program_airing_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.program_daypart_dim hop2
+              ON hop1.program_daypart_key = hop2.program_daypart_key
+              AND hop1.network_key = hop2.network_key
+            WHERE {CUBE}.program_airing_key = hop1.program_airing_key
+              AND {CUBE}.unit_sched_bday_key = hop1.unit_sched_bday_key
+          )
+        type: string
+        title: Program Selling Daypart
+        description: Selling description of the program daypart (PROGRAM_DAYPART_SELLING_DESC).
+      - name: program_grid_title_desc
+        sql: |-
+          (
+            SELECT hop2.grid_title_desc
+            FROM {{ catalog('dwhprd_gold') }}.program_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.grid_title_dim hop2
+              ON hop1.grid_title_key = hop2.grid_title_key
+            WHERE {CUBE}.program_key = hop1.program_key
+          )
+        type: string
+        title: Grid Title
+        description: Human-readable description or name of the grid title (e.g., program or content name).
+      - name: grid_title_key
+        sql: |-
+          (
+            SELECT hop1.grid_title_key
+            FROM {{ catalog('dwhprd_gold') }}.program_dim hop1
+            WHERE {CUBE}.program_key = hop1.program_key
+          )
+        type: number
+        title: Grid Title Key
+        description: Foreign key reference to the grid title dimension table.
+      - name: program_desc
+        sql: |-
+          (
+            SELECT hop1.program_desc
+            FROM {{ catalog('dwhprd_gold') }}.program_dim hop1
+            WHERE {CUBE}.program_key = hop1.program_key
+          )
+        type: string
+        title: Program
+        description: Human-readable description or title of the television program, often including season information.
+      - name: program_avg_desc
+        sql: |-
+          (
+            SELECT hop1.program_avg_desc
+            FROM {{ catalog('dwhprd_gold') }}.program_average_dim hop1
+            WHERE {CUBE}.program_avg_key = hop1.program_avg_key
+          )
+        type: string
+        title: Program Average
+        description: >-
+          CARL-4185. PROGRAM_AVG_DESC from program_average_dim, looked up by program_avg_key. A missing dimension row
+          returns NULL and does not drop the fact row. Not Program Average Selling Daypart.
+      - name: telecast_name
+        sql: |-
+          (
+            SELECT hop1.telecast_name
+            FROM {{ catalog('dwhprd_gold') }}.telecast_dim hop1
+            WHERE {CUBE}.telecast_key = hop1.telecast_key
+          )
+        type: string
+        title: Telecast
+        description: >-
+          CARL-4185. TELECAST_NAME from telecast_dim, looked up by telecast_key. A missing dimension row returns NULL
+          and does not drop the fact row.
+      - name: division
+        sql: |-
+          (
+            SELECT hop1.division
+            FROM {{ catalog('dwhprd_gold') }}.property_category_dim hop1
+            WHERE {CUBE}.property_category_key = hop1.property_category_key
+          )
+        type: string
+        title: Division
+        description: Name of the division to which this property category belongs.
+      - name: division_id
+        sql: |-
+          (
+            SELECT hop1.division_id
+            FROM {{ catalog('dwhprd_gold') }}.property_category_dim hop1
+            WHERE {CUBE}.property_category_key = hop1.property_category_key
+          )
+        type: number
+        title: Division Id
+        description: Identifier linking this property category to its parent division.
+      - name: property_category
+        sql: |-
+          (
+            SELECT hop1.property_category
+            FROM {{ catalog('dwhprd_gold') }}.property_category_dim hop1
+            WHERE {CUBE}.property_category_key = hop1.property_category_key
+          )
+        type: string
+        title: Order Property Category
+        description: Descriptive name or label of the property category.
+      - name: property_category_id
+        sql: |-
+          (
+            SELECT hop1.property_category_id
+            FROM {{ catalog('dwhprd_gold') }}.property_category_dim hop1
+            WHERE {CUBE}.property_category_key = hop1.property_category_key
+          )
+        type: number
+        title: Order Property Category ID
+        description: Business identifier for the property category from the source system.
+      - name: property_common_property_series_name
+        sql: |-
+          (
+            SELECT hop2.common_property_series_name
+            FROM {{ catalog('dwhprd_gold') }}.property_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.common_property_dim hop2
+              ON hop1.common_property_key = hop2.common_property_key
+            WHERE {CUBE}.property_key = hop1.property_key
+          )
+        type: string
+        title: Common Property Series Name
+        description: Name of the series or franchise associated with the property.
+      - name: property_desc
+        sql: |-
+          (
+            SELECT hop1.property_desc
+            FROM {{ catalog('dwhprd_gold') }}.property_dim hop1
+            WHERE {CUBE}.property_key = hop1.property_key
+          )
+        type: string
+        title: Property
+        description: Human-readable name or title of the broadcast property (show, program, or content).
+      - name: property_desc_id
+        sql: |-
+          (
+            SELECT hop1.property_desc || ' (' || CAST(hop1.property_id AS VARCHAR) || ')'
+            FROM {{ catalog('dwhprd_gold') }}.property_dim hop1
+            WHERE {CUBE}.property_key = hop1.property_key
+          )
+        type: string
+        title: Property (ID)
+        description: Property name with its business ID suffixed in parentheses, e.g. "2015 NBA Playoff Playbacks (281333)" — reproduces MicroStrategy's display format exactly. Confirmed
+          live in MSTR's own generated SQL (`"PROPERTY_DESC" || ' ('|| "PROPERTY_ID"||')' "PROPERTY_DESC"`), which concatenates the same two fields already modeled separately here
+          (property_desc, property_id). Also resolves property_desc alone being ambiguous for ~38% of properties.
+      - name: property_id
+        sql: |-
+          (
+            SELECT hop1.property_id
+            FROM {{ catalog('dwhprd_gold') }}.property_dim hop1
+            WHERE {CUBE}.property_key = hop1.property_key
+          )
+        type: number
+        title: Property ID
+        description: Business identifier for the property from the source system.
+      - name: rateclass_category
+        sql: |-
+          (
+            SELECT CASE WHEN hop1.rateclass_desc IN ( 'National', 'Ad-Enh Interstitial - National' ) THEN 'National' WHEN hop1.rateclass_desc LIKE 'DR%' OR hop1.rateclass_desc = 'Bonus' THEN
+            'DR' ELSE hop1.rateclass_desc END
+            FROM {{ catalog('dwhprd_gold') }}.rateclass_dim hop1
+            WHERE {CUBE}.rateclass_key = hop1.rateclass_key
+          )
+        type: string
+        title: Rateclass (MSTR Category)
+        description: 'MSTR-aligned rateclass grouping, verified against the Sports Linear Holes Data 25-26 Booked export in qa: every one of its 11,882 rows matches to the cent with
+          this grouping applied. "National" and "Ad-Enh Interstitial - National" group to National; everything beginning "DR", plus "Bonus", groups to DR. Note that "DR - National"
+          groups to DR and not to National -- it reads like a national variant and is not one, which is the whole reason this dimension is spelled out rather than inferred from the
+          name. Anything else keeps its own description.'
+      - name: rateclass_desc
+        sql: |-
+          (
+            SELECT hop1.rateclass_desc
+            FROM {{ catalog('dwhprd_gold') }}.rateclass_dim hop1
+            WHERE {CUBE}.rateclass_key = hop1.rateclass_key
+          )
+        type: string
+        title: Rateclass
+        description: Full descriptive name of the rate class explaining its purpose or category.
+      - name: bbt_head_id
+        sql: |-
+          (
+            SELECT hop1.bbt_head_id
+            FROM {{ catalog('dwhprd_gold') }}.revenue_area_mapping_dim hop1
+            WHERE {CUBE}.revenue_area_mapping_key = hop1.revenue_area_mapping_key
+          )
+        type: number
+        title: BBT Head (ID)
+        description: Buy-broadcast-type head identifier. MSTR Sponsorship - Linear Revenue Data filters BBT_HEAD_ID in (2, 3, 4) (Direct Response, National Commercial, Secured Direct
+          Response revenue-area mappings).
+      - name: bbt_heading
+        sql: |-
+          (
+            SELECT hop1.bbt_heading
+            FROM {{ catalog('dwhprd_gold') }}.revenue_area_mapping_dim hop1
+            WHERE {CUBE}.revenue_area_mapping_key = hop1.revenue_area_mapping_key
+          )
+        type: string
+        title: BBT Heading
+        description: Human-readable BBT head label from the mapping table.
+      - name: revenue_area_mapping_dimension_key
+        sql: |-
+          (
+            SELECT hop1.revenue_area_mapping_key
+            FROM {{ catalog('dwhprd_gold') }}.revenue_area_mapping_dim hop1
+            WHERE {CUBE}.revenue_area_mapping_key = hop1.revenue_area_mapping_key
+          )
+        type: number
+        title: Revenue Area Mapping Key
+        description: Unique surrogate key for each revenue area mapping row.
+      - name: revenue_area_desc
+        sql: |-
+          (
+            SELECT hop1.revenue_area_desc
+            FROM {{ catalog('dwhprd_gold') }}.revenue_area_dim hop1
+            WHERE {CUBE}.revenue_area_key = hop1.revenue_area_key
+          )
+        type: string
+        title: Revenue Area
+        description: Human-readable description or name of the revenue area.
+      - name: revenue_group_desc
+        sql: |-
+          (
+            SELECT hop1.revenue_group_desc
+            FROM {{ catalog('dwhprd_gold') }}.revenue_area_dim hop1
+            WHERE {CUBE}.revenue_area_key = hop1.revenue_area_key
+          )
+        type: string
+        title: Revenue Group
+        description: Description or name of the revenue group classification.
+      - name: revenue_eff_bcast_month_name
+        sql: |-
+          (
+            SELECT hop1.broadcast_month_name
+            FROM {{ catalog('dwhprd_gold') }}.revenue_eff_bcast_month_dim hop1
+            WHERE {CUBE}.revenue_eff_bcast_month_key = hop1.revenue_eff_bcast_month_key
+          )
+        type: string
+        title: Broadcast Month Name
+        description: Human-readable name of the broadcast month, e.g. what the "Broadcast Month" attribute displays.
+      - name: bcast_qtr_desc
+        sql: |-
+          (
+            SELECT hop1.bcast_qtr_desc
+            FROM {{ catalog('dwhprd_gold') }}.revenue_eff_bcast_qtr_dim hop1
+            WHERE {CUBE}.revenue_eff_bcast_qtr_key = hop1.revenue_eff_bcast_qtr_key
+          )
+        type: string
+        title: Broadcast Quarter
+        description: Human-readable description of the broadcast quarter.
+      - name: broadcast_qtr_num
+        sql: |-
+          (
+            SELECT hop1.broadcast_qtr_num
+            FROM {{ catalog('dwhprd_gold') }}.revenue_eff_bcast_qtr_dim hop1
+            WHERE {CUBE}.revenue_eff_bcast_qtr_key = hop1.revenue_eff_bcast_qtr_key
+          )
+        type: number
+        title: Broadcast Quarter Number
+        description: Sequential number identifying the quarter within its broadcast year (1-4).
+      - name: revenue_eff_bcast_qtr_broadcast_year
+        sql: |-
+          (
+            SELECT hop1.broadcast_year
+            FROM {{ catalog('dwhprd_gold') }}.revenue_eff_bcast_qtr_dim hop1
+            WHERE {CUBE}.revenue_eff_bcast_qtr_key = hop1.revenue_eff_bcast_qtr_key
+          )
+        type: number
+        title: Broadcast Year
+        description: The broadcast year containing this quarter.
+      - name: revenue_bcast_year
+        sql: |-
+          (
+            SELECT hop1.broadcast_year
+            FROM {{ catalog('dwhprd_gold') }}.revenue_eff_bcast_year_dim hop1
+            WHERE {CUBE}.revenue_eff_bcast_year_key = hop1.revenue_eff_bcast_year_key
+          )
+        type: number
+        title: Broadcast Year
+        description: Broadcast year, e.g. what the "Broadcast Year" attribute displays.
+      - name: revenue_eff_calendar_month
+        sql: |-
+          (
+            SELECT TRIM(hop1.calendar_month_name) || ' ' || CAST(hop1.calendar_year AS VARCHAR)
+            FROM {{ catalog('dwhprd_gold') }}.revenue_eff_cal_month_dim hop1
+            WHERE {CUBE}.revenue_eff_cal_month_key = hop1.revenue_eff_cal_month_key
+          )
+        type: string
+        title: Calendar Month Label
+        description: Formatted "<Month Name> <Year>" label for revenue-effective calendar months, matching MSTR's custom display column such as "July 2026".
+      - name: revenue_eff_calendar_month_name
+        sql: |-
+          (
+            SELECT hop1.calendar_month_name
+            FROM {{ catalog('dwhprd_gold') }}.revenue_eff_cal_month_dim hop1
+            WHERE {CUBE}.revenue_eff_cal_month_key = hop1.revenue_eff_cal_month_key
+          )
+        type: string
+        title: Calendar Month
+        description: The full name of the calendar month (e.g., January, February).
+      - name: revenue_eff_cal_month_calendar_year
+        sql: |-
+          (
+            SELECT hop1.calendar_year
+            FROM {{ catalog('dwhprd_gold') }}.revenue_eff_cal_month_dim hop1
+            WHERE {CUBE}.revenue_eff_cal_month_key = hop1.revenue_eff_cal_month_key
+          )
+        type: number
+        title: Calendar Year
+        description: The four-digit calendar year.
+      - name: cal_qtr_desc
+        sql: |-
+          (
+            SELECT hop1.cal_qtr_desc
+            FROM {{ catalog('dwhprd_gold') }}.revenue_eff_cal_qtr_dim hop1
+            WHERE {CUBE}.revenue_eff_cal_qtr_key = hop1.revenue_eff_cal_qtr_key
+          )
+        type: string
+        title: Calendar Quarter
+        description: A descriptive label for the calendar quarter (e.g., 'Q1 2024').
+      - name: calendar_qtr_num
+        sql: |-
+          (
+            SELECT hop1.calendar_qtr_num
+            FROM {{ catalog('dwhprd_gold') }}.revenue_eff_cal_qtr_dim hop1
+            WHERE {CUBE}.revenue_eff_cal_qtr_key = hop1.revenue_eff_cal_qtr_key
+          )
+        type: number
+        title: Calendar Quarter Number
+        description: The quarter number within the calendar year (1, 2, 3, or 4).
+      - name: revenue_eff_cal_qtr_calendar_year
+        sql: |-
+          (
+            SELECT hop1.calendar_year
+            FROM {{ catalog('dwhprd_gold') }}.revenue_eff_cal_qtr_dim hop1
+            WHERE {CUBE}.revenue_eff_cal_qtr_key = hop1.revenue_eff_cal_qtr_key
+          )
+        type: number
+        title: Calendar Year
+        description: The calendar year (e.g., 2024) that contains this quarter.
+      - name: revenue_eff_calendar_year
+        sql: |-
+          (
+            SELECT hop1.calendar_year
+            FROM {{ catalog('dwhprd_gold') }}.revenue_eff_cal_year_dim hop1
+            WHERE {CUBE}.revenue_eff_cal_year_key = hop1.revenue_eff_cal_year_key
+          )
+        type: number
+        title: Calendar Year
+        description: The calendar year value (e.g., 2023, 2024) used for reporting and filtering.
+      - name: revenue_effective_day_broadcast_month_name
+        sql: |-
+          (
+            SELECT hop1.broadcast_month_name
+            FROM {{ catalog('dwhprd_gold') }}.revenue_effective_day_dim hop1
+            WHERE {CUBE}.revenue_effective_day_key = hop1.revenue_effective_day_key
+          )
+        type: string
+        title: Broadcast Month
+        description: Full name of the broadcast month.
+      - name: broadcast_week_begin_date
+        sql: |-
+          (
+            SELECT hop1.broadcast_week_begin_date
+            FROM {{ catalog('dwhprd_gold') }}.revenue_effective_day_dim hop1
+            WHERE {CUBE}.revenue_effective_day_key = hop1.revenue_effective_day_key
+          )
+        type: time
+        title: Broadcast Week Begin Date
+        description: Start date of the broadcast week containing this day.
+      - name: broadcast_week_end_date
+        sql: |-
+          (
+            SELECT hop1.broadcast_week_end_date
+            FROM {{ catalog('dwhprd_gold') }}.revenue_effective_day_dim hop1
+            WHERE {CUBE}.revenue_effective_day_key = hop1.revenue_effective_day_key
+          )
+        type: time
+        title: Broadcast Week End Date
+        description: End date of the broadcast week containing this day.
+      - name: broadcast_week_key
+        sql: |-
+          (
+            SELECT hop1.broadcast_week_key
+            FROM {{ catalog('dwhprd_gold') }}.revenue_effective_day_dim hop1
+            WHERE {CUBE}.revenue_effective_day_key = hop1.revenue_effective_day_key
+          )
+        type: number
+        title: Broadcast Week Key
+        description: Surrogate key for the broadcast week containing this day.
+      - name: revenue_effective_broadcast_week_num
+        sql: |-
+          (
+            SELECT hop1.broadcast_week_num
+            FROM {{ catalog('dwhprd_gold') }}.revenue_effective_day_dim hop1
+            WHERE {CUBE}.revenue_effective_day_key = hop1.revenue_effective_day_key
+          )
+        type: number
+        title: Broadcast Week
+        description: Week number within the broadcast year.
+      - name: revenue_effective_day_date
+        sql: |-
+          (
+            SELECT hop1.day_date
+            FROM {{ catalog('dwhprd_gold') }}.revenue_effective_day_dim hop1
+            WHERE {CUBE}.revenue_effective_day_key = hop1.revenue_effective_day_key
+          )
+        type: time
+        title: Revenue Effective Date
+        description: The actual calendar date represented by this dimension record.
+      - name: sell_title_dpart_selling_desc
+        sql: |-
+          (
+            SELECT hop1.sell_title_dpart_selling_desc
+            FROM {{ catalog('dwhprd_gold') }}.selling_title_daypart_dim hop1
+            WHERE {CUBE}.selling_title_daypart_key = hop1.selling_title_daypart_key
+          )
+        type: string
+        title: Selling Title Selling Daypart
+        description: Description of the selling classification for this daypart (e.g., 'PRIME', 'DAYTIME', 'EARLY MORNING').
+      - name: sell_title_dpart_day_time_name
+        sql: |-
+          (
+            SELECT hop1.sell_title_dpart_day_time_name
+            FROM {{ catalog('dwhprd_gold') }}.selling_title_daypart_dim hop1
+            WHERE {CUBE}.selling_title_daypart_key = hop1.selling_title_daypart_key
+          )
+        type: string
+        title: Selling Title Daytime Daypart
+        description: Human-readable name of the selling title daypart time slot (e.g., 'MON-SUN 11P-3A', 'EARLY MORNING').
+      - name: master_selling_title_desc
+        sql: |-
+          (
+            SELECT hop1.master_selling_title_desc
+            FROM {{ catalog('dwhprd_gold') }}.selling_title_dim hop1
+            WHERE {CUBE}.selling_title_key = hop1.selling_title_key
+          )
+        type: string
+        title: Master Selling Title
+        description: Description of the master selling title.
+      - name: selling_title_definition
+        sql: |-
+          (
+            SELECT hop1.selling_title_definition
+            FROM {{ catalog('dwhprd_gold') }}.selling_title_dim hop1
+            WHERE {CUBE}.selling_title_key = hop1.selling_title_key
+          )
+        type: string
+        title: Selling Title Definition
+        description: Detailed definition or explanation of the selling title.
+      - name: selling_title_desc
+        sql: |-
+          (
+            SELECT hop1.selling_title_desc
+            FROM {{ catalog('dwhprd_gold') }}.selling_title_dim hop1
+            WHERE {CUBE}.selling_title_key = hop1.selling_title_key
+          )
+        type: string
+        title: Selling Title
+        description: Human-readable description or name of the selling title.
+      - name: unit_end_time
+        sql: |-
+          (
+            SELECT hop1.time_w_secs
+            FROM {{ catalog('dwhprd_gold') }}.unit_end_time_dim hop1
+            WHERE {CUBE}.unit_end_time_key = hop1.unit_end_time_key
+          )
+        type: string
+        title: Unit End Time
+        description: Unit end time formatted with seconds.
+      - name: unit_length_desc
+        sql: |-
+          (
+            SELECT hop1.unit_length_desc
+            FROM {{ catalog('dwhprd_gold') }}.unit_length_dim hop1
+            WHERE {CUBE}.unit_length_key = hop1.unit_length_key
+          )
+        type: string
+        title: Unit Length
+        description: Human-readable description of the unit length (e.g. ':30').
+      - name: unit_length_value
+        sql: |-
+          (
+            SELECT hop1.unit_length_value
+            FROM {{ catalog('dwhprd_gold') }}.unit_length_dim hop1
+            WHERE {CUBE}.unit_length_key = hop1.unit_length_key
+          )
+        type: number
+        title: Unit Length Value
+        description: Numeric length of the unit, in seconds (e.g. 30).
+      - name: unit_sched_bcast_month_name
+        sql: |-
+          (
+            SELECT hop1.broadcast_month_name
+            FROM {{ catalog('dwhprd_gold') }}.unit_sched_bcast_month_dim hop1
+            WHERE {CUBE}.unit_sched_bcast_month_key = hop1.unit_sched_bcast_month_key
+          )
+        type: string
+        title: Unit Broadcast Month
+        description: Display name of the broadcast month (e.g., January, February).
+      - name: unit_sched_bcast_month_num
+        sql: |-
+          (
+            SELECT hop1.broadcast_month_num
+            FROM {{ catalog('dwhprd_gold') }}.unit_sched_bcast_month_dim hop1
+            WHERE {CUBE}.unit_sched_bcast_month_key = hop1.unit_sched_bcast_month_key
+          )
+        type: number
+        title: Broadcast Month Num
+        description: Sequential month number within the broadcast year (1-12).
+      - name: broadcast_qtr_key
+        sql: |-
+          (
+            SELECT hop1.broadcast_qtr_key
+            FROM {{ catalog('dwhprd_gold') }}.unit_sched_bcast_month_dim hop1
+            WHERE {CUBE}.unit_sched_bcast_month_key = hop1.unit_sched_bcast_month_key
+          )
+        type: number
+        title: Unit Broadcast Quarter Key
+        description: Surrogate key linking to the parent broadcast quarter.
+      - name: unit_sched_bcast_qtr_desc
+        sql: |-
+          (
+            SELECT hop2.bcast_qtr_desc
+            FROM {{ catalog('dwhprd_gold') }}.unit_sched_bcast_month_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.unit_sched_bcast_qtr_dim hop2
+              ON hop1.broadcast_qtr_key = hop2.unit_sched_bcast_qtr_key
+            WHERE {CUBE}.unit_sched_bcast_month_key = hop1.unit_sched_bcast_month_key
+          )
+        type: string
+        title: Bcast Qtr Desc
+        description: Human-readable description of the broadcast quarter (e.g., 'Q1 2024').
+      - name: unit_sched_broadcast_year
+        sql: |-
+          (
+            SELECT hop3.broadcast_year
+            FROM {{ catalog('dwhprd_gold') }}.unit_sched_bcast_month_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.unit_sched_bcast_qtr_dim hop2
+              ON hop1.broadcast_qtr_key = hop2.unit_sched_bcast_qtr_key
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.unit_sched_bcast_year_dim hop3
+              ON hop2.broadcast_year_key = hop3.unit_sched_bcast_year_key
+            WHERE {CUBE}.unit_sched_bcast_month_key = hop1.unit_sched_bcast_month_key
+          )
+        type: number
+        title: Unit Broadcast Year
+        description: The broadcast year.
+      - name: unit_sched_bcast_year_key
+        sql: |-
+          (
+            SELECT hop3.unit_sched_bcast_year_key
+            FROM {{ catalog('dwhprd_gold') }}.unit_sched_bcast_month_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.unit_sched_bcast_qtr_dim hop2
+              ON hop1.broadcast_qtr_key = hop2.unit_sched_bcast_qtr_key
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.unit_sched_bcast_year_dim hop3
+              ON hop2.broadcast_year_key = hop3.unit_sched_bcast_year_key
+            WHERE {CUBE}.unit_sched_bcast_month_key = hop1.unit_sched_bcast_month_key
+          )
+        type: number
+        title: Unit Sched Bcast Year Key
+        description: Surrogate key uniquely identifying each broadcast year record.
+      - name: unit_sched_broadcast_week_num
+        sql: |-
+          (
+            SELECT hop1.broadcast_week_num
+            FROM {{ catalog('dwhprd_gold') }}.unit_sched_bday_dim hop1
+            WHERE {CUBE}.unit_sched_bday_key = hop1.unit_sched_bday_key
+          )
+        type: number
+        title: Broadcast Week Num
+        description: Week number within the broadcast year.
+      - name: unit_sched_broadcast_week_desc
+        sql: |-
+          (
+            SELECT date_format(hop1.broadcast_week_begin_date, '%d-%b-%Y') || ' to ' ||
+                   date_format(hop1.broadcast_week_end_date, '%d-%b-%Y')
+            FROM {{ catalog('dwhprd_gold') }}.unit_sched_bday_dim hop1
+            WHERE {CUBE}.unit_sched_bday_key = hop1.unit_sched_bday_key
+          )
+        type: string
+        title: Unit Broadcast Week Of
+        description: >-
+          CARL-4342. "<begin> to <end>" formatted broadcast-week range off unit_sched_bday_dim,
+          e.g. "23-Jul-2007 to 29-Jul-2007" (no pre-landed formatted column for this one, unlike
+          bcast_qtr_desc). Built with Trino date_format, matching MSTR's
+          to_char(d,'dd-Mon-yyyy')||' to '||to_char(d,'dd-Mon-yyyy') -- verified against real dev
+          data before adding. Title says "Unit" (not plain "Broadcast Week Of") to stay distinct
+          from broadcast_week_begin_date's view title, a different date role.
+      - name: unit_sched_broadcast_week_key
+        sql: |-
+          (
+            SELECT hop1.broadcast_week_key
+            FROM {{ catalog('dwhprd_gold') }}.unit_sched_bday_dim hop1
+            WHERE {CUBE}.unit_sched_bday_key = hop1.unit_sched_bday_key
+          )
+        type: number
+        title: Unit Sched Broadcast Week (ID)
+        description: >-
+          CARL-4342. Broadcast week identifier from unit_sched_bday_dim -- distinct from
+          broadcast_week_key above, which is the same-named column on revenue_effective_day_dim
+          (a different date role). Pairs with unit_sched_broadcast_week_desc.
+      - name: unit_sched_calendar_month_name
+        sql: |-
+          (
+            SELECT hop1.calendar_month_name
+            FROM {{ catalog('dwhprd_gold') }}.unit_sched_bday_dim hop1
+            WHERE {CUBE}.unit_sched_bday_key = hop1.unit_sched_bday_key
+          )
+        type: string
+        title: Unit Calendar Month
+        description: Full name of the calendar month (e.g., January, February).
+      - name: calendar_month_name_year
+        sql: |-
+          (
+            SELECT TRIM(hop1.calendar_month_name) || ' ' || CAST(hop1.calendar_year AS VARCHAR)
+            FROM {{ catalog('dwhprd_gold') }}.unit_sched_bday_dim hop1
+            WHERE {CUBE}.unit_sched_bday_key = hop1.unit_sched_bday_key
+          )
+        type: string
+        title: Unit Calendar Month and Year
+        description: Calendar month name with its year, e.g. "January 2026". Reproduces the MicroStrategy display format, which composes trim(calendar_month_name) || ' ' || calendar_year.
+          Reports whose "Unit Calendar Month" column reads "January 2026" want this member; calendar_month_name on its own returns "January" and is not year-aware, so it collapses
+          the same month across years.
+      - name: calendar_week_key
+        sql: |-
+          (
+            SELECT hop1.calendar_week_key
+            FROM {{ catalog('dwhprd_gold') }}.unit_sched_bday_dim hop1
+            WHERE {CUBE}.unit_sched_bday_key = hop1.unit_sched_bday_key
+          )
+        type: number
+        title: Calendar Week Key
+        description: Surrogate key for the calendar week containing this day.
+      - name: calendar_week_label
+        sql: |-
+          (
+            SELECT date_format(hop1.calendar_week_begin_date, '%m/%d/%Y') || ' - ' || date_format(hop1.calendar_week_end_date, '%m/%d/%Y')
+            FROM {{ catalog('dwhprd_gold') }}.unit_sched_bday_dim hop1
+            WHERE {CUBE}.unit_sched_bday_key = hop1.unit_sched_bday_key
+          )
+        type: string
+        title: Unit Calendar Week
+        description: 'Formatted unit calendar week range used by MSTR CNNE Data: calendar week begin and end dates as MM/DD/YYYY, concatenated with '' - ''.'
+      - name: unit_sched_bday_date
+        sql: |-
+          (
+            SELECT hop1.day_date
+            FROM {{ catalog('dwhprd_gold') }}.unit_sched_bday_dim hop1
+            WHERE {CUBE}.unit_sched_bday_key = hop1.unit_sched_bday_key
+          )
+        type: time
+        title: Unit Broadcast Date
+        description: The actual calendar date for this business day.
+      - name: day_num_in_week
+        sql: |-
+          (
+            SELECT hop1.day_num_in_week
+            FROM {{ catalog('dwhprd_gold') }}.unit_sched_bday_dim hop1
+            WHERE {CUBE}.unit_sched_bday_key = hop1.unit_sched_bday_key
+          )
+        type: number
+        title: Day Num In Week
+        description: Numeric position of the day within its week (1-7).
+      - name: day_of_week_long
+        sql: |-
+          (
+            SELECT hop1.day_of_week_long
+            FROM {{ catalog('dwhprd_gold') }}.unit_sched_bday_dim hop1
+            WHERE {CUBE}.unit_sched_bday_key = hop1.unit_sched_bday_key
+          )
+        type: string
+        title: Day Of Week Long
+        description: Full day of week name (e.g., Monday, Tuesday).
+      - name: unit_sched_cal_qtr_desc
+        sql: |-
+          (
+            SELECT hop3.cal_qtr_desc
+            FROM {{ catalog('dwhprd_gold') }}.unit_sched_bday_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.unit_sched_cal_month_dim hop2
+              ON hop1.calendar_month_key = hop2.unit_sched_cal_month_key
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.unit_sched_cal_qtr_dim hop3
+              ON hop2.calendar_qtr_key = hop3.unit_sched_cal_qtr_key
+            WHERE {CUBE}.unit_sched_bday_key = hop1.unit_sched_bday_key
+          )
+        type: string
+        title: Cal Qtr Desc
+        description: A human-readable description of the calendar quarter (e.g., '3rd Qtr 2008').
+      - name: unit_sched_cal_qtr_key
+        sql: |-
+          (
+            SELECT hop3.unit_sched_cal_qtr_key
+            FROM {{ catalog('dwhprd_gold') }}.unit_sched_bday_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.unit_sched_cal_month_dim hop2
+              ON hop1.calendar_month_key = hop2.unit_sched_cal_month_key
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.unit_sched_cal_qtr_dim hop3
+              ON hop2.calendar_qtr_key = hop3.unit_sched_cal_qtr_key
+            WHERE {CUBE}.unit_sched_bday_key = hop1.unit_sched_bday_key
+          )
+        type: number
+        title: Unit Sched Cal Qtr Key
+        description: Unique surrogate key identifying each calendar quarter record.
+      - name: unit_sched_calendar_year
+        sql: |-
+          (
+            SELECT hop2.calendar_year
+            FROM {{ catalog('dwhprd_gold') }}.unit_sched_bday_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.unit_sched_cal_year_dim hop2
+              ON hop1.calendar_year_key = hop2.unit_sched_cal_year_key
+            WHERE {CUBE}.unit_sched_bday_key = hop1.unit_sched_bday_key
+          )
+        type: number
+        title: Unit Calendar Year
+        description: The calendar year.
+      - name: unit_sched_cal_year_key
+        sql: |-
+          (
+            SELECT hop2.unit_sched_cal_year_key
+            FROM {{ catalog('dwhprd_gold') }}.unit_sched_bday_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.unit_sched_cal_year_dim hop2
+              ON hop1.calendar_year_key = hop2.unit_sched_cal_year_key
+            WHERE {CUBE}.unit_sched_bday_key = hop1.unit_sched_bday_key
+          )
+        type: number
+        title: Unit Sched Cal Year Key
+        description: Surrogate key uniquely identifying each calendar year record.
+      - name: time_hour
+        sql: |-
+          (
+            SELECT hop1.time_hour
+            FROM {{ catalog('dwhprd_gold') }}.unit_start_time_dim hop1
+            WHERE {CUBE}.unit_start_time_key = hop1.unit_start_time_key
+          )
+        type: number
+        title: Unit Start Hour
+        description: Hour component of the unit start time.
+      - name: time_w_secs
+        sql: |-
+          (
+            SELECT hop1.time_w_secs
+            FROM {{ catalog('dwhprd_gold') }}.unit_start_time_dim hop1
+            WHERE {CUBE}.unit_start_time_key = hop1.unit_start_time_key
+          )
+        type: string
+        title: Unit Start Time
+        description: Unit start time formatted with seconds.
+      - name: unit_type_group_desc
+        sql: |-
+          (
+            SELECT hop1.unit_type_group_desc
+            FROM {{ catalog('dwhprd_gold') }}.unit_type_group_dim hop1
+            WHERE {CUBE}.unit_type_group_key = hop1.unit_type_group_key
+          )
+        type: string
+        title: Unit Type Group
+        description: Human-readable description of the unit type group.
+      - name: unit_type_desc
+        sql: |-
+          (
+            SELECT hop1.unit_type_desc
+            FROM {{ catalog('dwhprd_gold') }}.unit_type_dim hop1
+            WHERE {CUBE}.unit_type_key = hop1.unit_type_key
+          )
+        type: string
+        title: Unit Type
+        description: Human-readable description of the unit type.
+      - name: account_key
+        sql: account_key
+        type: number
+        title: Account Key
+        description: >-
+          Foreign key joining invoice_revenue_fact to account_dim. This column holds the surrogate key only; the readable
+          labels are columns on account_dim. Filtered on directly downstream, because MSTR emits key literals rather than names.
+      - name: actual_air_daypart_key
+        sql: actual_air_daypart_key
+        type: number
+        title: Actual Aired Daypart Key
+        description: >-
+          Foreign key joining invoice_revenue_fact to actual_air_daypart_dim. This column holds the surrogate key only; the
+          readable labels are columns on actual_air_daypart_dim. Filtered on directly downstream, because MSTR emits key literals rather than names.
+      - name: advertiser_key
+        sql: advertiser_key
+        type: number
+        title: Advertiser Key
+        description: >-
+          Foreign key joining invoice_revenue_fact to advertiser_dim. This column holds the surrogate key only; the readable
+          labels are columns on advertiser_dim. Filtered on directly downstream, because MSTR emits key literals rather than names.
+      - name: buy_type_key
+        sql: buy_type_key
+        type: number
+        title: Buy Type Key
+        description: >-
+          Foreign key joining invoice_revenue_fact to buy_type_dim. This column holds the surrogate key only; the readable
+          labels are columns on buy_type_dim. Filtered on directly downstream, because MSTR emits key literals rather than names.
+      - name: buying_agency_key
+        sql: buying_agency_key
+        type: number
+        title: Buying Agency Key
+        description: >-
+          Foreign key joining invoice_revenue_fact to buying_agency_dim. This column holds the surrogate key only; the readable
+          labels are columns on buying_agency_dim. Filtered on directly downstream, because MSTR emits key literals rather than names.
+      - name: deal_revenue_snapshot_key
+        sql: deal_revenue_snapshot_key
+        type: number
+        title: Deal Revenue Snapshot Key
+        description: >-
+          Foreign key joining invoice_revenue_fact to deal_revenue_snapshot_dim. This column holds the surrogate key only;
+          the readable labels are columns on deal_revenue_snapshot_dim. Filtered on directly downstream, because MSTR emits key literals rather than names.
+      - name: deal_revenue_status_key
+        sql: deal_revenue_status_key
+        type: number
+        title: Deal Revenue Status Key
+        description: >-
+          Foreign key joining invoice_revenue_fact to deal_revenue_status_dim. This column holds the surrogate key only; the
+          readable labels are columns on deal_revenue_status_dim. Filtered on directly downstream, because MSTR emits key literals rather than names.
+      - name: deal_revision_key
+        sql: deal_revision_key
+        type: number
+        title: Deal Revision Key
+        description: >-
+          Foreign key joining invoice_revenue_fact to deal_dim. This column holds the surrogate key only; the readable labels
+          are columns on deal_dim. Filtered on directly downstream, because MSTR emits key literals rather than names.
+      - name: episode_version_key
+        sql: episode_version_key
+        type: number
+        title: Episode Version Key
+        description: >-
+          Foreign key joining invoice_revenue_fact to episode_version_dim. This column holds the surrogate key only; the readable
+          labels are columns on episode_version_dim. Filtered on directly downstream, because MSTR emits key literals rather than names.
+      - name: guar_est_methodology_key
+        sql: guar_est_methodology_key
+        type: number
+        title: Guarantee Estimate Methodology Key
+        description: >-
+          Foreign key joining invoice_revenue_fact to guar_est_methodology_dim. This column holds the surrogate key only;
+          the readable labels are columns on guar_est_methodology_dim. Filtered on directly downstream, because MSTR emits key literals rather than names.
+      - name: guar_target_demo_key
+        sql: guar_target_demo_key
+        type: number
+        title: Guarantee Target Demographic Key
+        description: >-
+          Foreign key joining invoice_revenue_fact to demographics_dim. This column holds the surrogate key only; the readable
+          labels are columns on demographics_dim. Filtered on directly downstream, because MSTR emits key literals rather than names.
+      - name: inventory_type_key
+        sql: inventory_type_key
+        type: number
+        title: Inventory Type Key
+        description: >-
+          Foreign key joining invoice_revenue_fact to inventory_type_dim. This column holds the surrogate key only; the readable
+          labels are columns on inventory_type_dim. Filtered on directly downstream, because MSTR emits key literals rather than names.
+      - name: invoice_key
+        sql: invoice_key
+        type: number
+        title: Invoice Key
+        description: >-
+          Foreign key joining invoice_revenue_fact to invoice_dim. This column holds the surrogate key only; the readable
+          labels are columns on invoice_dim. Filtered on directly downstream, because MSTR emits key literals rather than names.
+      - name: market_key
+        sql: market_key
+        type: number
+        title: Market Key
+        description: >-
+          Foreign key joining invoice_revenue_fact to market_dim. This column holds the surrogate key only; the readable labels
+          are columns on market_dim. Filtered on directly downstream, because MSTR emits key literals rather than names.
+      - name: network_key
+        sql: network_key
+        type: number
+        title: Network Key
+        description: >-
+          Foreign key joining invoice_revenue_fact to network_dim. This column holds the surrogate key only; the readable
+          labels are columns on network_dim. Filtered on directly downstream, because MSTR emits key literals rather than names.
+      - name: order_revision_key
+        sql: order_revision_key
+        type: number
+        title: Order Revision Key
+        description: >-
+          Foreign key joining invoice_revenue_fact to order_dim. This column holds the surrogate key only; the readable labels
+          are columns on order_dim. Filtered on directly downstream, because MSTR emits key literals rather than names.
+      - name: product_key
+        sql: product_key
+        type: number
+        title: Product Key
+        description: >-
+          Foreign key joining invoice_revenue_fact to product_dim. This column holds the surrogate key only; the readable
+          labels are columns on product_dim. Filtered on directly downstream, because MSTR emits key literals rather than names.
+      - name: program_key
+        sql: program_key
+        type: number
+        title: Program Key
+        description: >-
+          Foreign key joining invoice_revenue_fact to program_dim. This column holds the surrogate key only; the readable
+          labels are columns on program_dim. Filtered on directly downstream, because MSTR emits key literals rather than names.
+      - name: property_category_key
+        sql: property_category_key
+        type: number
+        title: Order Property Category Key
+        description: >-
+          Foreign key joining invoice_revenue_fact to property_category_dim. This column holds the surrogate key only; the
+          readable labels are columns on property_category_dim. Filtered on directly downstream, because MSTR emits key literals rather than names.
+      - name: property_key
+        sql: property_key
+        type: number
+        title: Property Key
+        description: >-
+          Foreign key joining invoice_revenue_fact to property_dim. This column holds the surrogate key only; the readable
+          labels are columns on property_dim. Filtered on directly downstream, because MSTR emits key literals rather than names.
+      - name: rateclass_key
+        sql: rateclass_key
+        type: number
+        title: Rateclass Key
+        description: >-
+          Foreign key joining invoice_revenue_fact to rateclass_dim. This column holds the surrogate key only; the readable
+          labels are columns on rateclass_dim. Filtered on directly downstream, because MSTR emits key literals rather than names.
+      - name: revenue_area_key
+        sql: revenue_area_key
+        type: number
+        title: Revenue Area Key
+        description: >-
+          Foreign key joining invoice_revenue_fact to revenue_area_dim. This column holds the surrogate key only; the readable
+          labels are columns on revenue_area_dim. Filtered on directly downstream, because MSTR emits key literals rather than names.
+      - name: revenue_area_mapping_key
+        sql: revenue_area_mapping_key
+        type: number
+        title: Revenue Area Mapping Key
+        description: >-
+          Foreign key joining invoice_revenue_fact to revenue_area_mapping_dim. MSTR Sponsorship - Linear Revenue Data
+          (CARL-3000) joins REVENUE_AREA_MAPPING_DIM on this key for equiv-spot/CPM paths (BBT_HEAD_ID 2/3/4). Filtered on
+          directly downstream, because MSTR emits key literals rather than names.
+      - name: revenue_eff_bcast_qtr_key
+        sql: revenue_eff_bcast_qtr_key
+        type: number
+        title: Revenue Effective Broadcast Quarter Key
+        description: >-
+          Foreign key joining invoice_revenue_fact to revenue_eff_bcast_qtr_dim. This column holds the surrogate key only;
+          the readable labels are columns on revenue_eff_bcast_qtr_dim. Filtered on directly downstream, because MSTR emits key literals rather than names.
+      - name: revenue_eff_cal_month_key
+        sql: revenue_eff_cal_month_key
+        type: number
+        title: Revenue Effective Calendar Month Key
+        description: >-
+          A calendar dimension table that provides a complete hierarchy of time periods for revenue analysis, including month,
+          quarter, half-year, and year levels with associated dates and day counts. This table enables time-based aggregation
+          and filtering across multiple calendar granularities.
+      - name: revenue_eff_cal_qtr_key
+        sql: revenue_eff_cal_qtr_key
+        type: number
+        title: Revenue Effective Calendar Quarter Key
+        description: >-
+          Foreign key joining invoice_revenue_fact to revenue_eff_cal_qtr_dim. This column holds the surrogate key only; the
+          readable labels are columns on revenue_eff_cal_qtr_dim. Filtered on directly downstream, because MSTR emits key literals rather than names.
+      - name: revenue_eff_cal_year_key
+        sql: revenue_eff_cal_year_key
+        type: number
+        title: Revenue Effective Calendar Year Key
+        description: >-
+          Foreign key joining invoice_revenue_fact to revenue_eff_cal_year_dim. This column holds the surrogate key only;
+          the readable labels are columns on revenue_eff_cal_year_dim. Filtered on directly downstream, because MSTR emits key literals rather than names.
+      - name: revenue_effective_day_key
+        sql: revenue_effective_day_key
+        type: number
+        title: Revenue Effective Date Key
+        description: >-
+          A comprehensive time dimension table that provides calendar and broadcast period attributes for revenue-related
+          fact tables. It contains daily grain records with associated calendar hierarchies (day, week, month, quarter, year)
+          and broadcast period hierarchies, plus holiday and competitive pressure indicators.
+      - name: selling_title_daypart_key
+        sql: selling_title_daypart_key
+        type: number
+        title: Selling Title Daypart Key
+        description: >-
+          This dimension table defines selling daypart configurations for broadcast networks, including time slots, scheduling
+          details, and daypart groupings. Each row represents a unique combination of network, daypart time period, and selling
+          classification used for advertising inventory management.
+      - name: selling_title_key
+        sql: selling_title_key
+        type: number
+        title: Selling Title Key
+        description: >-
+          Foreign key joining invoice_revenue_fact to selling_title_dim. This column holds the surrogate key only; the readable
+          labels are columns on selling_title_dim. Filtered on directly downstream, because MSTR emits key literals rather than names.
+      - name: unit_sched_bcast_month_key
+        sql: unit_sched_bcast_month_key
+        type: number
+        title: Unit Broadcast Month Key
+        description: >-
+          Foreign key joining invoice_revenue_fact to unit_sched_bcast_month_dim. This column holds the surrogate key only;
+          the readable labels are columns on unit_sched_bcast_month_dim. Filtered on directly downstream, because MSTR
+          emits key literals rather than names.
+      - name: unit_sched_bday_key
+        sql: unit_sched_bday_key
+        type: number
+        title: Unit Broadcast Date Key
+        description: >-
+          A comprehensive business day dimension table that provides calendar and broadcast period attributes for scheduling
+          and analysis. It contains both standard calendar hierarchies (day, week, month, quarter, year) and broadcast-specific
+          hierarchies, along with holiday and competitive pressure indicators.
+      - name: unit_type_group_key
+        sql: unit_type_group_key
+        type: number
+        title: Unit Type Group Key
+        description: >-
+          Foreign key joining invoice_revenue_fact to unit_type_group_dim. This column holds the surrogate key only; the readable
+          labels are columns on unit_type_group_dim. Filtered on directly downstream, because MSTR emits key literals rather than names.
+      - name: unit_type_key
+        sql: unit_type_key
+        type: number
+        title: Unit Type Key
+        description: >-
+          Foreign key joining invoice_revenue_fact to unit_type_dim. This column holds the surrogate key only; the readable
+          labels are columns on unit_type_dim. Filtered on directly downstream, because MSTR emits key literals rather than names.
+      - name: deal_id
+        sql: deal_id
+        type: number
+        title: Deal ID
+        description: Unique identifier for the deal.
+        primary_key: true
+      - name: program_airing_key
+        sql: program_airing_key
+        type: number
+        title: Program Airing Key
+        description: >-
+          Foreign key joining this fact to program_airing_dim, in company with unit_sched_bday_key — an airing key is only
+          meaningful together with the broadcast day it ran on, and matching on the key alone widens the join from 93.4m rows
+          to 148.4m here. This column holds the surrogate key only; the readable labels are columns on program_airing_dim
+          and the tables it reaches.
+      - name: program_avg_key
+        sql: program_avg_key
+        type: number
+        title: Program Average Key
+        description: >-
+          Foreign key joining invoice_revenue_fact to program_average_dim. This column holds the surrogate key only;
+          the readable label is program_avg_desc. Not program_avg_daypart_key.
+      - name: telecast_key
+        sql: telecast_key
+        type: number
+        title: Telecast Key
+        description: >-
+          Foreign key joining invoice_revenue_fact to telecast_dim. This column holds the surrogate key only;
+          the readable label is telecast_name.
+      - name: order_line_sell_key
+        sql: order_line_sell_key
+        type: number
+        title: Order Line Sell Key
+        description: >-
+          Foreign key joining invoice_revenue_fact to order_line_sell_dim, the sell-side order line. This column holds the
+          surrogate key only; order_line_sell_dim in turn carries order_line_revision_key, which reaches order_line_dim
+          for the displayed line number.
+      - name: revenue_eff_bcast_month_key
+        sql: revenue_eff_bcast_month_key
+        type: number
+        title: Revenue Effective Broadcast Month Key
+        description: >-
+          Foreign key joining invoice_revenue_fact to revenue_eff_bcast_month_dim. This column holds the surrogate key only;
+          the readable labels (broadcast month name, and the quarter/half/year hierarchy above it) are columns on
+          revenue_eff_bcast_month_dim.
+      - name: revenue_eff_bcast_year_key
+        sql: revenue_eff_bcast_year_key
+        type: number
+        title: Revenue Effective Broadcast Year Key
+        description: >-
+          Foreign key joining invoice_revenue_fact to revenue_eff_bcast_year_dim. This column holds the surrogate key only;
+          the readable broadcast year is a column on revenue_eff_bcast_year_dim.
+      - name: unit_length_key
+        sql: unit_length_key
+        type: number
+        title: Unit Length Key
+        description: >-
+          Foreign key joining invoice_revenue_fact to unit_length_dim. This column holds the surrogate key only; the readable
+          unit-length value/description are columns on unit_length_dim.
+      - name: brand_key
+        sql: brand_key
+        type: number
+        title: Brand Key
+        description: >-
+          Foreign key joining invoice_revenue_fact to brand_dim. This column holds the surrogate key only; the readable
+          brand name is a column on brand_dim. Distinct from advertiser_key and product_key.
+      - name: acct_cov_team_key
+        sql: acct_cov_team_key
+        type: number
+        title: Account Coverage Team Key
+        description: >-
+          Foreign key joining invoice_revenue_fact to acct_cov_team_dim. This column holds the surrogate key only; the readable
+          buying/client/planning AE strings are columns on acct_cov_team_dim. Filtered on directly downstream, because MSTR emits key literals rather than names.
+      - name: usn_key
+        sql: usn_key
+        type: number
+        title: USN
+        description: >-
+          Unit serial number key emitted directly by MSTR as USN for posted-spot reporting. No decoded lookup is present in
+          the CNNE Data SQL.
+      - name: unit_start_time_key
+        sql: unit_start_time_key
+        type: number
+        title: Unit Start Time Key
+        description: >-
+          Foreign key joining invoice_revenue_fact to unit_start_time_dim. This column holds the surrogate key only; the
+          readable unit start time and hour are columns on unit_start_time_dim. Probed against dev data: unit_start_time_dim
+          is unique on unit_start_time_key across 86,401 rows, with zero orphan invoice_revenue_fact rows.
+      - name: unit_end_time_key
+        sql: unit_end_time_key
+        type: number
+        title: Unit End Time Key
+        description: >-
+          Foreign key joining invoice_revenue_fact to unit_end_time_dim. This column holds the surrogate key only; the
+          readable unit end time and hour are columns on unit_end_time_dim. Role-played sibling of unit_start_time_key
+          (MSTR CNN Revenue by Half Hour, CARL-3004).
+      - name: log_status_key
+        sql: log_status_key
+        type: number
+        title: Log Status Key
+        description: >-
+          Foreign key joining invoice_revenue_fact to log_status_dim. This column holds the surrogate key only; the readable
+          log status code and description are columns on log_status_dim. Probed against dev data: log_status_dim is unique
+          on log_status_key across 10 rows, with zero orphan invoice_revenue_fact rows.
+      - name: isci_code_key
+        sql: isci_code_key
+        type: number
+        title: ISCI Code Key
+        description: >-
+          Foreign key joining invoice_revenue_fact to isci_code_dim. This column holds the surrogate key only; the readable
+          ISCI code is a column on isci_code_dim. Probed against dev data: isci_code_dim is unique on isci_code_key across
+          1,344,289 rows; 68,438,686 of 149,690,176 invoice_revenue_fact rows are unmatched (45.7%), so ISCI will be null
+          for those rows.
+      - name: planning_agency_key
+        sql: planning_agency_key
+        type: number
+        title: Planning Agency Key
+        description: >-
+          Foreign key joining invoice_revenue_fact to planning_agency_dim. This column holds the surrogate key only; the
+          readable planning agency name/id/state are columns on planning_agency_dim. Filtered on directly downstream, because MSTR emits key literals rather than names.
+      # CARL-4344 DR Tipping PT Drop In 3Q: MSTR's "Broadcast  Week" template attribute is a
+      # "<begin> to <end>" string off revenue_effective_day_dim (not unit_sched_bday_dim --
+      # that's unit_sched_broadcast_week_desc above, a different grain). Same formatting
+      # pattern as that member (CARL-4342), applied to this fact's existing
+      # revenue_effective_day_key join -- no new join needed.
+      - name: revenue_effective_broadcast_week_desc
+        sql: |-
+          (
+            SELECT date_format(hop1.broadcast_week_begin_date, '%d-%b-%Y') || ' to ' ||
+                   date_format(hop1.broadcast_week_end_date, '%d-%b-%Y')
+            FROM {{ catalog('dwhprd_gold') }}.revenue_effective_day_dim hop1
+            WHERE {CUBE}.revenue_effective_day_key = hop1.revenue_effective_day_key
+          )
+        type: string
+        title: Broadcast Week
+        description: >-
+          CARL-4344. "<begin> to <end>" formatted broadcast-week range off revenue_effective_day_dim,
+          e.g. "23-Jul-2007 to 29-Jul-2007", matching MSTR's
+          to_char(d,'dd-Mon-yyyy')||' to '||to_char(d,'dd-Mon-yyyy'). Title says plain "Broadcast
+          Week" (not "Unit Broadcast Week Of") since this is the revenue-effective grain, distinct
+          from unit_sched_broadcast_week_desc above.
+    joins:
+      - name: cube_carl_dwhprd_gold_account_dim
+        sql: '{CUBE}.account_key = {cube_carl_dwhprd_gold_account_dim}.account_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_actual_air_daypart_dim
+        sql: '{CUBE}.actual_air_daypart_key = {cube_carl_dwhprd_gold_actual_air_daypart_dim}.actual_air_daypart_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_advertiser_dim
+        sql: '{CUBE}.advertiser_key = {cube_carl_dwhprd_gold_advertiser_dim}.advertiser_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_buy_type_dim
+        sql: '{CUBE}.buy_type_key = {cube_carl_dwhprd_gold_buy_type_dim}.buy_type_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_buying_agency_dim
+        sql: '{CUBE}.buying_agency_key = {cube_carl_dwhprd_gold_buying_agency_dim}.buying_agency_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_deal_dim
+        sql: '{CUBE}.deal_revision_key = {cube_carl_dwhprd_gold_deal_dim}.deal_revision_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_deal_revenue_snapshot_dim
+        sql: '{CUBE}.deal_revenue_snapshot_key = {cube_carl_dwhprd_gold_deal_revenue_snapshot_dim}.deal_revenue_snapshot_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_deal_revenue_status_dim
+        sql: '{CUBE}.deal_revenue_status_key = {cube_carl_dwhprd_gold_deal_revenue_status_dim}.deal_revenue_status_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_demographics_dim
+        sql: '{CUBE}.guar_target_demo_key = {cube_carl_dwhprd_gold_demographics_dim}.demographics_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_episode_version_dim
+        sql: '{CUBE}.episode_version_key = {cube_carl_dwhprd_gold_episode_version_dim}.episode_version_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_guar_est_methodology_dim
+        sql: '{CUBE}.guar_est_methodology_key = {cube_carl_dwhprd_gold_guar_est_methodology_dim}.guar_est_methodology_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_inventory_type_dim
+        sql: '{CUBE}.inventory_type_key = {cube_carl_dwhprd_gold_inventory_type_dim}.inventory_type_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_invoice_dim
+        sql: '{CUBE}.invoice_key = {cube_carl_dwhprd_gold_invoice_dim}.invoice_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_market_dim
+        sql: '{CUBE}.market_key = {cube_carl_dwhprd_gold_market_dim}.market_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_network_dim
+        sql: '{CUBE}.network_key = {cube_carl_dwhprd_gold_network_dim}.network_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_order_dim
+        sql: '{CUBE}.order_revision_key = {cube_carl_dwhprd_gold_order_dim}.order_revision_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_product_dim
+        sql: '{CUBE}.product_key = {cube_carl_dwhprd_gold_product_dim}.product_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_program_airing_dim
+        sql: >-
+          {CUBE}.program_airing_key = {cube_carl_dwhprd_gold_program_airing_dim}.program_airing_key AND {CUBE}.unit_sched_bday_key
+          = {cube_carl_dwhprd_gold_program_airing_dim}.unit_sched_bday_key
+        relationship: many_to_one
+      # CARL-4185: key-only joins, matching the MicroStrategy SQL. many_to_one keeps fact rows whose key has no dimension row.
+      - name: cube_carl_dwhprd_gold_program_average_dim
+        sql: '{CUBE}.program_avg_key = {cube_carl_dwhprd_gold_program_average_dim}.program_avg_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_telecast_dim
+        sql: '{CUBE}.telecast_key = {cube_carl_dwhprd_gold_telecast_dim}.telecast_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_program_avg_daypart_dim
+        sql: '{CUBE}.program_avg_daypart_key = {cube_carl_dwhprd_gold_program_avg_daypart_dim}.program_avg_daypart_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_program_dim
+        sql: '{CUBE}.program_key = {cube_carl_dwhprd_gold_program_dim}.program_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_property_category_dim
+        sql: '{CUBE}.property_category_key = {cube_carl_dwhprd_gold_property_category_dim}.property_category_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_property_dim
+        sql: '{CUBE}.property_key = {cube_carl_dwhprd_gold_property_dim}.property_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_rateclass_dim
+        sql: '{CUBE}.rateclass_key = {cube_carl_dwhprd_gold_rateclass_dim}.rateclass_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_revenue_area_dim
+        sql: '{CUBE}.revenue_area_key = {cube_carl_dwhprd_gold_revenue_area_dim}.revenue_area_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_revenue_area_mapping_dim
+        sql: '{CUBE}.revenue_area_mapping_key = {cube_carl_dwhprd_gold_revenue_area_mapping_dim}.revenue_area_mapping_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_revenue_eff_bcast_qtr_dim
+        sql: '{CUBE}.revenue_eff_bcast_qtr_key = {cube_carl_dwhprd_gold_revenue_eff_bcast_qtr_dim}.revenue_eff_bcast_qtr_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_revenue_eff_cal_month_dim
+        sql: '{CUBE}.revenue_eff_cal_month_key = {cube_carl_dwhprd_gold_revenue_eff_cal_month_dim}.revenue_eff_cal_month_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_revenue_eff_cal_qtr_dim
+        sql: '{CUBE}.revenue_eff_cal_qtr_key = {cube_carl_dwhprd_gold_revenue_eff_cal_qtr_dim}.revenue_eff_cal_qtr_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_revenue_eff_cal_year_dim
+        sql: '{CUBE}.revenue_eff_cal_year_key = {cube_carl_dwhprd_gold_revenue_eff_cal_year_dim}.revenue_eff_cal_year_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_revenue_effective_day_dim
+        sql: '{CUBE}.revenue_effective_day_key = {cube_carl_dwhprd_gold_revenue_effective_day_dim}.revenue_effective_day_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_selling_title_daypart_dim
+        sql: '{CUBE}.selling_title_daypart_key = {cube_carl_dwhprd_gold_selling_title_daypart_dim}.selling_title_daypart_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_selling_title_dim
+        sql: '{CUBE}.selling_title_key = {cube_carl_dwhprd_gold_selling_title_dim}.selling_title_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_unit_sched_bcast_month_dim
+        sql: '{CUBE}.unit_sched_bcast_month_key = {cube_carl_dwhprd_gold_unit_sched_bcast_month_dim}.unit_sched_bcast_month_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_unit_sched_bday_dim
+        sql: '{CUBE}.unit_sched_bday_key = {cube_carl_dwhprd_gold_unit_sched_bday_dim}.unit_sched_bday_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_unit_type_dim
+        sql: '{CUBE}.unit_type_key = {cube_carl_dwhprd_gold_unit_type_dim}.unit_type_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_unit_type_group_dim
+        sql: '{CUBE}.unit_type_group_key = {cube_carl_dwhprd_gold_unit_type_group_dim}.unit_type_group_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_order_line_sell_dim
+        sql: '{CUBE}.order_line_sell_key = {cube_carl_dwhprd_gold_order_line_sell_dim}.order_line_sell_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_revenue_eff_bcast_month_dim
+        sql: '{CUBE}.revenue_eff_bcast_month_key = {cube_carl_dwhprd_gold_revenue_eff_bcast_month_dim}.revenue_eff_bcast_month_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_revenue_eff_bcast_year_dim
+        sql: '{CUBE}.revenue_eff_bcast_year_key = {cube_carl_dwhprd_gold_revenue_eff_bcast_year_dim}.revenue_eff_bcast_year_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_unit_length_dim
+        sql: '{CUBE}.unit_length_key = {cube_carl_dwhprd_gold_unit_length_dim}.unit_length_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_brand_dim
+        sql: '{CUBE}.brand_key = {cube_carl_dwhprd_gold_brand_dim}.brand_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_acct_cov_team_dim
+        sql: '{CUBE}.acct_cov_team_key = {cube_carl_dwhprd_gold_acct_cov_team_dim}.acct_cov_team_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_invoice_team_ae_bridge
+        sql: >-
+          {CUBE}.unit_sched_bcast_month_key =
+          {cube_carl_dwhprd_gold_invoice_team_ae_bridge}.unit_sched_bcast_month_key
+          AND {CUBE}.acct_cov_team_key =
+          {cube_carl_dwhprd_gold_invoice_team_ae_bridge.acct_cov_team_key}
+        relationship: one_to_many
+      - name: cube_carl_dwhprd_gold_unit_start_time_dim
+        sql: '{CUBE}.unit_start_time_key = {cube_carl_dwhprd_gold_unit_start_time_dim}.unit_start_time_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_unit_end_time_dim
+        sql: '{CUBE}.unit_end_time_key = {cube_carl_dwhprd_gold_unit_end_time_dim}.unit_end_time_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_log_status_dim
+        sql: '{CUBE}.log_status_key = {cube_carl_dwhprd_gold_log_status_dim}.log_status_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_isci_code_dim
+        sql: '{CUBE}.isci_code_key = {cube_carl_dwhprd_gold_isci_code_dim}.isci_code_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_planning_agency_dim
+        sql: '{CUBE}.planning_agency_key = {cube_carl_dwhprd_gold_planning_agency_dim}.planning_agency_key'
+        relationship: many_to_one
+    measures:
+      - name: record_count
+        sql: '*'
+        type: count
+        title: Record Count
+        description: Row count for smoke queries.
+        meta:
+          source: generated
+          used_by_report_ids: []
+      - name: acm_net_corp_imps_000
+        sql: (CAST(({CUBE}.acm_net_corp_estimated_imps * {CUBE}.num_of_spots) AS DOUBLE) / 1000.0)
+        type: sum
+        title: ACM Net Corp Impressions (Thousands)
+        description: ACM net corporate estimated impressions multiplied by number of spots, divided by 1000.
+      - name: acm_hh_imps_000
+        sql: ({CUBE}.acm_hh_estimated_imps * {CUBE}.num_of_spots) / 1000.0
+        type: sum
+        title: ACM HH Estimated Impressions (Thousands)
+        description: >-
+          Household estimated impressions multiplied by number of spots, divided by 1,000 for ACM data. Aggregated as a sum
+          across all rows.
+      - name: natl_comm_acm_net_corp_imps_000
+        sql: >-
+          (CAST((CASE WHEN {CUBE}.buy_type_key IN (12) THEN ({CUBE}.acm_net_corp_estimated_imps * {CUBE}.num_of_spots) ELSE
+          NULL END) AS DOUBLE) / 1000.0)
+        type: sum
+        title: ACM Net Corp Impressions (National Commercial, Thousands)
+        description: ACM net corporate estimated impressions multiplied by number of spots, in thousands, for National Commercial
+          buys.
+      - name: as_sold_unequiv_rate
+        sql: '{CUBE}.as_sold_unit_rate'
+        type: sum
+        title: As Sold Unequiv Rate
+        description: Sum of as-sold unit rates.
+      - name: natl_comm_revenue_tracked
+        sql: >-
+          (CASE WHEN {CUBE}.buy_type_key IN (12) THEN CASE WHEN {CUBE}.tracking_est_methodology_key = 0 THEN NULL ELSE {CUBE}.revenue
+          END ELSE NULL END)
+        type: sum
+        title: National Commercial Revenue (Tracked Methodology Only)
+        description: >-
+          Revenue for National Commercial buys, excluding rows whose tracking estimate methodology is N/A. Compare natl_comm_revenue,
+          which includes them.
+      - name: natl_comm_revenue
+        sql: (CASE WHEN {CUBE}.buy_type_key IN (12) THEN {CUBE}.revenue ELSE NULL END)
+        type: sum
+        title: National Commercial Revenue
+        description: Revenue for National Commercial buys.
+      - name: eqv30_spots
+        sql: '{CUBE}.eqv30_spots'
+        type: sum
+        title: Equiv30 Spots
+        description: Sum of equivalent 30-second spots.
+      - name: number_of_spots
+        sql: '{CUBE}.num_of_spots'
+        type: sum
+        title: Number of Spots
+        description: Sum of the raw (non-equivalized) number of spots.
+      - name: guar_target_imps_000
+        sql: ({CUBE}.guar_target_estimated_imps * {CUBE}.num_of_spots) / 1000.0
+        type: sum
+        title: Guaranteed Target Estimated Impressions (Thousands)
+        description: >-
+          Sum of guaranteed target estimated impressions multiplied by number of spots, expressed in thousands. Calculated
+          by multiplying impressions by spot count and dividing by 1000.
+      - name: hh_imps_000
+        sql: ({CUBE}.hh_estimated_imps * {CUBE}.num_of_spots) / 1000.0
+        type: sum
+        title: HH Estimated Impressions (Thousands)
+        description: Household estimated impressions multiplied by number of spots, divided by 1,000. Aggregated as a sum
+          across all rows.
+      - name: net_corp_imps_000
+        sql: (CAST(({CUBE}.net_corp_estimated_imps * {CUBE}.num_of_spots) AS DOUBLE) / 1000.0)
+        type: sum
+        title: Net Corp Impressions (Thousands)
+        description: Net corporate estimated impressions multiplied by number of spots, divided by 1000.
+      - name: pal_net_corp_imps_000
+        sql: (CAST(({CUBE}.pal_net_corp_estimated_imps * {CUBE}.num_of_spots) AS DOUBLE) / 1000.0)
+        type: sum
+        title: PAL Net Corp Impressions (Thousands)
+        description: >-
+          PAL net corporate estimated impressions multiplied by number of spots, divided by 1000. Unconditioned
+          counterpart of natl_comm_pal_net_corp_imps_000, same pattern as acm_net_corp_imps_000 vs
+          natl_comm_acm_net_corp_imps_000. Feeds pal_net_corp_cpm below.
+      - name: natl_comm_pal_net_corp_imps_000
+        sql: >-
+          (CAST((CASE WHEN {CUBE}.buy_type_key IN (12) THEN ({CUBE}.pal_net_corp_estimated_imps * {CUBE}.num_of_spots) ELSE
+          NULL END) AS DOUBLE) / 1000.0)
+        type: sum
+        title: PAL Net Corp Impressions (National Commercial, Thousands)
+        description: PAL net corporate estimated impressions multiplied by number of spots, in thousands, for National Commercial
+          buys.
+      - name: ecm_net_corp_imps_000
+        sql: (CAST(({CUBE}.ecm_net_corp_estimated_imps * {CUBE}.num_of_spots) AS DOUBLE) / 1000.0)
+        type: sum
+        title: ECM Net Corp Impressions (Thousands)
+        description: >-
+          ECM net corporate estimated impressions multiplied by number of spots, divided by 1000. Same pattern as
+          acm_net_corp_imps_000/pal_net_corp_imps_000; ecm_net_corp_estimated_imps confirmed present on
+          the ingested invoice_revenue_fact table (2026-08-31), no ingestion needed. Feeds ecm_net_corp_cpm below.
+      - name: natl_comm_ecm_net_corp_imps_000
+        sql: >-
+          (CAST((CASE WHEN {CUBE}.buy_type_key IN (12) THEN ({CUBE}.ecm_net_corp_estimated_imps * {CUBE}.num_of_spots) ELSE
+          NULL END) AS DOUBLE) / 1000.0)
+        type: sum
+        title: ECM Net Corp Impressions (National Commercial, Thousands)
+        description: >-
+          ECM net corporate estimated impressions multiplied by number of spots, in thousands, for National Commercial
+          buys. Same pattern as natl_comm_acm_net_corp_imps_000/natl_comm_pal_net_corp_imps_000.
+          Feeds natl_comm_ecm_net_corp_cpm below (the ACM/PAL siblings of that measure already existed as
+          natl_comm_acm_net_corp_cpm/natl_comm_pal_net_corp_cpm).
+      - name: ratecard_unequiv_rate
+        sql: '{CUBE}.ratecard_unit_rate'
+        type: sum
+        title: Ratecard Unequiv Rate
+        description: Sum of ratecard unit rates.
+      - name: revenue
+        sql: '{CUBE}.revenue'
+        type: sum
+        title: Revenue
+        description: Total revenue summed across all transactions.
+      - name: ratecard_pct
+        sql: CAST({as_sold_unequiv_rate} AS DOUBLE) / NULLIF({ratecard_unequiv_rate}, 0)
+        type: number
+        title: '% of Ratecard'
+        description: >-
+          As-sold unequivalised rate over ratecard unequivalised rate. MSTR defines this as [As Sold Unequiv Rate] /
+          [RateCard Unequiv Rate], which is exactly this. A ratio of two sums rather than a sum
+          of ratios — dividing after aggregation is what MSTR does, and the two disagree at any grain coarser than a row.
+      - name: net_corp_cpm
+        sql: CAST({revenue} AS DOUBLE) / NULLIF({net_corp_imps_000}, 0)
+        type: number
+        title: Net Corp CPM
+        description: >-
+          Revenue per thousand net corp impressions. MSTR calls it corp cpm and defines it as Revenue / [Net Corp
+          Estimated Imps], with that denominator defined as Sum(same) / 1000 — exactly this pair,
+          so no multiply by 1000 is needed. One question stays open, narrower than the formula — whether [Net Corp Estimated
+          Imps] means the plain impressions column or the ACM one. They land 0.6% apart.
+      - name: guar_target_cpm
+        sql: CAST({revenue} AS DOUBLE) / NULLIF({guar_target_imps_000}, 0)
+        type: number
+        title: Guar/Target CPM
+        description: >-
+          Revenue per thousand guaranteed or target demographic impressions. MSTR defines it as Revenue / [Guar/Target
+          Estimated Impressions], and defines that denominator as Sum([Booked Guar/Target Estimated Imps]) / 1000. MSTR
+          leaves the metric itself unnamed — it is literally called New Metric — so the name here is ours.
+      - name: acm_hh_cpm
+        sql: CAST({revenue} AS DOUBLE) / NULLIF({acm_hh_imps_000}, 0)
+        type: number
+        title: ACM HH CPM
+        description: >-
+          Revenue per thousand ACM household impressions. MSTR defines it as Revenue / [ACM HH Estimated Imps], and
+          defines that denominator as Sum([Booked ACM HH Estimated Imps]) / 1000.
+      - name: revenue_over_ratecard_rate
+        sql: CAST({revenue} AS DOUBLE) / NULLIF({ratecard_unequiv_rate}, 0)
+        type: number
+        title: Revenue over Ratecard Unequiv Rate
+        description: >-
+          UNVERIFIED — faithful to MSTR but probably not what its name suggests. Finance should say which formula was intended
+          before this number is quoted. MSTR calls it rc% and defines it as Revenue / [RateCard Unequiv
+          Rate], which is no percentage — dollars over a dollars-per-unit rate gives a unit count. ratecard_pct is the other
+          reading, [As Sold Unequiv Rate] / [RateCard Unequiv Rate]. Registered as written so this reproduces MSTR faithfully.
+      - name: potential_cancelable_revenue
+        sql: '{CUBE}.potential_cancelable_dollars'
+        type: sum
+        title: Potential Cancellable Revenue
+        description: Sum of potential cancelable dollars — revenue at risk of cancellation under deal cutback terms.
+      - name: agency_commission
+        sql: '{CUBE}.revenue * {CUBE}.agency_commission_pct'
+        type: sum
+        title: Agency Commission
+        description: Revenue multiplied by the row-level agency commission percentage, summed.
+      - name: net_revenue
+        sql: '{CUBE}.revenue - ({CUBE}.revenue * {CUBE}.agency_commission_pct)'
+        type: sum
+        title: Net Revenue
+        description: Gross revenue less agency commission, summed.
+      - name: commission_pct
+        sql: CAST({net_revenue} AS DOUBLE) / NULLIF({revenue}, 0)
+        type: number
+        title: Commission %
+        description: >-
+          Net Revenue over Gross Revenue. MSTR defines "commission" as the Net Revenue measure divided by the
+          Gross Revenue measure — a ratio of two sums, not a sum of row-level ratios.
+      - name: avg_equiv30_unit_rate
+        sql: CAST({revenue} AS DOUBLE) / NULLIF({eqv30_spots}, 0)
+        type: number
+        title: Avg Equiv :30 Unit Rate
+        description: >-
+          Revenue per equivalent :30 unit. MSTR defines it elsewhere as Avg Equiv30 Revenue, computed as Revenue /
+          [Equiv30 Spots] — exactly this. A metric named Avg Equiv :30 Unit Rate elsewhere is assumed to be the same
+          computation, though no formula was available to confirm it there. Distinct from as_sold_unequiv_rate,
+          which sums the rate on each row rather than deriving one.
+      - name: natl_comm_pal_net_corp_cpm
+        sql: CAST({natl_comm_revenue} AS DOUBLE) / NULLIF({natl_comm_pal_net_corp_imps_000}, 0)
+        type: number
+        title: PAL Net Corp CPM (National Commercial)
+        description: >-
+          National commercial revenue per thousand PAL net corp impressions. MSTR defines it as [Revenue - National Commercial]
+          / [PAL Net Corp Estimated Impressions - National Commercial]; both sides filter to buy type 12, so the ratio stays
+          within national commercial. No multiply by 1000 is needed because the denominator is already in thousands.
+      - name: natl_comm_acm_net_corp_cpm
+        sql: CAST({natl_comm_revenue_tracked} AS DOUBLE) / NULLIF({acm_net_corp_imps_000}, 0)
+        type: number
+        title: ACM Net Corp CPM (National Commercial)
+        description: >-
+          UNVERIFIED — confirm with finance before quoting this number. MSTR defines it as [Revenue - Post ACM/National Commercial]
+          / [ACM Net Corp Estimated Impressions], mixing a filtered numerator (national commercial revenue, only rows carrying
+          a tracking methodology) with an UNFILTERED denominator. MSTR names the national-commercial variant explicitly elsewhere
+          and not here, so this may be an authoring slip — the two readings give 17.4417 against 20.0368.
+      - name: natl_comm_ecm_net_corp_cpm
+        sql: CAST({natl_comm_revenue} AS DOUBLE) / NULLIF({natl_comm_ecm_net_corp_imps_000}, 0)
+        type: number
+        title: ECM Net Corp CPM (National Commercial)
+        description: >-
+          The ECM sibling of natl_comm_pal_net_corp_cpm above, same formula shape — national commercial
+          revenue over national commercial ECM net corp impressions, both sides filtered to buy type 12. Completes the
+          "PAL/ACM/ECM Net Corp Estimated CPM - National Commercial" trio; ACM/PAL existed already, this was the
+          missing one.
+      - name: pal_net_corp_cpm
+        sql: CAST({revenue} AS DOUBLE) / NULLIF({pal_net_corp_imps_000}, 0)
+        type: number
+        title: PAL Net Corp CPM
+        description: >-
+          Unconditioned PAL counterpart of net_corp_cpm above (revenue over PAL net corp impressions,
+          no buy-type filter), same relationship natl_comm_pal_net_corp_cpm has to its National-Commercial-filtered inputs.
+      - name: ecm_net_corp_cpm
+        sql: CAST({revenue} AS DOUBLE) / NULLIF({ecm_net_corp_imps_000}, 0)
+        type: number
+        title: ECM Net Corp CPM
+        description: >-
+          Unconditioned ECM counterpart of net_corp_cpm above, same pattern as pal_net_corp_cpm.
+      - name: current_booked_revenue
+        sql: CASE WHEN {CUBE}.deal_revenue_snapshot_key IN (8) THEN {CUBE}.revenue ELSE NULL END
+        type: sum
+        title: Revenue - Current Booked
+        description: >-
+          MSTR "Revenue - Current Booked" used by CNNE Data, CNNI Revenue Detail, and CNNI Posted Spots: booked revenue
+          restricted to Deal Revenue Snapshot Invoiced/Current Booked (key 8).
+      - name: sold_loa_revenue
+        sql: CASE WHEN {CUBE}.deal_revenue_snapshot_key IN (9) THEN {CUBE}.revenue ELSE NULL END
+        type: sum
+        title: Revenue - Sold LOA
+        description: >-
+          CARL-3029. Booked revenue restricted to Deal Revenue Snapshot Sold-LOA/1st to Order/CB Hold (key 9).
+          Kept separate from revenue and current_booked_revenue so both snapshots can be queried together.
+      - name: sold_loa_ratecard_unequiv_rate
+        sql: CASE WHEN {CUBE}.deal_revenue_snapshot_key IN (9) THEN {CUBE}.ratecard_unit_rate ELSE NULL END
+        type: sum
+        title: Sold LOA RateCard Unequiv Rate
+        description: >-
+          CARL-3029. Ratecard unit rate summed only for Sold-LOA snapshot key 9. Feeds sold_loa_ratecard_pct.
+      - name: sold_loa_as_sold_unequiv_rate
+        sql: CASE WHEN {CUBE}.deal_revenue_snapshot_key IN (9) THEN {CUBE}.as_sold_unit_rate ELSE NULL END
+        type: sum
+        title: Sold LOA As Sold Unequiv Rate
+        description: >-
+          CARL-3029. As-sold unit rate summed only for Sold-LOA snapshot key 9. Feeds sold_loa_ratecard_pct.
+      - name: sold_loa_ratecard_pct
+        sql: CAST({sold_loa_as_sold_unequiv_rate} AS DOUBLE) / NULLIF({sold_loa_ratecard_unequiv_rate}, 0)
+        type: number
+        title: RateCard % (Sold LOA)
+        description: >-
+          CARL-3029. As-sold unequivalised rate over ratecard unequivalised rate, both restricted to Sold-LOA
+          snapshot key 9. A ratio of two sums. Distinct from ratecard_pct, which has no snapshot filter.
+      - name: sold_loa_net_corp_imps_000
+        sql: >-
+          (CASE WHEN {CUBE}.deal_revenue_snapshot_key IN (9) THEN {CUBE}.net_corp_estimated_imps * {CUBE}.num_of_spots
+          ELSE NULL END) / 1000.0
+        type: sum
+        title: Sold LOA Net Corp Estimated Imps
+        description: >-
+          CARL-3029. Net corporate estimated impressions times number of spots, divided by 1000, only for
+          Sold-LOA snapshot key 9.
+      - name: sold_loa_potential_cancelable_revenue
+        sql: CASE WHEN {CUBE}.deal_revenue_snapshot_key IN (9) THEN {CUBE}.potential_cancelable_dollars ELSE NULL END
+        type: sum
+        title: Sold LOA Potential Cancellable Revenue
+        description: >-
+          CARL-3029. Potential cancelable dollars only for Sold-LOA snapshot key 9. Distinct from
+          potential_cancelable_revenue, which has no snapshot filter.
+      - name: sold_loa_potential_expansion_revenue
+        sql: CASE WHEN {CUBE}.deal_revenue_snapshot_key IN (9) THEN {CUBE}.potential_expansion_dollars ELSE NULL END
+        type: sum
+        title: Sold LOA Potential Expandable Revenue
+        description: >-
+          CARL-3029. Potential expansion dollars only for Sold-LOA snapshot key 9.
+      - name: sold_loa_cutback_percent
+        sql: CASE WHEN {CUBE}.deal_revenue_snapshot_key IN (9) THEN {CUBE}.cutback_percent / 100.0 ELSE NULL END
+        type: max
+        title: Sold LOA Cutback Percent
+        description: >-
+          CARL-3029. Maximum cutback percent for Sold-LOA snapshot key 9. Source cutback_percent is stored
+          as a whole percent and divided by 100, matching MSTR.
+      - name: net_corp_actual_imps_000
+        sql: '{CUBE}.net_corp_actual_imps / 1000.0'
+        type: sum
+        title: Net Corp Actual Impressions (Thousands)
+        description: >-
+          Net corporate ACTUAL impressions (net_corp_actual_imps), divided by 1000 — unlike its "_estimated"
+          siblings (net_corp_imps_000 etc.), not multiplied by num_of_spots: it's already a per-row total, not
+          a per-spot rate. No filter baked in; MSTR scoped this to unit_type_group_key = 1 ("Cash") for Net Corp
+          Unit Actual CPM below — filter at query time via that dimension instead.
+      - name: acm_guar_target_imps_000
+        sql: ({CUBE}.acm_guar_target_estimated_imps * {CUBE}.num_of_spots) / 1000.0
+        type: sum
+        title: ACM Guar/Target Estimated Impressions (Thousands)
+        description: >-
+          ACM-specific counterpart of guar_target_imps_000 above, using acm_guar_target_estimated_imps instead
+          of guar_target_estimated_imps, same multiply-by-spots-divide-by-1000 shape. No filter baked in; MSTR's
+          export scoped this to guar_est_methodology_key = 2 AND unit_type_group_key = 1 when computing
+          Guar/Target Estimated CPM - ACM Guar below — filter at query time via the existing
+          guar_est_methodology_key/unit_type_group_key dimensions rather than here.
+      - name: pal_guar_target_imps_000
+        sql: >-
+          (CASE WHEN {CUBE}.guar_est_methodology_key = 1 THEN {CUBE}.pal_guar_target_estimated_imps * {CUBE}.num_of_spots
+          ELSE NULL END) / 1000.0
+        type: sum
+        title: Guar/Target Estimated Impressions - PAL Guar
+        description: >-
+          CARL-3025/CARL-3034. PAL guaranteed/target estimated impressions times number of spots, divided by 1000,
+          only when guar_est_methodology_key = 1. The methodology test stays inside the measure so Revenue and Equiv30
+          on the same query are not filtered to PAL rows. There is no Cash filter; the percent-of-demographic metric
+          uses this unscoped total.
+      - name: acm_guar_target_imps_000_tracking
+        sql: >-
+          (CASE WHEN {CUBE}.tracking_est_methodology_key = 2 THEN {CUBE}.acm_guar_target_estimated_imps * {CUBE}.num_of_spots
+          ELSE NULL END) / 1000.0
+        type: sum
+        title: Guar/Target Estimated Impressions - ACM Tracking
+        description: >-
+          CARL-3025/CARL-3034. ACM guaranteed/target estimated impressions times number of spots, divided by 1000,
+          only when tracking_est_methodology_key = 2. Distinct from acm_guar_target_imps_000, which has no methodology
+          filter. The methodology test stays inside the measure so a query-level tracking filter does not also drop
+          Revenue and Equiv30 on non-ACM-tracking rows.
+      - name: acm_net_corp_cpm
+        sql: CAST({revenue} AS DOUBLE) / NULLIF({acm_net_corp_imps_000}, 0)
+        type: number
+        title: ACM Net Corp CPM
+        description: >-
+          Unconditioned ACM counterpart of net_corp_cpm above (revenue over ACM net corp impressions, no
+          buy-type filter), same relationship natl_comm_acm_net_corp_cpm has to its National-Commercial-filtered
+          inputs — the missing unconditioned sibling, same gap pattern pal_net_corp_cpm/ecm_net_corp_cpm filled
+          for their measures.
+      - name: net_corp_actual_cpm
+        sql: CAST({revenue} AS DOUBLE) / NULLIF({net_corp_actual_imps_000}, 0)
+        type: number
+        title: Net Corp Unit Actual CPM
+        description: >-
+          UNVERIFIED — inferred from MSTR's SQL trailer for "Sponsorship - Linear Revenue Data", which names
+          this metric but doesn't spell out its formula. Revenue over net_corp_actual_imps_000, the same
+          revenue-per-thousand-impressions shape every other _cpm measure on this cube uses. MSTR scoped both
+          sides to unit_type_group_key = 1 ("Cash") — apply that filter at query time; not baked in here so
+          the measure stays reusable. Confirm with the report owner before treating as authoritative.
+      - name: acm_guar_target_cpm
+        sql: CAST({revenue} AS DOUBLE) / NULLIF({acm_guar_target_imps_000}, 0)
+        type: number
+        title: Guar/Target Estimated CPM - ACM Guar
+        description: >-
+          UNVERIFIED — inferred from MSTR's SQL trailer for "Sponsorship - Linear Revenue Data", which names
+          this metric but doesn't spell out its formula. Revenue over acm_guar_target_imps_000, the ACM sibling
+          of guar_target_cpm above. MSTR scoped both sides to guar_est_methodology_key = 2 AND
+          unit_type_group_key = 1 — apply those filters at query time, same reusability reason as
+          net_corp_actual_cpm. Confirm with the report owner before treating as authoritative.
+      - name: revenue_tracked
+        sql: (CASE WHEN {CUBE}.tracking_est_methodology_key = 0 THEN NULL ELSE {CUBE}.revenue END)
+        type: sum
+        title: Revenue (Tracked Methodology Only)
+        description: >-
+          Revenue excluding rows whose tracking estimate methodology is N/A (tracking_est_methodology_key = 0).
+          Distinct from natl_comm_revenue_tracked, which pairs the same exclusion with a buy_type_key = 12
+          (National Commercial) filter — this one has no buy-type restriction, needed by "Sponsorship - Linear
+          Revenue Data" (scopes to unit_type_group_key = 1 at query time instead). Kept separate rather than
+          merged, since the two answer different questions and merging would silently change one of them.
+      # CARL-3034 CPM vs Upfront Pricing Data. The report returns Revenue, Equiv30, and every
+      # PAL/ACM/ECM guar and tracking CPM in one query, so methodology and Cash filters stay inside
+      # the measures. Snapshot 9 stays a query filter because the prompt selects one revenue status.
+      - name: acm_guar_target_imps_000_guar
+        sql: >-
+          (CASE WHEN {CUBE}.guar_est_methodology_key = 2 THEN {CUBE}.acm_guar_target_estimated_imps * {CUBE}.num_of_spots
+          ELSE NULL END) / 1000.0
+        type: sum
+        title: Guar/Target Estimated Impressions - ACM Guar
+        description: >-
+          CARL-3034. ACM guaranteed/target estimated impressions times spots, divided by 1000, only when
+          guar_est_methodology_key = 2. Distinct from acm_guar_target_imps_000, which has no methodology filter.
+      - name: ecm_guar_target_imps_000_guar
+        sql: >-
+          (CASE WHEN {CUBE}.guar_est_methodology_key = 3 THEN {CUBE}.ecm_guar_target_estimated_imps * {CUBE}.num_of_spots
+          ELSE NULL END) / 1000.0
+        type: sum
+        title: Guar/Target Estimated Impressions - ECM Guar
+        description: >-
+          CARL-3034. ECM guaranteed/target estimated impressions times spots, divided by 1000, only when
+          guar_est_methodology_key = 3.
+      - name: pal_guar_target_imps_000_tracking
+        sql: >-
+          (CASE WHEN {CUBE}.tracking_est_methodology_key = 1 THEN {CUBE}.pal_guar_target_estimated_imps * {CUBE}.num_of_spots
+          ELSE NULL END) / 1000.0
+        type: sum
+        title: Guar/Target Estimated Impressions - PAL Tracking
+        description: >-
+          CARL-3034. PAL guaranteed/target estimated impressions times spots, divided by 1000, only when
+          tracking_est_methodology_key = 1.
+      - name: ecm_guar_target_imps_000_tracking
+        sql: >-
+          (CASE WHEN {CUBE}.tracking_est_methodology_key = 3 THEN {CUBE}.ecm_guar_target_estimated_imps * {CUBE}.num_of_spots
+          ELSE NULL END) / 1000.0
+        type: sum
+        title: Guar/Target Estimated Impressions - ECM Tracking
+        description: >-
+          CARL-3034. ECM guaranteed/target estimated impressions times spots, divided by 1000, only when
+          tracking_est_methodology_key = 3.
+      - name: cash_revenue
+        sql: CASE WHEN {CUBE}.unit_type_group_key = 1 THEN {CUBE}.revenue ELSE NULL END
+        type: sum
+        title: Cash Revenue
+        description: >-
+          CARL-3034. Revenue for Cash unit types (unit_type_group_key = 1). Numerator of the Cash PAL, ACM,
+          and ECM Net Corp CPMs. Distinct from revenue, which has no unit-type-group filter.
+      - name: cash_revenue_tracked
+        sql: >-
+          (CASE WHEN {CUBE}.unit_type_group_key = 1 THEN (CASE WHEN {CUBE}.tracking_est_methodology_key = 0
+          THEN NULL ELSE {CUBE}.revenue END) ELSE NULL END)
+        type: sum
+        title: Cash Revenue (Tracked Methodology Only)
+        description: >-
+          CARL-4336 Let's Make A Deal CPM. Cash revenue excluding rows whose tracking estimate methodology
+          is N/A (key 0); any non-zero methodology counts, unlike the per-methodology cash_revenue_*_tracking
+          measures above. Mirrors cash_working_revenue_tracked on projected_working_revenue_fact
+          (CARL-4311) — MSTR generates this as alias WJXBFS2 and labels it "Revenue - Post ACM", i.e.
+          "Post ACM" is this tracked-methodology cash revenue, not a separate column. Distinct from
+          cash_revenue, which has no tracking-methodology filter.
+      - name: cash_revenue_pal_guar
+        sql: >-
+          CASE WHEN {CUBE}.unit_type_group_key = 1 AND {CUBE}.guar_est_methodology_key = 1 THEN {CUBE}.revenue
+          ELSE NULL END
+        type: sum
+        title: Cash Revenue - PAL Guar
+        description: >-
+          CARL-3034. Cash revenue whose guaranteed estimate methodology is PAL (key 1). Numerator of
+          Cash Guar/Target Estimated CPM - PAL Guar.
+      - name: cash_revenue_acm_guar
+        sql: >-
+          CASE WHEN {CUBE}.unit_type_group_key = 1 AND {CUBE}.guar_est_methodology_key = 2 THEN {CUBE}.revenue
+          ELSE NULL END
+        type: sum
+        title: Cash Revenue - ACM Guar
+        description: >-
+          CARL-3034. Cash revenue whose guaranteed estimate methodology is ACM (key 2). Numerator of
+          Cash Guar/Target Estimated CPM - ACM Guar.
+      - name: cash_revenue_ecm_guar
+        sql: >-
+          CASE WHEN {CUBE}.unit_type_group_key = 1 AND {CUBE}.guar_est_methodology_key = 3 THEN {CUBE}.revenue
+          ELSE NULL END
+        type: sum
+        title: Cash Revenue - ECM Guar
+        description: >-
+          CARL-3034. Cash revenue whose guaranteed estimate methodology is ECM (key 3). Numerator of
+          Cash Guar/Target Estimated CPM - ECM Guar.
+      - name: cash_revenue_pal_tracking
+        sql: >-
+          CASE WHEN {CUBE}.unit_type_group_key = 1 AND {CUBE}.tracking_est_methodology_key = 1 THEN {CUBE}.revenue
+          ELSE NULL END
+        type: sum
+        title: Cash Revenue - PAL Tracking
+        description: >-
+          CARL-3034. Cash revenue whose tracking estimate methodology is PAL (key 1). Numerator of
+          Cash Guar/Target Estimated CPM - PAL Tracking.
+      - name: cash_revenue_acm_tracking
+        sql: >-
+          CASE WHEN {CUBE}.unit_type_group_key = 1 AND {CUBE}.tracking_est_methodology_key = 2 THEN {CUBE}.revenue
+          ELSE NULL END
+        type: sum
+        title: Cash Revenue - ACM Tracking
+        description: >-
+          CARL-3034. Cash revenue whose tracking estimate methodology is ACM (key 2). Numerator of
+          Cash Guar/Target Estimated CPM - ACM Tracking.
+      - name: cash_revenue_ecm_tracking
+        sql: >-
+          CASE WHEN {CUBE}.unit_type_group_key = 1 AND {CUBE}.tracking_est_methodology_key = 3 THEN {CUBE}.revenue
+          ELSE NULL END
+        type: sum
+        title: Cash Revenue - ECM Tracking
+        description: >-
+          CARL-3034. Cash revenue whose tracking estimate methodology is ECM (key 3). Numerator of
+          Cash Guar/Target Estimated CPM - ECM Tracking.
+      - name: cash_pal_guar_target_imps_000
+        sql: >-
+          (CASE WHEN {CUBE}.unit_type_group_key = 1 AND {CUBE}.guar_est_methodology_key = 1
+          THEN {CUBE}.pal_guar_target_estimated_imps * {CUBE}.num_of_spots ELSE NULL END) / 1000.0
+        type: sum
+        title: Cash Guar/Target Estimated Impressions - PAL Guar
+        description: >-
+          CARL-3034. Cash PAL guaranteed impressions in thousands. Denominator of Cash Guar/Target
+          Estimated CPM - PAL Guar.
+      - name: cash_acm_guar_target_imps_000_guar
+        sql: >-
+          (CASE WHEN {CUBE}.unit_type_group_key = 1 AND {CUBE}.guar_est_methodology_key = 2
+          THEN {CUBE}.acm_guar_target_estimated_imps * {CUBE}.num_of_spots ELSE NULL END) / 1000.0
+        type: sum
+        title: Cash Guar/Target Estimated Impressions - ACM Guar
+        description: >-
+          CARL-3034. Cash ACM guaranteed impressions in thousands. Denominator of Cash Guar/Target
+          Estimated CPM - ACM Guar.
+      - name: cash_ecm_guar_target_imps_000_guar
+        sql: >-
+          (CASE WHEN {CUBE}.unit_type_group_key = 1 AND {CUBE}.guar_est_methodology_key = 3
+          THEN {CUBE}.ecm_guar_target_estimated_imps * {CUBE}.num_of_spots ELSE NULL END) / 1000.0
+        type: sum
+        title: Cash Guar/Target Estimated Impressions - ECM Guar
+        description: >-
+          CARL-3034. Cash ECM guaranteed impressions in thousands. Denominator of Cash Guar/Target
+          Estimated CPM - ECM Guar.
+      - name: cash_pal_guar_target_imps_000_tracking
+        sql: >-
+          (CASE WHEN {CUBE}.unit_type_group_key = 1 AND {CUBE}.tracking_est_methodology_key = 1
+          THEN {CUBE}.pal_guar_target_estimated_imps * {CUBE}.num_of_spots ELSE NULL END) / 1000.0
+        type: sum
+        title: Cash Guar/Target Estimated Impressions - PAL Tracking
+        description: >-
+          CARL-3034. Cash PAL tracking impressions in thousands. Denominator of Cash Guar/Target
+          Estimated CPM - PAL Tracking.
+      - name: cash_acm_guar_target_imps_000_tracking
+        sql: >-
+          (CASE WHEN {CUBE}.unit_type_group_key = 1 AND {CUBE}.tracking_est_methodology_key = 2
+          THEN {CUBE}.acm_guar_target_estimated_imps * {CUBE}.num_of_spots ELSE NULL END) / 1000.0
+        type: sum
+        title: Cash Guar/Target Estimated Impressions - ACM Tracking
+        description: >-
+          CARL-3034. Cash ACM tracking impressions in thousands. Denominator of Cash Guar/Target
+          Estimated CPM - ACM Tracking.
+      - name: cash_ecm_guar_target_imps_000_tracking
+        sql: >-
+          (CASE WHEN {CUBE}.unit_type_group_key = 1 AND {CUBE}.tracking_est_methodology_key = 3
+          THEN {CUBE}.ecm_guar_target_estimated_imps * {CUBE}.num_of_spots ELSE NULL END) / 1000.0
+        type: sum
+        title: Cash Guar/Target Estimated Impressions - ECM Tracking
+        description: >-
+          CARL-3034. Cash ECM tracking impressions in thousands. Denominator of Cash Guar/Target
+          Estimated CPM - ECM Tracking. The MSTR SQL export pre-aggregates the matching cash revenue
+          column and the other five cash impression columns, and this one follows that same pair.
+      - name: cash_pal_net_corp_imps_000
+        sql: >-
+          (CASE WHEN {CUBE}.unit_type_group_key = 1 THEN {CUBE}.pal_net_corp_estimated_imps * {CUBE}.num_of_spots
+          ELSE NULL END) / 1000.0
+        type: sum
+        title: Cash PAL Net Corp Estimated Imps
+        description: >-
+          CARL-3034. PAL net corporate estimated impressions times spots, divided by 1000, for Cash unit
+          types only. Denominator of Cash PAL Net Corp Estimated CPM.
+      - name: cash_acm_net_corp_imps_000
+        sql: >-
+          (CASE WHEN {CUBE}.unit_type_group_key = 1 THEN {CUBE}.acm_net_corp_estimated_imps * {CUBE}.num_of_spots
+          ELSE NULL END) / 1000.0
+        type: sum
+        title: Cash ACM Net Corp Estimated Imps
+        description: >-
+          CARL-3034. ACM net corporate estimated impressions times spots, divided by 1000, for Cash unit
+          types only. Denominator of Cash ACM Net Corp Estimated CPM.
+      - name: cash_ecm_net_corp_imps_000
+        sql: >-
+          (CASE WHEN {CUBE}.unit_type_group_key = 1 THEN {CUBE}.ecm_net_corp_estimated_imps * {CUBE}.num_of_spots
+          ELSE NULL END) / 1000.0
+        type: sum
+        title: Cash ECM Net Corp Estimated Imps
+        description: >-
+          CARL-3034. ECM net corporate estimated impressions times spots, divided by 1000, for Cash unit
+          types only. Denominator of Cash ECM Net Corp Estimated CPM.
+      - name: cash_pal_guar_cpm
+        sql: CAST({cash_revenue_pal_guar} AS DOUBLE) / NULLIF({cash_pal_guar_target_imps_000}, 0)
+        type: number
+        title: Cash Guar/Target Estimated CPM - PAL Guar
+        description: >-
+          CARL-3034. Cash PAL-guaranteed revenue over cash PAL-guaranteed impressions. MSTR Guar/Target
+          Estimated CPM - PAL Guar. A ratio of two sums.
+      - name: cash_acm_guar_cpm
+        sql: CAST({cash_revenue_acm_guar} AS DOUBLE) / NULLIF({cash_acm_guar_target_imps_000_guar}, 0)
+        type: number
+        title: Cash Guar/Target Estimated CPM - ACM Guar
+        description: >-
+          CARL-3034. Cash ACM-guaranteed revenue over cash ACM-guaranteed impressions. Distinct from
+          acm_guar_target_cpm, which does not bake the Cash or methodology filters.
+      - name: cash_ecm_guar_cpm
+        sql: CAST({cash_revenue_ecm_guar} AS DOUBLE) / NULLIF({cash_ecm_guar_target_imps_000_guar}, 0)
+        type: number
+        title: Cash Guar/Target Estimated CPM - ECM Guar
+        description: >-
+          CARL-3034. Cash ECM-guaranteed revenue over cash ECM-guaranteed impressions.
+      - name: cash_pal_tracking_cpm
+        sql: CAST({cash_revenue_pal_tracking} AS DOUBLE) / NULLIF({cash_pal_guar_target_imps_000_tracking}, 0)
+        type: number
+        title: Cash Guar/Target Estimated CPM - PAL Tracking
+        description: >-
+          CARL-3034. Cash PAL-tracking revenue over cash PAL-tracking impressions.
+      - name: cash_acm_tracking_cpm
+        sql: CAST({cash_revenue_acm_tracking} AS DOUBLE) / NULLIF({cash_acm_guar_target_imps_000_tracking}, 0)
+        type: number
+        title: Cash Guar/Target Estimated CPM - ACM Tracking
+        description: >-
+          CARL-3034. Cash ACM-tracking revenue over cash ACM-tracking impressions.
+      - name: cash_ecm_tracking_cpm
+        sql: CAST({cash_revenue_ecm_tracking} AS DOUBLE) / NULLIF({cash_ecm_guar_target_imps_000_tracking}, 0)
+        type: number
+        title: Cash Guar/Target Estimated CPM - ECM Tracking
+        description: >-
+          CARL-3034. Cash ECM-tracking revenue over cash ECM-tracking impressions.
+      - name: cash_pal_net_corp_cpm
+        sql: CAST({cash_revenue} AS DOUBLE) / NULLIF({cash_pal_net_corp_imps_000}, 0)
+        type: number
+        title: Cash PAL Net Corp Estimated CPM
+        description: >-
+          CARL-3034. Cash revenue over cash PAL net corp impressions. Distinct from pal_net_corp_cpm, which
+          has no Cash filter.
+      - name: cash_acm_net_corp_cpm
+        sql: CAST({cash_revenue} AS DOUBLE) / NULLIF({cash_acm_net_corp_imps_000}, 0)
+        type: number
+        title: Cash ACM Net Corp Estimated CPM
+        description: >-
+          CARL-3034. Cash revenue over cash ACM net corp impressions. Distinct from acm_net_corp_cpm.
+      - name: cash_acm_net_corp_cpm_tracked
+        sql: CAST({cash_revenue_tracked} AS DOUBLE) / NULLIF({cash_acm_net_corp_imps_000}, 0)
+        type: number
+        title: ACM Net Corp Estimated CPM
+        description: >-
+          CARL-4336 Let's Make A Deal CPM. MSTR [ACM Net Corp Estimated CPM] = [Revenue - Post ACM - Unit
+          Type Group in Cash] / [ACM Net Corp Estimated Impressions - Unit Type Group in Cash] =
+          cash_revenue_tracked (WJXBFS2) over cash_acm_net_corp_imps_000 (WJXBFS4). Ratio of sums, matching
+          MSTR's divide-after-aggregation. Distinct from cash_acm_net_corp_cpm, which divides by plain
+          cash_revenue (no tracked-methodology restriction) — that measure predates this report and stays
+          as-is for whatever report relies on it.
+      - name: cash_ecm_net_corp_cpm
+        sql: CAST({cash_revenue} AS DOUBLE) / NULLIF({cash_ecm_net_corp_imps_000}, 0)
+        type: number
+        title: Cash ECM Net Corp Estimated CPM
+        description: >-
+          CARL-3034. Cash revenue over cash ECM net corp impressions. Distinct from ecm_net_corp_cpm.
+      - name: deal_net_cpm
+        sql: '{CUBE}.deal_net_cpm'
+        type: sum
+        title: Deal Net CPM
+        description: >-
+          CARL-4339 WBD DR Analysis + Rateclass. Sum of the deal's net CPM column as landed on
+          invoice_revenue_fact — not derived from revenue/impressions here, MSTR sums the raw
+          per-row deal_net_cpm value directly. Distinct from the computed *_cpm measures above,
+          which are ratios of summed revenue over summed impressions.

@@ -1,0 +1,96 @@
+views:
+  - name: venus_view_standard_deals
+    public: true
+    title: Standard — Impression Dimensions
+    description: >-
+      Business view for standard deals on impression_dimensions.
+      Single-network measures only.
+    meta:
+      view_scope: business
+      business: venus
+      fact_table: impression_dimensions
+    cubes:
+      - join_path: cube_venus_silver_serving_impression_dimensions
+        includes:
+          - record_count
+          - name: deal_id
+            title: Deal Id
+          - name: opportunity_id
+            title: Opportunity Id
+          - name: network_id
+            title: Network Id
+          - name: property_id
+            title: Property Id
+          - name: division
+            title: Division
+          - name: daypart
+            title: Daypart
+          - name: selling_title
+            title: Selling Title
+          - name: impression_type
+            title: Impression Type
+          - name: calc_version_no
+            title: Calc Version No
+          - name: created_date
+            title: Created Date
+          - name: deal_start_date
+            title: Deal Start Date
+          - name: deal_end_date
+            title: Deal End Date
+          - name: is_latest_deal_version
+            title: Is Latest Deal Version
+          - name: super_deal_id
+            title: Super Deal Id
+          - name: channel
+            title: Channel
+          - name: standard_guaranteed_impressions
+            title: Guaranteed Impressions
+          - name: standard_guaranteed_actual_impressions
+            title: Guaranteed Actual Impressions
+          - name: standard_guaranteed_preactual_impressions
+            title: Guaranteed Pre-Actual Impressions
+          - name: standard_delivered_impressions
+            title: Delivered Impressions
+          - name: standard_delivered_actual_impressions
+            title: Delivered Actual Impressions
+          - name: standard_delivered_preactual_impressions
+            title: Delivered Pre-Actual Impressions
+          - name: standard_delivery_status
+            title: Delivery Status
+          - name: market_type_id
+            title: Market Type Id
+          - name: standard_adu_units_count
+            title: ADU Units
+          - name: standard_unaired_unit_count
+            title: Unaired Units
+          - name: standard_recap_units_count
+            title: Recap Units
+          - name: advertiser_id
+            title: Advertiser Id
+          - name: agency_id
+            title: Agency Id
+          - name: standard_cpm
+            title: CPM
+          - name: standard_variance
+            title: Variance
+          - name: standard_dollar_liability
+            title: Dollar Liability
+      - join_path: cube_venus_silver_serving_impression_dimensions.cube_linear_digital_revenue_bronze_ideal_posting_stw_network
+        includes:
+          - network_name
+          - network_label
+      - join_path: cube_venus_silver_serving_impression_dimensions.cube_linear_digital_revenue_bronze_ideal_dci_sell_property_category
+        includes:
+          - property_category_name
+      - join_path: cube_venus_silver_serving_impression_dimensions.cube_linear_digital_revenue_bronze_ideal_msa_de_deal_hdr
+        includes:
+          - deal_name
+      - join_path: cube_venus_silver_serving_impression_dimensions.cube_linear_digital_revenue_bronze_ideal_dci_super_deal
+        includes:
+          - super_deal_name
+      - join_path: cube_venus_silver_serving_impression_dimensions.cube_linear_digital_revenue_bronze_ideal_msa_ge_advertisers
+        includes:
+          - advertiser_name
+      - join_path: cube_venus_silver_serving_impression_dimensions.cube_linear_digital_revenue_bronze_ideal_msa_ge_agencies
+        includes:
+          - agency_name

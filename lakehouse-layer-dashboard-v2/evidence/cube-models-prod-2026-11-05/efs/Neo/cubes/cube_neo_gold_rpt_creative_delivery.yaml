@@ -1,0 +1,105 @@
+cubes:
+  - name: cube_neo_gold_rpt_creative_delivery
+    sql_table: "{{ catalog('neo_gold') }}.rpt_creative_delivery"
+    public: false
+    data_source: default
+    title: NEO Creative Delivery
+    description: >
+      Creative asset delivery from neo_gold.rpt_creative_delivery (FreeWheel 1P + ClearLine NG union).
+    dimensions:
+      - name: event_date_et
+        sql: CAST({CUBE}.event_date_et AS TIMESTAMP)
+        type: time
+        title: Event Date
+        description: Date of delivery in Eastern Time
+      - name: deal_id
+        sql: '{CUBE}.deal_id'
+        type: number
+        title: Deal ID
+        description: NEO internal deal identifier
+      - name: deal_name
+        sql: '{CUBE}.deal_name'
+        type: string
+        title: Deal Name
+        description: Deal / placement name
+      - name: advertiser_id
+        sql: '{CUBE}.advertiser_id'
+        type: string
+        title: Advertiser ID
+        description: Advertiser identifier in NEO
+      - name: advertiser_name
+        sql: '{CUBE}.advertiser_name'
+        type: string
+        title: Advertiser Name
+        description: Advertiser / brand name
+      - name: agency_id
+        sql: '{CUBE}.agency_id'
+        type: number
+        title: Agency ID
+        description: Agency identifier in NEO
+      - name: agency_name
+        sql: '{CUBE}.agency_name'
+        type: string
+        title: Agency Name
+        description: Agency managing the deal
+      - name: creative_id
+        sql: '{CUBE}.creative_id'
+        type: string
+        primary_key: true
+        title: Creative ID
+        description: Creative asset identifier
+      - name: creative_name
+        sql: '{CUBE}.creative_name'
+        type: string
+        title: Creative Name
+        description: Creative asset name
+      - name: creative_duration
+        sql: '{CUBE}.creative_duration'
+        type: number
+        title: Creative Duration (seconds)
+        description: Creative length in seconds when available
+      - name: source
+        sql: '{CUBE}.source'
+        type: string
+        title: Data Source
+        description: freewheel or clearline
+    measures:
+      - name: count
+        type: count
+        title: Row Count
+        description: Number of creative delivery rows
+      - name: total_impressions
+        sql: '{CUBE}.impressions'
+        type: sum
+        title: Creative Impressions
+        description: Delivered impressions by creative
+      - name: total_completions
+        sql: '{CUBE}.completions'
+        type: sum
+        title: Creative Completions
+        description: Completed views by creative
+      - name: avg_vcr
+        sql: >
+          CASE
+            WHEN SUM({CUBE}.impressions) > 0
+            THEN (CAST(SUM({CUBE}.completions) AS DOUBLE) / SUM({CUBE}.impressions)) * 100
+            ELSE 0
+          END
+        type: number
+        title: Video Completion Rate (%)
+        description: Completions divided by impressions × 100
+      - name: total_revenue
+        sql: '{CUBE}.revenue'
+        type: sum
+        title: Creative Spend ($)
+        description: Delivered spend by creative
+      - name: effective_cpm
+        sql: >
+          CASE
+            WHEN SUM({CUBE}.impressions) > 0
+            THEN (SUM({CUBE}.revenue) / SUM({CUBE}.impressions)) * 1000
+            ELSE 0
+          END
+        type: number
+        title: Effective CPM ($)
+        description: Revenue per thousand impressions by creative

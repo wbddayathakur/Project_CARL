@@ -1,0 +1,388 @@
+views:
+  - name: ad_sales_view_invoice_revenue_fact
+    public: true
+    title: Ad Sales — Invoice Revenue Fact
+    description: >-
+      Business view for ad_sales on invoice_revenue_fact.
+      CLARIFICATIONS (CARL-3631 dev QuickSight validation): (1) MSTR's "Booked Revenue"/"Revenue" measure
+      is this view's Gross Revenue — there is no separate Booked Revenue column; Gross Revenue is also the
+      correct base for Net Revenue/Agency Commission (see the Gross vs Net for $0 billing report), so it
+      keeps that name rather than being renamed. (2) "Sold LOA Network"/"Sold LOA Market"/"Sold LOA
+      Guar/Target Demographic"/"Sold LOA Unit Broadcast Quarter" (Sports SLOA reports) are the same
+      Network/Market/Guar/Target Demographic/Unit Broadcast Quarter fields already in this view — already
+      scoped to the Sold-LOA snapshot once filtered on Deal Revenue Snapshot = "Sold-LOA/1st to Order/CB
+      Hold"; not a separate role-played dimension. (3) MSTR's displayed "Broadcast Quarter"/"Calendar
+      Quarter" text is a computed "4th Qtr 2026"-style string (ordinal quarter + year), not necessarily
+      identical formatting to bcast_qtr_desc/cal_qtr_desc here — confirm before treating as an exact
+      match. (4) Some MSTR filter values (Product Category, Program Average Selling Daypart) carry a
+      source-system ID prefix/suffix not present in this view's clean description fields — prod_cat_name_id
+      is available as the numeric counterpart for Product Category. (5) CARL-3016 Invoiced-Booked Revenue by Team
+      uses a single path invoice → team_ae_bridge (ae_fraction_fact) → member / sales team dims. Team member and
+      fraction are month-aligned (unit broadcast month + acct_cov_team_member_key); coverage team member labels
+      are members with a fraction row for that invoice month, not every member on the team key alone. Do not sum
+      Gross Revenue at invoice-only grain while this path is active. Finance/sox views omit these paths.
+      (6) CARL-3953 Theatrical Deals - Various: MSTR view filters on hundreds of distinct brand_key values
+      (many labeled VARIOUS). Filter on Brand (ID), not brand_name alone, to match MSTR scope.
+    meta:
+      view_scope: business
+      business: ad_sales
+      fact_table: invoice_revenue_fact
+    cubes:
+      - join_path: cube_carl_dwhprd_gold_invoice_revenue_fact
+        includes:
+          - name: deal_id
+            title: Deal Id
+          # CARL-4030 CNNI Posted Spots: filter out spots with no program airing (key <= 0).
+          # Program airing itself is already joined and exposed through program_airing_dim
+          # below; this is the bare foreign key, needed because MSTR's Posted Spots report
+          # only returns a spot when it resolves to a program airing, while this view's
+          # program_airing_dim join stays a LEFT JOIN so finance/sox aired-inventory
+          # reporting on this same view keeps spots with no programme attached.
+          - name: program_airing_key
+            title: Program Airing Key
+          - name: revenue
+            title: Gross Revenue
+          - eqv30_spots
+          - name: guar_target_imps_000
+            title: Guar/Target Estimated Impressions
+          - name: net_corp_imps_000
+            title: Net Corp Estimated Imps
+          - name: acm_hh_imps_000
+            title: ACM HH Estimated Imps
+          - name: pal_guar_target_imps_000
+            title: Guar/Target Estimated Impressions - PAL Guar
+          - name: acm_guar_target_imps_000_tracking
+            title: Guar/Target Estimated Impressions - ACM Tracking
+          - name: ratecard_unequiv_rate
+            title: RateCard Unequiv Rate
+          - potential_cancelable_revenue
+          - agency_commission
+          - net_revenue
+          - commission_pct
+          - number_of_spots
+          - as_sold_unequiv_rate
+          - name: guar_target_demo_key
+            title: Guar/Target Demographic (ID)
+          - name: revenue_eff_bcast_qtr_key
+            title: Broadcast Quarter (ID)
+          - name: revenue_eff_cal_qtr_key
+            title: Calendar Quarter (ID)
+          - name: revenue_eff_cal_year_key
+            title: Calendar Year (ID)
+          - name: revenue_eff_cal_month_key
+            title: Revenue Effective Calendar Month (ID)
+          - name: revenue_area_key
+            title: Revenue Area (ID)
+          - name: network_key
+            title: Network (ID)
+          - name: brand_key
+            title: Brand (ID)
+          - name: market_key
+            title: Market (ID)
+          - name: rateclass_key
+            title: Rateclass (ID)
+          - name: deal_revenue_snapshot_key
+            title: Deal Revenue Snapshot (ID)
+          - name: current_booked_revenue
+            title: Revenue - Current Booked
+          - name: usn_key
+            title: USN
+          - name: unit_type_group_key
+            title: Unit Type Group (ID)
+          - name: guar_est_methodology_key
+            title: Guar Estimated Methodology (ID)
+          - name: buy_type_key
+            title: Buy Type (ID)
+          - name: deal_revenue_status_key
+            title: Deal Revenue Status (ID)
+          - name: inventory_type_key
+            title: Inventory Type (ID)
+          - name: selling_title_key
+            title: Selling Title (ID)
+          - acm_net_corp_imps_000
+          - hh_imps_000
+          - pal_net_corp_imps_000
+          - ecm_net_corp_imps_000
+          - net_corp_actual_imps_000
+          - acm_guar_target_imps_000
+          - guar_target_cpm
+          - net_corp_cpm
+          - acm_net_corp_cpm
+          - acm_hh_cpm
+          - pal_net_corp_cpm
+          - ecm_net_corp_cpm
+          - net_corp_actual_cpm
+          - acm_guar_target_cpm
+          - avg_equiv30_unit_rate
+          - ratecard_pct
+          - revenue_over_ratecard_rate
+          - revenue_tracked
+          - name: act_air_daypart_selling_desc
+            description: actual_air_daypart_dim.act_air_daypart_selling_desc looked up by actual_air_daypart_key via a correlated subquery, for the same reason as net_name_fact above.
+              See that member's description.
+          - name: adv_default_prod_cat_key
+            title: Advertiser Primary Product Category (ID)
+          - adv_default_prod_cat_name
+          - name: acm_guar_target_imps_000_guar
+            title: Guar/Target Estimated Impressions - ACM Guar
+          - name: ecm_guar_target_imps_000_guar
+            title: Guar/Target Estimated Impressions - ECM Guar
+          - name: pal_guar_target_imps_000_tracking
+            title: Guar/Target Estimated Impressions - PAL Tracking
+          - name: ecm_guar_target_imps_000_tracking
+            title: Guar/Target Estimated Impressions - ECM Tracking
+          - name: cash_revenue
+            title: Cash Revenue
+          - name: cash_revenue_pal_guar
+            title: Cash Revenue - PAL Guar
+          - name: cash_revenue_acm_guar
+            title: Cash Revenue - ACM Guar
+          - name: cash_revenue_ecm_guar
+            title: Cash Revenue - ECM Guar
+          - name: cash_revenue_pal_tracking
+            title: Cash Revenue - PAL Tracking
+          - name: cash_revenue_acm_tracking
+            title: Cash Revenue - ACM Tracking
+          - name: cash_revenue_ecm_tracking
+            title: Cash Revenue - ECM Tracking
+          - name: cash_pal_guar_target_imps_000
+            title: Cash Guar/Target Estimated Impressions - PAL Guar
+          - name: cash_acm_guar_target_imps_000_guar
+            title: Cash Guar/Target Estimated Impressions - ACM Guar
+          - name: cash_ecm_guar_target_imps_000_guar
+            title: Cash Guar/Target Estimated Impressions - ECM Guar
+          - name: cash_pal_guar_target_imps_000_tracking
+            title: Cash Guar/Target Estimated Impressions - PAL Tracking
+          - name: cash_acm_guar_target_imps_000_tracking
+            title: Cash Guar/Target Estimated Impressions - ACM Tracking
+          - name: cash_ecm_guar_target_imps_000_tracking
+            title: Cash Guar/Target Estimated Impressions - ECM Tracking
+          - name: cash_pal_net_corp_imps_000
+            title: Cash PAL Net Corp Estimated Imps
+          - name: cash_acm_net_corp_imps_000
+            title: Cash ACM Net Corp Estimated Imps
+          - name: cash_ecm_net_corp_imps_000
+            title: Cash ECM Net Corp Estimated Imps
+          - name: cash_pal_guar_cpm
+            title: Cash Guar/Target Estimated CPM - PAL Guar
+          - name: cash_acm_guar_cpm
+            title: Cash Guar/Target Estimated CPM - ACM Guar
+          - name: cash_ecm_guar_cpm
+            title: Cash Guar/Target Estimated CPM - ECM Guar
+          - name: cash_pal_tracking_cpm
+            title: Cash Guar/Target Estimated CPM - PAL Tracking
+          - name: cash_acm_tracking_cpm
+            title: Cash Guar/Target Estimated CPM - ACM Tracking
+          - name: cash_ecm_tracking_cpm
+            title: Cash Guar/Target Estimated CPM - ECM Tracking
+          - name: cash_pal_net_corp_cpm
+            title: Cash PAL Net Corp Estimated CPM
+          - name: cash_acm_net_corp_cpm
+            title: Cash ACM Net Corp Estimated CPM
+          - name: cash_ecm_net_corp_cpm
+            title: Cash ECM Net Corp Estimated CPM
+          - adv_id
+          - adv_name
+          - adv_name_id
+          - name: adv_reporting_parent
+            title: Advertiser Parent
+          - bbt_head_id
+          - bbt_heading
+          - bcast_qtr_desc
+          - brand_name
+          - name: revenue_eff_bcast_month_name
+            alias: broadcast_month_name
+          - name: broadcast_qtr_key
+            title: Unit Broadcast Quarter (ID)
+          - name: broadcast_week_begin_date
+            title: Broadcast Week Of
+          - name: broadcast_week_end_date
+            title: Broadcast Week End
+          - name: broadcast_week_key
+            title: Broadcast Week (ID)
+          - name: unit_sched_broadcast_week_num
+            alias: broadcast_week_num
+            title: Unit Broadcast Week
+          - name: unit_sched_broadcast_year
+            alias: broadcast_year
+          - buy_ae_string
+          - buy_type_desc
+          - buy_type_sales_group_desc
+          - buying_agency_country_code
+          - buying_agency_id
+          - buying_agency_name
+          - buying_agency_name_id
+          - name: buying_agency_reporting_parent
+            title: Buying Agency Parent
+          - buying_agency_state
+          - name: buying_mega_agency_id
+            title: Buying Mega Agency (ID)
+          - buying_mega_agency_name
+          - cal_qtr_desc
+          - name: unit_sched_calendar_month_name
+            alias: calendar_month_name
+          - calendar_month_name_year
+          - name: calendar_week_key
+            title: Unit Calendar Week (ID)
+          - calendar_week_label
+          - name: unit_sched_calendar_year
+            alias: calendar_year
+          - client_ae_string
+          - name: combination_ind
+            title: Deal Combination Indicator
+          - name: property_common_property_series_name
+            alias: common_property_series_name
+            title: Series Title
+          - name: unit_sched_bday_date
+            alias: day_date
+          - name: day_num_in_week
+            title: Day of Week (ID)
+          - name: day_of_week_long
+            title: Day of Week
+          - deal_cancelled_flag
+          - deal_comments
+          - deal_create_date
+          - deal_current_status_desc
+          - name: deal_eqv_ind
+            title: Deal Eqv Indicator
+          - deal_name
+          - deal_revenue_snapshot_desc
+          - deal_revenue_status_desc
+          - deal_type_desc
+          - deal_year
+          - name: demo_name
+            title: Guar/Target Demographic
+          - name: division
+            title: Order Division
+          - name: division_id
+            title: Order Division (ID)
+          - name: first_time_to_hold_or_order_date
+            title: First Time To Hold/Order Date
+          - gab_deal_id
+          - name: program_airing_grid_title_desc
+            alias: grid_title_desc
+          - guar_est_methodology_abbv
+          - name: guaranteed_ind
+            title: Deal Guaranteed Indicator
+          - name: inventory_cat_desc
+            description: inventory_type_dim.inventory_cat_desc looked up by inventory_type_key via a correlated subquery, for the same reason as net_name_fact above. See that member's
+              description.
+          - name: inventory_type_desc
+            description: inventory_type_dim.inventory_type_desc looked up by inventory_type_key via a correlated subquery, for the same reason as net_name_fact above. See that member's
+              description.
+          - name: invoice_id
+            title: Invoice
+          - invoice_type_desc
+          - name: invoice_type_key
+            title: Invoice Type (ID)
+          - isci_code
+          - last_revision_user
+          - log_status_code
+          - log_status_desc
+          - market_code
+          - name: market_desc
+            description: market_dim.market_desc looked up by market_key via a correlated subquery, for the same reason as net_name_fact above. See that member's description.
+          - market_group_desc
+          - master_selling_title_desc
+          - name: net_call_sign
+            title: Network Call Sign
+          - name: net_corp_demo
+            title: Network Corporate Demo
+          - name: net_name
+            description: 'network_dim.net_name looked up by network_key via a correlated subquery, so the value is resident on this fact cube and usable in QuickSight pivot row/column
+              ranking. See the comment above this block for why. Identical value and NULL semantics to the network_dim join: NULL when network_key has no matching dimension row.'
+          - order_flight_end_date
+          - order_flight_start_date
+          - name: order_num
+            title: Order
+          - order_status_desc
+          - plan_ae_string
+          - planning_agency_country_code
+          - planning_agency_id
+          - name: planning_agency_name
+            title: Planning Agency
+          - planning_agency_name_id
+          - planning_agency_state
+          - name: primary_ae
+            title: Buying AE
+          - name: primary_ae_office
+            title: Buying AE Office
+          - name: primary_ae_sales_region_name
+            title: Buying AE Sales Region
+          - prod_cat_name
+          - prod_cat_name_id
+          - name: prog_airing_start_end_time
+            title: Program Airing Start and End Time
+          - prog_avg_daypart_selling_desc
+          - program_daypart_selling_desc
+          - program_desc
+          - property_category
+          - name: property_category_id
+            title: Order Property Category (ID)
+          - rateclass_category
+          - rateclass_desc
+          - revenue_area_desc
+          - name: revenue_area_mapping_dimension_key
+            alias: revenue_area_mapping_key
+            title: Revenue Area Mapping (ID)
+          - revenue_bcast_year
+          - name: revenue_eff_calendar_month
+            title: Revenue Effective Calendar Month
+          - revenue_eff_calendar_year
+          - revenue_group_desc
+          - sales_rep_name_first_last
+          - sell_title_dpart_selling_desc
+          - selling_title_definition
+          - selling_title_desc
+          - show_name
+          - name: sloa_set_user
+            title: Sold LOA Set User
+          - name: sold_loa_audit_num
+            title: Sold-LOA Audit Number
+          - name: sold_loa_last_confirmed_date
+            title: Sold LOA Last Confirmed Date
+          - name: sold_loa_set_date
+            title: Sold LOA Set Date
+          - sub_account
+          - time_hour
+          - time_w_secs
+          - name: unit_sched_bcast_month_name
+            alias: unit_bcast_month_name
+          - unit_end_time
+          - unit_length_desc
+          - unit_length_value
+          - unit_sched_bcast_month_name
+          - name: unit_sched_bcast_month_num
+            title: Unit Broadcast Month Num
+          - name: unit_sched_bcast_qtr_desc
+            title: Unit Broadcast Quarter
+          - name: unit_sched_bcast_year_key
+            title: Unit Broadcast Year (ID)
+          - name: unit_sched_cal_qtr_desc
+            title: Unit Calendar Quarter
+          - name: unit_sched_cal_qtr_key
+            title: Unit Calendar Quarter (ID)
+          - name: unit_sched_cal_year_key
+            title: Unit Calendar Year (ID)
+          - unit_type_desc
+          - name: unit_type_group_desc
+            description: unit_type_group_dim.unit_type_group_desc looked up by unit_type_group_key via a correlated subquery, for the same reason as net_name_fact above. See that member's
+              description.
+      - join_path: cube_carl_dwhprd_gold_invoice_revenue_fact.cube_carl_dwhprd_gold_invoice_team_ae_bridge
+        includes:
+          - fraction
+          - sales_team_member_key
+      - join_path: >-
+          cube_carl_dwhprd_gold_invoice_revenue_fact.cube_carl_dwhprd_gold_invoice_team_ae_bridge.cube_carl_dwhprd_gold_acct_cov_team_member_dim
+        includes:
+          - coverage_team_member_label
+          - acct_cov_team_member_key
+      - join_path: >-
+          cube_carl_dwhprd_gold_invoice_revenue_fact.cube_carl_dwhprd_gold_invoice_team_ae_bridge.cube_carl_dwhprd_gold_sales_team_member_dim
+        includes:
+          - sales_team_member_name
+      - join_path: >-
+          cube_carl_dwhprd_gold_invoice_revenue_fact.cube_carl_dwhprd_gold_invoice_team_ae_bridge.cube_carl_dwhprd_gold_sales_team_member_dim.cube_carl_dwhprd_gold_sales_office_team_dim
+        includes:
+          - sales_team_name
+          - sales_office_name

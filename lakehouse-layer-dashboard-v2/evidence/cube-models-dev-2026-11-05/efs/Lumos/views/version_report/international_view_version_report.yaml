@@ -1,0 +1,216 @@
+views:
+  - name: international_view_version_report
+    public: true
+    title: International — version report
+    description: >-
+      version report. Spot version attributes for Discovery Latin America.
+      Apply in QuickSight: source_system_region_key 21, holding company key 1
+      (ARGENTINA), and calendar_month_key 202410. The seconds prompt is 30.
+      Equivalent spots are share-weighted spot seconds divided by 30.
+      Those filters are not on the cube. Sales Rep comes from bts_sales_rep_dim.
+      Attributes the engine rolls up stay on this view. Percent-of-total
+      members carry the amount; MicroStrategy divides by the grid total.
+    meta:
+      view_scope: business
+      business: international
+      fact_table: spot_fact
+      mstr_report_name: version report
+      catalog_key: lumos_carl_dwhprd_gold
+      ai_context: >
+        Use this view for the version report. Filter source_system_region_key = 21,
+        holding_company_key = 1, and calendar_month_key = 202410. Measures multiply
+        by sales_rep_revenue_share. Dynamic Booked Equivalent Spots divides spot
+        seconds by 30.
+    cubes:
+      - join_path: cube_carl_dwhprd_gold_spot_fact
+        includes:
+          - name: source_system_region_key
+            title: Source System Region Key
+          - name: calendar_month_key
+            title: Month Key
+          - name: day_key
+            title: Day Key
+          - name: spot_id
+            title: Spot
+          - name: spot_clock_number
+            title: Spot Clock Number
+          - name: spot_clock_hour
+            title: Spot Clock Hour
+          - name: spot_version_length
+            title: Spot Version Length
+          - name: spot_version_expiry_date
+            title: Spot Version Expiry Date
+          - name: spot_version_last_air_date
+            title: Spot Version Last Air Date
+          - name: spot_crt_1
+            title: Spot Copy Class 1
+          - name: spot_crt_2
+            title: Spot Copy Class 2
+          - name: spot_crt_3
+            title: Spot Copy Class 3
+          - name: spot_crt_4
+            title: Spot Copy Class 4
+          - name: spot_length
+            title: Spot Length
+          - name: spot_cpt
+            title: Spot CPT
+          - name: spot_cps
+            title: Spot CPS
+          - name: spot_cpp
+            title: Spot CPP
+          - name: day_date
+            title: Date
+          - name: break_end_time
+            title: Break End Time
+          - name: break_id
+            title: Break ID
+          - name: break_start_time
+            title: Break Start Time
+          - name: break_type_desc
+            title: Break Type
+          - name: holding_company_name
+            title: Holding Company
+          - name: display_channel_name
+            title: Channel
+          - name: bts_sales_rep_name
+            title: Sales Rep
+          - name: broadcast_month_name
+            title: Broadcast Month
+          - name: broadcast_week_desc
+            title: Broadcast Week
+          - name: broadcast_year
+            title: Broadcast Year
+          - name: demographic_name
+            title: Demographic
+          - name: equivalent_spots
+            title: "Booked Spots(Equivalent [Dynamic Spots])"
+          - name: avg_equiv_unit_rate
+            title: Avg Rate LOC (Equiv 30)
+          - name: avg_unequiv_spot_price_loc
+            title: Avg Rate LOC (Unequiv)
+          - name: avg_equiv_unit_current_rate_usd
+            title: Avg Current Rate USD((Equiv 30))
+          - name: avg_equiv_unit_hist_rate_usd
+            title: Avg Hist Rate USD(Equiv 30)
+          - name: avg_unequiv_spot_price_current_rate_usd
+            title: Avg Current Rate USD(Unequiv)
+          - name: avg_unequiv_spot_price_hist_rate_usd
+            title: Avg Hist Rate USD(Unequiv)
+          - name: pct_spot_price_loc
+            title: "% of Total Spot Price LOC"
+          - name: pct_spot_price_current_rate_usd
+            title: "% of Total Spot Price Current Rate USD)"
+          - name: pct_spot_price_hist_rate_usd
+            title: "% of Total Spot Price Hist Rate (USD)"
+          - name: spots_booked
+            title: Spots Booked
+          - name: spot_seconds
+            title: Spot Seconds
+          - name: spot_price_loc
+            title: Spot Price LOC
+          - name: spot_price_current_rate_usd
+            title: Spot Price Current Rate(USD)
+          - name: spot_price_hist_rate_usd
+            title: Spot Price Hist Rate(USD)
+          - name: spot_actual_impacts
+            title: Spot Actual Impacts
+          - name: spot_actual_imps_base_length
+            title: Spot Actual Imps Base Length
+          - name: spot_actual_rat_base_length
+            title: Spot Actual Rat Base Length
+          - name: spot_actual_ratings
+            title: Spot Actual Ratings
+          - name: net_revenue_loc
+            title: Net Revenue LOC (Spots)
+          - name: net_revenue_current_rate_usd
+            title: Net Revenue Current Rate(USD - Spots)
+          - name: net_revenue_hist_rate_usd
+            title: Net Revenue Hist Current Rate(USD - Spots)
+          - name: net_net_revenue_loc
+            title: Net Net Revenue LOC (Spots)
+          - name: net_net_revenue_current_rate_usd
+            title: Net Net Revenue Current Rate(USD - Spots)
+          - name: net_net_revenue_hist_rate_usd
+            title: Net Net Revenue Hist Rate(USD - Spots)
+          - name: agency_commission_loc
+            title: Agency Commission LOC (Spots)
+          - name: agency_commission_current_rate_usd
+            title: Agency Commission Current Rate(USD -Spots)
+          - name: agency_commission_hist_rate_usd
+            title: Agency Commission Hist Rate(USD - Spots)
+          - name: sales_commission_loc
+            title: Rep Commission LOC (Spots)
+          - name: sales_commission_current_rate_usd
+            title: Rep Commission Current Rate(USD - Spots)
+          - name: sales_commission_hist_rate_usd
+            title: Rep Commission Hist Rate(USD -Spots)
+          - name: gross_revenue_loc
+            title: Gross Revenue LOC (Spots)
+          - name: gross_revenue_current_rate_usd
+            title: Gross Revenue Current Rate(USD - Spots)
+          - name: gross_revenue_hist_rate_usd
+            title: Gross Revenue Hist Rate(USD - Spots)
+          - name: agency_incentive_loc
+            title: Agency Incentive LOC (Spots)
+          - name: agency_incentive_current_rate_usd
+            title: Agency Incentive Current Rate(USD -Spots)
+          - name: agency_incentive_hist_rate_usd
+            title: Agency Incentive Hist Rate(USD - Spots)
+          - name: agency_commission_pct_avg
+            title: Agency Commission % (Spots)
+          - name: agency_incentive_pct_avg
+            title: Agency Incentive % (Spots)
+          - name: rep_commission_pct_avg
+            title: Rep Commission % (Spots)
+          - name: sales_rep_revenue_share_avg
+            title: Sales Rep Revenue Share(Spots)
+          - name: currency_code
+            title: Base Currency
+          - name: currency_name
+            title: Base Currency Name
+          - name: currency_symbol
+            title: Base Currency Symbol
+          - name: business_type_name
+            title: Business Type
+          - name: campaign_id
+            title: Campaign
+          - name: campaign_start_end_date
+            title: Campaign Start and End Date
+          - name: campaign_status_name
+            title: Campaign Status
+          - name: corp_daypart_selling_desc
+            title: Corp Daypart
+          - name: country_name
+            title: Country
+          - name: deal_id
+            title: Deal ID
+          - name: deal_name
+            title: Deal Name
+          - name: calendar_month_label
+            title: Month
+          - name: product_name
+            title: Product
+          - name: product_category_1
+            title: Product Category 1
+          - name: program_name
+            title: Program
+          - name: program_id
+            title: Program ID
+          - name: cal_qtr_desc
+            title: Quarter
+          - name: source_region_name
+            title: Source System Region
+          - name: spot_status_desc
+            title: Spot Status
+          - name: spot_daypart_name
+            title: Spot Daypart Name
+          - name: sales_rep_team_name
+            title: Sales Rep Team
+          - name: time_w_secs
+            title: Spot Scheduled Time
+          - name: calendar_week_desc
+            title: Week
+          - name: calendar_year
+            title: Year
+          - name: holding_company_key
+            title: Holding Company Key

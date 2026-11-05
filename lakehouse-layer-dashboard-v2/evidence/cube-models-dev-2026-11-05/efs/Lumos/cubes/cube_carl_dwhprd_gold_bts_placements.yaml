@@ -1,0 +1,478 @@
+cubes:
+  - name: cube_carl_dwhprd_gold_bts_placements
+    sql_table: "{{ catalog('dwhprd_gold') }}.bts_placements"
+    data_source: default
+    public: false
+    title: Carl Dwhprd Gold — Bts Placements
+    description: >-
+      Placement-level booking and GRP for Items and Placements, and the placement
+      side of Items & Placements & Targets (BTSDWH.BTS_PLACEMENTS). One row per
+      campaign + channel + contract + contract item + contract placement. Pipeline
+      unique key is that five-column set; probed 2026-10-09: 1,489,926 distinct of
+      1,489,926 rows, and none of the five key columns is null. Cube joins are
+      many_to_one, which keep the placement row and null the dimension. Dev probe
+      2026-10-09, after campaign_dim was re-ingested (496,998 rows): every
+      placement matches campaign_dim, channel_dim, source_system_region_dim, and
+      bts_items, so there are 0 orphans in 1,489,926 rows, for region 21 and for
+      the whole table. Apply in QuickSight, not as cube
+      filters: source_system_region_key = 21, campaign_start_date >= 2024-05-01,
+      and contract_basis_key NOT IN (2, 5, 8, -2, -1, 0). The six placement GRP
+      columns are type sum. Item GRP and item value stay attributes on bts_items.
+    dimensions:
+      - name: item_achieved_grp
+        sql: |-
+          (
+            SELECT hop1.item_achieved_grp
+            FROM {{ catalog('dwhprd_gold') }}.bts_items hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key AND {CUBE}.contract_id = hop1.contract_id AND {CUBE}.contract_item_id = hop1.contract_item_id
+          )
+        type: number
+        title: Item Achieved Grp
+        description: Item-level achieved GRP. An attribute, not a sum.
+      - name: item_actual_grp
+        sql: |-
+          (
+            SELECT hop1.item_actual_grp
+            FROM {{ catalog('dwhprd_gold') }}.bts_items hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key AND {CUBE}.contract_id = hop1.contract_id AND {CUBE}.contract_item_id = hop1.contract_item_id
+          )
+        type: number
+        title: Item Actual Grp
+        description: Item-level actual GRP. An attribute, not a sum.
+      - name: item_booked_grp
+        sql: |-
+          (
+            SELECT hop1.item_booked_grp
+            FROM {{ catalog('dwhprd_gold') }}.bts_items hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key AND {CUBE}.contract_id = hop1.contract_id AND {CUBE}.contract_item_id = hop1.contract_item_id
+          )
+        type: number
+        title: Item Booked Grp
+        description: Item-level booked GRP. An attribute, not a sum.
+      - name: item_channel_names
+        sql: |-
+          (
+            SELECT hop1.item_channel_names
+            FROM {{ catalog('dwhprd_gold') }}.bts_items hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key AND {CUBE}.contract_id = hop1.contract_id AND {CUBE}.contract_item_id = hop1.contract_item_id
+          )
+        type: string
+        title: Item Channel Names
+        description: Item channel names shown on both templates.
+      - name: item_channels
+        sql: |-
+          (
+            SELECT hop1.item_channels
+            FROM {{ catalog('dwhprd_gold') }}.bts_items hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key AND {CUBE}.contract_id = hop1.contract_id AND {CUBE}.contract_item_id = hop1.contract_item_id
+          )
+        type: string
+        title: Item Channels
+        description: Item channel list. Items and Placements shows this. Items & Placements & Targets selects it and the analytical engine rolls it up before display.
+      - name: item_code
+        sql: |-
+          (
+            SELECT hop1.item_code
+            FROM {{ catalog('dwhprd_gold') }}.bts_items hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key AND {CUBE}.contract_id = hop1.contract_id AND {CUBE}.contract_item_id = hop1.contract_item_id
+          )
+        type: string
+        title: Item Code
+        description: Item code shown on both report templates.
+      - name: item_comb_grp
+        sql: |-
+          (
+            SELECT hop1.item_comb_grp
+            FROM {{ catalog('dwhprd_gold') }}.bts_items hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key AND {CUBE}.contract_id = hop1.contract_id AND {CUBE}.contract_item_id = hop1.contract_item_id
+          )
+        type: number
+        title: Item Comb Grp
+        description: Item-level combined GRP. An attribute, not a sum.
+      - name: item_delivery_code
+        sql: |-
+          (
+            SELECT hop1.item_delivery_code
+            FROM {{ catalog('dwhprd_gold') }}.bts_items hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key AND {CUBE}.contract_id = hop1.contract_id AND {CUBE}.contract_item_id = hop1.contract_item_id
+          )
+        type: string
+        title: Item Delivery Code
+        description: Item delivery code. Selected with item_delivery_desc.
+      - name: item_delivery_desc
+        sql: |-
+          (
+            SELECT hop1.item_delivery_desc
+            FROM {{ catalog('dwhprd_gold') }}.bts_items hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key AND {CUBE}.contract_id = hop1.contract_id AND {CUBE}.contract_item_id = hop1.contract_item_id
+          )
+        type: string
+        title: Item Delivery Description
+        description: Item delivery description shown on both templates.
+      - name: item_demo_code
+        sql: |-
+          (
+            SELECT hop1.item_demo_code
+            FROM {{ catalog('dwhprd_gold') }}.bts_items hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key AND {CUBE}.contract_id = hop1.contract_id AND {CUBE}.contract_item_id = hop1.contract_item_id
+          )
+        type: string
+        title: Item Demo Code
+        description: Item demo code. Selected with item_demo_desc.
+      - name: item_demo_desc
+        sql: |-
+          (
+            SELECT hop1.item_demo_desc
+            FROM {{ catalog('dwhprd_gold') }}.bts_items hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key AND {CUBE}.contract_id = hop1.contract_id AND {CUBE}.contract_item_id = hop1.contract_item_id
+          )
+        type: string
+        title: Item Demo Description
+        description: Item demo description shown on both templates.
+      - name: item_end_date
+        sql: |-
+          (
+            SELECT hop1.item_end_date
+            FROM {{ catalog('dwhprd_gold') }}.bts_items hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key AND {CUBE}.contract_id = hop1.contract_id AND {CUBE}.contract_item_id = hop1.contract_item_id
+          )
+        type: time
+        title: Item End Date
+        description: Item end date.
+      - name: item_pred_grp
+        sql: |-
+          (
+            SELECT hop1.item_pred_grp
+            FROM {{ catalog('dwhprd_gold') }}.bts_items hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key AND {CUBE}.contract_id = hop1.contract_id AND {CUBE}.contract_item_id = hop1.contract_item_id
+          )
+        type: number
+        title: Item Pred Grp
+        description: Item-level predicted GRP. An attribute, not a sum.
+      - name: item_prod_desc
+        sql: |-
+          (
+            SELECT hop1.item_prod_desc
+            FROM {{ catalog('dwhprd_gold') }}.bts_items hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key AND {CUBE}.contract_id = hop1.contract_id AND {CUBE}.contract_item_id = hop1.contract_item_id
+          )
+        type: string
+        title: Item Product Description
+        description: Item product description shown on Items and Placements.
+      - name: item_product_code
+        sql: |-
+          (
+            SELECT hop1.item_product_code
+            FROM {{ catalog('dwhprd_gold') }}.bts_items hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key AND {CUBE}.contract_id = hop1.contract_id AND {CUBE}.contract_item_id = hop1.contract_item_id
+          )
+        type: string
+        title: Item Product Code
+        description: Item product code. Items and Placements selects this with item_prod_desc.
+      - name: item_start_date
+        sql: |-
+          (
+            SELECT hop1.item_start_date
+            FROM {{ catalog('dwhprd_gold') }}.bts_items hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key AND {CUBE}.contract_id = hop1.contract_id AND {CUBE}.contract_item_id = hop1.contract_item_id
+          )
+        type: time
+        title: Item Start Date
+        description: Item start date.
+      - name: item_target_grp
+        sql: |-
+          (
+            SELECT hop1.item_target_grp
+            FROM {{ catalog('dwhprd_gold') }}.bts_items hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key AND {CUBE}.contract_id = hop1.contract_id AND {CUBE}.contract_item_id = hop1.contract_item_id
+          )
+        type: number
+        title: Item Target Grp
+        description: Item-level target GRP. An attribute, not a sum. Summing it across placements double-counts the item.
+      - name: item_universe
+        sql: |-
+          (
+            SELECT hop1.item_universe
+            FROM {{ catalog('dwhprd_gold') }}.bts_items hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key AND {CUBE}.contract_id = hop1.contract_id AND {CUBE}.contract_item_id = hop1.contract_item_id
+          )
+        type: number
+        title: Item Universe
+        description: Item universe attribute. Not a placement metric.
+      - name: item_value_loc
+        sql: |-
+          (
+            SELECT hop1.item_value_loc
+            FROM {{ catalog('dwhprd_gold') }}.bts_items hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key AND {CUBE}.contract_id = hop1.contract_id AND {CUBE}.contract_item_id = hop1.contract_item_id
+          )
+        type: number
+        title: Item Value LOC
+        description: Item value in local currency. An attribute that repeats on every placement or target of the item. Do not sum it.
+      - name: item_value_usd_curr_pln_rate
+        sql: |-
+          (
+            SELECT hop1.item_value_usd_curr_pln_rate
+            FROM {{ catalog('dwhprd_gold') }}.bts_items hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key AND {CUBE}.contract_id = hop1.contract_id AND {CUBE}.contract_item_id = hop1.contract_item_id
+          )
+        type: number
+        title: Item Value Current Rate USD
+        description: Item value at the current planned USD rate. An attribute, not a sum.
+      - name: agency_name
+        sql: |-
+          (
+            SELECT hop2.agency_name
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.agency_dim hop2
+              ON hop1.agency_key = hop2.agency_key
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Agency Name
+        description: Human-readable value "Agency".
+      - name: campaign_id
+        sql: |-
+          (
+            SELECT hop1.campaign_id
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Campaign ID
+        description: Natural identifier for the campaign.
+      - name: campaign_start_date
+        sql: |-
+          (
+            SELECT hop1.campaign_start_date
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: time
+        title: Campaign Start Date
+        description: Campaign start date. Items & Placements & Targets shows this as its own attribute. Items and Placements only shows it inside campaign_start_end_date. Both reports
+          filter on this column in QuickSight; it is not a cube filter.
+      - name: campaign_start_end_date
+        sql: |-
+          (
+            SELECT date_format(campaign_start_date, '%m/%d/%Y') || ' - ' || date_format(campaign_end_date, '%m/%d/%Y')
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Campaign Start and End Date
+        description: 'Formatted start/end date range, reproducing MSTR''s custom column (CustCol_40) exactly — both dates as MM/DD/YYYY, concatenated with '' - ''. Uses date_format
+          (MySQL-style %m/%d/%Y tokens), not to_char: probed live against Athena — to_char(''MM/DD/YYYY'') throws "INVALID_FUNCTION_ARGUMENT: Failed to tokenize string [M] at offset
+          [0]" on this engine, since Trino''s to_char expects a different token syntax than the Oracle/Teradata-style pattern MSTR used.'
+      - name: contract_basis_desc
+        sql: |-
+          (
+            SELECT hop2.contract_basis_desc
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.contract_basis_dim hop2
+              ON hop1.contract_basis_key = hop2.contract_basis_key
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Contract Basis
+        description: Contract basis description shown on the Items / Placements templates.
+      - name: contract_basis_key
+        sql: |-
+          (
+            SELECT hop1.contract_basis_key
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: number
+        title: Contract Basis Key
+        description: Foreign key to contract_basis_dim. Items and Placements excludes keys (2, 5, 8, -2, -1, 0) in QuickSight, not as a cube filter. MSTR also matches source_system_region_key
+          on the fact when it reads the dim.
+      - name: campaign_currency_code
+        sql: |-
+          (
+            SELECT hop2.currency_cd
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.currency_dim hop2
+              ON hop1.campaign_currency_key = hop2.currency_key
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Currency Code
+        description: ISO-style currency code — e.g. USD, AUD.
+      - name: channel_name
+        sql: |-
+          (
+            SELECT hop1.channel_name
+            FROM {{ catalog('dwhprd_gold') }}.channel_dim hop1
+            WHERE {CUBE}.channel_key = hop1.channel_key
+          )
+        type: string
+        title: Channel Name (raw)
+        description: Raw channel name. Use display_channel_name for the formatted version.
+      - name: master_channel
+        sql: |-
+          (
+            SELECT hop1.master_channel
+            FROM {{ catalog('dwhprd_gold') }}.channel_dim hop1
+            WHERE {CUBE}.channel_key = hop1.channel_key
+          )
+        type: string
+        title: Master Channel
+        description: Parent network grouping, e.g. Animal Planet, Discovery Channel, Discovery ID, Discovery Science, Discovery Turbo, TLC.
+      - name: source_region_name
+        sql: |-
+          (
+            SELECT hop1.source_region_name
+            FROM {{ catalog('dwhprd_gold') }}.source_system_region_dim hop1
+            WHERE {CUBE}.source_system_region_key = hop1.source_system_region_key
+          )
+        type: string
+        title: Source Region Name
+        description: Human-readable name of the source region.
+      - name: campaign_key
+        sql: campaign_key
+        type: number
+        title: Campaign Key
+        description: Foreign key to campaign_dim. Also part of the placement natural key.
+        primary_key: true
+      - name: channel_key
+        sql: channel_key
+        type: number
+        title: Channel Key
+        description: Foreign key to channel_dim. Also part of the placement natural key.
+        primary_key: true
+      - name: contract_id
+        sql: contract_id
+        type: number
+        title: Contract ID
+        description: Contract identifier on the placement. Part of the natural key.
+        primary_key: true
+      - name: contract_item_id
+        sql: contract_item_id
+        type: number
+        title: Contract Item ID
+        description: Contract item identifier on the placement. Part of the natural key.
+        primary_key: true
+      - name: contract_placement_id
+        sql: contract_placement_id
+        type: number
+        title: Contract Placement ID
+        description: >-
+          Placement identifier. Part of the natural key. Items and Placements
+          selects it and the analytical engine rolls it up before display.
+        primary_key: true
+      - name: source_system_region_key
+        sql: source_system_region_key
+        type: number
+        title: Source System Region Key
+        description: >-
+          Foreign key to source_system_region_dim. Report filter value 21 is
+          Discovery Latin America.
+      - name: placement_code
+        sql: placement_code
+        type: string
+        title: Placement Code
+        description: Placement code shown on both report templates.
+      - name: placement_channel
+        sql: placement_channel
+        type: string
+        title: Placement Channel
+        description: Placement channel text stored on the placement, not channel_dim.
+      - name: placement_booking_status_code
+        sql: placement_booking_status_code
+        type: string
+        title: Placement Booking Status Code
+        description: Placement booking status code. Selected with the description.
+      - name: placement_booking_status_desc
+        sql: placement_booking_status_desc
+        type: string
+        title: Placement Booking Status Code Desc
+        description: Placement booking status description shown on both templates.
+      - name: placement_start_date
+        sql: placement_start_date
+        type: time
+        title: Placement Start Date
+        description: Placement start date.
+      - name: placement_end_date
+        sql: placement_end_date
+        type: time
+        title: Placement End Date
+        description: Placement end date.
+      - name: placement_length_sec
+        sql: placement_length_sec
+        type: number
+        title: Placement Length Sec
+        description: Placement length in seconds.
+      - name: placement_fixed_version
+        sql: placement_fixed_version
+        type: string
+        title: Placement Fixed Version
+        description: Placement fixed version shown on Items & Placements & Targets.
+      - name: placement_target_impact
+        sql: placement_target_impact
+        type: number
+        title: Placement Target Impact
+        description: >-
+          Placement target impact. Items & Placements & Targets selects it and
+          the analytical engine rolls it up before display.
+      - name: placement_pred_grp_raw
+        sql: placement_pred_grp
+        type: number
+        title: Placement Pred Grp (Grouped)
+        description: >-
+          Grouped predicted GRP on the placement row. Items and Placements
+          also sums this column. The engine rolls the grouped value up before
+          display. The sum is the placement_pred_grp measure, which keeps the
+          report-object name.
+    joins:
+      - name: cube_carl_dwhprd_gold_campaign_dim
+        sql: '{CUBE}.campaign_key = {cube_carl_dwhprd_gold_campaign_dim}.campaign_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_bts_items
+        sql: >-
+          {CUBE}.campaign_key = {cube_carl_dwhprd_gold_bts_items}.campaign_key AND
+          {CUBE}.contract_id = {cube_carl_dwhprd_gold_bts_items}.contract_id AND
+          {CUBE}.contract_item_id = {cube_carl_dwhprd_gold_bts_items}.contract_item_id
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_channel_dim
+        sql: '{CUBE}.channel_key = {cube_carl_dwhprd_gold_channel_dim}.channel_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_source_system_region_dim
+        sql: '{CUBE}.source_system_region_key = {cube_carl_dwhprd_gold_source_system_region_dim}.source_system_region_key'
+        relationship: many_to_one
+    measures:
+      - name: record_count
+        sql: '*'
+        type: count
+        title: Record Count
+        description: Row count for smoke queries.
+      - name: placement_target_grp
+        sql: '{CUBE}.placement_target_grp'
+        type: sum
+        title: Placement Target Grp
+        description: Sum of placement target GRP (SQL alias WJXBFS2).
+      - name: placement_pred_grp
+        sql: '{CUBE}.placement_pred_grp'
+        type: sum
+        title: Placement Pred Grp
+        description: Sum of placement predicted GRP (SQL alias WJXBFS1).
+      - name: placement_achieved_grp
+        sql: '{CUBE}.placement_achieved_grp'
+        type: sum
+        title: Placement Achieved Grp
+        description: Sum of placement achieved GRP (SQL alias WJXBFS3).
+      - name: placement_actual_grp
+        sql: '{CUBE}.placement_actual_grp'
+        type: sum
+        title: Placement Actual Grp
+        description: Sum of placement actual GRP (SQL alias WJXBFS4).
+      - name: placement_comb_grp
+        sql: '{CUBE}.placement_comb_grp'
+        type: sum
+        title: Placement Comb Grp
+        description: Sum of placement combined GRP (SQL alias WJXBFS5).
+      - name: placement_booked_grp
+        sql: '{CUBE}.placement_booked_grp'
+        type: sum
+        title: Placement Booked Grp
+        description: Sum of placement booked GRP (SQL alias WJXBFS6).

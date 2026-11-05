@@ -1,0 +1,59 @@
+views:
+  - name: ad_sales_view_invoice_team_split_revenue
+    public: true
+    title: Ad Sales — Invoiced-Booked Revenue by Team
+    description: >-
+      Business view for ad_sales on CARL-3016 "Invoiced-Booked Revenue by Team". Its one metric is Split
+      Revenue — invoice revenue allocated to a sales team member by that member's AE fraction, which MSTR
+      writes as Revenue (Sales Team) times Fraction.
+      Separate from ad_sales_view_invoice_revenue_fact rather than added to it, because the grain is
+      different: one row per sales team member per coverage member per month, not one per invoice row.
+      Gross Revenue is deliberately absent here — at this grain it would be the whole coverage team's
+      revenue repeated against each member, which is a real intermediate in MSTR's calculation but is not
+      a number anyone should read as revenue. Use ad_sales_view_invoice_revenue_fact for that.
+      Split Revenue is additive over every dimension below, so it sums normally in QuickSight with no
+      calculated field.
+      The report's filters are Network, Calendar Year, Revenue Area (ID) not equal to 0 and Deal Revenue
+      Snapshot = Invoiced/Current Booked; all four are exposed here and none are baked into the cube.
+      Verified against dev 2026-09-30 for CNN / calendar 2025: 297,857,564.00 across the export's 969
+      populated cells, exact to the cent.
+      revenue_eff_calendar_year keeps its name but now resolves to the cube's own calendar_year rather
+      than the month dimension's. Consumers see no change — same alias, same title, same values — but
+      the filter now reaches FILTER_PARAMS inside the cube's aggregate, which is the difference between
+      a 229.7s and a 7.8s query. Filtering the month dimension's copy would silently fall back to the
+      slow path, which is why only one of the two is exposed here.
+    meta:
+      view_scope: business
+      business: ad_sales
+      fact_table: invoice_revenue_fact
+    cubes:
+      - join_path: cube_carl_dwhprd_gold_invoice_team_split_revenue
+        includes:
+          - name: split_revenue
+            title: Split Revenue
+          - name: revenue_area_key
+            title: Revenue Area (ID)
+          - name: network_key
+            title: Network (ID)
+          - name: revenue_eff_cal_month_key
+            title: Revenue Effective Calendar Month (ID)
+          - name: deal_revenue_snapshot_key
+            title: Deal Revenue Snapshot (ID)
+          - name: sales_team_member_key
+            title: Sales Team Member Key
+          - name: acct_cov_team_member_key
+            title: Account Coverage Team Member Key
+          - name: calendar_year
+            alias: revenue_eff_calendar_year
+            title: Calendar Year
+          - coverage_team_member_label
+          - deal_revenue_snapshot_desc
+          - net_name
+          - revenue_area_desc
+          - name: revenue_eff_calendar_month
+            title: Revenue Effective Calendar Month
+          - revenue_group_desc
+          - sales_office_name
+          - name: sales_team_member_name
+            title: AE
+          - sales_team_name

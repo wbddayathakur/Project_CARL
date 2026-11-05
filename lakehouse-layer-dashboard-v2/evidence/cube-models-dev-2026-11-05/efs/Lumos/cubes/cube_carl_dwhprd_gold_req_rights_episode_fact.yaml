@@ -1,0 +1,468 @@
+cubes:
+  - name: cube_carl_dwhprd_gold_req_rights_episode_fact
+    sql_table: "{{ catalog('dwhprd_gold') }}.req_rights_episode_fact"
+    data_source: default
+    public: false
+    title: Carl Dwhprd Gold — Req Rights Episode Fact
+    description: >-
+      One row per rights episode line under an internal offer — the deals-and-rights star. Distinct from the
+      advertising-revenue star (invoice_revenue_fact) and the content-airings star (airings_fact): this fact
+      tracks who offered what programming rights to whom, under which deal, contract and budget category, for
+      which platforms, geographies and rights term. There is no aggregation upstream of this table —
+      MicroStrategy's own export is a bare SELECT DISTINCT with no GROUP BY, because its two contribution metrics
+      are fixed at internal-offer x participating-entity grain and repeat across every episode row underneath
+      that pair; see cube_carl_dwhprd_gold_req_rights_participant_contribution for how those are summed safely.
+      Only the columns currently needed are modelled; the table carries more (rights verification workflow,
+      scheduling-sync detail) not currently read.
+    dimensions:
+      - name: budget_category_desc
+        sql: |-
+          (
+            SELECT hop1.budget_category_desc
+            FROM {{ catalog('dwhprd_gold') }}.budget_category_dim hop1
+            WHERE {CUBE}.budget_category_key = hop1.budget_category_key
+          )
+        type: string
+        title: Budget Category
+        description: Human-readable description of the budget category.
+      - name: buy_in_response_desc
+        sql: |-
+          (
+            SELECT hop1.buy_in_response_desc
+            FROM {{ catalog('dwhprd_gold') }}.buy_in_response_dim hop1
+            WHERE {CUBE}.buy_in_response_key = hop1.buy_in_response_key
+          )
+        type: string
+        title: Buy In Response
+        description: Human-readable description of the buy-in response, e.g. Interested.
+      - name: day_date
+        sql: |-
+          (
+            SELECT hop1.day_date
+            FROM {{ catalog('dwhprd_gold') }}.day_dim hop1
+            WHERE {CUBE}.financial_asset_start_date_key = hop1.day_key
+          )
+        type: time
+        title: Day Date
+        description: The calendar date this row represents.
+      - name: deal_program_name
+        sql: |-
+          (
+            SELECT hop1.deal_program_name
+            FROM {{ catalog('dwhprd_gold') }}.deal_program_dim hop1
+            WHERE {CUBE}.deal_program_key = hop1.deal_program_key
+          )
+        type: string
+        title: Program Title
+        description: Human-readable name of the programme.
+      - name: deal_program_status_key
+        sql: |-
+          (
+            SELECT hop1.deal_program_status_key
+            FROM {{ catalog('dwhprd_gold') }}.deal_program_dim hop1
+            WHERE {CUBE}.deal_program_key = hop1.deal_program_key
+          )
+        type: number
+        title: Deal Program Status Key
+        description: Programme status key, e.g. excluding "Removed From Deal" (key 5). Decoded label is not yet modelled — no deal_program_status_dim exists in Glue yet.
+      - name: program_sap_order_num
+        sql: |-
+          (
+            SELECT hop1.program_sap_order_num
+            FROM {{ catalog('dwhprd_gold') }}.deal_program_dim hop1
+            WHERE {CUBE}.deal_program_key = hop1.deal_program_key
+          )
+        type: string
+        title: 'Sap Order #'
+        description: SAP order number associated with this programme.
+      - name: property_id
+        sql: |-
+          (
+            SELECT hop1.property_id
+            FROM {{ catalog('dwhprd_gold') }}.deal_program_dim hop1
+            WHERE {CUBE}.deal_program_key = hop1.deal_program_key
+          )
+        type: string
+        title: Program Property Id
+        description: Source-system property identifier for this programme.
+      - name: contract_code
+        sql: |-
+          (
+            SELECT hop1.contract_code
+            FROM {{ catalog('dwhprd_gold') }}.deal_project_dim hop1
+            WHERE {CUBE}.deal_project_key = hop1.deal_project_key AND {CUBE}.budget_currency_key = hop1.budget_currency_key AND {CUBE}.premiere_status_key = hop1.premiere_status_key
+          )
+        type: string
+        title: Contract Id
+        description: Contract code associated with this deal project.
+      - name: deal_name
+        sql: |-
+          (
+            SELECT hop1.deal_name
+            FROM {{ catalog('dwhprd_gold') }}.deal_project_dim hop1
+            WHERE {CUBE}.deal_project_key = hop1.deal_project_key AND {CUBE}.budget_currency_key = hop1.budget_currency_key AND {CUBE}.premiere_status_key = hop1.premiere_status_key
+          )
+        type: string
+        title: Deal Title
+        description: Human-readable name of the deal.
+      - name: deal_status_desc
+        sql: |-
+          (
+            SELECT hop1.deal_status_desc
+            FROM {{ catalog('dwhprd_gold') }}.deal_status_dim hop1
+            WHERE {CUBE}.deal_status_key = hop1.deal_status_key
+          )
+        type: string
+        title: Deal Status
+        description: Human-readable description of the deal status, e.g. Dead.
+      - name: deal_type_desc
+        sql: |-
+          (
+            SELECT hop1.deal_type_desc
+            FROM {{ catalog('dwhprd_gold') }}.deal_type_dim hop1
+            WHERE {CUBE}.deal_type_key = hop1.deal_type_key
+          )
+        type: string
+        title: Deal Type
+        description: Human-readable description of the deal type, e.g. DEVELOPMENT.
+      - name: entity_name
+        sql: |-
+          (
+            SELECT hop1.entity_name
+            FROM {{ catalog('dwhprd_gold') }}.entity_dim hop1
+            WHERE {CUBE}.offering_entity_key = hop1.entity_key
+          )
+        type: string
+        title: Entity Name
+        description: Human-readable name of the entity.
+      - name: fa_offer_status
+        sql: |-
+          (
+            SELECT hop1.fa_offer_status
+            FROM {{ catalog('dwhprd_gold') }}.fa_offer_status_dim hop1
+            WHERE {CUBE}.fa_offer_status_key = hop1.fa_offer_status_key
+          )
+        type: string
+        title: Financial Asset Offer Status
+        description: Human-readable description of the financial asset offer status.
+      - name: final_indicator_desc
+        sql: |-
+          (
+            SELECT CASE WHEN hop1.final_ind = 'Y' THEN 'Final' WHEN hop1.final_ind = 'N' THEN 'Draft' ELSE 'N/A' END
+            FROM {{ catalog('dwhprd_gold') }}.internal_offer_dim hop1
+            WHERE {CUBE}.internal_offer_key = hop1.internal_offer_key
+          )
+        type: string
+        title: Final Indicator
+        description: MicroStrategy BI Premiere decode of final_ind (Final / Draft / N/A). Filter Final Indicator = Final here.
+      - name: internal_offer_desc
+        sql: |-
+          (
+            SELECT hop1.internal_offer_desc
+            FROM {{ catalog('dwhprd_gold') }}.internal_offer_dim hop1
+            WHERE {CUBE}.internal_offer_key = hop1.internal_offer_key
+          )
+        type: string
+        title: Internal Offer Title
+        description: Human-readable title of the internal offer.
+      - name: offering_region_key
+        sql: |-
+          (
+            SELECT hop1.offering_region_key
+            FROM {{ catalog('dwhprd_gold') }}.internal_offer_dim hop1
+            WHERE {CUBE}.internal_offer_key = hop1.internal_offer_key
+          )
+        type: number
+        title: Offering Region Key
+        description: Region this offer is made from (BI Premiere Offering Region filter — APAC is key 1 in MSTR SQL). Join cube_carl_dwhprd_gold_region_dim for region_long_name.
+      - name: region_long_name
+        sql: |-
+          (
+            SELECT hop2.region_long_name
+            FROM {{ catalog('dwhprd_gold') }}.internal_offer_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.region_dim hop2
+              ON hop1.offering_region_key = hop2.region_key
+            WHERE {CUBE}.internal_offer_key = hop1.internal_offer_key
+          )
+        type: string
+        title: Region Long Name
+        description: Full display name of the region, read via entity_dim in the Season/Show Controlling Region role.
+      - name: territory_name
+        sql: |-
+          (
+            SELECT hop1.territory_name
+            FROM {{ catalog('dwhprd_gold') }}.territory_dim hop1
+            WHERE {CUBE}.offering_territory_key = hop1.territory_key
+          )
+        type: string
+        title: Territory Name
+        description: Human-readable name of the territory.
+      - name: requested_rights_line_id
+        sql: requested_rights_line_id
+        type: number
+        title: Requested Rights Line Id
+        description: >-
+          Natural identifier for the requested rights line this row's episode belongs to. Not unique on its own —
+          this fact is at rights-line x episode grain, so the same line id repeats once per episode under it. See
+          row_id for the primary-key dimension built from this plus episode_key.
+      - name: row_id
+        sql: "concat(cast({CUBE}.requested_rights_line_id as varchar), '|', cast({CUBE}.episode_key as varchar))"
+        type: string
+        primary_key: true
+        title: Row Id (synthetic)
+        description: >-
+          Cube.js requires a declared primary key on any cube that defines joins, for correct aggregate/pre-agg
+          behavior. requested_rights_line_id alone is not unique (this fact repeats one row per episode under each
+          rights line — 8.6M rows for 960K distinct line ids). Checked against dev data: requested_rights_line_id
+          plus episode_key resolves 8.30M of 8.61M rows (96.4%) to a distinct value, the closest available proxy;
+          adding internal_offer_key/participating_entity_key did not improve it further. Treat this as a technical
+          surrogate for Cube's requirement, not a verified natural key.
+      - name: budget_category_key
+        sql: budget_category_key
+        type: number
+        title: Budget Category Key
+        description: Foreign key to budget_category_dim.
+      - name: budget_currency_key
+        sql: budget_currency_key
+        type: number
+        title: Budget Currency Key
+        description: >-
+          Part of the 3-column composite key this fact uses to join deal_project_dim (alongside deal_project_key
+          and premiere_status_key) — deal_project_key alone does not uniquely key that table.
+      - name: buy_in_response_key
+        sql: buy_in_response_key
+        type: number
+        title: Buy In Response Key
+        description: Foreign key to buy_in_response_dim. Source of the "Buy In Response = Interested" filter.
+      - name: deal_program_key
+        sql: deal_program_key
+        type: number
+        title: Deal Program Key
+        description: Foreign key to deal_program_dim.
+      - name: deal_project_key
+        sql: deal_project_key
+        type: number
+        title: Deal Project Key
+        description: >-
+          Foreign key to deal_project_dim. Not sufficient alone to join that table — see budget_currency_key's
+          description for the full composite key.
+      - name: deal_status_key
+        sql: deal_status_key
+        type: number
+        title: Deal Status Key
+        description: Foreign key to deal_status_dim. Source of the "Deal Status <> Dead" filter.
+      - name: deal_type_key
+        sql: deal_type_key
+        type: number
+        title: Deal Type Key
+        description: Foreign key to deal_type_dim. Source of the "Deal Type <> DEVELOPMENT" filter.
+      - name: fa_offer_status_key
+        sql: fa_offer_status_key
+        type: number
+        title: Fa Offer Status Key
+        description: Foreign key to fa_offer_status_dim.
+      - name: financial_asset_start_date_key
+        sql: financial_asset_start_date_key
+        type: number
+        title: Financial Asset Start Date Key
+        description: Foreign key to day_dim, in the Financial Asset Start Date role.
+      - name: internal_offer_key
+        sql: internal_offer_key
+        type: number
+        title: Internal Offer Key
+        description: Foreign key to internal_offer_dim.
+      - name: offering_entity_key
+        sql: offering_entity_key
+        type: number
+        title: Offering Entity Key
+        description: Foreign key to entity_dim, in the Offering Entity role — the one role joined directly.
+      - name: offering_territory_key
+        sql: offering_territory_key
+        type: number
+        title: Offering Territory Key
+        description: Foreign key to territory_dim, in the Offering Territory role.
+      - name: originating_entity_key
+        sql: originating_entity_key
+        type: number
+        title: Originating Entity Key
+        description: >-
+          Entity in the Originating Entity role. Read via originating_entity_name's correlated subquery rather than
+          a join — entity_dim is already joined once, in the Offering Entity role; see that dimension's description.
+      - name: participant_contr_amount
+        sql: participant_contr_amount
+        type: number
+        title: Participant Contribution Amount (raw, fans out)
+        description: >-
+          Raw column as it appears on this fact — repeats identically across every episode row for the same
+          (internal_offer_key, participating_entity_key) pair. Do not sum this directly; use the
+          total_participant_contribution_amount measure on cube_carl_dwhprd_gold_req_rights_participant_contribution
+          instead, which de-duplicates to that grain first. Kept here as a raw/audit column only.
+      - name: participant_contr_per_hour
+        sql: participant_contr_per_hour
+        type: number
+        title: Participant Contribution Per Hour (raw, fans out)
+        description: >-
+          Raw column as it appears on this fact — same fan-out hazard as participant_contr_amount. Use the
+          total_participant_contribution_per_hour measure on
+          cube_carl_dwhprd_gold_req_rights_participant_contribution instead.
+      - name: participating_entity_key
+        sql: participating_entity_key
+        type: number
+        title: Participating Entity Key
+        description: >-
+          Entity in the Participating Entity role. Read via participating_entity_name's correlated subquery rather
+          than a join. Also part of the composite key cube_carl_dwhprd_gold_req_rights_participant_contribution
+          joins on.
+      - name: premiere_status_key
+        sql: premiere_status_key
+        type: number
+        title: Premiere Status Key
+        description: >-
+          Part of the 3-column composite key this fact uses to join deal_project_dim — see budget_currency_key's
+          description.
+      - name: primary_cont_entity_key
+        sql: primary_cont_entity_key
+        type: number
+        title: Primary Contracting Entity Key
+        description: >-
+          Entity in the Primary Contracting Entity role. Read via primary_cont_entity_name's correlated subquery
+          rather than a join — see the Originating Entity Key description for why.
+      - name: primary_prod_bus_cont_key
+        sql: primary_prod_bus_cont_key
+        type: number
+        title: Primary Prod Business Company Key
+        description: >-
+          Entity in the Primary Prod Business Company role. Read via primary_prod_bus_cont_name's correlated
+          subquery rather than a join — see the Originating Entity Key description for why.
+      - name: req_rights_line_prog_end_date
+        sql: req_rights_line_prog_end_date
+        type: time
+        title: Participant Rights End Date
+        description: End date of the participant's programming rights line.
+      - name: req_rights_line_prog_episodes
+        sql: req_rights_line_prog_episodes
+        type: string
+        title: Rights Episodes
+        description: >-
+          Episodes covered by this rights line. A string in Glue, not a count — likely an episode number/range or
+          list rather than a total, despite the title "Rights Episodes".
+      - name: req_rights_line_prog_geography
+        sql: req_rights_line_prog_geography
+        type: string
+        title: Io Participant Rights Geographies
+        description: Geographies covered by this participant's programming rights line.
+      - name: req_rights_line_prog_platform
+        sql: req_rights_line_prog_platform
+        type: string
+        title: Io Participant Rights Platforms
+        description: Platforms covered by this participant's programming rights line.
+      - name: req_rights_line_prog_start_dt
+        sql: req_rights_line_prog_start_dt
+        type: time
+        title: Participant Rights Start Date
+        description: >-
+          Start date of the participant's programming rights line. Typically on or after 12/31/2012.
+      - name: req_rights_line_prog_term
+        sql: req_rights_line_prog_term
+        type: string
+        title: Io Participant Rights Term
+        description: Term of this participant's programming rights line.
+
+      # Correlated-subquery dimensions: entity_dim's four other roles. entity_dim is joined once already, as
+      # Offering Entity (offering_entity_key) — a fact can only join a given cube once, so the remaining roles are
+      # read directly off the physical table by key rather than through a second join. See
+      # cube_carl_dwhprd_gold_entity_dim's description for the full explanation of the role-play.
+      - name: originating_entity_name
+        sql: >-
+          (SELECT ed.entity_name FROM {{ catalog('dwhprd_gold') }}.entity_dim ed WHERE ed.entity_key =
+          {CUBE}.originating_entity_key)
+        type: string
+        title: Originating Entity
+        description: >-
+          entity_dim.entity_name looked up by originating_entity_key via a correlated subquery, since entity_dim is
+          already joined once in the Offering Entity role. See this fact's description for why.
+      - name: participating_entity_name
+        sql: >-
+          (SELECT ed.entity_name FROM {{ catalog('dwhprd_gold') }}.entity_dim ed WHERE ed.entity_key =
+          {CUBE}.participating_entity_key)
+        type: string
+        title: Participating Entity
+        description: >-
+          entity_dim.entity_name looked up by participating_entity_key via a correlated subquery, since entity_dim
+          is already joined once in the Offering Entity role. See this fact's description for why.
+      - name: primary_cont_entity_name
+        sql: >-
+          (SELECT ed.entity_name FROM {{ catalog('dwhprd_gold') }}.entity_dim ed WHERE ed.entity_key =
+          {CUBE}.primary_cont_entity_key)
+        type: string
+        title: Primary Contracting Entity
+        description: >-
+          entity_dim.entity_name looked up by primary_cont_entity_key via a correlated subquery, since entity_dim
+          is already joined once in the Offering Entity role. See this fact's description for why. Probed against
+          dev data: primary_cont_entity_key is populated on only 32.1% of fact rows (67.9% unmatched/null) — not a
+          join defect, but expect this column blank on most rows.
+      - name: primary_prod_bus_cont_name
+        sql: >-
+          (SELECT ed.entity_name FROM {{ catalog('dwhprd_gold') }}.entity_dim ed WHERE ed.entity_key =
+          {CUBE}.primary_prod_bus_cont_key)
+        type: string
+        title: Primary Prod Business Company
+        description: >-
+          entity_dim.entity_name looked up by primary_prod_bus_cont_key via a correlated subquery, since entity_dim
+          is already joined once in the Offering Entity role. See this fact's description for why. Probed against
+          dev data: primary_prod_bus_cont_key is populated on only 7.4% of fact rows (92.6% unmatched/null) — not a
+          join defect, but expect this column blank on nearly all rows.
+
+    joins:
+      - name: cube_carl_dwhprd_gold_budget_category_dim
+        sql: '{CUBE}.budget_category_key = {cube_carl_dwhprd_gold_budget_category_dim}.budget_category_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_buy_in_response_dim
+        sql: '{CUBE}.buy_in_response_key = {cube_carl_dwhprd_gold_buy_in_response_dim}.buy_in_response_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_day_dim
+        sql: '{CUBE}.financial_asset_start_date_key = {cube_carl_dwhprd_gold_day_dim}.day_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_deal_program_dim
+        sql: '{CUBE}.deal_program_key = {cube_carl_dwhprd_gold_deal_program_dim}.deal_program_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_deal_project_dim
+        sql: >-
+          {CUBE}.deal_project_key = {cube_carl_dwhprd_gold_deal_project_dim}.deal_project_key AND
+          {CUBE}.budget_currency_key = {cube_carl_dwhprd_gold_deal_project_dim}.budget_currency_key AND
+          {CUBE}.premiere_status_key = {cube_carl_dwhprd_gold_deal_project_dim}.premiere_status_key
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_deal_status_dim
+        sql: '{CUBE}.deal_status_key = {cube_carl_dwhprd_gold_deal_status_dim}.deal_status_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_deal_type_dim
+        sql: '{CUBE}.deal_type_key = {cube_carl_dwhprd_gold_deal_type_dim}.deal_type_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_entity_dim
+        sql: '{CUBE}.offering_entity_key = {cube_carl_dwhprd_gold_entity_dim}.entity_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_fa_offer_status_dim
+        sql: '{CUBE}.fa_offer_status_key = {cube_carl_dwhprd_gold_fa_offer_status_dim}.fa_offer_status_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_internal_offer_dim
+        sql: '{CUBE}.internal_offer_key = {cube_carl_dwhprd_gold_internal_offer_dim}.internal_offer_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_req_rights_participant_contribution
+        sql: >-
+          {CUBE}.internal_offer_key = {cube_carl_dwhprd_gold_req_rights_participant_contribution}.internal_offer_key
+          AND {CUBE}.participating_entity_key =
+          {cube_carl_dwhprd_gold_req_rights_participant_contribution}.participating_entity_key
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_territory_dim
+        sql: '{CUBE}.offering_territory_key = {cube_carl_dwhprd_gold_territory_dim}.territory_key'
+        relationship: many_to_one
+
+    measures:
+      - name: record_count
+        sql: '*'
+        type: count
+        title: Record Count
+        description: Row count for smoke queries.
+        meta:
+          source: generated
+          used_by_report_ids: []

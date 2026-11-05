@@ -1,0 +1,110 @@
+cubes:
+  - name: cube_carl_dwhprd_gold_tcr_approval_fact
+    sql_table: "{{ catalog('dwhprd_gold') }}.tcr_approval_fact"
+    data_source: default
+    public: false
+    title: Carl Dwhprd Gold — TCR Approval Fact
+    description: >-
+      TCR approval workflow, one or more rows per TCR approval stage (37,199 rows, 10,343 TCRs on
+      dev, 2026-10-09). Reached only from cube_carl_dwhprd_gold_tcr_fact through its one_to_many
+      join on tcr_id and source_system_region_key. No column set is unique: tcr_id plus the eight
+      report approval columns gives 37,197 distinct values over 37,199 rows (2 surplus rows that
+      match on every report approval column), and tcr_id plus approval_stage_seq is not unique
+      either. row_id is a best-effort synthetic key. Grouped queries collapse the surplus rows,
+      matching the MSTR select distinct. The TCR metric lives on the header cube.
+    dimensions:
+      - name: row_id
+        sql: >-
+          concat(coalesce({CUBE}.tcr_id, ''), '|',
+          coalesce(cast({CUBE}.source_system_region_key AS varchar), ''), '|',
+          cast({CUBE}.approval_stage_seq AS varchar), '|', coalesce({CUBE}.approval_stage, ''), '|',
+          coalesce({CUBE}.approval_stage_status, ''), '|', coalesce({CUBE}.approval_team, ''), '|',
+          coalesce({CUBE}.approved_by, ''), '|', coalesce(cast({CUBE}.approval_date AS varchar), ''), '|',
+          coalesce({CUBE}.completed_by, ''), '|', coalesce(cast({CUBE}.completed_date AS varchar), ''))
+        type: string
+        primary_key: true
+        title: Row Id (synthetic)
+        description: >-
+          Best-effort synthetic key: tcr_id, region and the eight report approval columns. Not
+          strictly unique: 37,197 distinct values over 37,199 rows (2 surplus rows that match on
+          every report approval column; dev, 2026-10-09). Cube requires a primary key on a join
+          target. Not for display.
+      - name: tcr_id
+        sql: tcr_id
+        type: string
+        title: TCR ID
+        description: >-
+          TCR identifier. Join key to the header cube. The report views take TCR ID from the header
+          cube, not from here.
+      - name: source_system_region_key
+        sql: source_system_region_key
+        type: number
+        title: Source System Region Key
+        description: Source system region. Join key to the header cube.
+      - name: approval_stage_seq
+        sql: approval_stage_seq
+        type: number
+        title: Approval Stage Seq
+        description: >-
+          Sequence of this approval stage. Never null. Not unique with tcr_id: a TCR can have
+          several rows for one sequence.
+      - name: approval_stage_status
+        sql: approval_stage_status
+        type: string
+        title: Approval Stage Status
+        description: Status of this approval stage.
+      - name: approval_stage
+        sql: approval_stage
+        type: string
+        title: Approval Stage
+        description: Name of this approval stage.
+      - name: approval_team
+        sql: approval_team
+        type: string
+        title: Approval Team
+        description: Team responsible for this approval stage.
+      - name: approved_by
+        sql: approved_by
+        type: string
+        title: Approved By
+        description: Person who approved this stage.
+      - name: approval_date
+        sql: "date_format({CUBE}.approval_date, '%Y-%m-%d %H:%i:%s')"
+        type: string
+        title: Approval Date
+        description: >-
+          Date this stage was approved. Shown as text (yyyy-mm-dd hh:mm:ss) so the report grid
+          pre-aggregation can match.
+      - name: completed_by
+        sql: completed_by
+        type: string
+        title: Completed By
+        description: Person who completed this stage.
+      - name: completed_date
+        sql: "date_format({CUBE}.completed_date, '%Y-%m-%d %H:%i:%s')"
+        type: string
+        title: Completed Date
+        description: >-
+          Date this stage was completed. Shown as text (yyyy-mm-dd hh:mm:ss) so the report grid
+          pre-aggregation can match.
+      - name: approval_stage_category
+        sql: approval_stage_category
+        type: string
+        title: Approval Stage Category
+        description: Category of this approval stage (provisional). Not on either report.
+      - name: approval_role
+        sql: approval_role
+        type: string
+        title: Approval Role
+        description: Role required to approve this stage (provisional). Not on either report.
+      - name: max_appr
+        sql: max_appr
+        type: string
+        title: Max Approval
+        description: Max-approval marker on the stage row (provisional). Not on either report.
+    measures:
+      - name: record_count
+        sql: '*'
+        type: count
+        title: Record Count
+        description: Approval-row count for smoke queries. Not on the report views.

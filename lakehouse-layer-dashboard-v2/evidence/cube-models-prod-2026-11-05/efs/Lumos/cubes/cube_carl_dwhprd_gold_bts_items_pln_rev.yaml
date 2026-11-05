@@ -1,0 +1,145 @@
+cubes:
+  - name: cube_carl_dwhprd_gold_bts_items_pln_rev
+    sql_table: "{{ catalog('dwhprd_gold') }}.bts_items_pln_rev"
+    data_source: default
+    public: false
+    title: Carl Dwhprd Gold — BTS Items Planned Revenue
+    description: >-
+      Planned and actual item revenue for Power BI - Revenue Events
+      (BTSDWH.BTS_ITEMS_PLN_REV). Probed 2026-10-22 in carl_dwhprd_gold_dev:
+      555,639 rows, and the six-column key campaign_key, contract_id,
+      contract_item_id, channel_key, calendar_month_key, calendar_year_key is
+      unique on all 555,639. None of those columns is null. item_code is null
+      on 2 rows and is not part of the key. The report scope, region 21 and
+      calendar years 2025, 2026, and 2027, is 178,045 of 178,045. Joining
+      channel, items, campaign, month, year, bts_deal_dim, and bts_currency_dim
+      returns 555,639 rows, so there is no fan-out. Channel, month, and year
+      match every row. 360 rows do not match bts_items, 314 of them inside the
+      report scope. 235 rows do not match campaign_dim, all of them inside the
+      report scope. Every matched campaign also matches bts_deal_dim and
+      bts_currency_dim. Deal is bts_deal_dim through campaign_dim.deal_key, not
+      deal_dim. Campaign currency is bts_currency_dim.currency_code.
+      CAMPAIGN_CURRENCY_DIM is a view over BTSDWH.CURRENCY_DIM. Apply in
+      QuickSight, not as cube filters: source_system_region_key = 21,
+      calendar_year_key in (2025, 2026, 2027), and client_key <> 759. CLab
+      Revenue reads this same cube. Probed 2026-10-22, its warehouse scope is
+      region 21, holding_company_key in (4, 67, 89), and calendar years 2025
+      and 2026: 37,751 of 37,751. Four of those rows do not match bts_items.
+      Holding company 4 is CHILE, 67 is CHILE WM, and 89 is CHILE DPLAY.
+      client_key 759 is DISCOVERY LATIN AMERICA. After that client exclusion
+      and item_revenue_event = CLab, 3,814 rows remain. The template also
+      names C-Lab; bts_items has no C-Lab value. CLab - Brand Experiences is a
+      different value and stays outside that filter.       The template sums are
+      item_planned_revenue_loc and item_plan_rev_usd_curr_pln. The other four
+      sums are on both international views. The engine does not plot them on
+      the default grid.
+    dimensions:
+      - name: campaign_key
+        sql: campaign_key
+        type: number
+        title: Campaign Key
+        description: Foreign key to campaign_dim. Part of the planned-revenue key and the item join.
+        primary_key: true
+      - name: contract_id
+        sql: contract_id
+        type: number
+        title: Contract ID
+        description: Contract identifier. Part of the item join. The template does not display it.
+        primary_key: true
+      - name: contract_item_id
+        sql: contract_item_id
+        type: number
+        title: Contract Item ID
+        description: Contract item identifier. Part of the item join. The template does not display it.
+        primary_key: true
+      - name: channel_key
+        sql: channel_key
+        type: number
+        title: Channel Key
+        description: Foreign key to channel_dim. Part of the planned-revenue key. The template shows the display name.
+        primary_key: true
+      - name: calendar_month_key
+        sql: calendar_month_key
+        type: number
+        title: Calendar Month Key
+        description: Foreign key to calendar_month_dim. The template shows calendar_month_label.
+        primary_key: true
+      - name: calendar_year_key
+        sql: calendar_year_key
+        type: number
+        title: Calendar Year Key
+        description: >-
+          Foreign key to calendar_year_dim. QuickSight filter for this report is
+          2025, 2026, and 2027. It is not a cube filter.
+        primary_key: true
+      - name: source_system_region_key
+        sql: source_system_region_key
+        type: number
+        title: Source System Region Key
+        description: >-
+          Region on the planned-revenue row. Discovery Latin America is 21.
+          That value is a QuickSight filter, not a cube filter. Contract basis
+          also matches this key in the MicroStrategy SQL. contract_basis_key is
+          unique on its own, so the view uses the existing key-only join.
+      - name: item_code
+        sql: item_code
+        type: string
+        title: Item Code
+        description: Item code on the planned-revenue row. The analytical engine rolls it up before display.
+    joins:
+      - name: cube_carl_dwhprd_gold_channel_dim
+        sql: '{CUBE}.channel_key = {cube_carl_dwhprd_gold_channel_dim}.channel_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_bts_items
+        sql: >-
+          {CUBE}.campaign_key = {cube_carl_dwhprd_gold_bts_items}.campaign_key AND
+          {CUBE}.contract_id = {cube_carl_dwhprd_gold_bts_items}.contract_id AND
+          {CUBE}.contract_item_id = {cube_carl_dwhprd_gold_bts_items}.contract_item_id
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_campaign_dim
+        sql: '{CUBE}.campaign_key = {cube_carl_dwhprd_gold_campaign_dim}.campaign_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_calendar_month_dim
+        sql: '{CUBE}.calendar_month_key = {cube_carl_dwhprd_gold_calendar_month_dim}.calendar_month_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_calendar_year_dim
+        sql: '{CUBE}.calendar_year_key = {cube_carl_dwhprd_gold_calendar_year_dim}.calendar_year_key'
+        relationship: many_to_one
+    measures:
+      - name: record_count
+        sql: '*'
+        type: count
+        title: Record Count
+        description: Row count for smoke queries.
+      - name: item_planned_revenue_loc
+        sql: '{CUBE}.item_planned_revenue_loc'
+        type: sum
+        title: Item Planned Revenue LOC
+        description: Sum of ITEM_PLANNED_REVENUE_LOC. Template metric, SQL alias WJXBFS6.
+      - name: item_plan_rev_usd_curr_pln
+        sql: '{CUBE}.item_plan_rev_usd_curr_pln'
+        type: sum
+        title: Item Planned Revenue Current Rate (USD)
+        description: >-
+          Sum of ITEM_PLAN_REV_USD_CURR_PLN. The current-rate amount is already
+          on the fact. Template metric, SQL alias WJXBFS2.
+      - name: item_actual_revenue_loc
+        sql: '{CUBE}.item_actual_revenue_loc'
+        type: sum
+        title: Item Actual Revenue LOC
+        description: Sum of ITEM_ACTUAL_REVENUE_LOC. Selected in the warehouse SQL (WJXBFS5) and not on the template.
+      - name: item_actual_rev_usd_curr_pln
+        sql: '{CUBE}.item_actual_rev_usd_curr_pln'
+        type: sum
+        title: Item Actual Revenue Current Rate (USD)
+        description: Sum of ITEM_ACTUAL_REV_USD_CURR_PLN. Selected in the warehouse SQL (WJXBFS1) and not on the template.
+      - name: item_rev_target_grp
+        sql: '{CUBE}.item_rev_target_grp'
+        type: sum
+        title: Item Rev Target Grp
+        description: Sum of ITEM_REV_TARGET_GRP. Selected in the warehouse SQL (WJXBFS3) and not on the template.
+      - name: item_rev_target_spots
+        sql: '{CUBE}.item_rev_target_spots'
+        type: sum
+        title: Item Rev Target Spots
+        description: Sum of ITEM_REV_TARGET_SPOTS. Selected in the warehouse SQL (WJXBFS4) and not on the template.

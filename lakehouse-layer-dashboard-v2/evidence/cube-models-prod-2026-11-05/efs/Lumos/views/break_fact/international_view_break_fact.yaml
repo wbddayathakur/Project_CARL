@@ -1,0 +1,108 @@
+views:
+  - name: international_view_break_fact
+    public: true
+    title: International — Break Analysis
+    description: >-
+      Business view for international on break_fact (MSTR Break Analysis,
+      Discovery Latin America). Apply in QuickSight: source_system_region_key = 21
+      AND day_date = 2025-10-04. Channel and daypart were unanswered prompts and
+      are not filters. The 30-second spot length is the divisor on the three
+      equivalent-spot measures, not a row filter. Report objects the template
+      rolls up stay on this view: break type, corporate daypart, month, week,
+      the week date range, and both end-time slots. Start slots are
+      hourly_time_slot_30 and hourly_time_slot_24 on bts_time_dim. End slots
+      are the same columns on bts_end_time_dim. Break Start Time is
+      bts_time_dim.time_w_secs. Break End Time reads time_w_secs from the same
+      table. Break Base Currency is bts_currency_dim.currency_symbol. The two
+      USD prices multiply break_price by the planned exchange factor. Break
+      Before Program and Break After Program are bts_program_dim.program_name,
+      joined on break_before_program_key and break_after_program_key.
+    meta:
+      view_scope: business
+      business: international
+      fact_table: break_fact
+      mstr_report_name: Break Analysis
+    cubes:
+      - join_path: cube_carl_dwhprd_gold_break_fact
+        includes:
+          - source_system_region_key
+          - day_key
+          - daypart_key
+          - channel_key
+          - break_start_time_key
+          - break_end_time_key
+          - base_currency_key
+          - name: break_end_time
+            title: Break End Time
+          - record_count
+          - break_duration_seconds
+          - break_sold_seconds
+          - break_available_seconds
+          - spots_booked
+          - break_duration_spots
+          - booked_equivalent_spots
+          - break_available_spots
+          - break_price_loc
+          - break_price_current_rate_usd
+          - break_price_hist_rate_usd
+          - name: currency_symbol
+            title: Break Base Currency
+          - name: day_date
+            title: Date
+          - name: daypart_name
+            title: Break Daypart Name
+          - name: display_channel_name
+            title: Channel
+          - name: hourly_time_slot_24
+            title: Break Hourly Start Time Slot - 24
+            description: >-
+              24-hour hourly slot. Break Analysis shows the start-time copy as
+              Break Hourly Start Time Slot - 24.
+          - name: hourly_time_slot_30
+            title: Break Hourly Start Time Slot - 30
+            description: >-
+              30-minute hourly slot. Break Analysis shows the start-time copy as
+              Break Hourly Start Time Slot - 30.
+          - name: break_hourly_end_time_slot_24
+            title: Break Hourly End Time Slot - 24
+            description: 24-hour slot for the break end time.
+          - name: break_hourly_end_time_slot_30
+            title: Break Hourly End Time Slot - 30
+            description: 30-minute slot for the break end time.
+          - source_region_name
+          - name: time_w_secs
+            title: Break Start Time
+          - name: break_type_desc
+            title: Break Type
+            description: >-
+              Break type description shown on Spot Analysis. Break Analysis
+              rolls it up before display.
+          - name: corp_daypart_selling_desc
+            title: Corp Daypart
+            description: >-
+              Sales-facing corporate daypart description selected by the
+              warehouse query.
+          - name: calendar_month_label
+            title: Month
+            description: >-
+              Formatted "<Month Name> <Year>" label derived from the calendar
+              month name and year associated with the Break fact row.
+          - name: calendar_week_desc
+            title: Week
+            description: >-
+              Week label, WEEK <number>, <year>. Break Analysis shows this as
+              Week.
+          - name: calendar_week_label
+            title: Week Start and End Date
+            description: >-
+              Week start and end as MM/DD/YYYY - MM/DD/YYYY. Break Analysis
+              shows this as Week Start and End Date. 4 October 2025 is
+              10/01/2025 - 10/07/2025.
+          - name: break_before_program
+            title: Break Before Program
+            description: >-
+              Program name. Break Analysis shows this as Break Before Program.
+          - name: break_after_program
+            title: Break After Program
+            description: >-
+              Program name. Break Analysis shows this as Break After Program.

@@ -1,0 +1,121 @@
+views:
+  - name: ad_sales_view_projected_working_revenue_fact
+    public: true
+    title: Ad Sales — Projected Working Revenue Fact
+    description: Business view for ad_sales on projected_working_revenue_fact.
+    meta:
+      view_scope: business
+      business: ad_sales
+      fact_table: projected_working_revenue_fact
+    cubes:
+      - join_path: cube_carl_dwhprd_gold_projected_working_revenue_fact
+        includes:
+          - working_revenue
+          - working_eqv30_spots
+          # CARL-3051 Engage Working Revenue: numerator of Working Avg As Sold Equiv30 Rate.
+          - working_as_sold_cost
+          - working_acm_guar_target_imps_000
+          - working_acm_net_corp_imps_000
+          - working_ratecard_cost
+          - working_ratecard_pct
+          - name: revenue_eff_cal_year_key
+            title: Calendar Year (ID)
+          - name: revenue_eff_cal_qtr_key
+            title: Calendar Quarter (ID)
+          - name: revenue_eff_cal_month_key
+            title: Calendar Month (ID)
+          - name: revenue_eff_bcast_qtr_key
+            title: Broadcast Quarter (ID)
+          - name: deal_revenue_status_key
+            title: Deal Revenue Status (ID)
+          - name: pressure_type_key
+            title: Pressure Type (ID)
+          - name: deal_revenue_snapshot_key
+            title: Deal Revenue Snapshot (ID)
+          - name: program_avg_daypart_key
+            title: Program Average Daypart (ID)
+          - name: network_key
+            title: Network (ID)
+          - name: market_key
+            title: Market (ID)
+          - adv_default_prod_cat_name
+          - adv_id
+          - adv_name
+          - adv_name_id
+          - name: adv_reporting_parent
+            title: Advertiser Parent
+          - bcast_qtr_desc
+          - brand_name
+          - name: broadcast_qtr_key
+            title: Unit Broadcast Quarter (ID)
+          - name: revenue_eff_broadcast_year
+            alias: broadcast_year
+          - buy_type_desc
+          - buy_type_sales_group_desc
+          - buying_agency_country_code
+          - buying_agency_id
+          - buying_agency_name
+          - buying_agency_name_id
+          - name: buying_agency_reporting_parent
+            title: Buying Agency Parent
+          - buying_agency_state
+          - cal_qtr_desc
+          - name: calendar_month_label
+            title: Calendar Month
+          - name: revenue_eff_calendar_year
+            alias: calendar_year
+          - client_ae_string
+          - deal_cancelled_flag
+          - deal_comments
+          - name: deal_confirm_date
+            title: Deal Revision Confirm Date
+          - deal_create_date
+          - deal_current_status_desc
+          - name: deal_eqv_ind
+            title: Deal Eqv Indicator
+          - deal_id
+          - name: deal_name
+            title: Deal Name
+          - deal_revenue_snapshot_desc
+          - deal_revenue_status_desc
+          - deal_type_desc
+          - deal_year
+          - name: demo_name
+            title: Guar/Target Demographic
+          - name: division
+            title: Order Division
+          - gab_deal_id
+          - guar_est_methodology_abbv
+          - name: guaranteed_ind
+            title: Deal Guaranteed Indicator
+          - market_desc
+          - market_group_desc
+          - name: net_call_sign
+            title: Network Call Sign
+          - name: net_corp_demo
+            title: Network Corporate Demo
+          - net_name
+          - order_flight_end_date
+          - order_flight_start_date
+          - order_status_desc
+          - plan_ae_string
+          - planning_agency_country_code
+          - planning_agency_id
+          - name: planning_agency_name_id
+            title: Planning Agency
+          - planning_agency_state
+          - pressure_type_desc
+          - name: primary_ae
+            title: Buying AE
+          - name: primary_ae_office
+            title: Buying AE Office
+          - name: primary_ae_sales_team_sname
+            title: Buying AE Sales Team Short Name
+          - prod_cat_name
+          - prod_cat_name_id
+          - prog_avg_daypart_selling_desc
+          - property_category
+          - sales_rep_name_first_last
+          - sub_account
+          - unit_type_desc
+          - unit_type_group_desc

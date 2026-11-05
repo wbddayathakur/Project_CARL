@@ -1,0 +1,657 @@
+cubes:
+  - name: cube_carl_dwhprd_gold_bts_items_pln_rev
+    sql_table: "{{ catalog('dwhprd_gold') }}.bts_items_pln_rev"
+    data_source: default
+    public: false
+    title: Carl Dwhprd Gold — BTS Items Planned Revenue
+    description: >-
+      Planned and actual item revenue for Power BI - Revenue Events
+      (BTSDWH.BTS_ITEMS_PLN_REV). Probed 2026-10-22 in carl_dwhprd_gold_dev:
+      555,639 rows, and the six-column key campaign_key, contract_id,
+      contract_item_id, channel_key, calendar_month_key, calendar_year_key is
+      unique on all 555,639. None of those columns is null. item_code is null
+      on 2 rows and is not part of the key. The report scope, region 21 and
+      calendar years 2025, 2026, and 2027, is 178,045 of 178,045. Joining
+      channel, items, campaign, month, year, bts_deal_dim, and bts_currency_dim
+      returns 555,639 rows, so there is no fan-out. Channel, month, and year
+      match every row. 360 rows do not match bts_items, 314 of them inside the
+      report scope. 235 rows do not match campaign_dim, all of them inside the
+      report scope. Every matched campaign also matches bts_deal_dim and
+      bts_currency_dim. Deal is bts_deal_dim through campaign_dim.deal_key, not
+      deal_dim. Campaign currency is bts_currency_dim.currency_code.
+      CAMPAIGN_CURRENCY_DIM is a view over BTSDWH.CURRENCY_DIM. Apply in
+      QuickSight, not as cube filters: source_system_region_key = 21,
+      calendar_year_key in (2025, 2026, 2027), and client_key <> 759. CLab
+      Revenue reads this same cube. Probed 2026-10-22, its warehouse scope is
+      region 21, holding_company_key in (4, 67, 89), and calendar years 2025
+      and 2026: 37,751 of 37,751. Four of those rows do not match bts_items.
+      Holding company 4 is CHILE, 67 is CHILE WM, and 89 is CHILE DPLAY.
+      client_key 759 is DISCOVERY LATIN AMERICA. After that client exclusion
+      and item_revenue_event = CLab, 3,814 rows remain. The template also
+      names C-Lab; bts_items has no C-Lab value. CLab - Brand Experiences is a
+      different value and stays outside that filter. The template sums are
+      item_planned_revenue_loc and item_plan_rev_usd_curr_pln. The report
+      objects also include the actual-revenue sums, the two target sums, and
+      the two plan-versus-actual variances. Those six stay on both
+      international views. The engine does not plot them on the default grid.
+      The variances are planned minus actual after the sums. They are not
+      warehouse columns.
+    dimensions:
+      - name: campaign_key
+        sql: campaign_key
+        type: number
+        title: Campaign Key
+        description: Foreign key to campaign_dim. Part of the planned-revenue key and the item join.
+        primary_key: true
+      - name: contract_id
+        sql: contract_id
+        type: number
+        title: Contract ID
+        description: Contract identifier. Part of the item join. The template does not display it.
+        primary_key: true
+      - name: contract_item_id
+        sql: contract_item_id
+        type: number
+        title: Contract Item ID
+        description: Contract item identifier. Part of the item join. The template does not display it.
+        primary_key: true
+      - name: channel_key
+        sql: channel_key
+        type: number
+        title: Channel Key
+        description: Foreign key to channel_dim. Part of the planned-revenue key. The template shows the display name.
+        primary_key: true
+      - name: calendar_month_key
+        sql: calendar_month_key
+        type: number
+        title: Calendar Month Key
+        description: Foreign key to calendar_month_dim. The template shows calendar_month_label.
+        primary_key: true
+      - name: calendar_year_key
+        sql: calendar_year_key
+        type: number
+        title: Calendar Year Key
+        description: >-
+          Foreign key to calendar_year_dim. QuickSight filter for this report is
+          2025, 2026, and 2027. It is not a cube filter.
+        primary_key: true
+      - name: source_system_region_key
+        sql: source_system_region_key
+        type: number
+        title: Source System Region Key
+        description: >-
+          Region on the planned-revenue row. Discovery Latin America is 21.
+          That value is a QuickSight filter, not a cube filter. Contract basis
+          also matches this key in the MicroStrategy SQL. contract_basis_key is
+          unique on its own, so the view uses the existing key-only join.
+      - name: item_code
+        sql: item_code
+        type: string
+        title: Item Code
+        description: Item code on the planned-revenue row. The analytical engine rolls it up before display.
+      - name: agency_name
+        sql: |-
+          (
+            SELECT hop2.agency_name
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.agency_dim hop2
+              ON hop1.agency_key = hop2.agency_key
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Agency Name
+        description: Human-readable value "Agency".
+      - name: calendar_month_label
+        sql: |-
+          (
+            SELECT hop1.calendar_month_label
+            FROM (
+              SELECT m.*,
+                     m.calendar_month_name || ' ' || CAST(m.calendar_year AS VARCHAR) AS calendar_month_label
+                FROM {{ catalog('dwhprd_gold') }}.calendar_month_dim m
+            ) hop1
+            WHERE {CUBE}.calendar_month_key = hop1.calendar_month_key
+          )
+        type: string
+        title: Month
+        description: >-
+          Formatted "<Month Name> <Year>" label, reproducing MSTR's custom column
+          (CustCol_400/CustCol_3). The value is the calendar_month_label column
+          computed in this cube's SQL from calendar_month_name and calendar_year
+          on calendar_month_dim. The SQL API selects that column. CLab Revenue
+          in QA on 2026-10-24 failed when QuickSight grouped by Month, because
+          the old expression named calendar_year in a join that also included
+          calendar_year_dim.
+      - name: calendar_year
+        sql: |-
+          (
+            SELECT hop1.calendar_year
+            FROM {{ catalog('dwhprd_gold') }}.calendar_year_dim hop1
+            WHERE {CUBE}.calendar_year_key = hop1.calendar_year_key
+          )
+        type: number
+        title: Calendar Year
+        description: Four-digit calendar year.
+      - name: campaign_desc
+        sql: |-
+          (
+            SELECT hop1.campaign_desc
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Campaign Description
+        description: Free-text campaign description.
+      - name: campaign_end_date
+        sql: |-
+          (
+            SELECT hop1.campaign_end_date
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: time
+        title: Campaign End Date
+        description: >-
+          Campaign end date. An attribute, not a filter — both reports left the
+          campaign/contract end-date prompt unanswered.
+      - name: campaign_id
+        sql: |-
+          (
+            SELECT hop1.campaign_id
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Campaign ID
+        description: Natural identifier for the campaign.
+      - name: campaign_start_date
+        sql: |-
+          (
+            SELECT hop1.campaign_start_date
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: time
+        title: Campaign Start Date
+        description: >-
+          Campaign start date. Items & Placements & Targets shows this as its own
+          attribute. Items and Placements only shows it inside campaign_start_end_date.
+          Both reports filter on this column in QuickSight; it is not a cube filter.
+      - name: campaign_start_end_date
+        sql: |-
+          (
+            SELECT date_format(hop1.campaign_start_date, '%m/%d/%Y') || ' - ' || date_format(hop1.campaign_end_date, '%m/%d/%Y')
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Campaign Start and End Date
+        description: >-
+          Formatted start/end date range, reproducing MSTR's custom column (CustCol_40) exactly — both dates as
+          MM/DD/YYYY, concatenated with ' - '. Uses date_format (MySQL-style
+          %m/%d/%Y tokens), not to_char: probed live against Athena — to_char('MM/DD/YYYY') throws
+          "INVALID_FUNCTION_ARGUMENT: Failed to tokenize string [M] at offset [0]" on this engine, since Trino's
+          to_char expects a different token syntax than the Oracle/Teradata-style pattern MSTR used.
+      - name: campaign_status_name
+        sql: |-
+          (
+            SELECT hop2.campaign_status_name
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.campaign_status_dim hop2
+              ON hop1.campaign_status_key = hop2.campaign_status_key
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Campaign Status Name
+        description: Human-readable name of the campaign status.
+      - name: campaign_target_spots
+        sql: |-
+          (
+            SELECT hop1.campaign_target_spots
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: number
+        title: Campaign Target Spots
+        description: Campaign target spot count. Selected by Items Rpt.
+      - name: campaign_target_value_loc
+        sql: |-
+          (
+            SELECT hop1.campaign_target_value_loc
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: number
+        title: Campaign Target Value LOC
+        description: Campaign target value in local currency. Selected by Items Rpt.
+      - name: campaign_target_value_usd
+        sql: |-
+          (
+            SELECT hop1.campaign_target_value_usd
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: number
+        title: Campaign Target Value USD
+        description: Campaign target value in USD. Selected by Items Rpt.
+      - name: client_key
+        sql: |-
+          (
+            SELECT hop1.client_key
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: number
+        title: Client Key
+        description: >-
+          Foreign key to client_dim. Items & Placements & Targets reaches client
+          through this campaign key.
+      - name: client_name
+        sql: |-
+          (
+            SELECT hop2.client_name
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.client_dim hop2
+              ON hop1.client_key = hop2.client_key
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Client Name
+        description: Human-readable name of the client.
+      - name: contract_basis_desc
+        sql: |-
+          (
+            SELECT hop2.contract_basis_desc
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.contract_basis_dim hop2
+              ON hop1.contract_basis_key = hop2.contract_basis_key
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Contract Basis
+        description: Contract basis description shown on the Items / Placements templates.
+      - name: contract_type_desc
+        sql: |-
+          (
+            SELECT hop2.contract_type_desc
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.contract_type_dim hop2
+              ON hop1.contract_type_key = hop2.contract_type_key
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Contract Type
+        description: Contract type description shown on the Items & Placements & Targets template.
+      - name: currency_code
+        sql: |-
+          (
+            SELECT hop2.currency_code
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.bts_currency_dim hop2
+              ON hop1.campaign_currency_key = hop2.currency_key
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Currency Code
+        description: Currency code on BTSDWH.CURRENCY_DIM. The Break Analysis template shows the symbol, not this code.
+      - name: deal_id
+        sql: |-
+          (
+            SELECT hop2.deal_id
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.bts_deal_dim hop2
+              ON hop1.deal_key = hop2.deal_key
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: number
+        title: Deal Id
+        description: Numeric business identifier for the deal. Items Rpt groups by this id.
+      - name: deal_name
+        sql: |-
+          (
+            SELECT hop2.deal_name
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.bts_deal_dim hop2
+              ON hop1.deal_key = hop2.deal_key
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Deal Name
+        description: Deal name on BTSDWH.DEAL_DIM. Items Rpt shows this as Deal Name.
+      - name: deal_type_desc
+        sql: |-
+          (
+            SELECT hop2.deal_type_desc
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.bts_deal_dim hop2
+              ON hop1.deal_key = hop2.deal_key
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Deal Type
+        description: Deal type on BTSDWH.DEAL_DIM. Items Rpt shows this as Deal Type.
+      - name: display_channel_name
+        sql: |-
+          (
+            SELECT hop1.display_channel_name
+            FROM {{ catalog('dwhprd_gold') }}.channel_dim hop1
+            WHERE {CUBE}.channel_key = hop1.channel_key
+          )
+        type: string
+        title: Channel Name
+        description: >-
+          Display-formatted channel name, distinct from the raw channel_name column.
+      - name: holding_company_key
+        sql: |-
+          (
+            SELECT hop1.holding_company_key
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: number
+        title: Holding Company Key
+        description: >-
+          Foreign key to holding_company_dim.
+      - name: holding_company_name
+        sql: |-
+          (
+            SELECT hop2.holding_company_name
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.holding_company_dim hop2
+              ON hop1.holding_company_key = hop2.holding_company_key
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Holding Company Name
+        description: Human-readable name of the holding company.
+      - name: invoice_calendar
+        sql: |-
+          (
+            SELECT hop1.invoice_calendar
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Invoice Calendar
+        description: >-
+          Invoice calendar on the campaign. Power BI - Revenue Events selects it
+          and the analytical engine rolls it up before display.
+      - name: item_channel_names
+        sql: |-
+          (
+            SELECT hop1.item_channel_names
+            FROM {{ catalog('dwhprd_gold') }}.bts_items hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+              AND {CUBE}.contract_id = hop1.contract_id
+              AND {CUBE}.contract_item_id = hop1.contract_item_id
+          )
+        type: string
+        title: Item Channel Names
+        description: Item channel names shown on both templates.
+      - name: item_channels
+        sql: |-
+          (
+            SELECT hop1.item_channels
+            FROM {{ catalog('dwhprd_gold') }}.bts_items hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+              AND {CUBE}.contract_id = hop1.contract_id
+              AND {CUBE}.contract_item_id = hop1.contract_item_id
+          )
+        type: string
+        title: Item Channels
+        description: >-
+          Item channel list. Items and Placements shows this. Items & Placements &
+          Targets selects it and the analytical engine rolls it up before display.
+      - name: item_delivery_code
+        sql: |-
+          (
+            SELECT hop1.item_delivery_code
+            FROM {{ catalog('dwhprd_gold') }}.bts_items hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+              AND {CUBE}.contract_id = hop1.contract_id
+              AND {CUBE}.contract_item_id = hop1.contract_item_id
+          )
+        type: string
+        title: Item Delivery Code
+        description: Item delivery code. Selected with item_delivery_desc.
+      - name: item_delivery_desc
+        sql: |-
+          (
+            SELECT hop1.item_delivery_desc
+            FROM {{ catalog('dwhprd_gold') }}.bts_items hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+              AND {CUBE}.contract_id = hop1.contract_id
+              AND {CUBE}.contract_item_id = hop1.contract_item_id
+          )
+        type: string
+        title: Item Delivery Description
+        description: Item delivery description shown on both templates.
+      - name: item_description
+        sql: |-
+          (
+            SELECT hop1.item_description
+            FROM {{ catalog('dwhprd_gold') }}.bts_items hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+              AND {CUBE}.contract_id = hop1.contract_id
+              AND {CUBE}.contract_item_id = hop1.contract_item_id
+          )
+        type: string
+        title: Item Description
+        description: >-
+          Item description. Items & Placements & Targets selects it and the
+          analytical engine rolls it up before display.
+      - name: item_end_date
+        sql: |-
+          (
+            SELECT hop1.item_end_date
+            FROM {{ catalog('dwhprd_gold') }}.bts_items hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+              AND {CUBE}.contract_id = hop1.contract_id
+              AND {CUBE}.contract_item_id = hop1.contract_item_id
+          )
+        type: time
+        title: Item End Date
+        description: Item end date.
+      - name: item_onair_flag
+        sql: |-
+          (
+            SELECT hop1.item_onair_flag
+            FROM {{ catalog('dwhprd_gold') }}.bts_items hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+              AND {CUBE}.contract_id = hop1.contract_id
+              AND {CUBE}.contract_item_id = hop1.contract_item_id
+          )
+        type: string
+        title: Item Onair Flag
+        description: Item on-air flag shown on Items & Placements & Targets.
+      - name: item_prod_desc
+        sql: |-
+          (
+            SELECT hop1.item_prod_desc
+            FROM {{ catalog('dwhprd_gold') }}.bts_items hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+              AND {CUBE}.contract_id = hop1.contract_id
+              AND {CUBE}.contract_item_id = hop1.contract_item_id
+          )
+        type: string
+        title: Item Product Description
+        description: Item product description shown on Items and Placements.
+      - name: item_product_code
+        sql: |-
+          (
+            SELECT hop1.item_product_code
+            FROM {{ catalog('dwhprd_gold') }}.bts_items hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+              AND {CUBE}.contract_id = hop1.contract_id
+              AND {CUBE}.contract_item_id = hop1.contract_item_id
+          )
+        type: string
+        title: Item Product Code
+        description: Item product code. Items and Placements selects this with item_prod_desc.
+      - name: item_revenue_event
+        sql: |-
+          (
+            SELECT hop1.item_revenue_event
+            FROM {{ catalog('dwhprd_gold') }}.bts_items hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+              AND {CUBE}.contract_id = hop1.contract_id
+              AND {CUBE}.contract_item_id = hop1.contract_item_id
+          )
+        type: string
+        title: Item Revenue Event
+        description: >-
+          Item-level revenue event. Distinct from campaign_dim.revenue_event_desc.
+      - name: item_spot_pricing_method
+        sql: |-
+          (
+            SELECT hop1.item_spot_pricing_method
+            FROM {{ catalog('dwhprd_gold') }}.bts_items hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+              AND {CUBE}.contract_id = hop1.contract_id
+              AND {CUBE}.contract_item_id = hop1.contract_item_id
+          )
+        type: string
+        title: Item Spot Pricing Method
+        description: Item spot pricing method shown on Items & Placements & Targets.
+      - name: item_start_date
+        sql: |-
+          (
+            SELECT hop1.item_start_date
+            FROM {{ catalog('dwhprd_gold') }}.bts_items hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+              AND {CUBE}.contract_id = hop1.contract_id
+              AND {CUBE}.contract_item_id = hop1.contract_item_id
+          )
+        type: time
+        title: Item Start Date
+        description: Item start date.
+      - name: item_value_loc
+        sql: |-
+          (
+            SELECT hop1.item_value_loc
+            FROM {{ catalog('dwhprd_gold') }}.bts_items hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+              AND {CUBE}.contract_id = hop1.contract_id
+              AND {CUBE}.contract_item_id = hop1.contract_item_id
+          )
+        type: number
+        title: Item Value LOC
+        description: >-
+          Item value in local currency. An attribute that repeats on every
+          placement or target of the item. Do not sum it.
+      - name: item_value_usd_curr_pln_rate
+        sql: |-
+          (
+            SELECT hop1.item_value_usd_curr_pln_rate
+            FROM {{ catalog('dwhprd_gold') }}.bts_items hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+              AND {CUBE}.contract_id = hop1.contract_id
+              AND {CUBE}.contract_item_id = hop1.contract_item_id
+          )
+        type: number
+        title: Item Value Current Rate USD
+        description: >-
+          Item value at the current planned USD rate. An attribute, not a sum.
+      - name: master_channel
+        sql: |-
+          (
+            SELECT hop1.master_channel
+            FROM {{ catalog('dwhprd_gold') }}.channel_dim hop1
+            WHERE {CUBE}.channel_key = hop1.channel_key
+          )
+        type: string
+        title: Master Channel
+        description: Parent network grouping, e.g. Animal Planet, Discovery Channel, Discovery ID, Discovery
+          Science, Discovery Turbo, TLC.
+      - name: revenue_event_desc
+        sql: |-
+          (
+            SELECT hop1.revenue_event_desc
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Revenue Event
+        description: >-
+          Campaign-level revenue event description. Items & Placements & Targets
+          shows this, not item_revenue_event on bts_items.
+
+    joins:
+      - name: cube_carl_dwhprd_gold_channel_dim
+        sql: '{CUBE}.channel_key = {cube_carl_dwhprd_gold_channel_dim}.channel_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_bts_items
+        sql: >-
+          {CUBE}.campaign_key = {cube_carl_dwhprd_gold_bts_items}.campaign_key AND
+          {CUBE}.contract_id = {cube_carl_dwhprd_gold_bts_items}.contract_id AND
+          {CUBE}.contract_item_id = {cube_carl_dwhprd_gold_bts_items}.contract_item_id
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_campaign_dim
+        sql: '{CUBE}.campaign_key = {cube_carl_dwhprd_gold_campaign_dim}.campaign_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_calendar_month_dim
+        sql: '{CUBE}.calendar_month_key = {cube_carl_dwhprd_gold_calendar_month_dim}.calendar_month_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_calendar_year_dim
+        sql: '{CUBE}.calendar_year_key = {cube_carl_dwhprd_gold_calendar_year_dim}.calendar_year_key'
+        relationship: many_to_one
+    measures:
+      - name: record_count
+        sql: '*'
+        type: count
+        title: Record Count
+        description: Row count for smoke queries.
+      - name: item_planned_revenue_loc
+        sql: '{CUBE}.item_planned_revenue_loc'
+        type: sum
+        title: Item Planned Revenue LOC
+        description: Sum of ITEM_PLANNED_REVENUE_LOC. Template metric, SQL alias WJXBFS6.
+      - name: item_plan_rev_usd_curr_pln
+        sql: '{CUBE}.item_plan_rev_usd_curr_pln'
+        type: sum
+        title: Item Planned Revenue Current Rate (USD)
+        description: >-
+          Sum of ITEM_PLAN_REV_USD_CURR_PLN. The current-rate amount is already
+          on the fact. Template metric, SQL alias WJXBFS2.
+      - name: item_actual_revenue_loc
+        sql: '{CUBE}.item_actual_revenue_loc'
+        type: sum
+        title: Items Actual Revenue LOC
+        description: >-
+          Sum of ITEM_ACTUAL_REVENUE_LOC. The report-object name is Items
+          Actual Revenue LOC. SQL alias WJXBFS5. The template does not plot it.
+      - name: item_actual_rev_usd_curr_pln
+        sql: '{CUBE}.item_actual_rev_usd_curr_pln'
+        type: sum
+        title: Item Actual Revenue Current Rate (USD)
+        description: Sum of ITEM_ACTUAL_REV_USD_CURR_PLN. Selected in the warehouse SQL (WJXBFS1) and not on the template.
+      - name: item_rev_target_grp
+        sql: '{CUBE}.item_rev_target_grp'
+        type: sum
+        title: Item Revenue Target GRP
+        description: >-
+          Sum of ITEM_REV_TARGET_GRP. The report-object name is Item Revenue
+          Target GRP. SQL alias WJXBFS3. The template does not plot it.
+      - name: item_rev_target_spots
+        sql: '{CUBE}.item_rev_target_spots'
+        type: sum
+        title: Item Revenue Target Spots
+        description: >-
+          Sum of ITEM_REV_TARGET_SPOTS. The report-object name is Item Revenue
+          Target Spots. SQL alias WJXBFS4. The template does not plot it.
+      - name: item_plan_vs_actual_variance_loc
+        sql: "{item_planned_revenue_loc} - {item_actual_revenue_loc}"
+        type: number
+        title: Item Plan vs Actual Variance - LOC
+        description: >-
+          Planned local revenue minus actual local revenue after the sums.
+          MicroStrategy calculates this in the view. It is not a warehouse
+          column.
+      - name: item_plan_vs_actual_variance_usd
+        sql: "{item_plan_rev_usd_curr_pln} - {item_actual_rev_usd_curr_pln}"
+        type: number
+        title: Item Plan vs Actual Variance - USD
+        description: >-
+          Planned current-rate USD revenue minus actual current-rate USD
+          revenue after the sums. MicroStrategy calculates this in the view.
+          It is not a warehouse column.

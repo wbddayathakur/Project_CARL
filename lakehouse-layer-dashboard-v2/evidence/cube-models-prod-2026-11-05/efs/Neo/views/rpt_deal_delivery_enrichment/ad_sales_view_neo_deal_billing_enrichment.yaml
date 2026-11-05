@@ -1,0 +1,22 @@
+views:
+  - name: ad_sales_view_neo_deal_billing_enrichment
+    public: true
+    title: "NEO Deal Billing Delivery Enrichment"
+    description: >
+      Deal-level delivery dimension fields for NEO 1.0 billing enrichment exports. Separate contract from Prisma actuals back-feed.
+    meta:
+      view_scope: business
+      business: ad_sales
+      fact_table: rpt_deal_delivery_enrichment
+    cubes:
+      - join_path: cube_neo_gold_rpt_deal_delivery_enrichment
+        includes:
+          - deal_id
+          - shared_external_deal_id
+          - campaign_id
+          - deal_name
+          - insertion_order_no
+          - delivered_brand_site
+          - delivered_property_sports_category
+          - delivered_ad_type
+          - count

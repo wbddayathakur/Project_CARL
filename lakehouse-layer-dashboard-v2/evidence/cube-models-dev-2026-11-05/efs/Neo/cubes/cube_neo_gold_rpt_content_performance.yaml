@@ -1,0 +1,224 @@
+cubes:
+  - name: cube_neo_gold_rpt_content_performance
+    sql_table: "{{ catalog('neo_gold') }}.rpt_content_performance"
+    public: false
+    data_source: default
+    title: NEO Content Performance
+    description: >
+      Content, genre, device, geography, package, and creative delivery from neo_gold.rpt_content_performance.
+    dimensions:
+      - name: event_date_et
+        sql: CAST({CUBE}.event_date_et AS TIMESTAMP)
+        type: time
+        title: Event Date
+        description: Date of delivery in Eastern Time
+      - name: campaign_id
+        sql: '{CUBE}.campaign_id'
+        type: number
+        title: Campaign ID
+        description: NEO internal campaign identifier
+      - name: campaign_name
+        sql: '{CUBE}.campaign_name'
+        type: string
+        title: Campaign Name
+        description: Campaign name
+      - name: deal_id
+        sql: '{CUBE}.deal_id'
+        type: number
+        title: Deal ID
+        description: NEO internal deal identifier
+      - name: deal_name
+        sql: '{CUBE}.deal_name'
+        type: string
+        title: Deal Name
+        description: Deal / placement name
+      - name: deal_type
+        sql: '{CUBE}.deal_type'
+        type: string
+        title: Deal Type
+        description: Deal type classification
+      - name: deal_status
+        sql: '{CUBE}.deal_status'
+        type: string
+        title: Deal Status
+        description: Deal lifecycle status
+      - name: deal_start_date
+        sql: CAST({CUBE}.deal_start_date AS TIMESTAMP)
+        type: time
+        title: Deal Start Date
+        description: Deal flight start date
+      - name: deal_end_date
+        sql: CAST({CUBE}.deal_end_date AS TIMESTAMP)
+        type: time
+        title: Deal End Date
+        description: Deal flight end date
+      - name: advertiser_id
+        sql: '{CUBE}.advertiser_id'
+        type: string
+        title: Advertiser ID
+        description: Advertiser identifier in NEO
+      - name: advertiser_name
+        sql: '{CUBE}.advertiser_name'
+        type: string
+        title: Advertiser Name
+        description: Advertiser / brand name
+      - name: agency_id
+        sql: '{CUBE}.agency_id'
+        type: number
+        title: Agency ID
+        description: Agency identifier in NEO
+      - name: agency_name
+        sql: '{CUBE}.agency_name'
+        type: string
+        title: Agency Name
+        description: Agency managing the deal
+      - name: package_id
+        sql: '{CUBE}.package_id'
+        type: string
+        title: Package ID
+        description: FreeWheel insertion order identifier
+      - name: package_name
+        sql: '{CUBE}.package_name'
+        type: string
+        title: Package Name
+        description: FreeWheel insertion order / inventory package name
+      - name: creative_id
+        sql: '{CUBE}.creative_id'
+        type: string
+        title: Creative ID
+        description: FreeWheel creative identifier
+      - name: creative_name
+        sql: '{CUBE}.creative_name'
+        type: string
+        title: Creative Name
+        description: Creative asset name
+      - name: creative_duration
+        sql: '{CUBE}.creative_duration'
+        type: number
+        title: Creative Duration (seconds)
+        description: Creative length in seconds when available
+      - name: genre
+        sql: '{CUBE}.genre'
+        type: string
+        title: Content Genre
+        description: Primary content genre
+      - name: rating
+        sql: '{CUBE}.rating'
+        type: string
+        title: Content Rating
+        description: TV content rating (TV-PG, TV-MA, etc.)
+      - name: fw_brand
+        sql: '{CUBE}.fw_brand'
+        type: string
+        title: Platform Brand
+        description: FreeWheel streaming brand / site group
+      - name: modality
+        sql: '{CUBE}.modality'
+        type: string
+        title: Viewing Modality
+        description: VOD, Live stream, or other modality
+      - name: screen_type
+        sql: '{CUBE}.screen_type'
+        type: string
+        title: Screen Type
+        description: CTV, Mobile, Desktop, or Other — canonical bucket from gold ETL
+      - name: device_name
+        sql: '{CUBE}.device_name'
+        type: string
+        title: Device
+        description: Delivery device (CTV, Mobile, Desktop, etc.)
+      - name: visitor_dma
+        sql: '{CUBE}.visitor_dma'
+        type: string
+        title: Geography (DMA)
+        description: Visitor designated market area (Nielsen code)
+      - name: visitor_state_province
+        sql: '{CUBE}.visitor_state_province'
+        type: string
+        title: Geography (State/Province)
+        description: Visitor state or province
+      - name: visitor_city
+        sql: '{CUBE}.visitor_city'
+        type: string
+        title: Geography (City)
+        description: Visitor city when available
+      - name: site_name
+        sql: '{CUBE}.site_name'
+        type: string
+        title: Site Name
+        description: Delivery site / property name
+      - name: site_id
+        sql: '{CUBE}.site_id'
+        type: string
+        title: Site ID
+        description: FreeWheel site identifier
+      - name: video_series_name
+        sql: '{CUBE}.video_series_name'
+        type: string
+        title: Video Series
+        description: Show or series name when available
+      - name: video_series_id
+        sql: '{CUBE}.video_series_id'
+        type: string
+        title: Video Series ID
+        description: FreeWheel video series identifier
+      - name: fw_campaign_id
+        sql: '{CUBE}.fw_campaign_id'
+        type: string
+        title: FreeWheel Campaign ID
+        description: FreeWheel campaign identifier (distinct from NEO campaign_id)
+    measures:
+      - name: count
+        type: count
+        title: Row Count
+        description: Number of content delivery rows
+      - name: total_impressions
+        sql: '{CUBE}.impressions'
+        type: sum
+        title: Content Impressions
+        description: Delivered impressions for the selected content dimension
+      - name: total_revenue
+        sql: '{CUBE}.revenue'
+        type: sum
+        title: Content Spend ($)
+        description: Delivered spend for the selected content dimension
+      - name: total_completions
+        sql: '{CUBE}.completions'
+        type: sum
+        title: Content Completions
+        description: Completed views for the selected content dimension
+      - name: total_first_quartile_views
+        sql: '{CUBE}.first_quartile_views'
+        type: sum
+        title: First Quartile Views
+        description: Views reaching 25% completion
+      - name: total_midpoint_views
+        sql: '{CUBE}.midpoint_views'
+        type: sum
+        title: Midpoint Views
+        description: Views reaching 50% completion
+      - name: total_third_quartile_views
+        sql: '{CUBE}.third_quartile_views'
+        type: sum
+        title: Third Quartile Views
+        description: Views reaching 75% completion
+      - name: avg_vcr
+        sql: >
+          CASE
+            WHEN SUM({CUBE}.impressions) > 0
+            THEN (CAST(SUM({CUBE}.completions) AS DOUBLE) / SUM({CUBE}.impressions)) * 100
+            ELSE 0
+          END
+        type: number
+        title: Video Completion Rate (%)
+        description: Completions divided by impressions × 100
+      - name: effective_cpm
+        sql: >
+          CASE
+            WHEN SUM({CUBE}.impressions) > 0
+            THEN (SUM({CUBE}.revenue) / SUM({CUBE}.impressions)) * 1000
+            ELSE 0
+          END
+        type: number
+        title: Effective CPM ($)
+        description: Revenue per thousand impressions for the selected dimensions

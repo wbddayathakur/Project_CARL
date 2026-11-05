@@ -1,0 +1,92 @@
+views:
+  - name: executive_view_bobby_v
+    public: true
+    title: Executive — Bobby V
+    description: >-
+      Business view for executive on fact_executive_revenue_month_v. Backs the Bobby V
+      executive dashboard (CARL-497/CARL-559): revenue by platform (Linear/Digital),
+      by market (Upfront/Scatter, Direct Response, Programmatic), and by
+      advertiser/agency/Hold Co. CPM/fill-rate/liability metrics and Pipeline Metrics
+      are intentionally out of scope — CARL-559 sources those from the ASF forecast
+      and Salesforce, not Iceberg/QuickSight. CARL-2923.
+    meta:
+      view_scope: business
+      business: executive
+      fact_table: fact_executive_revenue_month_v
+    cubes:
+      - join_path: cube_linear_digital_revenue_gold_fact_executive_revenue_month_v
+        includes:
+          # Measures
+          - record_count
+          - revenue_gross
+          - revenue_net
+          - booked_revenue
+          - working_revenue
+          - linear_revenue
+          - digital_revenue
+
+          # Identifiers
+          - net_account_id
+          - account_id
+          - adver_id
+          - table_name
+
+          # Reconciliation variants, re-exposed here because the real Bobby V
+          # dashboard uses them (per the "Network =... Network_abs = network
+          # based on net_account" note on its Research sheet) even though
+          # they're public: false on the cube by default.
+          - account_abs
+          - network_abs
+
+          # Platform
+          - business_source
+
+          # Advertiser / agency hierarchy
+          - advertiser_id
+          - advertiser
+          - advertiser_reporting_parent
+          - agency_id
+          - agency
+          - agency_reporting_parent
+          - mega_agency
+
+          # Market / deal structure
+          - upfront_scatter
+          - upfront_market
+          - upfront_type
+          - market
+          - classification
+          - is_programmatic
+          - programmatic_type
+          - national_direct_response
+          - is_local_affiliate
+          - is_adu
+
+          # Network / platform detail
+          - network
+          - network_short
+          - digital_brand
+
+          # Revenue classification
+          - revenue_type
+          - revenue_type_detail
+
+          # Time
+          - year
+          - quarter
+          - month
+          - year_month
+          - year_quarter
+          - updated_date
+
+          # Operational
+          - office
+          - ae_name
+          - general_category
+          - property_category
+          - is_ncaa
+          - division_original
+          - consolidated_division
+          - linear_revenue_area
+          - is_streaming
+          - streaming_type

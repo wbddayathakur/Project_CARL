@@ -1,0 +1,55 @@
+views:
+  - name: ad_sales_view_neo_content_performance
+    public: true
+    title: "NEO Content Performance Report"
+    description: >
+      Genre, rating, modality, device, geography, package, and creative delivery for dimension breakdown,
+      granular reporting, and delivery log export.
+    meta:
+      view_scope: business
+      business: ad_sales
+      fact_table: rpt_content_performance
+    cubes:
+      - join_path: cube_neo_gold_rpt_content_performance
+        includes:
+          - event_date_et
+          - campaign_id
+          - campaign_name
+          - deal_id
+          - deal_name
+          - deal_type
+          - deal_status
+          - deal_start_date
+          - deal_end_date
+          - advertiser_id
+          - advertiser_name
+          - agency_id
+          - agency_name
+          - package_id
+          - package_name
+          - creative_id
+          - creative_name
+          - creative_duration
+          - genre
+          - rating
+          - fw_brand
+          - modality
+          - screen_type
+          - device_name
+          - visitor_dma
+          - visitor_state_province
+          - visitor_city
+          - site_name
+          - site_id
+          - video_series_name
+          - video_series_id
+          - fw_campaign_id
+          - count
+          - total_impressions
+          - total_revenue
+          - total_completions
+          - total_first_quartile_views
+          - total_midpoint_views
+          - total_third_quartile_views
+          - avg_vcr
+          - effective_cpm

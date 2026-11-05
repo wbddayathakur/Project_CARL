@@ -1,0 +1,99 @@
+views:
+  - name: international_view_wbdl_bonus_spot_review
+    public: true
+    title: International — WBDL Bonus Spot Review
+    description: >-
+      WBDL Bonus Spot Review for Discovery Latin America. Non-chargeable
+      spots and net revenue by holding company, sales rep, agency, client,
+      master channel, channel, break daypart group, campaign, charge type,
+      calendar year, month, quarter, business type, 30-minute slot, and base
+      currency. Reads cube_carl_dwhprd_gold_spot_fact. Apply in QuickSight:
+      source_system_region_key = 21, spot_status_key in 5, 4, 0, 1, 2, 3,
+      and 6, calendar_qtr_key = 20251, charge type name Non-Chargeable, and
+      client name other than Discovery Latin America. Those filters are not
+      on the cube. Equivalent spots are Spot Seconds / 30.
+    meta:
+      view_scope: business
+      business: international
+      fact_table: wbdl_bonus_spot_review
+      mstr_report_name: WBDL Bonus Spot Review
+      catalog_key: lumos_carl_dwhprd_gold
+      ai_context: >
+        Use this view for WBDL Bonus Spot Review. Filter
+        source_system_region_key = 21, spot_status_key to 5, 4, 0, 1, 2, 3,
+        and 6, and calendar_qtr_key to 20251 (1st Qtr 2025). Keep charge type
+        Non-Chargeable and exclude client Discovery Latin America. Measures
+        are multiplied by sales_rep_revenue_share, with a missing share
+        treated as 1. A campaign with no sales rep is named N/A.
+        equivalent_spots = spot_seconds / 30, computed after the grid totals.
+        net_revenue_loc = sum(gross_revenue * share * (1 - agency_commission_pct)).
+        net_revenue_current_rate_usd applies the current planned exchange
+        factor to that same product.
+    cubes:
+      - join_path: cube_carl_dwhprd_gold_spot_fact
+        includes:
+          - source_system_region_key
+          - spot_status_key
+          - calendar_qtr_key
+          - record_count
+          - spots_booked
+          - spot_seconds
+          - equivalent_spots
+          - net_revenue_loc
+          - net_revenue_current_rate_usd
+          - name: sales_rep_name
+            title: Sales Rep
+      - join_path: >-
+          cube_carl_dwhprd_gold_spot_fact.cube_carl_dwhprd_gold_campaign_dim.cube_carl_dwhprd_gold_holding_company_dim
+        includes:
+          - name: holding_company_name
+            title: Holding Company
+      - join_path: cube_carl_dwhprd_gold_spot_fact.cube_carl_dwhprd_gold_business_type_dim
+        includes:
+          - name: business_type_name
+            title: Business Type
+      - join_path: cube_carl_dwhprd_gold_spot_fact.cube_carl_dwhprd_gold_base_currency_dim
+        includes:
+          - name: currency_code
+            alias: base_currency_code
+            title: Base Currency
+      - join_path: cube_carl_dwhprd_gold_spot_fact.cube_carl_dwhprd_gold_campaign_dim
+        includes:
+          - name: campaign_id
+            title: Campaign
+      - join_path: cube_carl_dwhprd_gold_spot_fact.cube_carl_dwhprd_gold_campaign_dim.cube_carl_dwhprd_gold_agency_dim
+        includes:
+          - name: agency_name
+            title: Agency
+      - join_path: cube_carl_dwhprd_gold_spot_fact.cube_carl_dwhprd_gold_campaign_dim.cube_carl_dwhprd_gold_client_dim
+        includes:
+          - name: client_name
+            title: Client
+      - join_path: cube_carl_dwhprd_gold_spot_fact.cube_carl_dwhprd_gold_channel_dim
+        includes:
+          - master_channel
+          - name: display_channel_name
+            title: Channel
+      - join_path: cube_carl_dwhprd_gold_spot_fact.cube_carl_dwhprd_gold_bts_time_dim
+        includes:
+          - name: hourly_time_slot_30
+            title: Spot Scheduled Hourly Time Slot - 30
+      - join_path: cube_carl_dwhprd_gold_spot_fact.cube_carl_dwhprd_gold_charge_type_dim
+        includes:
+          - name: charge_type_name
+            title: Charge Type
+      - join_path: cube_carl_dwhprd_gold_spot_fact.cube_carl_dwhprd_gold_calendar_month_dim
+        includes:
+          - calendar_month_label
+      - join_path: cube_carl_dwhprd_gold_spot_fact.cube_carl_dwhprd_gold_calendar_qtr_dim
+        includes:
+          - name: cal_qtr_desc
+            title: Quarter
+      - join_path: cube_carl_dwhprd_gold_spot_fact.cube_carl_dwhprd_gold_calendar_year_dim
+        includes:
+          - name: calendar_year
+            title: Year
+      - join_path: cube_carl_dwhprd_gold_spot_fact.cube_carl_dwhprd_gold_break_dim.cube_carl_dwhprd_gold_daypart_dim
+        includes:
+          - name: daypart_group_name
+            title: Break Daypart Group

@@ -1,0 +1,84 @@
+views:
+  - name: international_view_tcr_fact
+    public: true
+    title: International — TCR fact
+    description: >-
+      TCR fact view for Discovery Latin America finance (MSTR DLA Shared, Finance Shared). Detail
+      listing of TCRs at TCR x approval stage grain. One public view per gold fact: it serves BOTH
+      TCR rprt 1 and TCR rprt 2 from QuickSight through different filter controls / analyses, rather
+      than one view per MSTR report name. Header columns come from cube_carl_dwhprd_gold_tcr_fact and
+      stage columns from cube_carl_dwhprd_gold_tcr_approval_fact through a left join, so a TCR with no
+      approval rows still appears, with blank stage columns. The only metric is tcr_count, an exact
+      distinct count of tcr_id. Recompute it for totals; never sum it. Prompts are not baked in. Apply
+      them in QuickSight as optional filter controls on contract_number, deal_number, invoice_number,
+      month, sales_holding_company, agent, advertiser, product, added_date (a date or a date range),
+      and current_approval_status. In MSTR the commercial prompts filtered TCR prompt value-list
+      tables, which were not landed. Here they filter the same columns on the TCR header, which hold
+      one value per TCR. Amount and adjustment-count columns are row attributes, not measures. In
+      QuickSight place the amount, adjustment_count and multiple_items columns in Group by, not
+      Value.
+    meta:
+      view_scope: business
+      business: international
+      fact_table: tcr_fact
+      ai_context: >
+        Use this view for the TCR fact (TCR = the finance change-request record; expansion
+        unconfirmed). It is the single view behind both TCR rprt 1 and TCR rprt 2, which differ only
+        in their QuickSight filter controls / analyses, not in grain or columns. One row per TCR per
+        approval stage. tcr_count is the only metric. It is an exact distinct count of TCR IDs and is
+        not additive. "Number of TCRs" and "TCR count" both mean tcr_count. Do not use a row count.
+        Amounts (original, adjustment and new, in LOC and HOME) are per-row attributes: do not sum
+        them across stage rows, because a TCR repeats once per stage. current_* columns describe the
+        TCR as a whole, and approval_* / completed_* columns describe one stage. approval_date,
+        completed_date and current_approval_date are text in yyyy-mm-dd hh:mm:ss form. Group by the
+        amount, adjustment_count and multiple_items columns; never aggregate them.
+        The unfiltered listing exceeds the API's default row limit; filter (for example by added
+        date or contract) or page with limit and offset.
+        Typical filters, applied as optional QuickSight filter controls (not baked into the view):
+        contract, deal, invoice, month, holding company, agent, advertiser, product, added date
+        (date or date range), and current approval status.
+    cubes:
+      - join_path: cube_carl_dwhprd_gold_tcr_fact
+        includes:
+          - tcr_count
+          - sales_holding_company
+          - added_date
+          - tcr_id
+          - added_by
+          - current_approval_status
+          - current_approval_stage
+          - current_approved_by
+          - current_approval_date
+          - header_change
+          - multiple_change
+          - multiple_items
+          - change_source
+          - change_reason
+          - adjustment_type
+          - adjustment_count
+          - calendar
+          - contract_currency
+          - original_amount_local
+          - original_amount_home
+          - adjustment_amount_local
+          - adjustment_amount_home
+          - new_amount_local
+          - new_amount_home
+          - month
+          - deal_number
+          - contract_number
+          - invoice_number
+          - agent
+          - advertiser
+          - product
+          - revenue_type
+      - join_path: cube_carl_dwhprd_gold_tcr_fact.cube_carl_dwhprd_gold_tcr_approval_fact
+        includes:
+          - approval_stage_seq
+          - approval_stage_status
+          - approval_stage
+          - approval_team
+          - approved_by
+          - approval_date
+          - completed_by
+          - completed_date

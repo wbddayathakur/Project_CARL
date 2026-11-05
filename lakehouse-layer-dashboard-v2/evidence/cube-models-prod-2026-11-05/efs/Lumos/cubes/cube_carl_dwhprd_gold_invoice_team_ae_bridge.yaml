@@ -1,0 +1,75 @@
+cubes:
+  - name: cube_carl_dwhprd_gold_invoice_team_ae_bridge
+    sql: >
+      SELECT f.unit_sched_bcast_month_key,
+             f.acct_cov_team_member_key,
+             f.sales_team_member_key,
+             f.fraction,
+             m.acct_cov_team_key
+        FROM {{ catalog('dwhprd_gold') }}.ae_fraction_fact f
+        INNER JOIN {{ catalog('dwhprd_gold') }}.acct_cov_team_member_dim m
+          ON f.acct_cov_team_member_key = m.acct_cov_team_member_key
+    data_source: default
+    public: false
+    title: Carl Dwhprd Gold — Invoice Team AE Bridge
+    description: >-
+      Query-backed ae_fraction_fact joined to acct_cov_team_member_dim so acct_cov_team_key is a
+      physical column for invoice→bridge joins (Athena rejects cross-cube refs and correlated
+      subqueries in join SQL). Grain is fraction row + team key from member. CARL-3016 ad_sales only.
+      Probed dev 2026-09-29: unique on (acct_cov_team_key, unit_sched_bcast_month_key,
+      acct_cov_team_member_key, sales_team_member_key).
+    dimensions:
+      - name: acct_cov_team_key
+        sql: acct_cov_team_key
+        type: number
+        title: Account Coverage Team Key
+        description: >-
+          From acct_cov_team_member_dim via embedded join; used in invoice→bridge join with
+          unit_sched_bcast_month_key. Not exposed on ad_sales_view_invoice_revenue_fact includes.
+      - name: unit_sched_bcast_month_key
+        sql: unit_sched_bcast_month_key
+        type: number
+        title: Unit Sched Broadcast Month Key
+        description: Part of bridge grain; must match invoice_revenue_fact.unit_sched_bcast_month_key on the join.
+        primary_key: true
+      - name: acct_cov_team_member_key
+        sql: acct_cov_team_member_key
+        type: number
+        title: Account Coverage Team Member Key
+        description: Part of bridge grain; foreign key to acct_cov_team_member_dim.
+        primary_key: true
+      - name: sales_team_member_key
+        sql: sales_team_member_key
+        type: number
+        title: Sales Team Member Key
+        description: Part of bridge grain; foreign key to sales_team_member_dim.
+        primary_key: true
+    joins:
+      - name: cube_carl_dwhprd_gold_acct_cov_team_member_dim
+        sql: >-
+          {CUBE}.acct_cov_team_member_key =
+          {cube_carl_dwhprd_gold_acct_cov_team_member_dim}.acct_cov_team_member_key
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_sales_team_member_dim
+        sql: >-
+          {CUBE}.sales_team_member_key =
+          {cube_carl_dwhprd_gold_sales_team_member_dim}.sales_team_member_key
+        relationship: many_to_one
+    measures:
+      - name: record_count
+        sql: '*'
+        type: count
+        title: Record Count
+        description: Row count for smoke queries.
+        meta:
+          source: generated
+          used_by_report_ids: []
+      - name: fraction
+        sql: '{CUBE}.fraction'
+        type: sum
+        title: AE Fraction
+        description: >-
+          Sum of AE allocation fractions (CARL-3016) at team + unit broadcast month + member + sales team
+          member grain. Pair with Gross Revenue only when coverage team member and Unit Broadcast Month are
+          in the query grain; summing Gross Revenue at coarser grain while this path is joined still inflates
+          revenue. MSTR multiplies pre-aggregated revenue and fraction — validate parity.

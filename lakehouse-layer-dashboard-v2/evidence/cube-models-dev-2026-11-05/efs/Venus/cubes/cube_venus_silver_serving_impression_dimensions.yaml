@@ -1,0 +1,1193 @@
+cubes:
+  - name: cube_venus_silver_serving_impression_dimensions
+    data_source: default
+    public: false
+    title: Venus — Impression Dimensions
+    description: >-
+      One row per impression bucket for a deal version and network. Combo
+      netting columns are computed here. Standard, combo, and super deal
+      dollar figures are measures on this cube, not separate cubes.
+    sql: >
+      WITH scoped AS (
+        SELECT *
+        FROM {{ catalog('venus_silver_serving') }}.impression_dimensions AS src
+        WHERE {FILTER_PARAMS.cube_venus_silver_serving_impression_dimensions.created_date.filter('src.created_date')}
+      ),
+      sourced AS (
+        SELECT
+          scaled.*,
+          SUM(scaled.delivered_impressions) OVER (PARTITION BY scaled.deal_id, scaled.calc_version_no)
+            - SUM(scaled.guaranteed_impressions * COALESCE(scaled.guaranteed_percentage, 100) / 100.0)
+              OVER (PARTITION BY scaled.deal_id, scaled.calc_version_no) AS deal_version_variance,
+          EXISTS (
+            SELECT 1
+            FROM scoped AS other
+            WHERE other.deal_id = scaled.deal_id
+              AND other.calc_version_no = scaled.calc_version_no
+              AND other.network_id <> scaled.network_id
+          ) AS combo_ind
+        FROM (
+        SELECT
+          src.id,
+          src.deal_id,
+          src.gab_deal_id,
+          src.opportunity_id,
+          src.network_id,
+          src.property_id,
+          src.holdco,
+          src.ae,
+          src.division,
+          src.daypart,
+          src.selling_title,
+          src.impression_type,
+          src.calc_version_no,
+          src.created_date,
+          src.guaranteed_impressions AS guaranteed_impressions,
+          src.delivered_impressions / 1000.0 AS delivered_impressions,
+          src.cost,
+          src.super_deal_id,
+          src.advertiser_id,
+          src.agency_id,
+          src.adu_units_count,
+          src.recap_units_count,
+          src.cash_unit_count,
+          CASE
+            WHEN src.impression_type = 3 THEN
+              COALESCE(src.recap_units_count, 0) + COALESCE(src.adu_units_count, 0) + COALESCE(src.cash_unit_count, 0)
+            ELSE 0
+          END AS unaired_unit_count,
+          src.market_type_id,
+          src.guaranteed_demo,
+          src.guaranteed_percentage,
+          src.start_date,
+          src.end_date,
+          src.channel,
+          src.calc_version_no = MAX(src.calc_version_no) OVER (PARTITION BY src.deal_id) AS is_latest_deal_version
+        FROM scoped AS src
+        ) AS scaled
+      ),
+      version_created AS (
+        SELECT
+          deal_id,
+          calc_version_no,
+          MIN(created_date) AS version_created_at
+        FROM sourced
+        GROUP BY deal_id, calc_version_no
+      ),
+      version_bounds AS (
+        SELECT
+          deal_id,
+          calc_version_no,
+          version_created_at,
+          LEAD(version_created_at) OVER (
+            PARTITION BY deal_id
+            ORDER BY calc_version_no
+          ) AS next_version_created_at
+        FROM version_created
+      ),
+      group_roll AS (
+        SELECT
+          deal_id,
+          calc_version_no,
+          network_id,
+          property_id,
+          SUM(guaranteed_impressions) AS group_guar,
+          SUM(guaranteed_impressions * COALESCE(guaranteed_percentage, 100) / 100.0) AS group_thresh,
+          SUM(delivered_impressions) AS group_del,
+          SUM(CASE WHEN impression_type IN (1, 2) THEN delivered_impressions ELSE 0 END) AS group_del_now,
+          SUM(cost) AS group_cost
+        FROM sourced
+        WHERE combo_ind
+        GROUP BY deal_id, calc_version_no, network_id, property_id
+      ),
+      group_scored AS (
+        SELECT
+          g.*,
+          g.group_del - g.group_thresh AS liab_imps,
+          g.group_del_now - g.group_thresh AS liab_imps_now,
+          SUM(g.group_del) OVER (PARTITION BY g.deal_id, g.calc_version_no)
+            - SUM(g.group_guar) OVER (PARTITION BY g.deal_id, g.calc_version_no) AS deal_surplus,
+          SUM(g.group_del_now) OVER (PARTITION BY g.deal_id, g.calc_version_no)
+            - SUM(g.group_guar) OVER (PARTITION BY g.deal_id, g.calc_version_no) AS deal_surplus_now,
+          SUM(GREATEST(g.group_del - g.group_thresh, 0)) OVER (PARTITION BY g.deal_id, g.calc_version_no) AS total_over,
+          SUM(GREATEST(-(g.group_del - g.group_thresh), 0)) OVER (PARTITION BY g.deal_id, g.calc_version_no) AS total_short,
+          SUM(GREATEST(g.group_del_now - g.group_thresh, 0)) OVER (PARTITION BY g.deal_id, g.calc_version_no) AS total_over_now,
+          SUM(GREATEST(-(g.group_del_now - g.group_thresh), 0)) OVER (PARTITION BY g.deal_id, g.calc_version_no) AS total_short_now
+        FROM group_roll AS g
+      ),
+      group_ranked AS (
+        SELECT
+          s.*,
+          LEAST(GREATEST(s.deal_surplus, 0), s.total_over, s.total_short) AS allocatable,
+          LEAST(GREATEST(s.deal_surplus_now, 0), s.total_over_now, s.total_short_now) AS allocatable_now,
+          SUM(GREATEST(-s.liab_imps, 0)) OVER (
+            PARTITION BY s.deal_id, s.calc_version_no
+            ORDER BY s.group_guar DESC, s.network_id, s.property_id
+            ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+          ) AS cum_short,
+          SUM(GREATEST(s.liab_imps, 0)) OVER (
+            PARTITION BY s.deal_id, s.calc_version_no
+            ORDER BY s.group_guar DESC, s.network_id, s.property_id
+            ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+          ) AS cum_over,
+          SUM(GREATEST(-s.liab_imps_now, 0)) OVER (
+            PARTITION BY s.deal_id, s.calc_version_no
+            ORDER BY s.group_guar DESC, s.network_id, s.property_id
+            ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+          ) AS cum_short_now,
+          SUM(GREATEST(s.liab_imps_now, 0)) OVER (
+            PARTITION BY s.deal_id, s.calc_version_no
+            ORDER BY s.group_guar DESC, s.network_id, s.property_id
+            ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+          ) AS cum_over_now
+        FROM group_scored AS s
+      ),
+      group_net AS (
+        SELECT
+          r.*,
+          CASE
+            WHEN COALESCE(r.group_cost, 0) = 0 AND COALESCE(r.group_guar, 0) = 0 THEN 0
+            ELSE r.group_cost / NULLIF(r.group_guar, 0)
+          END AS group_cpm,
+          CASE
+            WHEN r.allocatable <= 0 OR r.liab_imps >= 0 THEN 0
+            ELSE LEAST(
+              GREATEST(-r.liab_imps, 0),
+              GREATEST(0, r.allocatable - (r.cum_short - GREATEST(-r.liab_imps, 0)))
+            )
+          END AS received,
+          CASE
+            WHEN r.allocatable <= 0 OR r.liab_imps <= 0 THEN 0
+            ELSE LEAST(
+              GREATEST(r.liab_imps, 0),
+              GREATEST(0, r.allocatable - (r.cum_over - GREATEST(r.liab_imps, 0)))
+            )
+          END AS given,
+          CASE
+            WHEN r.allocatable_now <= 0 OR r.liab_imps_now >= 0 THEN 0
+            ELSE LEAST(
+              GREATEST(-r.liab_imps_now, 0),
+              GREATEST(0, r.allocatable_now - (r.cum_short_now - GREATEST(-r.liab_imps_now, 0)))
+            )
+          END AS received_now,
+          CASE
+            WHEN r.allocatable_now <= 0 OR r.liab_imps_now <= 0 THEN 0
+            ELSE LEAST(
+              GREATEST(r.liab_imps_now, 0),
+              GREATEST(0, r.allocatable_now - (r.cum_over_now - GREATEST(r.liab_imps_now, 0)))
+            )
+          END AS given_now
+        FROM group_ranked AS r
+      ),
+      row_base AS (
+        SELECT
+          s.id,
+          s.deal_id,
+          s.calc_version_no,
+          s.network_id,
+          s.property_id,
+          n.group_cpm,
+          n.received,
+          n.given,
+          n.received_now,
+          n.given_now,
+          s.delivered_impressions
+            - s.guaranteed_impressions * COALESCE(s.guaranteed_percentage, 100) / 100.0 AS row_liab,
+          CASE WHEN s.impression_type IN (1, 2) THEN s.delivered_impressions ELSE 0 END
+            - s.guaranteed_impressions * COALESCE(s.guaranteed_percentage, 100) / 100.0 AS row_liab_now
+        FROM sourced AS s
+        INNER JOIN group_net AS n
+          ON n.deal_id = s.deal_id
+         AND n.calc_version_no = s.calc_version_no
+         AND n.network_id = s.network_id
+         AND n.property_id IS NOT DISTINCT FROM s.property_id
+        WHERE s.combo_ind
+      ),
+      row_ranked AS (
+        SELECT
+          b.*,
+          GREATEST(b.row_liab, 0) AS row_over,
+          GREATEST(-b.row_liab, 0) AS row_short,
+          GREATEST(b.row_liab_now, 0) AS row_over_now,
+          GREATEST(-b.row_liab_now, 0) AS row_short_now,
+          SUM(GREATEST(b.row_liab, 0)) OVER (
+            PARTITION BY b.deal_id, b.calc_version_no, b.network_id, b.property_id
+            ORDER BY GREATEST(b.row_liab, 0) DESC, b.id
+            ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+          ) AS cum_row_over,
+          SUM(GREATEST(-b.row_liab, 0)) OVER (
+            PARTITION BY b.deal_id, b.calc_version_no, b.network_id, b.property_id
+            ORDER BY GREATEST(-b.row_liab, 0) DESC, b.id
+            ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+          ) AS cum_row_short,
+          SUM(GREATEST(b.row_liab_now, 0)) OVER (
+            PARTITION BY b.deal_id, b.calc_version_no, b.network_id, b.property_id
+            ORDER BY GREATEST(b.row_liab_now, 0) DESC, b.id
+            ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+          ) AS cum_row_over_now,
+          SUM(GREATEST(-b.row_liab_now, 0)) OVER (
+            PARTITION BY b.deal_id, b.calc_version_no, b.network_id, b.property_id
+            ORDER BY GREATEST(-b.row_liab_now, 0) DESC, b.id
+            ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+          ) AS cum_row_short_now
+        FROM row_base AS b
+      ),
+      row_shares AS (
+        SELECT
+          id,
+          row_liab
+            - LEAST(row_over, GREATEST(0, given - (cum_row_over - row_over)))
+            + LEAST(row_short, GREATEST(0, received - (cum_row_short - row_short))) AS net_variance_share,
+          group_cpm * row_liab AS row_gross_dollar,
+          group_cpm * (
+            row_liab
+            - LEAST(row_over, GREATEST(0, given - (cum_row_over - row_over)))
+            + LEAST(row_short, GREATEST(0, received - (cum_row_short - row_short)))
+          ) AS row_dollar_liability,
+          group_cpm * (
+            row_liab_now
+            - LEAST(row_over_now, GREATEST(0, given_now - (cum_row_over_now - row_over_now)))
+            + LEAST(row_short_now, GREATEST(0, received_now - (cum_row_short_now - row_short_now)))
+          ) AS row_dollar_liability_now
+        FROM row_ranked
+      ),
+      detail AS (
+      SELECT
+        sourced.id,
+        sourced.deal_id,
+        sourced.gab_deal_id,
+        sourced.opportunity_id,
+        sourced.network_id,
+        sourced.property_id,
+        sourced.holdco,
+        sourced.ae,
+        sourced.division,
+        sourced.daypart,
+        sourced.selling_title,
+        sourced.impression_type,
+        sourced.calc_version_no,
+        sourced.created_date,
+        sourced.guaranteed_impressions,
+        sourced.delivered_impressions,
+        sourced.cost,
+        sourced.super_deal_id,
+        sourced.advertiser_id,
+        sourced.agency_id,
+        sourced.adu_units_count,
+        sourced.recap_units_count,
+        sourced.cash_unit_count,
+        sourced.unaired_unit_count,
+        sourced.market_type_id,
+        sourced.guaranteed_demo,
+        sourced.guaranteed_percentage,
+        sourced.start_date,
+        sourced.end_date,
+        sourced.guaranteed_impressions * COALESCE(sourced.guaranteed_percentage, 100) / 100.0 AS threshold_guaranteed,
+        sourced.channel,
+        SUM(sourced.delivered_impressions) OVER (PARTITION BY sourced.deal_id, sourced.calc_version_no, sourced.network_id)
+          - SUM(sourced.guaranteed_impressions * COALESCE(sourced.guaranteed_percentage, 100) / 100.0)
+            OVER (PARTITION BY sourced.deal_id, sourced.calc_version_no, sourced.network_id) AS network_variance,
+        SUM(sourced.delivered_impressions) OVER (PARTITION BY sourced.deal_id, sourced.calc_version_no, sourced.property_id)
+          - SUM(sourced.guaranteed_impressions * COALESCE(sourced.guaranteed_percentage, 100) / 100.0)
+            OVER (PARTITION BY sourced.deal_id, sourced.calc_version_no, sourced.property_id) AS property_variance,
+        SUM(sourced.delivered_impressions) OVER (PARTITION BY sourced.deal_id, sourced.calc_version_no, sourced.holdco)
+          - SUM(sourced.guaranteed_impressions * COALESCE(sourced.guaranteed_percentage, 100) / 100.0)
+            OVER (PARTITION BY sourced.deal_id, sourced.calc_version_no, sourced.holdco) AS holdco_variance,
+        SUM(sourced.delivered_impressions) OVER (PARTITION BY sourced.deal_id, sourced.calc_version_no, sourced.channel)
+          - SUM(sourced.guaranteed_impressions * COALESCE(sourced.guaranteed_percentage, 100) / 100.0)
+            OVER (PARTITION BY sourced.deal_id, sourced.calc_version_no, sourced.channel) AS channel_variance,
+        sourced.is_latest_deal_version,
+        sourced.deal_version_variance,
+        sourced.combo_ind,
+        CASE WHEN sourced.combo_ind THEN row_shares.net_variance_share END AS net_variance_share,
+        CASE WHEN sourced.combo_ind THEN row_shares.row_dollar_liability END AS row_dollar_liability,
+        CASE WHEN sourced.combo_ind THEN row_shares.row_gross_dollar END AS row_gross_dollar,
+        CASE WHEN sourced.combo_ind THEN row_shares.row_dollar_liability_now END AS row_dollar_liability_now,
+        date_trunc('week', version_bounds.version_created_at) AS version_week,
+        date_trunc('week', version_bounds.version_created_at) AS as_of_week,
+        version_bounds.next_version_created_at,
+        CASE
+          WHEN version_bounds.next_version_created_at IS NOT NULL
+            AND date_trunc('week', version_bounds.next_version_created_at) = date_trunc('week', version_bounds.version_created_at)
+          THEN version_bounds.next_version_created_at
+          ELSE NULL
+        END AS next_version_in_week,
+        CASE
+          WHEN version_bounds.next_version_created_at IS NULL
+            OR date_trunc('week', version_bounds.next_version_created_at) > date_trunc('week', version_bounds.version_created_at)
+          THEN true
+          ELSE false
+        END AS is_latest_in_version_week
+      FROM sourced
+      LEFT JOIN row_shares
+        ON row_shares.id = sourced.id
+      LEFT JOIN version_bounds
+        ON version_bounds.deal_id = sourced.deal_id
+       AND version_bounds.calc_version_no = sourced.calc_version_no
+      ),
+      member_priced AS (
+        SELECT
+          detail.*,
+          COALESCE(ROUND(
+            CASE
+              WHEN detail.combo_ind THEN SUM(detail.row_dollar_liability) OVER member_deal
+              ELSE (
+                SUM(detail.delivered_impressions) OVER member_deal
+                - SUM(detail.threshold_guaranteed) OVER member_deal
+              ) * SUM(detail.cost) OVER member_deal
+                / NULLIF(SUM(detail.threshold_guaranteed) OVER member_deal, 0)
+            END
+          , 0), 0) AS member_dollar_liability,
+          COUNT(*) OVER member_deal AS member_rows
+        FROM detail
+        WINDOW member_deal AS (PARTITION BY detail.deal_id, detail.calc_version_no)
+      )
+      SELECT
+        member_priced.*,
+        CASE
+          WHEN member_priced.combo_ind THEN member_priced.row_dollar_liability
+          ELSE member_priced.member_dollar_liability / member_priced.member_rows
+        END AS member_dollar_share,
+        CASE
+          WHEN member_priced.super_deal_id IS NULL
+            OR member_priced.super_deal_id = 0
+            OR member_priced.member_dollar_liability >= 0
+          THEN 0
+          WHEN member_priced.combo_ind THEN member_priced.row_dollar_liability
+          ELSE member_priced.member_dollar_liability / member_priced.member_rows
+        END AS super_member_dollar_share
+      FROM member_priced
+
+    joins:
+      - name: cube_linear_digital_revenue_bronze_ideal_posting_stw_network
+        relationship: many_to_one
+        sql: "{CUBE}.network_id = {cube_linear_digital_revenue_bronze_ideal_posting_stw_network}.net_id"
+      - name: cube_linear_digital_revenue_bronze_ideal_dci_sell_property_category
+        relationship: many_to_one
+        sql: "{CUBE}.property_id = {cube_linear_digital_revenue_bronze_ideal_dci_sell_property_category}.property_category_id"
+      - name: cube_linear_digital_revenue_bronze_ideal_msa_de_deal_hdr
+        relationship: many_to_one
+        sql: "{CUBE}.deal_id = {cube_linear_digital_revenue_bronze_ideal_msa_de_deal_hdr}.deal_id"
+      - name: cube_linear_digital_revenue_bronze_ideal_dci_super_deal
+        relationship: many_to_one
+        sql: "{CUBE}.super_deal_id = {cube_linear_digital_revenue_bronze_ideal_dci_super_deal}.super_deal_id"
+      - name: cube_linear_digital_revenue_bronze_ideal_msa_ge_advertisers
+        relationship: many_to_one
+        sql: "{CUBE}.advertiser_id = {cube_linear_digital_revenue_bronze_ideal_msa_ge_advertisers}.adver_id"
+      - name: cube_linear_digital_revenue_bronze_ideal_msa_ge_agencies
+        relationship: many_to_one
+        sql: "{CUBE}.agency_id = {cube_linear_digital_revenue_bronze_ideal_msa_ge_agencies}.agency_id"
+
+    dimensions:
+      - name: id
+        sql: id
+        type: string
+        primary_key: true
+        title: Id
+        description: Row identifier from impression_dimensions.
+      - name: deal_id
+        sql: deal_id
+        type: number
+        title: Deal Id
+        description: Member deal identifier.
+      - name: gab_deal_id
+        sql: gab_deal_id
+        type: number
+        title: GAB Deal Id
+        description: GAB deal identifier on the impression row.
+      - name: network_id
+        sql: network_id
+        type: number
+        title: Network Id
+        description: Network on the impression row.
+      - name: property_id
+        sql: property_id
+        type: number
+        title: Property Id
+        description: Property category id. The name comes from the property category lookup.
+      - name: holdco
+        sql: holdco
+        type: string
+        title: Holdco
+        description: Holding company name on the impression row.
+      - name: ae
+        sql: ae
+        type: number
+        title: AE
+        description: Account executive id on the impression row.
+      - name: division
+        sql: division
+        type: string
+        title: Division
+        description: Division on the impression row.
+      - name: daypart
+        sql: daypart
+        type: number
+        title: Daypart
+        description: Daypart on the impression row.
+      - name: selling_title
+        sql: selling_title
+        type: number
+        title: Selling Title
+        description: Selling title on the impression row.
+      - name: impression_type
+        sql: impression_type
+        type: number
+        title: Impression Type
+        description: 1 is actual. 2 is pre-actual.
+      - name: calc_version_no
+        sql: calc_version_no
+        type: number
+        title: Calc Version No
+        description: Calculation version of the member deal.
+      - name: created_date
+        sql: created_date
+        type: time
+        title: Created Date
+        description: >-
+          Day the deal version was created. A filter on this date is applied
+          before Is Latest Deal Version is calculated. Created Date before
+          11 Oct keeps the highest version on or before that date, even when
+          that date itself has no row.
+      - name: channel
+        sql: channel
+        type: string
+        title: Channel
+        description: Channel from impression_dimensions. Linear, Digital, or Converged.
+      - name: advertiser_id
+        sql: advertiser_id
+        type: number
+        title: Advertiser Id
+        description: Advertiser id on the impression row. The name is on ideal_msa_ge_advertisers.
+      - name: agency_id
+        sql: agency_id
+        type: number
+        title: Agency Id
+        description: Buying agency id on the impression row. The name is on ideal_msa_ge_agencies.
+      - name: version_week
+        sql: version_week
+        type: time
+        title: Version Week
+        description: >-
+          Monday of the week this calc version was created. This version is the
+          latest for a later week while Next Version Created At is empty or
+          after that week.
+      - name: as_of_week
+        sql: as_of_week
+        type: time
+        title: Week Start
+        description: >-
+          Monday of the week this calc version was created. One value per row.
+          The row is not repeated for later weeks.
+      - name: next_version_in_week
+        sql: next_version_in_week
+        type: time
+        title: Next Version In Week
+        description: >-
+          When a newer calc version of this deal was created in the same week.
+          Empty when this version is the latest one created in that week.
+      - name: next_version_created_at
+        sql: next_version_created_at
+        type: time
+        title: Next Version Created At
+        description: >-
+          When the next calc version of this deal was created. Empty when this
+          version is still the latest.
+      - name: is_latest_in_version_week
+        sql: is_latest_in_version_week
+        type: boolean
+        title: Is Latest In Version Week
+        description: >-
+          True when this calc version is the latest one created in its Version
+          Week. A newer version created later that same week makes this false.
+      - name: is_latest_deal_version
+        sql: is_latest_deal_version
+        type: boolean
+        title: Is Latest Deal Version
+        description: >-
+          True when calc_version_no is the highest version of the deal inside
+          the Created Date filter. With no date filter, this is the latest
+          version in the table.
+      - name: opportunity_id
+        sql: opportunity_id
+        type: string
+        title: Opportunity Id
+        description: Opportunity id from impression_dimensions.
+      - name: super_deal_id
+        sql: super_deal_id
+        type: number
+        title: Super Deal Id
+        description: Parent super deal. Null or zero means the row is not in a super deal.
+      - name: market_type_id
+        sql: market_type_id
+        type: number
+        title: Market Type Id
+        description: Market type id from impression_dimensions.
+      - name: guaranteed_demo
+        sql: guaranteed_demo
+        type: string
+        title: Guaranteed Demo
+        description: Demo on the impression row, such as HH or P18-49.
+      - name: deal_start_date
+        sql: start_date
+        type: time
+        title: Deal Start Date
+        description: Deal flight start date from impression_dimensions.start_date.
+      - name: deal_end_date
+        sql: end_date
+        type: time
+        title: Deal End Date
+        description: Deal flight end date from impression_dimensions.end_date.
+      - name: guaranteed_percentage
+        sql: guaranteed_percentage
+        type: number
+        title: Guaranteed Percentage
+        description: >-
+          Guarantee threshold percent. 90 means liability is measured against
+          90 percent of booked impressions. Null is treated as 100.
+      - name: combo_ind
+        sql: combo_ind
+        type: boolean
+        title: Combo Indicator
+        description: True when the deal version has more than one network.
+      - name: line_type
+        sql: "CASE WHEN lower(CAST({CUBE}.channel AS varchar)) = 'digital' THEN 'Digital' WHEN {CUBE}.combo_ind THEN 'Combo' ELSE 'Standard' END"
+        type: string
+        title: Line Type
+        description: >-
+          Standard or Combo for a linear deal. Digital when the channel is
+          Digital. A digital row is not a deal. A super deal is not a separate
+          line type; use Super Deal Id for the parent.
+      - name: deal_version_delivery_status
+        sql: "CASE WHEN {CUBE}.deal_version_variance < 0 THEN 'Under' WHEN {CUBE}.deal_version_variance > 0 THEN 'Over' ELSE 'Even' END"
+        type: string
+        title: Deal Delivery Status
+        description: >-
+          Under, Over, or Even for the whole deal version. Delivered is compared
+          with booked impressions times the guarantee threshold percent. The
+          same value is on every row of the version.
+      - name: network_delivery_status
+        sql: "CASE WHEN {CUBE}.network_variance < 0 THEN 'Under' WHEN {CUBE}.network_variance > 0 THEN 'Over' ELSE 'Even' END"
+        type: string
+        title: Network Delivery Status
+        description: >-
+          Under, Over, or Even for one deal version on one network, against the
+          guarantee threshold. The same value is on every row of that network.
+      - name: channel_delivery_status
+        sql: "CASE WHEN {CUBE}.channel_variance < 0 THEN 'Under' WHEN {CUBE}.channel_variance > 0 THEN 'Over' ELSE 'Even' END"
+        type: string
+        title: Channel Delivery Status
+        description: >-
+          Under, Over, or Even for one deal version on one channel, against the
+          guarantee threshold. The same value is on every row of that channel.
+
+    measures:
+      - name: record_count
+        sql: "*"
+        type: count
+        title: Record Count
+        description: Row count for smoke queries.
+      - name: deal_count
+        sql: deal_id
+        type: countDistinct
+        title: Deal Count
+        description: Number of distinct deals in the query. A digital row with no deal id is not counted.
+      - name: latest_deal_count
+        sql: deal_id
+        type: countDistinct
+        filters:
+          - sql: "{CUBE}.is_latest_deal_version"
+        title: Latest Deal Count
+        description: >-
+          Number of distinct deals on the latest version inside the Created Date
+          filter. Filter the query to Is Latest Deal Version as well when
+          grouping by Deal Delivery Status.
+      - name: network_over_deal_count
+        sql: deal_id
+        type: countDistinct
+        filters:
+          - sql: "{CUBE}.is_latest_deal_version AND {CUBE}.network_variance > 0"
+        title: Network Over Deal Count
+        description: Latest deals over the guarantee threshold on that network. Group by Network Id.
+      - name: network_under_deal_count
+        sql: deal_id
+        type: countDistinct
+        filters:
+          - sql: "{CUBE}.is_latest_deal_version AND {CUBE}.network_variance < 0"
+        title: Network Under Deal Count
+        description: Latest deals under the guarantee threshold on that network. Group by Network Id.
+      - name: property_over_deal_count
+        sql: deal_id
+        type: countDistinct
+        filters:
+          - sql: "{CUBE}.is_latest_deal_version AND {CUBE}.property_variance > 0"
+        title: Property Over Deal Count
+        description: Latest deals over the guarantee threshold on that property. Group by Property Id.
+      - name: property_under_deal_count
+        sql: deal_id
+        type: countDistinct
+        filters:
+          - sql: "{CUBE}.is_latest_deal_version AND {CUBE}.property_variance < 0"
+        title: Property Under Deal Count
+        description: Latest deals under the guarantee threshold on that property. Group by Property Id.
+      - name: holdco_over_deal_count
+        sql: deal_id
+        type: countDistinct
+        filters:
+          - sql: "{CUBE}.is_latest_deal_version AND {CUBE}.holdco_variance > 0"
+        title: Holdco Over Deal Count
+        description: Latest deals over the guarantee threshold on that holdco. Group by Holdco.
+      - name: holdco_under_deal_count
+        sql: deal_id
+        type: countDistinct
+        filters:
+          - sql: "{CUBE}.is_latest_deal_version AND {CUBE}.holdco_variance < 0"
+        title: Holdco Under Deal Count
+        description: Latest deals under the guarantee threshold on that holdco. Group by Holdco.
+      - name: channel_over_deal_count
+        sql: deal_id
+        type: countDistinct
+        filters:
+          - sql: "{CUBE}.is_latest_deal_version AND {CUBE}.channel_variance > 0"
+        title: Channel Over Deal Count
+        description: Latest deals over the guarantee threshold on that channel. Group by Channel.
+      - name: channel_under_deal_count
+        sql: deal_id
+        type: countDistinct
+        filters:
+          - sql: "{CUBE}.is_latest_deal_version AND {CUBE}.channel_variance < 0"
+        title: Channel Under Deal Count
+        description: Latest deals under the guarantee threshold on that channel. Group by Channel.
+      - name: standard_guaranteed_impressions
+        sql: "{CUBE}.guaranteed_impressions"
+        type: sum
+        filters:
+          - sql: "NOT {CUBE}.combo_ind"
+        title: Standard Guaranteed Impressions
+        description: Sum of guaranteed impressions on single-network deal versions only.
+      - name: standard_delivered_impressions
+        sql: "{CUBE}.delivered_impressions"
+        type: sum
+        filters:
+          - sql: "NOT {CUBE}.combo_ind"
+        title: Standard Delivered Impressions
+        description: Sum of delivered impressions on single-network deal versions only.
+      - name: standard_guaranteed_actual_impressions
+        sql: "{CUBE}.guaranteed_impressions"
+        type: sum
+        filters:
+          - sql: "NOT {CUBE}.combo_ind AND {CUBE}.impression_type = 1"
+        title: Standard Guaranteed Actual Impressions
+        description: Guaranteed impressions on single-network rows whose impression type is 1, actual.
+      - name: standard_guaranteed_preactual_impressions
+        sql: "{CUBE}.guaranteed_impressions"
+        type: sum
+        filters:
+          - sql: "NOT {CUBE}.combo_ind AND {CUBE}.impression_type = 2"
+        title: Standard Guaranteed Pre-Actual Impressions
+        description: Guaranteed impressions on single-network rows whose impression type is 2, pre-actual.
+      - name: standard_delivered_actual_impressions
+        sql: "{CUBE}.delivered_impressions"
+        type: sum
+        filters:
+          - sql: "NOT {CUBE}.combo_ind AND {CUBE}.impression_type = 1"
+        title: Standard Delivered Actual Impressions
+        description: Delivered impressions on single-network rows whose impression type is 1, actual.
+      - name: standard_delivered_preactual_impressions
+        sql: "{CUBE}.delivered_impressions"
+        type: sum
+        filters:
+          - sql: "NOT {CUBE}.combo_ind AND {CUBE}.impression_type = 2"
+        title: Standard Delivered Pre-Actual Impressions
+        description: Delivered impressions on single-network rows whose impression type is 2, pre-actual.
+      - name: standard_guaranteed_combined_impressions
+        type: number
+        sql: "COALESCE({standard_guaranteed_actual_impressions}, 0) + COALESCE({standard_guaranteed_preactual_impressions}, 0)"
+        title: Standard Guaranteed Combined Impressions
+        description: Standard guaranteed actual impressions plus standard guaranteed pre-actual impressions.
+      - name: standard_delivered_combined_impressions
+        type: number
+        sql: "COALESCE({standard_delivered_actual_impressions}, 0) + COALESCE({standard_delivered_preactual_impressions}, 0)"
+        title: Standard Delivered Combined Impressions
+        description: Standard delivered actual impressions plus standard delivered pre-actual impressions.
+      - name: standard_cpm
+        type: number
+        sql: >
+          ROUND(CASE WHEN COALESCE(SUM(CASE WHEN NOT {CUBE}.combo_ind THEN {CUBE}.cost END), 0) =
+          0 AND COALESCE(SUM(CASE WHEN NOT {CUBE}.combo_ind THEN {CUBE}.guaranteed_impressions
+          END), 0) = 0 THEN 0 ELSE SUM(CASE WHEN NOT {CUBE}.combo_ind THEN {CUBE}.cost END) /
+          NULLIF(SUM(CASE WHEN NOT {CUBE}.combo_ind THEN {CUBE}.guaranteed_impressions END), 0)
+          END, 2)
+        title: Standard CPM
+        description: Rounded guaranteed CPM for standard rows only. Combo rows are excluded inside the formula. Zero divided by zero returns 0.
+      - name: standard_variance
+        type: number
+        sql: "COALESCE(SUM(CASE WHEN NOT {CUBE}.combo_ind THEN {CUBE}.delivered_impressions END) - SUM(CASE WHEN NOT {CUBE}.combo_ind THEN {CUBE}.threshold_guaranteed END), 0)"
+        title: Standard Variance
+        description: Delivered minus the guarantee threshold target for standard rows. At 100 percent this equals delivered minus booked. Returns 0 when the query has no standard rows.
+      - name: standard_delivery_status
+        type: string
+        sql: "CASE WHEN {standard_variance} < 0 THEN 'Under' WHEN {standard_variance} > 0 THEN 'Over' ELSE 'Even' END"
+        title: Delivery Status
+        description: Under when the standard impression variance is negative. Over when it is positive. Even when it is zero.
+      - name: standard_adu_units_count
+        sql: "{CUBE}.adu_units_count"
+        type: sum
+        filters:
+          - sql: "NOT {CUBE}.combo_ind"
+        title: ADU Units
+        description: ADU unit count on single-network rows.
+      - name: standard_unaired_unit_count
+        sql: "{CUBE}.unaired_unit_count"
+        type: sum
+        filters:
+          - sql: "NOT {CUBE}.combo_ind"
+        title: Unaired Units
+        description: Unaired unit count on single-network rows.
+      - name: standard_recap_units_count
+        sql: "{CUBE}.recap_units_count"
+        type: sum
+        filters:
+          - sql: "NOT {CUBE}.combo_ind"
+        title: Recap Units
+        description: Recap unit count on single-network rows.
+      - name: standard_dollar_liability
+        type: number
+        sql: >
+          COALESCE(ROUND((SUM(CASE WHEN NOT {CUBE}.combo_ind THEN
+          {CUBE}.delivered_impressions END) - SUM(CASE WHEN NOT {CUBE}.combo_ind THEN
+          {CUBE}.threshold_guaranteed END)) * SUM(CASE WHEN NOT {CUBE}.combo_ind THEN
+          {CUBE}.cost END) / NULLIF(SUM(CASE WHEN NOT {CUBE}.combo_ind THEN
+          {CUBE}.threshold_guaranteed END), 0), 0), 0)
+        title: Standard Dollar Liability
+        description: >-
+          Delivered minus the threshold target, times cost divided by the
+          threshold target. No intermediate value is rounded. The liability
+          dollars are rounded to the nearest dollar at the end. A null
+          guarantee percentage is 100. Combo rows are excluded.
+      - name: combo_guaranteed_impressions
+        sql: "{CUBE}.guaranteed_impressions"
+        type: sum
+        filters:
+          - sql: "{CUBE}.combo_ind"
+        title: Combo Guaranteed Impressions
+        description: Sum of guaranteed impressions on multi-network deal versions only.
+      - name: combo_delivered_impressions
+        sql: "{CUBE}.delivered_impressions"
+        type: sum
+        filters:
+          - sql: "{CUBE}.combo_ind"
+        title: Combo Delivered Impressions
+        description: Sum of delivered impressions on multi-network deal versions only.
+      - name: combo_guaranteed_actual_impressions
+        sql: "{CUBE}.guaranteed_impressions"
+        type: sum
+        filters:
+          - sql: "{CUBE}.combo_ind AND {CUBE}.impression_type = 1"
+        title: Combo Guaranteed Actual Impressions
+        description: Guaranteed impressions on multi-network rows whose impression type is 1, actual.
+      - name: combo_guaranteed_preactual_impressions
+        sql: "{CUBE}.guaranteed_impressions"
+        type: sum
+        filters:
+          - sql: "{CUBE}.combo_ind AND {CUBE}.impression_type = 2"
+        title: Combo Guaranteed Pre-Actual Impressions
+        description: Guaranteed impressions on multi-network rows whose impression type is 2, pre-actual.
+      - name: combo_delivered_actual_impressions
+        sql: "{CUBE}.delivered_impressions"
+        type: sum
+        filters:
+          - sql: "{CUBE}.combo_ind AND {CUBE}.impression_type = 1"
+        title: Combo Delivered Actual Impressions
+        description: Delivered impressions on multi-network rows whose impression type is 1, actual.
+      - name: combo_delivered_preactual_impressions
+        sql: "{CUBE}.delivered_impressions"
+        type: sum
+        filters:
+          - sql: "{CUBE}.combo_ind AND {CUBE}.impression_type = 2"
+        title: Combo Delivered Pre-Actual Impressions
+        description: Delivered impressions on multi-network rows whose impression type is 2, pre-actual.
+      - name: combo_guaranteed_combined_impressions
+        type: number
+        sql: "COALESCE({combo_guaranteed_actual_impressions}, 0) + COALESCE({combo_guaranteed_preactual_impressions}, 0)"
+        title: Combo Guaranteed Combined Impressions
+        description: Combo guaranteed actual impressions plus combo guaranteed pre-actual impressions.
+      - name: combo_delivered_combined_impressions
+        type: number
+        sql: "COALESCE({combo_delivered_actual_impressions}, 0) + COALESCE({combo_delivered_preactual_impressions}, 0)"
+        title: Combo Delivered Combined Impressions
+        description: Combo delivered actual impressions plus combo delivered pre-actual impressions.
+      - name: combo_cpm
+        type: number
+        sql: >
+          ROUND(CASE WHEN COALESCE(SUM(CASE WHEN {CUBE}.combo_ind THEN {CUBE}.cost END), 0) = 0
+          AND COALESCE(SUM(CASE WHEN {CUBE}.combo_ind THEN {CUBE}.guaranteed_impressions END), 0)
+          = 0 THEN 0 ELSE SUM(CASE WHEN {CUBE}.combo_ind THEN {CUBE}.cost END) / NULLIF(SUM(CASE
+          WHEN {CUBE}.combo_ind THEN {CUBE}.guaranteed_impressions END), 0) END, 2)
+        title: Combo CPM
+        description: Rounded CPM inside the selected combo rows. Standard rows are excluded. Do not use this as a blended rate across networks. Zero divided by zero returns 0.
+      - name: combo_variance
+        type: number
+        sql: "COALESCE(SUM(CASE WHEN {CUBE}.combo_ind THEN {CUBE}.delivered_impressions END) - SUM(CASE WHEN {CUBE}.combo_ind THEN {CUBE}.threshold_guaranteed END), 0)"
+        title: Combo Variance
+        description: Delivered minus the guarantee threshold target for combo rows, before combo netting. Returns 0 when the query has no combo rows.
+      - name: combo_delivery_status
+        type: string
+        sql: "CASE WHEN {combo_variance} < 0 THEN 'Under' WHEN {combo_variance} > 0 THEN 'Over' ELSE 'Even' END"
+        title: Delivery Status
+        description: Under when the combo impression variance is negative. Over when it is positive. Even when it is zero. This uses delivered minus guaranteed, before combo netting.
+      - name: combo_adu_units_count
+        sql: "{CUBE}.adu_units_count"
+        type: sum
+        filters:
+          - sql: "{CUBE}.combo_ind"
+        title: ADU Units
+        description: ADU unit count on multi-network rows.
+      - name: combo_unaired_unit_count
+        sql: "{CUBE}.unaired_unit_count"
+        type: sum
+        filters:
+          - sql: "{CUBE}.combo_ind"
+        title: Unaired Units
+        description: Unaired unit count on multi-network rows.
+      - name: combo_recap_units_count
+        sql: "{CUBE}.recap_units_count"
+        type: sum
+        filters:
+          - sql: "{CUBE}.combo_ind"
+        title: Recap Units
+        description: Recap unit count on multi-network rows.
+      - name: combo_net_variance
+        type: number
+        sql: "COALESCE(SUM(CASE WHEN {CUBE}.combo_ind THEN {CUBE}.net_variance_share END), 0)"
+        title: Combo Net Variance
+        description: >-
+          Impression gap after combo netting. Impressions move only when the
+          deal aired more than it guaranteed, and the largest guarantee is
+          filled first. Returns 0 when the query has no combo rows.
+      - name: combo_gross_dollar_liability
+        type: number
+        sql: "COALESCE(ROUND(SUM({CUBE}.row_gross_dollar), 0), 0)"
+        title: Combo Gross Dollar Liability
+        description: >-
+          Liability before surplus moves. Each network and property category
+          is priced at its cost divided by booked guaranteed impressions.
+          The summed dollars are rounded to the nearest dollar. Null on
+          standard rows, and 0 when every row is null.
+      - name: combo_dollar_liability
+        type: number
+        sql: "COALESCE(ROUND(SUM({CUBE}.row_dollar_liability), 0), 0)"
+        title: Combo Dollar Liability
+        description: >-
+          Liability after surplus moves. Nothing moves when the deal is short
+          overall. When the deal is over, extra impressions fill under-delivered
+          network and property category groups, largest guarantee first, until
+          a group reaches zero or the extra runs out. Dollars use each group's
+          cost divided by its booked guarantee. The summed dollars are rounded
+          to the nearest dollar. Null on standard rows, and 0 when every row is null.
+      - name: dollar_liability
+        type: number
+        sql: >
+          CASE
+            WHEN COUNT(DISTINCT {CUBE}.deal_id) > 1
+              AND SUM(CASE WHEN {CUBE}.super_deal_id IS NULL OR {CUBE}.super_deal_id = 0 THEN 1 ELSE 0 END) = 0
+            THEN COALESCE(ROUND(SUM({CUBE}.super_member_dollar_share), 0), 0)
+            ELSE COALESCE(ROUND(SUM({CUBE}.member_dollar_share), 0), 0)
+          END
+        title: Dollar Liability
+        description: >-
+          One member deal shows its own liability, including a positive amount
+          when that deal is over. A standard deal uses delivered minus the
+          threshold target, times cost divided by that target. A combo deal uses
+          the netted liability. When the rows are rolled up to a super deal,
+          only member deals with a negative liability are included.
+      - name: standard_dollar_liability_now
+        type: number
+        sql: >
+          COALESCE(ROUND((SUM(CASE WHEN NOT {CUBE}.combo_ind AND {CUBE}.impression_type
+          IN (1, 2) THEN {CUBE}.delivered_impressions END) - SUM(CASE WHEN NOT
+          {CUBE}.combo_ind THEN {CUBE}.threshold_guaranteed END)) * SUM(CASE WHEN NOT
+          {CUBE}.combo_ind THEN {CUBE}.cost END) / NULLIF(SUM(CASE WHEN NOT
+          {CUBE}.combo_ind THEN {CUBE}.threshold_guaranteed END), 0), 0), 0)
+        title: Standard Dollar Liability Now
+        description: >-
+          Same formula as standard dollar liability. Delivered impressions are
+          actual plus pre-actual only. The threshold target is unchanged. No
+          intermediate value is rounded. The liability dollars are rounded to
+          the nearest dollar at the end.
+      - name: combo_dollar_liability_now
+        type: number
+        sql: "COALESCE(ROUND(SUM({CUBE}.row_dollar_liability_now), 0), 0)"
+        title: Combo Dollar Liability Now
+        description: >-
+          Combo liability after the same surplus rule. Delivered impressions
+          in the netting are actual plus pre-actual only. The guarantee and
+          the group price are unchanged. The summed dollars are rounded to the
+          nearest dollar. Null on standard rows, and 0 when every row is null.
+      - name: dollar_liability_now
+        type: number
+        sql: "COALESCE({standard_dollar_liability_now}, 0) + COALESCE({combo_dollar_liability_now}, 0)"
+        title: Liability Now
+        description: >-
+          Same member-deal liability as dollar liability, with delivered
+          impressions replaced by actual plus pre-actual. Standard plus netted
+          combo. This is not the super deal total.
+      - name: adu_units_count
+        sql: "{CUBE}.adu_units_count"
+        type: sum
+        title: ADU Units
+        description: Sum of adu_units_count across the rows in the query.
+      - name: recap_units_count
+        sql: "{CUBE}.recap_units_count"
+        type: sum
+        title: Recap Units
+        description: Sum of recap_units_count across the rows in the query.
+      - name: cash_unit_count
+        sql: "{CUBE}.cash_unit_count"
+        type: sum
+        title: Cash Units
+        description: Sum of cash_unit_count across the rows in the query.
+      - name: cpm
+        type: number
+        sql: >
+          ROUND(CASE WHEN COALESCE(SUM({CUBE}.cost), 0) = 0 AND
+          COALESCE(SUM({CUBE}.guaranteed_impressions), 0) = 0 THEN 0 ELSE
+          SUM({CUBE}.cost) / NULLIF(SUM({CUBE}.guaranteed_impressions), 0) END, 2)
+        title: CPM
+        description: >-
+          Total cost divided by guaranteed impressions for every row in the
+          query. Standard and combo rows are both included. This is the same
+          rate as Standard CPM and Combo CPM, without splitting by deal type.
+          Zero divided by zero returns 0.
+      - name: cost
+        sql: "{CUBE}.cost"
+        type: sum
+        title: Total Cost
+        description: Sum of the cost column. This is the cash cost used in CPM. It is not unit_cost.
+      - name: super_cost
+        type: number
+        sql: >
+          COALESCE(SUM(CASE WHEN {CUBE}.super_deal_id IS NOT NULL AND {CUBE}.super_deal_id <> 0
+          THEN {CUBE}.cost END), 0)
+        title: Super Deal Cost
+        description: Cash cost across member rows that belong to a super deal. Rows with no super deal are excluded. Returns 0 when the query has no super deal. Same cost column as Total Cost.
+      - name: super_guaranteed_impressions
+        sql: "{CUBE}.guaranteed_impressions"
+        type: sum
+        filters:
+          - sql: "{CUBE}.super_deal_id IS NOT NULL AND {CUBE}.super_deal_id <> 0"
+        title: Super Deal Guaranteed Impressions
+        description: Guaranteed impressions across member rows that belong to a super deal.
+      - name: super_delivered_impressions
+        sql: "{CUBE}.delivered_impressions"
+        type: sum
+        filters:
+          - sql: "{CUBE}.super_deal_id IS NOT NULL AND {CUBE}.super_deal_id <> 0"
+        title: Super Deal Delivered Impressions
+        description: Delivered impressions across member rows that belong to a super deal. This is raw delivery, not combo-netted delivery.
+      - name: super_guaranteed_actual_impressions
+        sql: "{CUBE}.guaranteed_impressions"
+        type: sum
+        filters:
+          - sql: "{CUBE}.super_deal_id IS NOT NULL AND {CUBE}.super_deal_id <> 0 AND {CUBE}.impression_type = 1"
+        title: Super Deal Guaranteed Actual Impressions
+        description: Guaranteed impressions on super-deal rows whose impression type is 1, actual.
+      - name: super_guaranteed_preactual_impressions
+        sql: "{CUBE}.guaranteed_impressions"
+        type: sum
+        filters:
+          - sql: "{CUBE}.super_deal_id IS NOT NULL AND {CUBE}.super_deal_id <> 0 AND {CUBE}.impression_type = 2"
+        title: Super Deal Guaranteed Pre-Actual Impressions
+        description: Guaranteed impressions on super-deal rows whose impression type is 2, pre-actual.
+      - name: super_delivered_actual_impressions
+        sql: "{CUBE}.delivered_impressions"
+        type: sum
+        filters:
+          - sql: "{CUBE}.super_deal_id IS NOT NULL AND {CUBE}.super_deal_id <> 0 AND {CUBE}.impression_type = 1"
+        title: Super Deal Delivered Actual Impressions
+        description: Delivered impressions on super-deal rows whose impression type is 1, actual. This is raw delivery, not combo-netted delivery.
+      - name: super_delivered_preactual_impressions
+        sql: "{CUBE}.delivered_impressions"
+        type: sum
+        filters:
+          - sql: "{CUBE}.super_deal_id IS NOT NULL AND {CUBE}.super_deal_id <> 0 AND {CUBE}.impression_type = 2"
+        title: Super Deal Delivered Pre-Actual Impressions
+        description: Delivered impressions on super-deal rows whose impression type is 2, pre-actual. This is raw delivery, not combo-netted delivery.
+      - name: super_guaranteed_combined_impressions
+        type: number
+        sql: "COALESCE({super_guaranteed_actual_impressions}, 0) + COALESCE({super_guaranteed_preactual_impressions}, 0)"
+        title: Super Guaranteed Combined Impressions
+        description: Super deal guaranteed actual impressions plus super deal guaranteed pre-actual impressions.
+      - name: super_delivered_combined_impressions
+        type: number
+        sql: "COALESCE({super_delivered_actual_impressions}, 0) + COALESCE({super_delivered_preactual_impressions}, 0)"
+        title: Super Delivered Combined Impressions
+        description: Super deal delivered actual impressions plus super deal delivered pre-actual impressions.
+      - name: super_cpm
+        type: number
+        sql: >
+          ROUND(CASE WHEN COALESCE(SUM(CASE WHEN {CUBE}.super_deal_id IS NOT NULL AND
+          {CUBE}.super_deal_id <> 0 THEN {CUBE}.cost END), 0) = 0 AND COALESCE(SUM(CASE WHEN
+          {CUBE}.super_deal_id IS NOT NULL AND {CUBE}.super_deal_id <> 0 THEN
+          {CUBE}.guaranteed_impressions END), 0) = 0 THEN 0 ELSE SUM(CASE WHEN
+          {CUBE}.super_deal_id IS NOT NULL AND {CUBE}.super_deal_id <> 0 THEN {CUBE}.cost END) /
+          NULLIF(SUM(CASE WHEN {CUBE}.super_deal_id IS NOT NULL AND {CUBE}.super_deal_id <> 0 THEN
+          {CUBE}.guaranteed_impressions END), 0) END, 2)
+        title: Super Deal CPM
+        description: Blended guaranteed CPM at the queried super-deal grain. Rows with no super deal are excluded inside the formula. Zero divided by zero returns 0.
+      - name: super_variance
+        type: number
+        sql: >
+          COALESCE(SUM(CASE WHEN {CUBE}.super_deal_id IS NOT NULL AND {CUBE}.super_deal_id <> 0 THEN
+          {CUBE}.delivered_impressions END) - SUM(CASE WHEN {CUBE}.super_deal_id IS NOT NULL AND
+          {CUBE}.super_deal_id <> 0 THEN {CUBE}.threshold_guaranteed END), 0)
+        title: Super Deal Variance
+        description: Delivered minus the guarantee threshold target across member rows in a super deal. Returns 0 when the query has no super deal.
+      - name: super_delivery_status
+        type: string
+        sql: "CASE WHEN {super_variance} < 0 THEN 'Under' WHEN {super_variance} > 0 THEN 'Over' ELSE 'Even' END"
+        title: Delivery Status
+        description: Under when the super deal impression variance is negative. Over when it is positive. Even when it is zero.
+      - name: super_adu_units_count
+        sql: "{CUBE}.adu_units_count"
+        type: sum
+        filters:
+          - sql: "{CUBE}.super_deal_id IS NOT NULL AND {CUBE}.super_deal_id <> 0"
+        title: ADU Units
+        description: ADU unit count on rows that belong to a super deal.
+      - name: super_unaired_unit_count
+        sql: "{CUBE}.unaired_unit_count"
+        type: sum
+        filters:
+          - sql: "{CUBE}.super_deal_id IS NOT NULL AND {CUBE}.super_deal_id <> 0"
+        title: Unaired Units
+        description: Unaired unit count on rows that belong to a super deal.
+      - name: unaired_unit_count
+        sql: "{CUBE}.unaired_unit_count"
+        type: sum
+        title: Unaired Units
+        description: >-
+          Recap units plus ADU units plus cash units on projected rows only,
+          impression type 3. Other impression types contribute 0. The
+          unaired_unit_count column on the silver table is not used.
+      - name: unaired_adu_count
+        sql: "{CUBE}.adu_units_count"
+        type: sum
+        filters:
+          - sql: "{CUBE}.impression_type = 3"
+        title: Unaired ADU Count
+        description: ADU units on projected rows only, impression type 3.
+      - name: unaired_recap_count
+        sql: "{CUBE}.recap_units_count"
+        type: sum
+        filters:
+          - sql: "{CUBE}.impression_type = 3"
+        title: Unaired Recap Count
+        description: Recap units on projected rows only, impression type 3.
+      - name: unaired_cash_count
+        sql: "{CUBE}.cash_unit_count"
+        type: sum
+        filters:
+          - sql: "{CUBE}.impression_type = 3"
+        title: Unaired Cash Count
+        description: Cash units on projected rows only, impression type 3.
+      - name: super_recap_units_count
+        sql: "{CUBE}.recap_units_count"
+        type: sum
+        filters:
+          - sql: "{CUBE}.super_deal_id IS NOT NULL AND {CUBE}.super_deal_id <> 0"
+        title: Recap Units
+        description: Recap unit count on rows that belong to a super deal.
+      - name: super_pacing
+        type: number
+        sql: >
+          CASE WHEN COALESCE({super_delivered_impressions}, 0) = 0 AND
+          COALESCE({super_guaranteed_impressions}, 0) = 0 THEN 0 ELSE
+          CAST({super_delivered_impressions} AS DOUBLE) / NULLIF({super_guaranteed_impressions},
+          0) END
+        title: Super Deal Pacing
+        description: Delivered impressions divided by guaranteed impressions at the super deal grain. Zero divided by zero returns 0.
+      - name: super_dollar_liability
+        type: number
+        sql: "COALESCE(ROUND(SUM({CUBE}.super_member_dollar_share), 0), 0)"
+        title: Super Deal Dollar Liability
+        description: >-
+          Sum of member-deal Dollar Liability for rows in a super deal, keeping
+          only member deals whose own liability is negative. Over-delivered
+          member deals stay on Dollar Liability and contribute nothing here.
+          Deals with no super deal contribute nothing. Returns 0 when the query
+          has no short super-deal member.
+      - name: guaranteed_impressions
+        sql: "{CUBE}.guaranteed_impressions"
+        type: sum
+        title: Guaranteed Impressions
+        description: >-
+          Sum of guaranteed impressions. Rows are not rounded before they are
+          added, and the total is not rounded. The source value is not
+          multiplied by 1000.
+      - name: guaranteed_actual_impressions
+        sql: "{CUBE}.guaranteed_impressions"
+        type: sum
+        filters:
+          - sql: "{CUBE}.impression_type = 1"
+        title: Guaranteed Actual Impressions
+        description: Guaranteed impressions on rows whose impression type is 1, actual.
+      - name: guaranteed_preactual_impressions
+        sql: "{CUBE}.guaranteed_impressions"
+        type: sum
+        filters:
+          - sql: "{CUBE}.impression_type = 2"
+        title: Guaranteed Pre-Actual Impressions
+        description: Guaranteed impressions on rows whose impression type is 2, pre-actual.
+      - name: delivered_impressions
+        sql: "{CUBE}.delivered_impressions"
+        type: sum
+        title: Delivered Impressions
+        description: >-
+          Sum of delivered impressions after dividing each row by 1000. Rows
+          are not rounded before they are added, and the total is not rounded.
+      - name: delivered_actual_impressions
+        sql: "{CUBE}.delivered_impressions"
+        type: sum
+        filters:
+          - sql: "{CUBE}.impression_type = 1"
+        title: Delivered Actual Impressions
+        description: Delivered impressions on rows whose impression type is 1, actual.
+      - name: delivered_preactual_impressions
+        sql: "{CUBE}.delivered_impressions"
+        type: sum
+        filters:
+          - sql: "{CUBE}.impression_type = 2"
+        title: Delivered Pre-Actual Impressions
+        description: Delivered impressions on rows whose impression type is 2, pre-actual.
+      - name: guaranteed_combined_impressions
+        type: number
+        sql: "COALESCE({guaranteed_actual_impressions}, 0) + COALESCE({guaranteed_preactual_impressions}, 0)"
+        title: Guaranteed Combined Impressions
+        description: Guaranteed actual impressions plus guaranteed pre-actual impressions. This is the sum of the two split measures, not the source guaranteed_impressions column.
+      - name: delivered_combined_impressions
+        type: number
+        sql: "COALESCE({delivered_actual_impressions}, 0) + COALESCE({delivered_preactual_impressions}, 0)"
+        title: Delivered Combined Impressions
+        description: Delivered actual impressions plus delivered pre-actual impressions. This is the sum of the two split measures, not the source delivered_impressions column.
+      - name: threshold_guaranteed_impressions
+        sql: "{CUBE}.threshold_guaranteed"
+        type: sum
+        title: Threshold Guaranteed Impressions
+        description: >-
+          Booked guaranteed impressions times guaranteed percentage over 100.
+          This is the target liability is measured against.
+      - name: impression_variance
+        type: number
+        sql: "CAST(FLOOR(SUM({CUBE}.delivered_impressions) - SUM({CUBE}.threshold_guaranteed) + 0.5) AS BIGINT)"
+        title: Impression Variance
+        description: >-
+          Delivered minus the guarantee threshold target, rounded half up once
+          after the subtraction. Rows are not rounded before they are added.
+          Negative is under delivery. Positive is over delivery. At 100 percent
+          this equals delivered minus booked.
+      - name: delivery_status
+        type: string
+        sql: "CASE WHEN {impression_variance} < 0 THEN 'Under' WHEN {impression_variance} > 0 THEN 'Over' ELSE 'Even' END"
+        title: Delivery Status
+        description: Under when impression variance is negative. Over when it is positive. Even when it is zero. Calculated after the impressions are summed.

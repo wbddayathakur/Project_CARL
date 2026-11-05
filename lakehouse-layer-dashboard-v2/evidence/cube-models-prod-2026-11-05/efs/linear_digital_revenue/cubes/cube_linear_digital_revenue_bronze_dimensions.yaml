@@ -1,0 +1,150 @@
+cubes:
+  - name: cube_linear_digital_revenue_bronze_ideal_posting_stw_network
+    sql_table: "{{ catalog('linear_digital_revenue_bronze') }}.ideal_posting_stw_network"
+    data_source: default
+    public: false
+    title: Network
+    description: Network name and label for a net_id. One row per network.
+    dimensions:
+      - name: net_id
+        sql: net_id
+        type: number
+        primary_key: true
+        title: Net Id
+        description: Network identifier. Matches impression_dimensions.network_id.
+      - name: network_name
+        sql: name
+        type: string
+        title: Network Name
+        description: Human-readable network name, such as Tru TV.
+
+    measures:
+      - name: network_label
+        sql: "MIN(nielsen_load_network_code)"
+        type: string
+        title: Network Label
+        description: >-
+          Short network code, such as TRU. One label for the networks
+          in the selection.
+
+  - name: cube_linear_digital_revenue_bronze_ideal_dci_sell_property_category
+    sql_table: "{{ catalog('linear_digital_revenue_bronze') }}.ideal_dci_sell_property_category"
+    data_source: default
+    public: false
+    title: Property Category
+    description: Property category name. The impression row property_id is this category id.
+    dimensions:
+      - name: property_category_id
+        sql: property_category_id
+        type: number
+        primary_key: true
+        title: Property Category Id
+        description: Property category identifier. Matches impression_dimensions.property_id.
+      - name: property_category_name
+        sql: property_category
+        type: string
+        title: Property Category Name
+        description: Property category name, such as Entertainment.
+
+  - name: cube_linear_digital_revenue_bronze_ideal_msa_de_deal_hdr
+    sql_table: "{{ catalog('linear_digital_revenue_bronze') }}.ideal_msa_de_deal_hdr"
+    data_source: default
+    public: false
+    title: Deal
+    description: Deal name for a GAB deal id. One row per deal_id.
+    dimensions:
+      - name: deal_id
+        sql: deal_id
+        type: number
+        primary_key: true
+        title: Deal Id
+        description: GAB deal identifier. Matches impression_dimensions.deal_id.
+      - name: deal_name
+        sql: name
+        type: string
+        title: Deal Name
+        description: Deal name from the deal header.
+      - name: deal_end_date
+        sql: flt_end_date
+        type: time
+        title: Deal End Date
+        description: Flight end date from the deal header.
+
+  - name: cube_linear_digital_revenue_bronze_ideal_dci_super_deal
+    sql_table: "{{ catalog('linear_digital_revenue_bronze') }}.ideal_dci_super_deal"
+    data_source: default
+    public: false
+    title: Super Deal
+    description: Super deal name from ideal_dci_super_deal.
+    dimensions:
+      - name: super_deal_id
+        sql: super_deal_id
+        type: number
+        primary_key: true
+        title: Super Deal Id
+        description: Super deal identifier. Matches impression_dimensions.super_deal_id.
+      - name: super_deal_name
+        sql: super_deal_description
+        type: string
+        title: Super Deal Name
+        description: Super deal description from the super deal table.
+
+  - name: cube_linear_digital_revenue_bronze_ideal_msa_ge_advertisers
+    sql: >
+      SELECT adver_id, name AS advertiser_name
+      FROM (
+        SELECT
+          adver_id,
+          name,
+          ROW_NUMBER() OVER (PARTITION BY adver_id ORDER BY chg_dt DESC) AS rn
+        FROM {{ catalog('linear_digital_revenue_bronze') }}.ideal_msa_ge_advertisers
+      )
+      WHERE rn = 1
+    data_source: default
+    public: false
+    title: Advertiser
+    description: >-
+      Advertiser name for an adver_id. One row per advertiser, the latest
+      change when the source has more than one.
+    dimensions:
+      - name: adver_id
+        sql: adver_id
+        type: number
+        primary_key: true
+        title: Advertiser Id
+        description: Advertiser identifier. Matches impression_dimensions.advertiser_id.
+      - name: advertiser_name
+        sql: advertiser_name
+        type: string
+        title: Advertiser Name
+        description: Advertiser name from ideal_msa_ge_advertisers.
+
+  - name: cube_linear_digital_revenue_bronze_ideal_msa_ge_agencies
+    sql: >
+      SELECT agency_id, name AS agency_name
+      FROM (
+        SELECT
+          agency_id,
+          name,
+          ROW_NUMBER() OVER (PARTITION BY agency_id ORDER BY chg_dt DESC) AS rn
+        FROM {{ catalog('linear_digital_revenue_bronze') }}.ideal_msa_ge_agencies
+      )
+      WHERE rn = 1
+    data_source: default
+    public: false
+    title: Agency
+    description: >-
+      Agency name for an agency_id. One row per agency, the latest change
+      when the source has more than one. This is the buying agency name.
+    dimensions:
+      - name: agency_id
+        sql: agency_id
+        type: number
+        primary_key: true
+        title: Agency Id
+        description: Agency identifier. Matches impression_dimensions.agency_id.
+      - name: agency_name
+        sql: agency_name
+        type: string
+        title: Agency Name
+        description: Agency name from ideal_msa_ge_agencies.

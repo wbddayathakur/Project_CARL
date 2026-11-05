@@ -1,0 +1,465 @@
+cubes:
+  - name: cube_carl_dwhprd_gold_break_fact
+    sql: >
+      SELECT bf.*,
+             curr.exchange_factor AS plan_curr_exchange_factor,
+             hist.exchange_factor AS plan_hist_exchange_factor
+        FROM {{ catalog('dwhprd_gold') }}.break_fact bf
+        LEFT JOIN {{ catalog('dwhprd_gold') }}.plan_curr_currency_rate curr
+          ON bf.base_currency_key = curr.base_currency_key
+        LEFT JOIN {{ catalog('dwhprd_gold') }}.plan_hist_currency_rate hist
+          ON bf.base_currency_key = hist.base_currency_key
+         AND bf.base_currency_year = hist.base_currency_year
+    data_source: default
+    public: false
+    title: Carl Dwhprd Gold — Break Fact
+    description: >-
+      Break inventory and sales for Break Analysis (BTSDWH.BREAK_FACT, the base
+      table of BREAK_FACT_VW). One row per break_key. Probed 2026-10-14 on gold:
+      82,194,545 rows, 82,194,545 distinct break_key, and no null break_key.
+      Report scope source_system_region_key = 21 and day_date = 2025-10-04 is
+      19,923 rows and 19,923 distinct break_key. Join keys on the fact have no
+      nulls.
+      Every row matched bts_time_dim for both start and end, bts_currency_dim,
+      daypart_dim, channel_dim, corp_daypart_dim, day_dim, and
+      source_system_region_dim. Fact calendar_month_key matched day_dim on all
+      82,194,545 rows, so joining day_key alone agrees with the SQL join on
+      day_key and calendar_month_key. Break before and after program names join
+      bts_program_dim, loaded from BTSDWH.PROGRAM_DIM. Probed 2026-10-23:
+      program_key is unique on 10,505,940 rows, and both keys matched all
+      19,923 rows on region 21 and day 20251004. The shared program_dim matched
+      none of those keys.
+      break_dim is unique on break_key (94,565,288 rows) and matched all 82,194,545 fact
+      rows, so that join cannot fan out. Other dimension keys are unique: bts_time_dim 109,802,
+      bts_currency_dim 138, daypart_dim 1,377, channel_dim 551, corp_daypart_dim
+      10, day_dim 19,448, source_system_region_dim 4. Start time joins
+      bts_time_dim, loaded from BTSDWH.TIME_DIM. End time reads
+      bts_time_dim.time_w_secs through a correlated subquery. Base currency joins
+      bts_currency_dim, loaded from BTSDWH.CURRENCY_DIM. These are not the shared
+      time_dim and currency_dim tables. Cube joins are many_to_one. Apply in
+      QuickSight, not as cube filters: source_system_region_key = 21 and
+      day_date = 2025-10-04. Channel and daypart were unanswered prompts and are
+      not filters.       Break Price Current Rate(USD) and Break Price Hist Rate(USD)
+      multiply break_price by exchange_factor inside this cube's SQL. The
+      current rate is plan_curr_currency_rate on base_currency_key. The
+      historical rate is plan_hist_currency_rate on base_currency_key and
+      base_currency_year. Both keys are unique, so the left joins do not fan
+      the fact out. Probed 2026-10-23 on the report slice: both joins matched
+      all 19,923 rows.
+      The three equivalent-spot measures divide seconds by 30, the spot length
+      answered for this export. A same-day live Oracle count was 82,198,558,
+      4,013 above this snapshot.
+    dimensions:
+      - name: break_type_desc
+        sql: |-
+          (
+            SELECT hop1.break_type_desc
+            FROM {{ catalog('dwhprd_gold') }}.break_dim hop1
+            WHERE {CUBE}.break_key = hop1.break_key
+          )
+        type: string
+        title: Break Type Description
+        description: Human-readable break type description.
+      - name: corp_daypart_selling_desc
+        sql: |-
+          (
+            SELECT hop1.corp_daypart_selling_desc
+            FROM {{ catalog('dwhprd_gold') }}.corp_daypart_dim hop1
+            WHERE {CUBE}.corp_daypart_key = hop1.corp_daypart_key
+          )
+        type: string
+        title: Corp Daypart Selling Description
+        description: Corporate selling daypart description.
+      - name: calendar_month_label
+        sql: |-
+          (
+            SELECT hop1.calendar_month_name || ' ' || CAST(hop1.calendar_year AS VARCHAR)
+            FROM {{ catalog('dwhprd_gold') }}.calendar_month_dim hop1
+            WHERE {CUBE}.calendar_month_key = hop1.calendar_month_key
+          )
+        type: string
+        title: Calendar Month Label
+        description: Display label for the calendar month.
+      - name: calendar_week_desc
+        sql: |-
+          (
+            SELECT week.calendar_week_desc
+            FROM (
+              SELECT calendar_week_key,
+                     max(calendar_week_desc) AS calendar_week_desc
+              FROM (
+                SELECT calendar_week_key,
+                       'WEEK ' || CAST(calendar_week_num AS VARCHAR) || ', ' || CAST(calendar_year AS VARCHAR)
+                         AS calendar_week_desc,
+                       min(calendar_week_begin_date) AS calendar_week_begin_date,
+                       min(calendar_week_end_date) AS calendar_week_end_date
+                FROM {{ catalog('dwhprd_gold') }}.day_dim
+                WHERE calendar_year > 2012
+                  AND calendar_year <= year(current_date) + 1
+                GROUP BY calendar_week_key, calendar_week_num, calendar_year
+              ) canonical_week
+              GROUP BY calendar_week_key
+            ) week
+            WHERE {CUBE}.calendar_week_key = week.calendar_week_key
+          )
+        type: string
+        title: Calendar Week Description
+        description: Calendar week description.
+      - name: calendar_week_label
+        sql: |-
+          (
+            SELECT week.calendar_week_label
+            FROM (
+              SELECT calendar_week_key,
+                     max(
+                       date_format(calendar_week_begin_date, '%m/%d/%Y') || ' - ' ||
+                       date_format(calendar_week_end_date, '%m/%d/%Y')
+                     ) AS calendar_week_label
+              FROM (
+                SELECT calendar_week_key,
+                       'WEEK ' || CAST(calendar_week_num AS VARCHAR) || ', ' || CAST(calendar_year AS VARCHAR)
+                         AS calendar_week_desc,
+                       min(calendar_week_begin_date) AS calendar_week_begin_date,
+                       min(calendar_week_end_date) AS calendar_week_end_date
+                FROM {{ catalog('dwhprd_gold') }}.day_dim
+                WHERE calendar_year > 2012
+                  AND calendar_year <= year(current_date) + 1
+                GROUP BY calendar_week_key, calendar_week_num, calendar_year
+              ) canonical_week
+              GROUP BY calendar_week_key
+            ) week
+            WHERE {CUBE}.calendar_week_key = week.calendar_week_key
+          )
+        type: string
+        title: Calendar Week Label
+        description: Display label for the calendar week date range.
+      - name: break_before_program
+        sql: |-
+          (
+            SELECT hop1.program_name
+            FROM {{ catalog('dwhprd_gold') }}.bts_program_dim hop1
+            WHERE {CUBE}.break_before_program_key = hop1.program_key
+          )
+        type: string
+        title: Break Before Program
+        description: Program immediately before the break.
+      - name: break_after_program
+        sql: |-
+          (
+            SELECT hop1.program_name
+            FROM {{ catalog('dwhprd_gold') }}.bts_program_dim hop1
+            WHERE {CUBE}.break_after_program_key = hop1.program_key
+          )
+        type: string
+        title: Break After Program
+        description: Program immediately after the break.
+      - name: currency_symbol
+        sql: |-
+          (
+            SELECT hop1.currency_symbol
+            FROM {{ catalog('dwhprd_gold') }}.bts_currency_dim hop1
+            WHERE {CUBE}.base_currency_key = hop1.currency_key
+          )
+        type: string
+        title: Currency Symbol
+        description: Currency symbol. Break Analysis shows this as Break Base Currency.
+      - name: hourly_time_slot_24
+        sql: |-
+          (
+            SELECT hop1.hourly_time_slot_24
+            FROM {{ catalog('dwhprd_gold') }}.bts_time_dim hop1
+            WHERE {CUBE}.break_start_time_key = hop1.time_key
+          )
+        type: string
+        title: Hourly Time Slot 24
+        description: 24-minute hourly start slot shown on Break Analysis.
+      - name: hourly_time_slot_30
+        sql: |-
+          (
+            SELECT hop1.hourly_time_slot_30
+            FROM {{ catalog('dwhprd_gold') }}.bts_time_dim hop1
+            WHERE {CUBE}.break_start_time_key = hop1.time_key
+          )
+        type: string
+        title: Hourly Time Slot 30
+        description: 30-minute hourly start slot shown on Break Analysis.
+      - name: break_hourly_end_time_slot_24
+        sql: |-
+          (
+            SELECT hop1.hourly_time_slot_24
+            FROM {{ catalog('dwhprd_gold') }}.bts_time_dim hop1
+            WHERE {CUBE}.break_end_time_key = hop1.time_key
+          )
+        type: string
+        title: Break Hourly End Time Slot - 24
+        description: 24-minute hourly end slot shown on Break Analysis.
+      - name: break_hourly_end_time_slot_30
+        sql: |-
+          (
+            SELECT hop1.hourly_time_slot_30
+            FROM {{ catalog('dwhprd_gold') }}.bts_time_dim hop1
+            WHERE {CUBE}.break_end_time_key = hop1.time_key
+          )
+        type: string
+        title: Break Hourly End Time Slot - 30
+        description: 30-minute hourly end slot shown on Break Analysis.
+      - name: time_w_secs
+        sql: |-
+          (
+            SELECT hop1.time_w_secs
+            FROM {{ catalog('dwhprd_gold') }}.bts_time_dim hop1
+            WHERE {CUBE}.break_start_time_key = hop1.time_key
+          )
+        type: string
+        title: Time (with seconds)
+        description: Clock time with seconds. Break Analysis shows this as Break Start Time. Break End Time reads the same column through a correlated subquery.
+      - name: display_channel_name
+        sql: |-
+          (
+            SELECT hop1.display_channel_name
+            FROM {{ catalog('dwhprd_gold') }}.channel_dim hop1
+            WHERE {CUBE}.channel_key = hop1.channel_key
+          )
+        type: string
+        title: Channel Name
+        description: Display-formatted channel name, distinct from the raw channel_name column.
+      - name: day_date
+        sql: |-
+          (
+            SELECT hop1.day_date
+            FROM {{ catalog('dwhprd_gold') }}.day_dim hop1
+            WHERE {CUBE}.day_key = hop1.day_key
+          )
+        type: time
+        title: Day Date
+        description: The calendar date this row represents.
+      - name: daypart_name
+        sql: |-
+          (
+            SELECT hop1.daypart_name
+            FROM {{ catalog('dwhprd_gold') }}.daypart_dim hop1
+            WHERE {CUBE}.daypart_key = hop1.daypart_key
+          )
+        type: string
+        title: Daypart Name
+        description: Daypart name. Break Analysis shows this as Break Daypart Name.
+      - name: source_region_name
+        sql: |-
+          (
+            SELECT hop1.source_region_name
+            FROM {{ catalog('dwhprd_gold') }}.source_system_region_dim hop1
+            WHERE {CUBE}.source_system_region_key = hop1.source_system_region_key
+          )
+        type: string
+        title: Source Region Name
+        description: Human-readable name of the source region.
+      - name: break_key
+        sql: break_key
+        type: number
+        title: Break Key
+        description: Unique key of the break. Primary key of this fact.
+        primary_key: true
+      - name: source_system_region_key
+        sql: source_system_region_key
+        type: number
+        title: Source System Region Key
+        description: >-
+          Foreign key to source_system_region_dim. Report filter value 21 is
+          Discovery Latin America.
+      - name: channel_key
+        sql: channel_key
+        type: number
+        title: Channel Key
+        description: Foreign key to channel_dim.
+      - name: daypart_key
+        sql: daypart_key
+        type: number
+        title: Daypart Key
+        description: Foreign key to daypart_dim. Not a report filter.
+      - name: day_key
+        sql: day_key
+        type: number
+        title: Day Key
+        description: >-
+          Foreign key to day_dim. The report date filter is day_date on that
+          dimension. 4 October 2025 is day_key 20251004.
+      - name: calendar_month_key
+        sql: calendar_month_key
+        type: number
+        title: Calendar Month Key
+        description: >-
+          Calendar month key stored on the fact. The view shows Month from
+          calendar_month_dim.calendar_month_label.
+      - name: break_start_time_key
+        sql: break_start_time_key
+        type: number
+        title: Break Start Time Key
+        description: >-
+          Foreign key to bts_time_dim for Break Start Time. bts_time_dim is
+          joined once, in this role. hourly_time_slot_30 and hourly_time_slot_24
+          on that cube are the start-time slots. End-time slots join
+          cube_carl_dwhprd_gold_bts_end_time_dim.
+      - name: break_end_time_key
+        sql: break_end_time_key
+        type: number
+        title: Break End Time Key
+        description: >-
+          Foreign key to bts_time_dim for Break End Time. Read through
+          break_end_time, because bts_time_dim is already joined for the start
+          time.
+      - name: break_end_time
+        sql: >-
+          (SELECT td.time_w_secs FROM {{ catalog('dwhprd_gold') }}.bts_time_dim td
+            WHERE td.time_key = {CUBE}.break_end_time_key)
+        type: string
+        title: Break End Time
+        description: >-
+          bts_time_dim.time_w_secs for break_end_time_key. A correlated subquery,
+          because bts_time_dim is already joined for the start time.
+      - name: base_currency_key
+        sql: base_currency_key
+        type: number
+        title: Base Currency Key
+        description: >-
+          Foreign key to bts_currency_dim. The view shows currency_symbol.
+      - name: base_currency_year
+        sql: base_currency_year
+        type: number
+        title: Base Currency Year
+        description: >-
+          Plan year used to join plan_hist_currency_rate. Not a report object.
+      - name: corp_daypart_key
+        sql: corp_daypart_key
+        type: number
+        title: Corp Daypart Key
+        description: >-
+          Foreign key to corp_daypart_dim. The view shows corp_daypart_selling_desc.
+      - name: break_before_program_key
+        sql: break_before_program_key
+        type: number
+        title: Break Before Program Key
+        description: Foreign key to bts_program_dim for the program before the break.
+      - name: break_after_program_key
+        sql: break_after_program_key
+        type: number
+        title: Break After Program Key
+        description: Foreign key to bts_program_dim for the program after the break.
+      - name: calendar_week_key
+        sql: calendar_week_key
+        type: number
+        title: Calendar Week Key
+        description: >-
+          Foreign key to calendar_week_dim. That cube groups day_dim by week
+          so this join does not fan the fact out.
+    joins:
+      - name: cube_carl_dwhprd_gold_daypart_dim
+        sql: '{CUBE}.daypart_key = {cube_carl_dwhprd_gold_daypart_dim}.daypart_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_break_dim
+        sql: '{CUBE}.break_key = {cube_carl_dwhprd_gold_break_dim}.break_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_channel_dim
+        sql: '{CUBE}.channel_key = {cube_carl_dwhprd_gold_channel_dim}.channel_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_bts_time_dim
+        sql: '{CUBE}.break_start_time_key = {cube_carl_dwhprd_gold_bts_time_dim}.time_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_bts_currency_dim
+        sql: '{CUBE}.base_currency_key = {cube_carl_dwhprd_gold_bts_currency_dim}.currency_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_corp_daypart_dim
+        sql: '{CUBE}.corp_daypart_key = {cube_carl_dwhprd_gold_corp_daypart_dim}.corp_daypart_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_day_dim
+        sql: '{CUBE}.day_key = {cube_carl_dwhprd_gold_day_dim}.day_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_source_system_region_dim
+        sql: >-
+          {CUBE}.source_system_region_key =
+          {cube_carl_dwhprd_gold_source_system_region_dim}.source_system_region_key
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_calendar_month_dim
+        sql: '{CUBE}.calendar_month_key = {cube_carl_dwhprd_gold_calendar_month_dim}.calendar_month_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_calendar_week_dim
+        sql: '{CUBE}.calendar_week_key = {cube_carl_dwhprd_gold_calendar_week_dim}.calendar_week_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_bts_end_time_dim
+        sql: '{CUBE}.break_end_time_key = {cube_carl_dwhprd_gold_bts_end_time_dim}.time_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_bts_program_before_dim
+        sql: >-
+          {CUBE}.break_before_program_key =
+          {cube_carl_dwhprd_gold_bts_program_before_dim}.program_key
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_bts_program_after_dim
+        sql: >-
+          {CUBE}.break_after_program_key =
+          {cube_carl_dwhprd_gold_bts_program_after_dim}.program_key
+        relationship: many_to_one
+    measures:
+      - name: record_count
+        sql: '*'
+        type: count
+        title: Record Count
+        description: Row count for smoke queries.
+      - name: break_duration_seconds
+        sql: '{CUBE}.break_duration_secs'
+        type: sum
+        title: Break Duration Seconds
+        description: Sum of break duration in seconds.
+      - name: break_sold_seconds
+        sql: '{CUBE}.break_sold_sec'
+        type: sum
+        title: Break Sold Seconds
+        description: Sum of break sold seconds (column BREAK_SOLD_SEC).
+      - name: break_available_seconds
+        sql: '{CUBE}.break_avail_secs'
+        type: sum
+        title: Break Available Seconds
+        description: Sum of break available seconds (column BREAK_AVAIL_SECS).
+      - name: spots_booked
+        sql: '{CUBE}.spots_booked'
+        type: sum
+        title: Spots Booked(Break)
+        description: Sum of spots booked on the break.
+      - name: break_duration_spots
+        sql: '{CUBE}.break_duration_secs / 30'
+        type: sum
+        title: Dynamic Break Duration Spots
+        description: >-
+          Sum of break duration seconds divided by 30. Equals the summed
+          duration divided by the prompted 30-second spot length.
+      - name: booked_equivalent_spots
+        sql: '{CUBE}.break_sold_sec / 30'
+        type: sum
+        title: Dynamic Booked Equivalent Spots(Break Sold Sec)
+        description: >-
+          Sum of break sold seconds divided by 30. The analytical engine labels
+          the same metric Booked Spots(Equivalent 30) on the final view pass.
+      - name: break_available_spots
+        sql: '{CUBE}.break_avail_secs / 30'
+        type: sum
+        title: Dynamic Break Available Spots
+        description: >-
+          Sum of break available seconds divided by 30. Equals the summed
+          available seconds divided by the prompted 30-second spot length.
+      - name: break_price_loc
+        sql: '{CUBE}.break_price'
+        type: sum
+        title: Break Price LOC
+        description: Sum of break price in local currency.
+      - name: break_price_current_rate_usd
+        sql: '{CUBE}.break_price * {CUBE}.plan_curr_exchange_factor'
+        type: sum
+        title: Break Price Current Rate(USD)
+        description: >-
+          Sum of break price times the current planned exchange factor. The
+          rate stays inside the sum. PLAN_CURR_RATE on BREAK_FACT_VW.
+      - name: break_price_hist_rate_usd
+        sql: '{CUBE}.break_price * {CUBE}.plan_hist_exchange_factor'
+        type: sum
+        title: Break Price Hist Rate(USD)
+        description: >-
+          Sum of break price times the historical planned exchange factor. The
+          rate stays inside the sum. PLAN_HIST_RATE on BREAK_FACT_VW.

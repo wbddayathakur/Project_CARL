@@ -1,0 +1,1431 @@
+cubes:
+  - name: cube_carl_dwhprd_gold_spot_fact
+    sql: >
+      SELECT sf.spot_id, sf.source_system_region_key, sf.campaign_key, sf.channel_key,
+             sf.day_key, sf.break_key, sf.business_type_key, sf.base_currency_key,
+             sf.base_currency_year, sf.spot_time_key, sf.charge_type_key, sf.spot_status_key,
+             sf.calendar_month_key, sf.calendar_qtr_key, sf.calendar_year_key,
+             sf.calendar_week_key, sf.program_key, sf.product_key, sf.corp_daypart_key,
+             sf.country_key, sf.spot_daypart_key,
+             sf.spot_length, sf.spot_length_factor, sf.spots_booked, sf.spot_seconds,
+             sf.spot_clock_number, sf.spot_cpt, sf.spot_cps, sf.spot_cpp,
+             sf.spot_version_length,
+             CAST(sf.spot_version_last_air_date AS timestamp(3)) AS spot_version_last_air_date,
+             CAST(sf.spot_version_expiry_date AS timestamp(3)) AS spot_version_expiry_date,
+             sf.spot_crt_1, sf.spot_crt_2, sf.spot_crt_3, sf.spot_crt_4,
+             sf.spot_clock_hour,
+             sf.broadcast_month_key, sf.broadcast_week_key, sf.broadcast_year_key,
+             sf.broadcast_qtr_key,
+             sf.demographic_key,
+             sf.spot_price, sf.gross_revenue, sf.agency_commission_pct,
+             sf.agency_commission_pct * 100 AS agency_commission_pct_points,
+             sf.rep_commission_pct, sf.agency_incentive_pct,
+             sf.spot_actual_impacts, sf.spot_actual_imps_base_length,
+             sf.spot_actual_rat_base_length, sf.spot_actual_ratings,
+             srf.sales_rep_key, srf.sales_rep_name, srf.sales_rep_revenue_share,
+             srf.sales_rep_team_key, srf.sales_rep_team_desc,
+             CASE
+               WHEN rep.sales_rep_name IS NOT NULL THEN rep.sales_rep_name
+               WHEN sf.source_system_region_key = 30 THEN 'ITALY N/A'
+               WHEN sf.source_system_region_key = 20 THEN 'DNAP N/A'
+               ELSE 'DLA N/A'
+             END AS bts_sales_rep_name,
+             curr.exchange_factor AS plan_curr_exchange_factor,
+             hist.exchange_factor AS plan_hist_exchange_factor,
+             date_format(
+               date_add(
+                 'day',
+                 -((day_of_year(CAST(d.day_date AS date)) - 1) % 7),
+                 CAST(d.day_date AS date)
+               ),
+               '%m/%d'
+             ) AS week_of
+        FROM {{ catalog('dwhprd_gold') }}.spot_fact sf
+        LEFT JOIN {{ catalog('dwhprd_gold') }}.sales_rep_fraction_fact srf
+          ON sf.campaign_key = srf.campaign_key
+        LEFT JOIN {{ catalog('dwhprd_gold') }}.bts_sales_rep_dim rep
+          ON srf.sales_rep_key = rep.sales_rep_key
+        LEFT JOIN {{ catalog('dwhprd_gold') }}.day_dim d
+          ON sf.day_key = d.day_key
+        LEFT JOIN {{ catalog('dwhprd_gold') }}.plan_curr_currency_rate curr
+          ON sf.base_currency_key = curr.base_currency_key
+        LEFT JOIN {{ catalog('dwhprd_gold') }}.plan_hist_currency_rate hist
+          ON sf.base_currency_key = hist.base_currency_key
+         AND sf.base_currency_year = hist.base_currency_year
+    data_source: default
+    public: false
+    title: Carl Dwhprd Gold — Spot Fact
+    description: >-
+      Booked spots for the Spot Analysis report. One gold row is one spot in one
+      source-system region. Probed 2026-10-14 on carl_dwhprd_gold_dev: 60,508,479
+      rows, 28,039,734 distinct spot_id values, 0 null spot_id, and
+      (spot_id, source_system_region_key) is unique. spot_id alone is not.
+      SPOT_FACT_VW multiplies every additive measure by SALES_REP_REVENUE_SHARE
+      from SALES_REP_FRACTION_FACT, outer-joined on campaign_key, and uses
+      NVL(share, 1) when a campaign has no sales-rep row. That join is embedded
+      here, the same shape as cube_carl_dwhprd_gold_campaign_fact: a native
+      one_to_many join makes Cube's SQL API reject the share-weighted measures.
+      sales_rep_fraction_fact is unique on (campaign_key, sales_rep_key)
+      (431,137 rows, 0 null sales_rep_key, probed 2026-10-14). A campaign with
+      several reps fans this fact out, and each measure multiplies by that
+      rep's share before summing, so the shares reconstruct the spot total.
+      An unmatched campaign keeps one row and COALESCE(share, 1). Apply
+      source_system_region_key = 21 in QuickSight for Discovery Latin America.
+      That filter is not on the cube. Day is not filtered: Spot Analysis
+      returns every calendar day and uses the local-currency measures.
+      WBDL AUR Review is a separate view. It multiplies spot price and net
+      revenue by the current planned rate. That rate is exchange_factor on
+      plan_curr_currency_rate, joined in this SQL on base_currency_key and
+      exposed as plan_curr_exchange_factor. The rate table is unique on
+      base_currency_key (128 rows, probed 2026-10-21), so the join does not
+      fan the fact out. A spot with no rate keeps a null rate and drops out
+      of the USD sums. The historical rate is plan_hist_currency_rate on
+      base_currency_key and base_currency_year, exposed as
+      plan_hist_exchange_factor. Both names are unique to this SELECT, so a
+      query that returns Month and Year does not see two exchange_factor
+      columns. WBDL AUR Review also filters spot status, calendar
+      month, charge type, and client in QuickSight.
+    dimensions:
+      - name: break_end_time
+        sql: |-
+          (
+            SELECT hop2.time_w_secs
+            FROM {{ catalog('dwhprd_gold') }}.break_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.bts_time_dim hop2
+              ON hop1.break_end_time_key = hop2.time_key
+            WHERE {CUBE}.break_key = hop1.break_key
+          )
+        type: string
+        title: Break End Time
+        description: Break end time with seconds. Spot Analysis aliases this TIME_W_SECS1.
+      - name: break_id
+        sql: |-
+          (
+            SELECT hop1.break_id
+            FROM {{ catalog('dwhprd_gold') }}.break_dim hop1
+            WHERE {CUBE}.break_key = hop1.break_key
+          )
+        type: string
+        title: Break ID
+        description: Natural break identifier shown on Spot Analysis.
+      - name: break_start_time
+        sql: |-
+          (
+            SELECT hop2.time_w_secs
+            FROM {{ catalog('dwhprd_gold') }}.break_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.bts_time_dim hop2
+              ON hop1.break_start_time_key = hop2.time_key
+            WHERE {CUBE}.break_key = hop1.break_key
+          )
+        type: string
+        title: Break Start Time
+        description: Break start time with seconds. Spot Analysis aliases this TIME_W_SECS0.
+      - name: break_type_code
+        sql: |-
+          (
+            SELECT hop1.break_type_code
+            FROM {{ catalog('dwhprd_gold') }}.break_dim hop1
+            WHERE {CUBE}.break_key = hop1.break_key
+          )
+        type: string
+        title: Break Type Code
+        description: Short code for the break type. Break Analysis rolls it up before display.
+      - name: break_type_desc
+        sql: |-
+          (
+            SELECT hop1.break_type_desc
+            FROM {{ catalog('dwhprd_gold') }}.break_dim hop1
+            WHERE {CUBE}.break_key = hop1.break_key
+          )
+        type: string
+        title: Break Type
+        description: Break type description shown on Spot Analysis. Break Analysis rolls it up before display.
+      - name: break_daypart_group_name
+        sql: |-
+          CASE WHEN {CUBE}.break_key < 0 THEN 'Non Prime Time' ELSE (
+            SELECT hop2.daypart_group_name
+            FROM {{ catalog('dwhprd_gold') }}.break_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.daypart_dim hop2
+              ON hop1.daypart_key = hop2.daypart_key
+            WHERE {CUBE}.break_key = hop1.break_key
+          ) END
+        type: string
+        title: Break Daypart Group
+        description: >-
+          Daypart group of the spot's break, through break_dim.daypart_key to
+          daypart_dim. Spots with no break yet carry a placeholder break
+          (break_key < 0, break_id 0), and every placeholder break points to
+          daypart key 0, which BTSDWH labels DLA N/A. MSTR shows those spots
+          as Non Prime Time on WBDL Bonus Spot Review (896 grid rows in 1st
+          Qtr 2025, all zero spots booked), so placeholder breaks are labelled
+          Non Prime Time here. Pending BTS SME confirmation of the MSTR rule.
+          break_dim and daypart_dim are unique on their keys, so the lookup is
+          scalar.
+      - name: business_type_name
+        sql: |-
+          (
+            SELECT hop1.business_type_name
+            FROM {{ catalog('dwhprd_gold') }}.business_type_dim hop1
+            WHERE {CUBE}.business_type_key = hop1.business_type_key
+          )
+        type: string
+        title: Business Type Name
+        description: Human-readable name of the business type.
+      - name: holding_company_name
+        sql: |-
+          (
+            SELECT hop2.holding_company_name
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.holding_company_dim hop2
+              ON hop1.holding_company_key = hop2.holding_company_key
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Holding Company Name
+        description: Human-readable name of the holding company.
+      - name: display_channel_name
+        sql: |-
+          (
+            SELECT hop1.display_channel_name
+            FROM {{ catalog('dwhprd_gold') }}.channel_dim hop1
+            WHERE {CUBE}.channel_key = hop1.channel_key
+          )
+        type: string
+        title: Channel Name
+        description: Display-formatted channel name, distinct from the raw channel_name column.
+      - name: base_currency_code
+        sql: |-
+          (
+            SELECT hop1.currency_code
+            FROM {{ catalog('dwhprd_gold') }}.bts_currency_dim hop1
+            WHERE {CUBE}.base_currency_key = hop1.currency_key
+          )
+        type: string
+        title: Currency Code
+        description: >-
+          Currency code on bts_currency_dim. The column is currency_code.
+          currency_dim.currency_cd is a different list and is not this code.
+      - name: day_date
+        sql: |-
+          (
+            SELECT CAST(hop1.day_date AS timestamp(3))
+            FROM {{ catalog('dwhprd_gold') }}.day_dim hop1
+            WHERE {CUBE}.day_key = hop1.day_key
+          )
+        type: time
+        title: Day Date
+        description: The calendar date this row represents.
+      - name: spot_id
+        sql: spot_id
+        type: number
+        title: Spot Id
+        description: >-
+          Spot identifier. Part of this cube's key with source_system_region_key
+          and sales_rep_key. Not unique on its own.
+        primary_key: true
+      - name: source_system_region_key
+        sql: source_system_region_key
+        type: number
+        title: Source System Region Key
+        description: >-
+          Foreign key to source_system_region_dim, and part of this cube's key.
+          Spot Analysis filters this to 21 (Discovery Latin America) in
+          QuickSight. That filter is not a segment.
+        primary_key: true
+      - name: sales_rep_key
+        sql: sales_rep_key
+        type: number
+        title: Sales Rep Key
+        description: >-
+          Part of this cube's key. From the embedded sales_rep_fraction_fact
+          join. NULL when the campaign has no sales-rep row; those rows are
+          kept and treated as a 100% share.
+        primary_key: true
+      - name: sales_rep_revenue_share
+        sql: sales_rep_revenue_share
+        type: number
+        title: Sales Rep Revenue Share
+        description: >-
+          Raw per-rep share from the embedded join. NULL on an unallocated
+          campaign. Every additive measure below uses COALESCE of this column
+          to 1. Not a grid column.
+      - name: campaign_key
+        sql: campaign_key
+        type: number
+        title: Campaign Key
+        description: >-
+          Foreign key to campaign_dim. Holding company is reached through that
+          dim, which is how the report joins HOLDING_COMPANY_DIM.
+      - name: channel_key
+        sql: channel_key
+        type: number
+        title: Channel Key
+        description: Foreign key to channel_dim.
+      - name: day_key
+        sql: day_key
+        type: number
+        title: Day Key
+        description: >-
+          Foreign key to day_dim. Calendar date of the spot. The report keeps
+          every day; this is not a load filter.
+      - name: break_key
+        sql: break_key
+        type: number
+        title: Break Key
+        description: Foreign key to break_dim.
+      - name: business_type_key
+        sql: business_type_key
+        type: number
+        title: Business Type Key
+        description: Foreign key to business_type_dim.
+      - name: base_currency_key
+        sql: base_currency_key
+        type: number
+        title: Base Currency Key
+        description: >-
+          Foreign key for the base-currency role. Spot Analysis resolves it through
+          cube_carl_dwhprd_gold_base_currency_dim (BTSDWH currency codes). The
+          currency_dim join remains on this cube and is not used by the Spot Analysis view.
+      - name: spot_length
+        sql: spot_length
+        type: number
+        title: Spot Length
+        description: Spot length on the fact. An attribute, not a metric.
+      - name: spot_length_factor
+        sql: spot_length_factor
+        type: number
+        title: Spot Length Factor
+        description: Spot length factor on the fact. An attribute, not a metric.
+      - name: spot_time_key
+        sql: spot_time_key
+        type: number
+        title: Spot Time Key
+        description: >-
+          Foreign key to bts_time_dim. WBDL AUR Review reads the 30-minute
+          hourly slot through this key. Probed 2026-10-21: every Discovery
+          Latin America spot in calendar 2026 with the report's spot statuses
+          matched bts_time_dim.
+      - name: charge_type_key
+        sql: charge_type_key
+        type: number
+        title: Charge Type Key
+        description: >-
+          Foreign key to charge_type_dim. WBDL AUR Review keeps charge type
+          Chargable in QuickSight. That filter is not on the cube.
+      - name: spot_status_key
+        sql: spot_status_key
+        type: number
+        title: Spot Status Key
+        description: >-
+          Spot status key. WBDL AUR Review keeps keys 5, 4, 0, 1, 2, 3, and 6
+          in QuickSight. That filter is not on the cube.
+      - name: calendar_month_key
+        sql: calendar_month_key
+        type: number
+        title: Calendar Month Key
+        description: >-
+          Foreign key to calendar_month_dim. WBDL AUR Review keeps calendar
+          months 202601 through 202612 in QuickSight. That filter is not on
+          the cube.
+      - name: calendar_qtr_key
+        sql: calendar_qtr_key
+        type: number
+        title: Calendar Quarter Key
+        description: Foreign key to calendar_qtr_dim.
+      - name: calendar_year_key
+        sql: calendar_year_key
+        type: number
+        title: Calendar Year Key
+        description: Foreign key to calendar_year_dim.
+      - name: sales_rep_name
+        sql: bts_sales_rep_name
+        type: string
+        title: Sales Rep Name
+        description: >-
+          SALES_REP_NAME from BTSDWH.SALES_REP_DIM. This cube's SQL left-joins
+          bts_sales_rep_dim on the fraction sales_rep_key. A campaign with no
+          fraction row has a null key, so the column is the sentinel for that
+          region: region 21 is DLA N/A, region 20 is DNAP N/A, and region 30
+          is ITALY N/A. The dimension key is unique, so the join does not add
+          rows. Amnistia uses the same column in its own SQL.
+      - name: sales_rep_team_key
+        sql: sales_rep_team_key
+        type: number
+        title: Sales Rep Team Key
+        description: Foreign key to sales_rep_team_dim from the embedded sales_rep_fraction_fact row.
+      - name: sales_rep_team_desc
+        sql: sales_rep_team_desc
+        type: string
+        title: Sales Rep Team Desc
+        description: >-
+          Sales rep team description from the embedded sales_rep_fraction_fact
+          row. The Argentina view shows Sales Rep Team from sales_rep_team_dim.
+      - name: spot_clock_number
+        sql: spot_clock_number
+        type: string
+        title: Spot Clock Number
+        description: Spot clock number. An attribute, not a metric.
+      - name: spot_cpt
+        sql: spot_cpt
+        type: number
+        title: Spot CPT
+        description: Spot cost per thousand on the fact row. Grouped, not summed.
+      - name: spot_cps
+        sql: spot_cps
+        type: number
+        title: Spot CPS
+        description: Spot cost per spot on the fact row. Grouped, not summed.
+      - name: spot_cpp
+        sql: spot_cpp
+        type: number
+        title: Spot CPP
+        description: Spot cost per point on the fact row. Grouped, not summed.
+      - name: spot_seconds_value
+        sql: spot_seconds
+        type: number
+        title: Spot Seconds Value
+        description: >-
+          Spot seconds on the fact row, before the sales-rep share. The
+          template shows this as Spot Seconds. The summed measure stays
+          spot_seconds.
+      - name: spot_daypart_key
+        sql: spot_daypart_key
+        type: number
+        title: Spot Daypart Key
+        description: Foreign key to spot_daypart_dim. The name and prompt are on that cube.
+      - name: program_key
+        sql: program_key
+        type: number
+        title: Program Key
+        description: Foreign key to bts_program_dim. This is the spot's program, not the break before or after program.
+      - name: product_key
+        sql: product_key
+        type: number
+        title: Product Key
+        description: Foreign key to bts_product_dim.
+      - name: corp_daypart_key
+        sql: corp_daypart_key
+        type: number
+        title: Corp Daypart Key
+        description: Foreign key to corp_daypart_dim.
+      - name: country_key
+        sql: country_key
+        type: number
+        title: Country Key
+        description: Foreign key to country_dim.
+      - name: calendar_week_key
+        sql: calendar_week_key
+        type: number
+        title: Calendar Week Key
+        description: Foreign key to the grouped calendar week cube.
+      - name: week_of
+        sql: week_of
+        type: string
+        title: Week of
+        description: >-
+          MM/DD label of Oracle TRUNC(day_date, 'WW'): the week starts on the
+          same weekday as 1 January. Computed in this cube's SQL from day_dim
+          so the SQL API selects week_of and does not recompute day_date.
+      - name: base_currency_year
+        sql: base_currency_year
+        type: number
+        title: Base Currency Year
+        description: Plan year used to join the historical currency rate. Not a report object.
+      - name: agency_commission_pct_points
+        sql: agency_commission_pct_points
+        type: number
+        title: Agency Commission %
+        description: >-
+          Agency commission rate times 100. The Dashboard Spot Report SQL
+          groups by AGENCY_COMMISSION_PCT * 100. This is not a sum.
+      - name: spot_version_length
+        sql: spot_version_length
+        type: string
+        title: Spot Version Length
+        description: Spot version length from spot_fact.
+      - name: spot_version_last_air_date
+        sql: spot_version_last_air_date
+        type: time
+        title: Spot Version Last Air Date
+        description: Last air date of the spot version, cast to timestamp(3) in this cube's SQL.
+      - name: spot_version_expiry_date
+        sql: spot_version_expiry_date
+        type: time
+        title: Spot Version Expiry Date
+        description: Expiry date of the spot version, cast to timestamp(3) in this cube's SQL.
+      - name: spot_crt_1
+        sql: spot_crt_1
+        type: string
+        title: Spot Copy Class 1
+        description: Spot copy class 1 from spot_fact.SPOT_CRT_1.
+      - name: spot_crt_2
+        sql: spot_crt_2
+        type: string
+        title: Spot Copy Class 2
+        description: Spot copy class 2 from spot_fact.SPOT_CRT_2.
+      - name: spot_crt_3
+        sql: spot_crt_3
+        type: string
+        title: Spot Copy Class 3
+        description: Spot copy class 3 from spot_fact.SPOT_CRT_3.
+      - name: spot_crt_4
+        sql: spot_crt_4
+        type: string
+        title: Spot Copy Class 4
+        description: Spot copy class 4 from spot_fact.SPOT_CRT_4.
+      - name: spot_clock_hour
+        sql: spot_clock_hour
+        type: string
+        title: Spot Clock Hour
+        description: Spot clock hour from spot_fact. The version report rolls this up before the grid is drawn.
+      - name: broadcast_month_name
+        sql: |-
+          (
+            SELECT hop1.broadcast_month_name
+            FROM {{ catalog('dwhprd_gold') }}.broadcast_month_dim hop1
+            WHERE {CUBE}.broadcast_month_key = hop1.broadcast_month_key
+          )
+        type: string
+        title: Broadcast Month
+        description: Broadcast month name. The version report rolls this up before the grid is drawn. Probed carl_dwhprd_gold_dev on 2026-10-28, 388 rows and 388 distinct broadcast_month_key.
+      - name: broadcast_week_desc
+        sql: |-
+          (
+            SELECT hop1.broadcast_week_desc
+            FROM {{ catalog('dwhprd_gold') }}.broadcast_week_dim hop1
+            WHERE {CUBE}.broadcast_week_key = hop1.broadcast_week_key
+          )
+        type: string
+        title: Broadcast Week
+        description: Broadcast week description. The version report rolls this up before the grid is drawn. Probed carl_dwhprd_gold_dev on 2026-10-28, 1,684 rows and 1,684 distinct broadcast_week_key.
+      - name: broadcast_year
+        sql: |-
+          (
+            SELECT hop1.broadcast_year
+            FROM {{ catalog('dwhprd_gold') }}.broadcast_year_dim hop1
+            WHERE {CUBE}.broadcast_year_key = hop1.broadcast_year_key
+          )
+        type: number
+        title: Broadcast Year
+        description: Broadcast year. The version report rolls this up before the grid is drawn. Probed carl_dwhprd_gold_dev on 2026-10-28, 33 rows and 33 distinct broadcast_year_key.
+      - name: bcast_qtr_desc
+        sql: |-
+          (
+            SELECT hop1.bcast_qtr_desc
+            FROM {{ catalog('dwhprd_gold') }}.broadcast_qtr_dim hop1
+            WHERE {CUBE}.broadcast_qtr_key = hop1.broadcast_qtr_key
+          )
+        type: string
+        title: Broadcast Quarter
+        description: >-
+          BCAST_QTR_DESC from BROADCAST_QTR_DIM on spot_fact.BROADCAST_QTR_KEY.
+          Quarterly Business Review Net_AUR Analysis rolls this up before the
+          grid is drawn.
+      - name: demographic_name
+        sql: |-
+          (
+            SELECT hop1.demographic_name
+            FROM {{ catalog('dwhprd_gold') }}.demographic_dim hop1
+            WHERE {CUBE}.demographic_key = hop1.demographic_key
+          )
+        type: string
+        title: Demographic
+        description: Demographic name. The version report rolls this up before the grid is drawn. Probed carl_dwhprd_gold_dev on 2026-10-28, 259 rows and 259 distinct demographic_key.
+      - name: bts_sales_rep_name
+        sql: |-
+          (
+            SELECT hop1.sales_rep_name
+            FROM {{ catalog('dwhprd_gold') }}.bts_sales_rep_dim hop1
+            WHERE hop1.sales_rep_key = CASE
+              WHEN {CUBE}.source_system_region_key = 30 THEN COALESCE({CUBE}.sales_rep_key, -2)
+              WHEN {CUBE}.source_system_region_key = 20 THEN COALESCE({CUBE}.sales_rep_key, -1)
+              ELSE COALESCE({CUBE}.sales_rep_key, 0)
+            END
+          )
+        type: string
+        title: Sales Rep
+        description: >-
+          SALES_REP_NAME from bts_sales_rep_dim. A spot with no fraction row uses the region
+          sentinel key, 0 for Latin America, -1 for DNAP, and -2 for Italy.
+          Probed carl_dwhprd_gold_dev on 2026-10-28, 485 rows and 485 distinct sales_rep_key.
+      - name: agency_name
+        sql: |-
+          (
+            SELECT hop2.agency_name
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.agency_dim hop2
+              ON hop1.agency_key = hop2.agency_key
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Agency Name
+        description: Human-readable value "Agency".
+      - name: cal_qtr_desc
+        sql: |-
+          (
+            SELECT hop1.cal_qtr_desc
+            FROM {{ catalog('dwhprd_gold') }}.calendar_qtr_dim hop1
+            WHERE {CUBE}.calendar_qtr_key = hop1.calendar_qtr_key
+          )
+        type: string
+        title: Calendar Quarter Description
+        description: Human-readable calendar quarter, e.g. Q1 2024.
+      - name: calendar_month_label
+        sql: |-
+          (
+            SELECT hop1.calendar_month_label
+            FROM (
+              SELECT m.*,
+                     m.calendar_month_name || ' ' || CAST(m.calendar_year AS VARCHAR) AS calendar_month_label
+                FROM {{ catalog('dwhprd_gold') }}.calendar_month_dim m
+            ) hop1
+            WHERE {CUBE}.calendar_month_key = hop1.calendar_month_key
+          )
+        type: string
+        title: Month
+        description: >-
+          Formatted "<Month Name> <Year>" label, reproducing MSTR's custom column
+          (CustCol_400/CustCol_3). The value is the calendar_month_label column
+          computed in this cube's SQL from calendar_month_name and calendar_year
+          on calendar_month_dim. The SQL API selects that column. CLab Revenue
+          in QA on 2026-10-24 failed when QuickSight grouped by Month, because
+          the old expression named calendar_year in a join that also included
+          calendar_year_dim.
+      - name: calendar_week_desc
+        sql: |-
+          (
+            SELECT hop1.calendar_week_desc
+            FROM (
+              SELECT calendar_week_key,
+                     'WEEK ' || CAST(calendar_week_num AS VARCHAR) || ', ' || CAST(calendar_year AS VARCHAR)
+                       AS calendar_week_desc,
+                     min(calendar_week_begin_date) AS calendar_week_begin_date,
+                     min(calendar_week_end_date) AS calendar_week_end_date,
+                     date_format(min(calendar_week_begin_date), '%m/%d/%Y') || ' - ' ||
+                       date_format(min(calendar_week_end_date), '%m/%d/%Y') AS calendar_week_label
+                FROM {{ catalog('dwhprd_gold') }}.day_dim
+               WHERE calendar_year > 2012
+                 AND calendar_year <= year(current_date) + 1
+               GROUP BY calendar_week_key, calendar_week_num, calendar_year
+            ) hop1
+            WHERE {CUBE}.calendar_week_key = hop1.calendar_week_key
+          )
+        type: string
+        title: Calendar Week
+        description: >-
+          Week label, WEEK <number>, <year>. Break Analysis shows this as Week.
+      - name: calendar_week_label
+        sql: |-
+          (
+            SELECT hop1.calendar_week_label
+            FROM (
+              SELECT calendar_week_key,
+                     'WEEK ' || CAST(calendar_week_num AS VARCHAR) || ', ' || CAST(calendar_year AS VARCHAR)
+                       AS calendar_week_desc,
+                     min(calendar_week_begin_date) AS calendar_week_begin_date,
+                     min(calendar_week_end_date) AS calendar_week_end_date,
+                     date_format(min(calendar_week_begin_date), '%m/%d/%Y') || ' - ' ||
+                       date_format(min(calendar_week_end_date), '%m/%d/%Y') AS calendar_week_label
+                FROM {{ catalog('dwhprd_gold') }}.day_dim
+               WHERE calendar_year > 2012
+                 AND calendar_year <= year(current_date) + 1
+               GROUP BY calendar_week_key, calendar_week_num, calendar_year
+            ) hop1
+            WHERE {CUBE}.calendar_week_key = hop1.calendar_week_key
+          )
+        type: string
+        title: Calendar Week Start and End Date
+        description: >-
+          Week start and end as MM/DD/YYYY - MM/DD/YYYY. The value is computed
+          in this cube's SQL. The SQL API selects calendar_week_label. Break
+          Analysis shows this as Week Start and End Date. 4 October 2025 is
+          10/01/2025 - 10/07/2025.
+      - name: calendar_year
+        sql: |-
+          (
+            SELECT hop1.calendar_year
+            FROM {{ catalog('dwhprd_gold') }}.calendar_year_dim hop1
+            WHERE {CUBE}.calendar_year_key = hop1.calendar_year_key
+          )
+        type: number
+        title: Calendar Year
+        description: Four-digit calendar year.
+      - name: campaign_desc
+        sql: |-
+          (
+            SELECT hop1.campaign_desc
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Campaign Description
+        description: Free-text campaign description.
+      - name: campaign_id
+        sql: |-
+          (
+            SELECT hop1.campaign_id
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Campaign ID
+        description: Natural identifier for the campaign.
+      - name: campaign_start_end_date
+        sql: |-
+          (
+            SELECT date_format(hop1.campaign_start_date, '%m/%d/%Y') || ' - ' || date_format(hop1.campaign_end_date, '%m/%d/%Y')
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Campaign Start and End Date
+        description: >-
+          Formatted start/end date range, reproducing MSTR's custom column (CustCol_40) exactly — both dates as
+          MM/DD/YYYY, concatenated with ' - '. Uses date_format (MySQL-style
+          %m/%d/%Y tokens), not to_char: probed live against Athena — to_char('MM/DD/YYYY') throws
+          "INVALID_FUNCTION_ARGUMENT: Failed to tokenize string [M] at offset [0]" on this engine, since Trino's
+          to_char expects a different token syntax than the Oracle/Teradata-style pattern MSTR used.
+      - name: campaign_status_name
+        sql: |-
+          (
+            SELECT hop2.campaign_status_name
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.campaign_status_dim hop2
+              ON hop1.campaign_status_key = hop2.campaign_status_key
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Campaign Status Name
+        description: Human-readable name of the campaign status.
+      - name: client_group_name
+        sql: |-
+          (
+            SELECT hop2.client_group_name
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.client_group_dim hop2
+              ON hop1.client_group_key = hop2.client_group_key
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Client Group Name
+        description: Human-readable name of the client group.
+      - name: charge_type_name
+        sql: |-
+          (
+            SELECT hop1.charge_type_name
+            FROM {{ catalog('dwhprd_gold') }}.charge_type_dim hop1
+            WHERE {CUBE}.charge_type_key = hop1.charge_type_key
+          )
+        type: string
+        title: Charge Type Name
+        description: >-
+          Charge type name as stored, including the spelling Chargable.
+          WBDL AUR Review filters to that name in QuickSight.
+      - name: client_name
+        sql: |-
+          (
+            SELECT hop2.client_name
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.client_dim hop2
+              ON hop1.client_key = hop2.client_key
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Client Name
+        description: Human-readable name of the client.
+      - name: corp_daypart_selling_desc
+        sql: |-
+          (
+            SELECT hop1.corp_daypart_selling_desc
+            FROM {{ catalog('dwhprd_gold') }}.corp_daypart_dim hop1
+            WHERE {CUBE}.corp_daypart_key = hop1.corp_daypart_key
+          )
+        type: string
+        title: Corp Daypart
+        description: Sales-facing corporate daypart description selected by the warehouse query.
+      - name: country_name
+        sql: |-
+          (
+            SELECT hop1.country_name
+            FROM {{ catalog('dwhprd_gold') }}.country_dim hop1
+            WHERE {CUBE}.country_key = hop1.country_key
+          )
+        type: string
+        title: Country Name
+        description: Human-readable name of the country.
+      - name: currency_code
+        sql: |-
+          (
+            SELECT hop1.currency_code
+            FROM {{ catalog('dwhprd_gold') }}.bts_currency_dim hop1
+            WHERE {CUBE}.base_currency_key = hop1.currency_key
+          )
+        type: string
+        title: Base Currency
+        description: >-
+          Currency code on bts_currency_dim. The column is currency_code.
+          currency_dim.currency_cd is a different list and is not this code.
+      - name: currency_name
+        sql: |-
+          (
+            SELECT hop1.currency_name
+            FROM {{ catalog('dwhprd_gold') }}.bts_currency_dim hop1
+            WHERE {CUBE}.base_currency_key = hop1.currency_key
+          )
+        type: string
+        title: Base Currency Name
+        description: Currency name for the fact row's base currency.
+      - name: currency_symbol
+        sql: |-
+          (
+            SELECT hop1.currency_symbol
+            FROM {{ catalog('dwhprd_gold') }}.bts_currency_dim hop1
+            WHERE {CUBE}.base_currency_key = hop1.currency_key
+          )
+        type: string
+        title: Base Currency Symbol
+        description: Currency symbol on bts_currency_dim.
+      - name: deal_id
+        sql: |-
+          (
+            SELECT hop2.deal_id
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.bts_deal_dim hop2
+              ON hop1.deal_key = hop2.deal_key
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: number
+        title: Deal Id
+        description: Numeric business identifier for the deal. Items Rpt groups by this id.
+      - name: deal_name
+        sql: |-
+          (
+            SELECT hop2.deal_name
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.bts_deal_dim hop2
+              ON hop1.deal_key = hop2.deal_key
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Deal Name
+        description: Deal name on BTSDWH.DEAL_DIM. Items Rpt shows this as Deal Name.
+      - name: display_business_type_prompt
+        sql: |-
+          (
+            SELECT hop1.display_business_type_prompt
+            FROM {{ catalog('dwhprd_gold') }}.business_type_dim hop1
+            WHERE {CUBE}.business_type_key = hop1.business_type_key
+          )
+        type: string
+        title: Business Type Prompt
+        description: >-
+          Prompt label, for example BTS-DLA - COMMERCIAL. The Argentina
+          transmission report filters this column. It is not the grid name.
+      - name: holding_company_key
+        sql: |-
+          (
+            SELECT hop2.holding_company_key
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.holding_company_dim hop2
+              ON hop1.holding_company_key = hop2.holding_company_key
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: number
+        title: Holding Company Key
+        description: Surrogate key uniquely identifying each holding company.
+      - name: hourly_time_slot_30
+        sql: |-
+          (
+            SELECT hop1.hourly_time_slot_30
+            FROM {{ catalog('dwhprd_gold') }}.bts_time_dim hop1
+            WHERE {CUBE}.spot_time_key = hop1.time_key
+          )
+        type: string
+        title: Hourly Time Slot 30
+        description: >-
+          30-minute hourly slot. Break Analysis shows the start-time copy as
+          Break Hourly Start Time Slot - 30.
+      - name: master_channel
+        sql: |-
+          (
+            SELECT hop1.master_channel
+            FROM {{ catalog('dwhprd_gold') }}.channel_dim hop1
+            WHERE {CUBE}.channel_key = hop1.channel_key
+          )
+        type: string
+        title: Master Channel
+        description: Parent network grouping, e.g. Animal Planet, Discovery Channel, Discovery ID, Discovery
+          Science, Discovery Turbo, TLC.
+      - name: product_category_1
+        sql: |-
+          (
+            SELECT hop1.product_category_1
+            FROM {{ catalog('dwhprd_gold') }}.bts_product_dim hop1
+            WHERE {CUBE}.product_key = hop1.product_key
+          )
+        type: string
+        title: Product Category 1
+        description: Product category 1. Selected in the Digital Analysis SQL and rolled up before the grid is drawn.
+      - name: product_name
+        sql: |-
+          (
+            SELECT hop1.product_name
+            FROM {{ catalog('dwhprd_gold') }}.bts_product_dim hop1
+            WHERE {CUBE}.product_key = hop1.product_key
+          )
+        type: string
+        title: Product
+        description: Product name. Digital Analysis shows this as Product.
+      - name: program_id
+        sql: |-
+          (
+            SELECT hop1.program_id
+            FROM {{ catalog('dwhprd_gold') }}.bts_program_dim hop1
+            WHERE {CUBE}.program_key = hop1.program_key
+          )
+        type: string
+        title: Program ID
+        description: Business program id from BTSDWH.PROGRAM_DIM.
+      - name: program_name
+        sql: |-
+          (
+            SELECT hop1.program_name
+            FROM {{ catalog('dwhprd_gold') }}.bts_program_dim hop1
+            WHERE {CUBE}.program_key = hop1.program_key
+          )
+        type: string
+        title: Program
+        description: Program name shown as Program.
+      - name: sales_rep_team_name
+        sql: |-
+          (
+            SELECT hop1.sales_rep_team_name
+            FROM {{ catalog('dwhprd_gold') }}.sales_rep_team_dim hop1
+            WHERE {CUBE}.sales_rep_team_key = hop1.sales_rep_team_key
+          )
+        type: string
+        title: Sales Rep Team
+        description: Sales rep team name from SALES_REP_TEAM_DIM.
+      - name: source_region_name
+        sql: |-
+          (
+            SELECT hop1.source_region_name
+            FROM {{ catalog('dwhprd_gold') }}.source_system_region_dim hop1
+            WHERE {CUBE}.source_system_region_key = hop1.source_system_region_key
+          )
+        type: string
+        title: Source Region Name
+        description: Human-readable name of the source region.
+      - name: spot_daypart_name
+        sql: |-
+          (
+            SELECT hop1.spot_daypart_name
+            FROM {{ catalog('dwhprd_gold') }}.spot_daypart_dim hop1
+            WHERE {CUBE}.spot_daypart_key = hop1.spot_daypart_key
+          )
+        type: string
+        title: Spot Daypart Name
+        description: Daypart name from SPOT_DAYPART_DIM.
+      - name: spot_daypart_name_prompt
+        sql: |-
+          (
+            SELECT hop1.spot_daypart_name_prompt
+            FROM {{ catalog('dwhprd_gold') }}.spot_daypart_dim hop1
+            WHERE {CUBE}.spot_daypart_key = hop1.spot_daypart_key
+          )
+        type: string
+        title: Spot Daypart Name Prompt
+        description: >-
+          Prompt value for the daypart. The Argentina report filters this to
+          the answered daypart list. That filter is not on the cube.
+      - name: spot_daypart_group_name
+        sql: |-
+          (
+            SELECT hop1.spot_daypart_group_name
+            FROM {{ catalog('dwhprd_gold') }}.spot_daypart_dim hop1
+            WHERE {CUBE}.spot_daypart_key = hop1.spot_daypart_key
+          )
+        type: string
+        title: Spot Daypart Group
+        description: >-
+          SPOT_DAYPART_GROUP_NAME from SPOT_DAYPART_DIM on the spot's daypart.
+          Quarterly Business Review Net_AUR Analysis shows this on the grid.
+      - name: spot_status_desc
+        sql: |-
+          (
+            SELECT hop1.spot_status_desc
+            FROM {{ catalog('dwhprd_gold') }}.spot_status_dim hop1
+            WHERE {CUBE}.spot_status_key = hop1.spot_status_key
+          )
+        type: string
+        title: Spot Status
+        description: Spot status description.
+      - name: time_w_secs
+        sql: |-
+          (
+            SELECT hop1.time_w_secs
+            FROM {{ catalog('dwhprd_gold') }}.bts_time_dim hop1
+            WHERE {CUBE}.spot_time_key = hop1.time_key
+          )
+        type: string
+        title: Time (with seconds)
+        description: >-
+          Clock time with seconds. Break Analysis shows this as Break Start Time.
+          Break End Time reads the same column through a correlated subquery.
+
+    measures:
+      - name: record_count
+        sql: '*'
+        type: count
+        title: Record Count
+        description: >-
+          Row count after the sales-rep join. A campaign with several reps
+          counts once per rep. For a smoke query, not the Spots Booked metric.
+        meta:
+          source: generated
+          used_by_report_ids: []
+      - name: spots_booked
+        sql: "{CUBE}.spots_booked * COALESCE({CUBE}.sales_rep_revenue_share, 1)"
+        type: sum
+        title: Spots Booked
+        description: >-
+          Sum of spots_booked multiplied by sales-rep revenue share. An
+          unallocated campaign uses share 1, matching SPOT_FACT_VW's
+          NVL(SALES_REP_REVENUE_SHARE, 1).
+      - name: spot_seconds
+        sql: "{CUBE}.spot_seconds * COALESCE({CUBE}.sales_rep_revenue_share, 1)"
+        type: sum
+        title: Spot Seconds
+        description: >-
+          Sum of spot_seconds multiplied by sales-rep revenue share. An
+          unallocated campaign uses share 1.
+      - name: equivalent_spots
+        sql: "{spot_seconds} / 30"
+        type: number
+        title: Dynamic Booked Equivalent Spots
+        description: >-
+          Spot Seconds divided by 30. The 30 is the answered Spot Analysis
+          prompt for seconds in one spot. It is not a filter and not a column.
+      - name: spot_price_loc
+        sql: "{CUBE}.spot_price * COALESCE({CUBE}.sales_rep_revenue_share, 1)"
+        type: sum
+        title: Spot Price LOC
+        description: >-
+          Sum of spot_price in local currency, multiplied by sales-rep revenue
+          share. An unallocated campaign uses share 1. This is the
+          local-currency price.
+      - name: net_revenue_loc
+        sql: >-
+          CAST({CUBE}.gross_revenue AS DOUBLE) * COALESCE({CUBE}.sales_rep_revenue_share, 1)
+          * (1 - {CUBE}.agency_commission_pct)
+        type: sum
+        title: Net Revenue LOC (Spots)
+        description: >-
+          Sum of gross_revenue * sales-rep revenue share * (1 - agency_commission_pct),
+          in local currency. gross_revenue is cast to DOUBLE before multiplying,
+          because the three decimal(38,10) factors overflow Athena's decimal
+          precision when summed. An unallocated campaign uses share 1. This is
+          not a sum of a stored net-revenue column. This is the
+          local-currency net.
+      - name: spot_price_current_rate_usd
+        sql: >-
+          CAST({CUBE}.spot_price AS DOUBLE) * COALESCE({CUBE}.sales_rep_revenue_share, 1)
+          * CAST({CUBE}.plan_curr_exchange_factor AS DOUBLE)
+        type: sum
+        title: Spot Price Current Rate (USD)
+        description: >-
+          Sum of spot price times sales-rep revenue share times the current
+          planned exchange factor. An unallocated campaign uses share 1. A
+          missing rate makes the product null, so that spot is left out of
+          the sum. This is the numerator of the WBDL average unit rate. It
+          is not itself a column on the WBDL grid. spot_price and the rate
+          are cast to DOUBLE before multiplying so the decimal factors do
+          not overflow Athena.
+      - name: net_revenue_current_rate_usd
+        sql: >-
+          CAST({CUBE}.gross_revenue AS DOUBLE) * COALESCE({CUBE}.sales_rep_revenue_share, 1)
+          * (1 - {CUBE}.agency_commission_pct)
+          * CAST({CUBE}.plan_curr_exchange_factor AS DOUBLE)
+        type: sum
+        title: Net Revenue Current Rate (USD - Spots)
+        description: >-
+          Sum of gross revenue times sales-rep revenue share times
+          (1 - agency commission) times the current planned exchange factor.
+          Same shape as net_revenue_loc, with the planned rate applied. An
+          unallocated campaign uses share 1. A missing rate drops that spot
+          from the sum. gross_revenue and the rate are cast to DOUBLE before
+          multiplying.
+      - name: avg_equiv_unit_current_rate_usd
+        sql: "{spot_price_current_rate_usd} / NULLIF({equivalent_spots}, 0)"
+        type: number
+        title: Dynamic Avg Equiv Unit Current Rate (USD)
+        description: >-
+          Current-rate spot price divided by equivalent spots, after the
+          grid totals. Equivalent spots are spot seconds divided by 30.
+          This is not an average of the row-level rates.
+      - name: avg_current_rate_usd_rounded
+        sql: "ROUND({avg_equiv_unit_current_rate_usd}, 2)"
+        type: number
+        title: Avg Current Rate USD-ROUNDED
+        description: >-
+          Dynamic Avg Equiv Unit Current Rate(USD) rounded to 2 decimal
+          places after the totals. Dashboard Spot Report - Argentina Q1'25
+          calculates this in the view.
+      - name: bonus_indicator
+        sql: "CASE WHEN ROUND({avg_equiv_unit_current_rate_usd}, 2) = 0 THEN 'Bonus' ELSE 'Paid' END"
+        type: string
+        title: Bonus Indicator
+        description: >-
+          Bonus when the rounded current-rate equivalent unit rate is 0,
+          otherwise Paid. Evaluated after the totals, at the query grain.
+      - name: spot_price_hist_rate_usd
+        sql: >-
+          CAST({CUBE}.spot_price AS DOUBLE) * COALESCE({CUBE}.sales_rep_revenue_share, 1)
+          * CAST({CUBE}.plan_hist_exchange_factor AS DOUBLE)
+        type: sum
+        title: Spot Price Hist Rate (USD)
+        description: >-
+          Sum of spot price times sales-rep share times the historical planned
+          exchange factor. A missing rate leaves that spot out of the sum.
+      - name: spot_actual_impacts
+        sql: "{CUBE}.spot_actual_impacts * COALESCE({CUBE}.sales_rep_revenue_share, 1)"
+        type: sum
+        title: Spot Actual Impacts
+        description: Sum of spot actual impacts times sales-rep share.
+      - name: spot_actual_imps_base_length
+        sql: "{CUBE}.spot_actual_imps_base_length * COALESCE({CUBE}.sales_rep_revenue_share, 1)"
+        type: sum
+        title: Spot Actual Imps Base Length
+        description: Sum of base-length impacts times sales-rep share.
+      - name: spot_actual_rat_base_length
+        sql: "{CUBE}.spot_actual_rat_base_length * COALESCE({CUBE}.sales_rep_revenue_share, 1)"
+        type: sum
+        title: Spot Actual Ratings Base Length
+        description: Sum of base-length ratings times sales-rep share.
+      - name: spot_actual_ratings
+        sql: "{CUBE}.spot_actual_ratings * COALESCE({CUBE}.sales_rep_revenue_share, 1)"
+        type: sum
+        title: Spot Actual Ratings
+        description: Sum of spot actual ratings times sales-rep share.
+      - name: agency_commission_loc
+        sql: >-
+          CAST({CUBE}.gross_revenue AS DOUBLE) * COALESCE({CUBE}.sales_rep_revenue_share, 1)
+          * {CUBE}.agency_commission_pct
+        type: sum
+        title: Agency Commission LOC
+        description: Sum of gross revenue times share times the agency commission rate, in local currency.
+      - name: agency_commission_current_rate_usd
+        sql: >-
+          CAST({CUBE}.gross_revenue AS DOUBLE) * COALESCE({CUBE}.sales_rep_revenue_share, 1)
+          * {CUBE}.agency_commission_pct
+          * CAST({CUBE}.plan_curr_exchange_factor AS DOUBLE)
+        type: sum
+        title: Agency Commission Current Rate (USD)
+        description: Agency commission in local currency times the current planned exchange factor.
+      - name: agency_commission_hist_rate_usd
+        sql: >-
+          CAST({CUBE}.gross_revenue AS DOUBLE) * COALESCE({CUBE}.sales_rep_revenue_share, 1)
+          * {CUBE}.agency_commission_pct
+          * CAST({CUBE}.plan_hist_exchange_factor AS DOUBLE)
+        type: sum
+        title: Agency Commission Hist Rate (USD)
+        description: Agency commission in local currency times the historical planned exchange factor.
+      - name: sales_commission_loc
+        sql: >-
+          CAST({CUBE}.gross_revenue AS DOUBLE) * COALESCE({CUBE}.sales_rep_revenue_share, 1)
+          * {CUBE}.rep_commission_pct
+        type: sum
+        title: Sales Commission LOC
+        description: Sum of gross revenue times share times the rep commission rate, in local currency.
+      - name: sales_commission_current_rate_usd
+        sql: >-
+          CAST({CUBE}.gross_revenue AS DOUBLE) * COALESCE({CUBE}.sales_rep_revenue_share, 1)
+          * {CUBE}.rep_commission_pct
+          * CAST({CUBE}.plan_curr_exchange_factor AS DOUBLE)
+        type: sum
+        title: Sales Commission Current Rate (USD)
+        description: Sales commission in local currency times the current planned exchange factor.
+      - name: sales_commission_hist_rate_usd
+        sql: >-
+          CAST({CUBE}.gross_revenue AS DOUBLE) * COALESCE({CUBE}.sales_rep_revenue_share, 1)
+          * {CUBE}.rep_commission_pct
+          * CAST({CUBE}.plan_hist_exchange_factor AS DOUBLE)
+        type: sum
+        title: Sales Commission Hist Rate (USD)
+        description: Sales commission in local currency times the historical planned exchange factor.
+      - name: net_revenue_hist_rate_usd
+        sql: >-
+          CAST({CUBE}.gross_revenue AS DOUBLE) * COALESCE({CUBE}.sales_rep_revenue_share, 1)
+          * (1 - {CUBE}.agency_commission_pct)
+          * CAST({CUBE}.plan_hist_exchange_factor AS DOUBLE)
+        type: sum
+        title: Net Revenue Hist Rate (USD)
+        description: >-
+          Net revenue in local currency times the historical planned exchange
+          factor. This is SPOT_BASE_BREAK_PRICE_CURRENT1 in the report SQL.
+      - name: net_net_revenue_loc
+        sql: >-
+          CAST({CUBE}.gross_revenue AS DOUBLE) * COALESCE({CUBE}.sales_rep_revenue_share, 1)
+          * (1 - {CUBE}.agency_commission_pct) * (1 - {CUBE}.agency_incentive_pct)
+        type: sum
+        title: Net Net Revenue LOC
+        description: Net revenue after the agency incentive, in local currency.
+      - name: net_net_revenue_current_rate_usd
+        sql: >-
+          CAST({CUBE}.gross_revenue AS DOUBLE) * COALESCE({CUBE}.sales_rep_revenue_share, 1)
+          * (1 - {CUBE}.agency_commission_pct) * (1 - {CUBE}.agency_incentive_pct)
+          * CAST({CUBE}.plan_curr_exchange_factor AS DOUBLE)
+        type: sum
+        title: Net Net Revenue Current Rate (USD)
+        description: Net net revenue in local currency times the current planned exchange factor.
+      - name: net_net_revenue_hist_rate_usd
+        sql: >-
+          CAST({CUBE}.gross_revenue AS DOUBLE) * COALESCE({CUBE}.sales_rep_revenue_share, 1)
+          * (1 - {CUBE}.agency_commission_pct) * (1 - {CUBE}.agency_incentive_pct)
+          * CAST({CUBE}.plan_hist_exchange_factor AS DOUBLE)
+        type: sum
+        title: Net Net Revenue Hist Rate (USD)
+        description: Net net revenue in local currency times the historical planned exchange factor.
+      - name: avg_equiv_unit_rate
+        sql: "{spot_price_loc} / NULLIF({equivalent_spots}, 0)"
+        type: number
+        title: Dynamic Avg Equiv Unit Rate
+        description: Local spot price divided by equivalent spots after the totals. The divisor is 30 seconds.
+      - name: avg_unequiv_spot_price_loc
+        sql: "{spot_price_loc} / NULLIF({spots_booked}, 0)"
+        type: number
+        title: Avg Unequiv Spot Price LOC
+        description: Local spot price divided by spots booked after the totals.
+      - name: avg_equiv_unit_hist_rate_usd
+        sql: "{spot_price_hist_rate_usd} / NULLIF({equivalent_spots}, 0)"
+        type: number
+        title: Dynamic Avg Equiv Unit Hist Rate (USD)
+        description: Historical-rate spot price divided by equivalent spots after the totals.
+      - name: avg_unequiv_spot_price_current_rate_usd
+        sql: "{spot_price_current_rate_usd} / NULLIF({spots_booked}, 0)"
+        type: number
+        title: Avg Unequiv Spot Price Current Rate (USD)
+        description: Current-rate spot price divided by spots booked after the totals.
+      - name: avg_unequiv_spot_price_hist_rate_usd
+        sql: "{spot_price_hist_rate_usd} / NULLIF({spots_booked}, 0)"
+        type: number
+        title: Avg Unequiv Spot Price Hist Rate (USD)
+        description: Historical-rate spot price divided by spots booked after the totals.
+      - name: pct_spot_price_loc
+        sql: "{spot_price_loc}"
+        type: number
+        title: "% of Total Spot Price LOC"
+        description: >-
+          Local spot price. MicroStrategy divides this amount by its total
+          after the grid is drawn. The member carries the amount.
+      - name: pct_spot_price_current_rate_usd
+        sql: "{spot_price_current_rate_usd}"
+        type: number
+        title: "% of Total Spot Price Current Rate USD)"
+        description: >-
+          Current-rate spot price. MicroStrategy divides this amount by its
+          total after the grid is drawn. The member carries the amount.
+      - name: pct_spot_price_hist_rate_usd
+        sql: "{spot_price_hist_rate_usd}"
+        type: number
+        title: "% of Total Spot Price Hist Rate (USD)"
+        description: >-
+          Historical-rate spot price. MicroStrategy divides this amount by its
+          total after the grid is drawn. The member carries the amount.
+
+      - name: gross_revenue_loc
+        sql: >-
+          CAST({CUBE}.gross_revenue AS DOUBLE) * COALESCE({CUBE}.sales_rep_revenue_share, 1)
+        type: sum
+        title: Gross Revenue LOC
+        description: Sum of gross revenue times sales-rep share, in local currency.
+      - name: gross_revenue_current_rate_usd
+        sql: >-
+          CAST({CUBE}.gross_revenue AS DOUBLE) * COALESCE({CUBE}.sales_rep_revenue_share, 1)
+          * CAST({CUBE}.plan_curr_exchange_factor AS DOUBLE)
+        type: sum
+        title: Gross Revenue Current Rate(USD)
+        description: Gross revenue times share times the current planned exchange factor.
+      - name: gross_revenue_hist_rate_usd
+        sql: >-
+          CAST({CUBE}.gross_revenue AS DOUBLE) * COALESCE({CUBE}.sales_rep_revenue_share, 1)
+          * CAST({CUBE}.plan_hist_exchange_factor AS DOUBLE)
+        type: sum
+        title: Gross Revenue Hist Rate(USD)
+        description: Gross revenue times share times the historical planned exchange factor.
+      - name: agency_incentive_loc
+        sql: >-
+          CAST({CUBE}.gross_revenue AS DOUBLE) * COALESCE({CUBE}.sales_rep_revenue_share, 1)
+          * (1 - {CUBE}.agency_commission_pct) * {CUBE}.agency_incentive_pct
+        type: sum
+        title: Agency Incentive LOC
+        description: Rep-allocated agency incentive in local currency.
+      - name: agency_incentive_current_rate_usd
+        sql: >-
+          CAST({CUBE}.gross_revenue AS DOUBLE) * COALESCE({CUBE}.sales_rep_revenue_share, 1)
+          * (1 - {CUBE}.agency_commission_pct) * {CUBE}.agency_incentive_pct
+          * CAST({CUBE}.plan_curr_exchange_factor AS DOUBLE)
+        type: sum
+        title: Agency Incentive Current Rate(USD)
+        description: Agency incentive in local currency times the current planned exchange factor.
+      - name: agency_incentive_hist_rate_usd
+        sql: >-
+          CAST({CUBE}.gross_revenue AS DOUBLE) * COALESCE({CUBE}.sales_rep_revenue_share, 1)
+          * (1 - {CUBE}.agency_commission_pct) * {CUBE}.agency_incentive_pct
+          * CAST({CUBE}.plan_hist_exchange_factor AS DOUBLE)
+        type: sum
+        title: Agency Incentive Hist Rate(USD)
+        description: Agency incentive in local currency times the historical planned exchange factor.
+      - name: agency_commission_pct_avg
+        sql: agency_commission_pct
+        type: avg
+        title: Agency Commission %
+        description: Average agency commission rate. The version report SQL averages this rate.
+      - name: agency_incentive_pct_avg
+        sql: agency_incentive_pct
+        type: avg
+        title: Agency Incentive %
+        description: Average agency incentive rate. The version report SQL averages this rate.
+      - name: rep_commission_pct_avg
+        sql: rep_commission_pct
+        type: avg
+        title: Rep Commission %
+        description: Average rep commission rate. The version report SQL averages this rate.
+      - name: sales_rep_revenue_share_avg
+        sql: sales_rep_revenue_share
+        type: avg
+        title: Sales Rep Revenue Share
+        description: Average sales-rep revenue share. The version report SQL averages this share.
+    joins:
+      - name: cube_carl_dwhprd_gold_campaign_dim
+        sql: "{CUBE}.campaign_key = {cube_carl_dwhprd_gold_campaign_dim}.campaign_key"
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_channel_dim
+        sql: "{CUBE}.channel_key = {cube_carl_dwhprd_gold_channel_dim}.channel_key"
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_day_dim
+        sql: "{CUBE}.day_key = {cube_carl_dwhprd_gold_day_dim}.day_key"
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_break_dim
+        sql: "{CUBE}.break_key = {cube_carl_dwhprd_gold_break_dim}.break_key"
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_business_type_dim
+        sql: "{CUBE}.business_type_key = {cube_carl_dwhprd_gold_business_type_dim}.business_type_key"
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_currency_dim
+        sql: "{CUBE}.base_currency_key = {cube_carl_dwhprd_gold_currency_dim}.currency_key"
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_base_currency_dim
+        sql: "{CUBE}.base_currency_key = {cube_carl_dwhprd_gold_base_currency_dim}.currency_key"
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_source_system_region_dim
+        sql: >-
+          {CUBE}.source_system_region_key =
+          {cube_carl_dwhprd_gold_source_system_region_dim}.source_system_region_key
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_bts_time_dim
+        sql: "{CUBE}.spot_time_key = {cube_carl_dwhprd_gold_bts_time_dim}.time_key"
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_charge_type_dim
+        sql: "{CUBE}.charge_type_key = {cube_carl_dwhprd_gold_charge_type_dim}.charge_type_key"
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_calendar_month_dim
+        sql: "{CUBE}.calendar_month_key = {cube_carl_dwhprd_gold_calendar_month_dim}.calendar_month_key"
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_calendar_qtr_dim
+        sql: "{CUBE}.calendar_qtr_key = {cube_carl_dwhprd_gold_calendar_qtr_dim}.calendar_qtr_key"
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_calendar_year_dim
+        sql: "{CUBE}.calendar_year_key = {cube_carl_dwhprd_gold_calendar_year_dim}.calendar_year_key"
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_calendar_week_dim
+        sql: "{CUBE}.calendar_week_key = {cube_carl_dwhprd_gold_calendar_week_dim}.calendar_week_key"
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_bts_product_dim
+        sql: "{CUBE}.product_key = {cube_carl_dwhprd_gold_bts_product_dim}.product_key"
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_bts_program_dim
+        sql: "{CUBE}.program_key = {cube_carl_dwhprd_gold_bts_program_dim}.program_key"
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_corp_daypart_dim
+        sql: "{CUBE}.corp_daypart_key = {cube_carl_dwhprd_gold_corp_daypart_dim}.corp_daypart_key"
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_country_dim
+        sql: "{CUBE}.country_key = {cube_carl_dwhprd_gold_country_dim}.country_key"
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_spot_status_dim
+        sql: "{CUBE}.spot_status_key = {cube_carl_dwhprd_gold_spot_status_dim}.spot_status_key"
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_spot_daypart_dim
+        sql: "{CUBE}.spot_daypart_key = {cube_carl_dwhprd_gold_spot_daypart_dim}.spot_daypart_key"
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_sales_rep_team_dim
+        sql: "{CUBE}.sales_rep_team_key = {cube_carl_dwhprd_gold_sales_rep_team_dim}.sales_rep_team_key"
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_plan_curr_currency_rate
+        sql: "{CUBE}.base_currency_key = {cube_carl_dwhprd_gold_plan_curr_currency_rate}.base_currency_key"
+        relationship: many_to_one
+  # Members are inherited from cube_carl_dwhprd_gold_spot_fact.
+  - name: cube_carl_dwhprd_gold_amnistia_spot_fact
+    extends: cube_carl_dwhprd_gold_spot_fact
+    sql: >
+      SELECT sf.spot_id, sf.source_system_region_key, sf.campaign_key, sf.channel_key,
+             sf.day_key, sf.break_key, sf.business_type_key, sf.base_currency_key,
+             sf.base_currency_year, sf.spot_time_key, sf.charge_type_key, sf.spot_status_key,
+             sf.calendar_month_key, sf.calendar_qtr_key, sf.calendar_year_key,
+             sf.calendar_week_key, sf.program_key, sf.product_key, sf.corp_daypart_key,
+             sf.country_key, sf.spot_daypart_key,
+             sf.spot_length, sf.spot_length_factor, sf.spots_booked, sf.spot_seconds,
+             sf.spot_clock_number, sf.spot_cpt, sf.spot_cps, sf.spot_cpp,
+             sf.spot_version_length,
+             CAST(sf.spot_version_last_air_date AS timestamp(3)) AS spot_version_last_air_date,
+             CAST(sf.spot_version_expiry_date AS timestamp(3)) AS spot_version_expiry_date,
+             sf.spot_crt_1, sf.spot_crt_2, sf.spot_crt_3, sf.spot_crt_4,
+             sf.spot_clock_hour,
+             sf.broadcast_month_key, sf.broadcast_week_key, sf.broadcast_year_key,
+             sf.demographic_key,
+             sf.spot_price, sf.gross_revenue, sf.agency_commission_pct,
+             sf.agency_commission_pct * 100 AS agency_commission_pct_points,
+             sf.rep_commission_pct, sf.agency_incentive_pct,
+             sf.spot_actual_impacts, sf.spot_actual_imps_base_length,
+             sf.spot_actual_rat_base_length, sf.spot_actual_ratings,
+             srf.sales_rep_key, srf.sales_rep_name, srf.sales_rep_revenue_share,
+             srf.sales_rep_team_key, srf.sales_rep_team_desc,
+             CASE
+               WHEN rep.sales_rep_name IS NOT NULL THEN rep.sales_rep_name
+               WHEN sf.source_system_region_key = 30 THEN 'ITALY N/A'
+               WHEN sf.source_system_region_key = 20 THEN 'DNAP N/A'
+               ELSE 'DLA N/A'
+             END AS bts_sales_rep_name,
+             curr.exchange_factor AS plan_curr_exchange_factor,
+             hist.exchange_factor AS plan_hist_exchange_factor,
+             date_format(
+               date_add(
+                 'day',
+                 -((day_of_year(CAST(d.day_date AS date)) - 1) % 7),
+                 CAST(d.day_date AS date)
+               ),
+               '%m/%d'
+             ) AS week_of
+        FROM {{ catalog('dwhprd_gold') }}.spot_fact sf
+        LEFT JOIN {{ catalog('dwhprd_gold') }}.sales_rep_fraction_fact srf
+          ON sf.campaign_key = srf.campaign_key
+        LEFT JOIN {{ catalog('dwhprd_gold') }}.bts_sales_rep_dim rep
+          ON srf.sales_rep_key = rep.sales_rep_key
+        LEFT JOIN {{ catalog('dwhprd_gold') }}.day_dim d
+          ON sf.day_key = d.day_key
+        LEFT JOIN {{ catalog('dwhprd_gold') }}.plan_curr_currency_rate curr
+          ON sf.base_currency_key = curr.base_currency_key
+        LEFT JOIN {{ catalog('dwhprd_gold') }}.plan_hist_currency_rate hist
+          ON sf.base_currency_key = hist.base_currency_key
+         AND sf.base_currency_year = hist.base_currency_year
+       WHERE sf.source_system_region_key = 21
+    public: false
+    title: Carl Dwhprd Gold — Amnistia Spot Fact
+    description: >-
+      Spot fact for Reporte de Transmision Amnistia - Argentina. Same SQL as
+      cube_carl_dwhprd_gold_spot_fact, limited to source_system_region_key = 21.
+      Campaign ids C0125494, C0125495, and C0128072 also exist in region 30.
+      Those Italy rows are 30, 60, and 34 spots. Leaving them in the view made
+      Spots Booked 93, 86, and 61. Region 21 is 63, 26, and 27, and each
+      campaign's sales-rep shares sum to 1.

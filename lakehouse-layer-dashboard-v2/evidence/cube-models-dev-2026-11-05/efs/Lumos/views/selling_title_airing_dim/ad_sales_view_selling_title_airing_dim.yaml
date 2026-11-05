@@ -1,0 +1,46 @@
+views:
+  - name: ad_sales_view_selling_title_airing_dim
+    public: true
+    title: Ad Sales — Selling Title Airing Dim
+    description: Business view for ad_sales on selling_title_airing_dim.
+    meta:
+      view_scope: business
+      business: ad_sales
+      fact_table: selling_title_airing_dim
+    cubes:
+      - join_path: cube_carl_dwhprd_gold_selling_title_airing_dim
+        includes:
+          - record_count
+          - st_no_of_breaks
+          - net_name
+          - name: network_key
+            title: Network (ID)
+          - selling_title_desc
+          - name: selling_title_key
+            title: Selling Title (ID)
+          - selling_title_type_desc
+          - name: selling_title_type_key
+            title: Selling Title Type (ID)
+          - sell_title_dpart_selling_desc
+          - name: selling_title_daypart_key
+            title: Selling Title Selling Daypart (ID)
+          - selling_title_start_hr
+          - bcast_qtr_desc
+          - name: broadcast_qtr_key
+            title: Unit Broadcast Quarter (ID)
+          - unit_sched_broadcast_week_range
+          - name: broadcast_week_key
+            title: Unit Broadcast Week (ID)
+          - name: selling_title_airing_key
+            title: Selling Title Airing (ID)
+      - join_path: cube_carl_dwhprd_gold_selling_title_airing_dim.cube_carl_dwhprd_gold_property_category_dim
+        includes:
+          - name: property_category
+            title: Order Property Category
+            description: >-
+              Order Property Category. MSTR's Commercial Breaks report cross joins every airing to every property
+              category (34), so each airing appears under every category. Filter Order Property Category (ID) = 1
+              (Entertainment), as the MSTR view filter does; grouping by this field without that filter shows the full
+              break total under each of the 34 categories.
+          - name: property_category_id
+            title: Order Property Category (ID)

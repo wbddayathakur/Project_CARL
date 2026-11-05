@@ -1,0 +1,135 @@
+views:
+  - name: international_view_bts_items_pln_rev
+    public: true
+    title: International — Items Planned Revenue
+    description: >-
+      Business view for Power BI - Revenue Events. Planned item revenue in
+      local currency and at the current plan rate in USD. Apply in QuickSight:
+      source_system_region_key = 21, calendar_year_key in (2025, 2026, 2027),
+      and client_key <> 759. Holding Company and Master Channel are attributes,
+      not filters. Deal Name is bts_deal_dim.deal_name. Campaign Currency is
+      bts_currency_dim.currency_code. The template metrics are
+      item_planned_revenue_loc and item_plan_rev_usd_curr_pln. The SQL also
+      sums item_actual_revenue_loc, item_actual_rev_usd_curr_pln,
+      item_rev_target_grp, and item_rev_target_spots, and those four stay on
+      this dataset. The analytical engine rolls up the raw campaign dates,
+      campaign status, contract type, campaign targets, deal id, deal type,
+      item code, item on-air flag, item dates, item current-rate value,
+      invoice calendar, spot pricing method, year, and contract basis before
+      display. Those attributes stay on this dataset and off the default
+      visual. Item code is the fact column. Item Delivery Description keeps
+      item_delivery_code with item_delivery_desc, and Item Product Description
+      keeps item_product_code with item_prod_desc.
+    meta:
+      view_scope: business
+      business: international
+      fact_table: bts_items_pln_rev
+      mstr_report_name: Power BI - Revenue Events
+    cubes:
+      - join_path: cube_carl_dwhprd_gold_bts_items_pln_rev
+        includes:
+          - source_system_region_key
+          - campaign_key
+          - contract_id
+          - contract_item_id
+          - channel_key
+          - calendar_month_key
+          - calendar_year_key
+          - item_code
+          - record_count
+          - item_planned_revenue_loc
+          - item_plan_rev_usd_curr_pln
+          - item_actual_revenue_loc
+          - item_actual_rev_usd_curr_pln
+          - item_rev_target_grp
+          - item_rev_target_spots
+      - join_path: cube_carl_dwhprd_gold_bts_items_pln_rev.cube_carl_dwhprd_gold_calendar_month_dim
+        includes:
+          - name: calendar_month_label
+            title: Month
+      - join_path: cube_carl_dwhprd_gold_bts_items_pln_rev.cube_carl_dwhprd_gold_calendar_year_dim
+        includes:
+          - name: calendar_year
+            title: Year
+      - join_path: cube_carl_dwhprd_gold_bts_items_pln_rev.cube_carl_dwhprd_gold_channel_dim
+        includes:
+          - name: display_channel_name
+            title: Channel
+          - name: master_channel
+            title: Master Channel
+      - join_path: cube_carl_dwhprd_gold_bts_items_pln_rev.cube_carl_dwhprd_gold_bts_items
+        includes:
+          - item_description
+          - item_product_code
+          - name: item_prod_desc
+            title: Item Product Description
+          - name: item_value_loc
+            title: Item Value LOC
+          - name: item_value_usd_curr_pln_rate
+            title: Item Value Current Rate USD
+          - name: item_onair_flag
+            title: Item Onair Flag
+          - item_start_date
+          - item_end_date
+          - name: item_spot_pricing_method
+            title: Item Spot Pricing Method
+          - item_channel_names
+          - item_channels
+          - name: item_revenue_event
+            title: Item Revenue Event
+          - item_delivery_code
+          - name: item_delivery_desc
+            title: Item Delivery Description
+      - join_path: cube_carl_dwhprd_gold_bts_items_pln_rev.cube_carl_dwhprd_gold_campaign_dim
+        includes:
+          - name: campaign_id
+            title: Campaign
+          - campaign_start_end_date
+          - campaign_start_date
+          - campaign_end_date
+          - campaign_target_value_loc
+          - name: campaign_target_value_usd
+            title: Campaign Target Value Current Rate USD
+          - campaign_target_spots
+          - invoice_calendar
+          - client_key
+          - name: revenue_event_desc
+            title: Revenue Event
+      - join_path: cube_carl_dwhprd_gold_bts_items_pln_rev.cube_carl_dwhprd_gold_campaign_dim.cube_carl_dwhprd_gold_agency_dim
+        includes:
+          - name: agency_name
+            title: Agency
+      - join_path: cube_carl_dwhprd_gold_bts_items_pln_rev.cube_carl_dwhprd_gold_campaign_dim.cube_carl_dwhprd_gold_client_dim
+        includes:
+          - name: client_name
+            title: Client
+      - join_path: cube_carl_dwhprd_gold_bts_items_pln_rev.cube_carl_dwhprd_gold_campaign_dim.cube_carl_dwhprd_gold_holding_company_dim
+        includes:
+          - name: holding_company_name
+            title: Holding Company
+      - join_path: cube_carl_dwhprd_gold_bts_items_pln_rev.cube_carl_dwhprd_gold_campaign_dim.cube_carl_dwhprd_gold_bts_deal_dim
+        includes:
+          - name: deal_id
+            title: Deal ID
+          - name: deal_name
+            title: Deal Name
+          - name: deal_type_desc
+            title: Deal Type
+      - join_path: >-
+          cube_carl_dwhprd_gold_bts_items_pln_rev.cube_carl_dwhprd_gold_campaign_dim.cube_carl_dwhprd_gold_campaign_status_dim
+        includes:
+          - name: campaign_status_name
+            title: Campaign Status
+      - join_path: >-
+          cube_carl_dwhprd_gold_bts_items_pln_rev.cube_carl_dwhprd_gold_campaign_dim.cube_carl_dwhprd_gold_contract_type_dim
+        includes:
+          - contract_type_desc
+      - join_path: >-
+          cube_carl_dwhprd_gold_bts_items_pln_rev.cube_carl_dwhprd_gold_campaign_dim.cube_carl_dwhprd_gold_contract_basis_dim
+        includes:
+          - contract_basis_desc
+      - join_path: cube_carl_dwhprd_gold_bts_items_pln_rev.cube_carl_dwhprd_gold_campaign_dim.cube_carl_dwhprd_gold_bts_currency_dim
+        includes:
+          - name: currency_code
+            alias: campaign_currency_code
+            title: Campaign Currency

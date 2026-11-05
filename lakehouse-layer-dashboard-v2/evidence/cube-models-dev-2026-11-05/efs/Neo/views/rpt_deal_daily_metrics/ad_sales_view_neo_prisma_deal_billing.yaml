@@ -1,0 +1,34 @@
+views:
+  - name: ad_sales_view_neo_prisma_deal_billing
+    public: true
+    title: "NEO Prisma Deal Billing Report"
+    description: >
+      Curated view of deal-level impressions, delivered cost, and billable actuals for Prisma (Mediaocean) reconciliation.
+    meta:
+      view_scope: business
+      business: ad_sales
+      fact_table: rpt_deal_daily_metrics
+    cubes:
+      - join_path: cube_neo_gold_prisma_deal_billing
+        includes:
+          - event_date_et
+          - deal_id
+          - shared_external_deal_id
+          - demand_entity_item_id
+          - deal_name
+          - deal_type
+          - deal_status
+          - campaign_id
+          - campaign_name
+          - advertiser_id
+          - advertiser_name
+          - agency_id
+          - agency_name
+          - cpm
+          - pacing_status
+          - count
+          - first_party_delivered_impressions
+          - contracted_impressions
+          - billable_impressions
+          - billable_revenue
+          - effective_cpm

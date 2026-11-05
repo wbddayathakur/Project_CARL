@@ -1,0 +1,57 @@
+views:
+  - name: international_view_spot_fact
+    public: true
+    title: International — Spot Analysis
+    description: >-
+      Spot Analysis for Discovery Latin America. Booked spots by holding
+      company, date, break, business type, spot length, base currency, and
+      channel. Reads the share-weighted local-currency measures on
+      cube_carl_dwhprd_gold_spot_fact. Apply in QuickSight:
+      source_system_region_key = 21. That filter is not on the cube. Date is
+      not filtered. Base Currency resolves through the BTS base-currency lookup.
+      Current-rate USD price and net revenue are omitted; the
+      planned-rate views are not in this catalog. Equivalent spots are Spot
+      Seconds / 30.
+    meta:
+      view_scope: business
+      business: international
+      fact_table: spot_fact
+      mstr_report_name: Spot Analysis
+      catalog_key: lumos_carl_dwhprd_gold
+      ai_context: >
+        Use this view for Spot Analysis. Filter source_system_region_key = 21
+        for Discovery Latin America. Do not filter day_key unless the user asks
+        for a date. Measures are local currency and are multiplied by
+        sales_rep_revenue_share, with a missing share treated as 1.
+        equivalent_spots = spot_seconds / 30. Do not ask for current-rate or
+        historical-rate USD; those rates are not in this catalog.
+        net_revenue_loc = sum(gross_revenue * share * (1 - agency_commission_pct)).
+        Holding company comes from the campaign, not from a key on the spot.
+    cubes:
+      - join_path: cube_carl_dwhprd_gold_spot_fact
+        includes:
+          - source_system_region_key
+          - day_key
+          - spot_length
+          - spot_length_factor
+          - record_count
+          - spots_booked
+          - spot_seconds
+          - equivalent_spots
+          - spot_price_loc
+          - net_revenue_loc
+          - name: base_currency_code
+            title: Base Currency
+          - break_end_time
+          - break_id
+          - break_start_time
+          - break_type_code
+          - break_type_desc
+          - name: business_type_name
+            title: Business Type
+          - name: day_date
+            title: Date
+          - name: display_channel_name
+            title: Channel
+          - name: holding_company_name
+            title: Holding Company

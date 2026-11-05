@@ -1,0 +1,190 @@
+views:
+  - name: international_view_billing_status_report
+    public: true
+    title: International — Billing Status Report
+    description: >-
+      Billing Status Report for Discovery Latin America. Monthly billing status of each campaign,
+      with campaign, agency, client, product, deal, channel, currency and sales-rep attributes, and
+      the campaign measures in local currency, current-rate USD and historical-rate USD. Reads
+      cube_carl_dwhprd_gold_campaign_fact. Apply in QuickSight: source_system_region_key = 21 and
+      calendar_year_key = 2025. Those filters are not on the cube. The report grid shows Holding
+      Company, Campaign, Invoice Calendar, Campaign Start and End Date, Campaign Status, Campaign
+      Booking Channel Names, Business Type, Month, the four billing-status columns and Campaign
+      Currency, with Campaign Spots Target, Campaign Spots Booked, Campaign Budget LOC, Gross
+      Revenue LOC and Revenue Variance. Every other column is a report object outside the grid.
+    meta:
+      view_scope: business
+      business: international
+      fact_table: billing_status_report
+      mstr_report_name: Billing Status Report
+      catalog_key: lumos_carl_dwhprd_gold
+      ai_context: >
+        Use this view for the Billing Status Report. Filter source_system_region_key = 21 and
+        calendar_year_key = 2025. Measures are multiplied by sales_rep_revenue_share, with a
+        missing share treated as 1, the same as CAMPAIGN_FACT_VW. They are not the unweighted
+        Campaign Grid sums. Current-rate and historical-rate USD measures multiply the LOC formula
+        by the planned exchange factor; a row with no rate is left out of those sums.
+        revenue_variance = campaign_budget_loc - gross_revenue_loc and spot_variance =
+        campaign_spots_target - campaign_spots_booked, both after the totals. Billing status is
+        one value per campaign, month and region. Product, deal and every currency attribute come
+        from the BTS lookups.
+    cubes:
+      - join_path: cube_carl_dwhprd_gold_campaign_fact
+        includes:
+          - name: source_system_region_key
+            title: Source System Region
+          - name: source_region_name
+            title: Source Region
+          - calendar_year_key
+          - calendar_month_key
+          - name: calendar_month_label
+            title: Month
+          - calendar_qtr_key
+          - name: cal_qtr_desc
+            title: Quarter
+          - name: holding_company_name
+            title: Holding Company
+          - campaign_key
+          - name: campaign_id
+            title: Campaign
+          - campaign_desc
+          - invoice_calendar
+          - campaign_start_end_date
+          - name: campaign_status_name
+            title: Campaign Status
+          - campaign_booking_channel_ids
+          - campaign_booking_channel_names
+          - name: campaign_delivery_type_name
+            title: Campaign Delivery Type
+          - campaign_commission_pct
+          - campaign_tax_pct
+          - campaign_disc_sur_pct
+          - campaign_ccp
+          - campaign_cps
+          - campaign_cpt
+          - name: day_date
+            alias: campaign_invoice_date
+            title: Campaign Invoice Date
+          - business_type_key
+          - name: business_type_name
+            title: Business Type
+          - billing_status_desc
+          - billing_status_note
+          - billing_status_updated_by
+          - billing_status_updated_date
+          - agency_key
+          - name: agency_name
+            title: Agency
+          - agency_id
+          - agency_group_key
+          - name: agency_group_name
+            title: Agency Group
+          - client_key
+          - name: client_name
+            title: Client
+          - client_id
+          - name: client_group_name
+            title: Client Group
+          - mapped_category
+          - country_key
+          - name: country_name
+            title: Country
+          - product_key
+          - product_id
+          - product_name
+          - product_category_1
+          - deal_key
+          - deal_id
+          - deal_name
+          - channel_key
+          - name: display_channel_name
+            alias: channel_name
+            title: Channel
+          - channel_id
+          - master_channel
+          - name: sales_rep_key
+            title: Sales Rep Key
+          - name: sales_rep_name
+            title: Sales Rep
+          - sales_rep_team_key
+          - sales_rep_team_desc
+          - base_currency_key
+          - name: bts_base_currency_code
+            alias: base_currency_code
+            title: Base Currency
+          - name: bts_base_currency_name
+            alias: base_currency_name
+          - name: bts_base_currency_symbol
+            alias: base_currency_symbol
+          - name: bts_campaign_currency_code
+            alias: campaign_currency_code
+          - name: bts_campaign_currency_name
+            alias: campaign_currency_name
+          - name: bts_campaign_currency_symbol
+            alias: campaign_currency_symbol
+          - invoice_currency_key
+          - name: bts_invoice_currency_code
+            alias: invoice_currency_code
+            title: Invoice Currency
+          - name: bts_invoice_currency_name
+            alias: invoice_currency_name
+          - name: bts_invoice_currency_symbol
+            alias: invoice_currency_symbol
+          - campaign_spots_target
+          - campaign_spots_booked
+          - campaign_budget_loc
+          - gross_revenue_loc
+          - revenue_variance
+          - spot_variance
+          - campaign_budget_current_rate_usd
+          - campaign_budget_hist_rate_usd
+          - campaign_invoice_value_loc
+          - campaign_invoice_value_current_rate_usd
+          - campaign_invoice_value_hist_rate_usd
+          - campaign_net_revenue_loc
+          - campaign_net_revenue_current_rate_usd
+          - campaign_net_revenue_hist_rate_usd
+          - campaign_net_net_revenue_loc
+          - campaign_net_net_revenue_current_rate_usd
+          - campaign_net_net_revenue_hist_rate_usd
+          - campaign_spots_price_loc
+          - campaign_spots_price_current_rate_usd
+          - campaign_spots_price_hist_rate_usd
+          - campaign_tax_value_loc
+          - campaign_tax_value_current_rate_usd
+          - campaign_tax_value_hist_rate_usd
+          - gross_revenue_current_rate_usd
+          - gross_revenue_hist_rate_usd
+          - agency_commission_loc
+          - agency_commission_current_rate_usd
+          - agency_commission_hist_rate_usd
+          - agency_incentive_loc
+          - agency_incentive_current_rate_usd
+          - agency_incentive_hist_rate_usd
+          - name: sales_commission_loc
+            alias: rep_commission_loc
+            title: Rep Commission LOC
+          - name: sales_commission_current_rate_usd
+            alias: rep_commission_current_rate_usd
+            title: Rep Commission Current Rate(USD)
+          - name: sales_commission_hist_rate_usd
+            alias: rep_commission_hist_rate_usd
+            title: Rep Commission Hist Rate(USD)
+          - campaign_ratings_booked
+          - campaign_ratings_delivered
+          - campaign_ratings_sold
+          - campaign_impacts_booked
+          - campaign_impacts_delivered
+          - campaign_impacts_sold
+          - name: agency_commission_pct_avg
+            alias: agency_commission_pct
+            title: Agency Commission %
+          - name: agency_incentive_pct_avg
+            alias: agency_incentive_pct
+            title: Agency Incentive %
+          - name: rep_commission_pct_avg
+            alias: rep_commission_pct
+            title: Rep Commission %
+          - name: sales_rep_revenue_share_avg
+            alias: sales_rep_revenue_share
+            title: Sales Rep Revenue Share

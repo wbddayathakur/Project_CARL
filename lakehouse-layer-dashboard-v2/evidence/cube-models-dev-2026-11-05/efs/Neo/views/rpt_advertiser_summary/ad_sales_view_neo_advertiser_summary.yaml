@@ -1,0 +1,25 @@
+views:
+  - name: ad_sales_view_neo_advertiser_summary
+    public: true
+    title: "NEO Advertiser Summary Report"
+    description: >
+      Aggregated advertiser delivery, deal counts, revenue, VCR, and eCPM for Reporting Suite overview tab.
+    meta:
+      view_scope: business
+      business: ad_sales
+      fact_table: rpt_advertiser_summary
+    cubes:
+      - join_path: cube_neo_gold_rpt_advertiser_summary
+        includes:
+          - advertiser_id
+          - advertiser_name
+          - agency_id
+          - agency_name
+          - count
+          - total_deals
+          - active_deals
+          - total_impressions
+          - total_revenue
+          - total_completions
+          - avg_vcr
+          - avg_ecpm

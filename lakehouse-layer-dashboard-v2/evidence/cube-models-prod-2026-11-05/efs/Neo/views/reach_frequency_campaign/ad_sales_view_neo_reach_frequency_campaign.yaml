@@ -1,0 +1,22 @@
+views:
+  - name: ad_sales_view_neo_reach_frequency_campaign
+    public: true
+    title: FreeWheel Reach and Frequency Campaign
+    description: >
+      Campaign-level FreeWheel reach and frequency from neo_gold.reach_frequency_campaign.
+    meta:
+      view_scope: business
+      business: ad_sales
+      fact_table: reach_frequency_campaign
+    cubes:
+      - join_path: cube_neo_gold_reach_frequency_campaign
+        includes:
+          - campaign_id
+          - advertiser_name
+          - first_impression_date
+          - last_impression_date
+          - impressions
+          - reach_device
+          - reach_household_floor
+          - frequency_household_floor
+          - count

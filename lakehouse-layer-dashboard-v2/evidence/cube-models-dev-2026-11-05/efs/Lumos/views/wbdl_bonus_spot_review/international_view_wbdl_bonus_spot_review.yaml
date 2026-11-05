@@ -1,0 +1,75 @@
+views:
+  - name: international_view_wbdl_bonus_spot_review
+    public: true
+    title: International — WBDL Bonus Spot Review
+    description: >-
+      WBDL Bonus Spot Review for Discovery Latin America. Non-chargeable
+      spots and net revenue by holding company, sales rep, agency, client,
+      master channel, channel, break daypart group, campaign, charge type,
+      calendar year, month, quarter, business type, 30-minute slot, and base
+      currency. Reads cube_carl_dwhprd_gold_spot_fact. Apply in QuickSight:
+      source_system_region_key = 21, spot_status_key in 5, 4, 0, 1, 2, 3,
+      and 6, calendar_qtr_key = 20251, charge type name Non-Chargeable, and
+      client name other than Discovery Latin America. Those filters are not
+      on the cube. Equivalent spots are Spot Seconds / 30.
+    meta:
+      view_scope: business
+      business: international
+      fact_table: wbdl_bonus_spot_review
+      mstr_report_name: WBDL Bonus Spot Review
+      catalog_key: lumos_carl_dwhprd_gold
+      ai_context: >
+        Use this view for WBDL Bonus Spot Review. Filter
+        source_system_region_key = 21, spot_status_key to 5, 4, 0, 1, 2, 3,
+        and 6, and calendar_qtr_key to 20251 (1st Qtr 2025). Keep charge type
+        Non-Chargeable and exclude client Discovery Latin America. Measures
+        are multiplied by sales_rep_revenue_share, with a missing share
+        treated as 1. A campaign with no sales rep is named DLA N/A.
+        Unplaced spots (placeholder break) show Break Daypart Group
+        Non Prime Time.
+        equivalent_spots = spot_seconds / 30, computed after the grid totals.
+        net_revenue_loc = sum(gross_revenue * share * (1 - agency_commission_pct)).
+        net_revenue_current_rate_usd applies the current planned exchange
+        factor to that same product.
+    cubes:
+      - join_path: cube_carl_dwhprd_gold_spot_fact
+        includes:
+          - source_system_region_key
+          - spot_status_key
+          - calendar_qtr_key
+          - record_count
+          - spots_booked
+          - spot_seconds
+          - equivalent_spots
+          - net_revenue_loc
+          - net_revenue_current_rate_usd
+          - name: sales_rep_name
+            title: Sales Rep
+          - name: break_daypart_group_name
+            alias: daypart_group_name
+            title: Break Daypart Group
+          - name: holding_company_name
+            title: Holding Company
+          - name: business_type_name
+            title: Business Type
+          - name: currency_code
+            alias: base_currency_code
+            title: Base Currency
+          - name: campaign_id
+            title: Campaign
+          - name: agency_name
+            title: Agency
+          - name: client_name
+            title: Client
+          - master_channel
+          - name: display_channel_name
+            title: Channel
+          - name: hourly_time_slot_30
+            title: Spot Scheduled Hourly Time Slot - 30
+          - name: charge_type_name
+            title: Charge Type
+          - calendar_month_label
+          - name: cal_qtr_desc
+            title: Quarter
+          - name: calendar_year
+            title: Year

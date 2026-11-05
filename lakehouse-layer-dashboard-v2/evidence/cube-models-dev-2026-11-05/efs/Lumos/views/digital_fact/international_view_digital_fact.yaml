@@ -1,0 +1,119 @@
+views:
+  - name: international_view_digital_fact
+    public: true
+    title: International — Digital Analysis
+    description: >-
+      Business view for international on digital_fact (MSTR Digital Analysis, Discovery
+      Latin America). Apply in QuickSight: source_system_region_key = 21 AND
+      calendar_year_key = 2026. Master Channel, Holding Company, and Business Type are
+      attributes, not filters. Current-rate USD gross and net are sums of the local
+      amount times the plan current rate looked up by campaign currency. Current-rate
+      price is the average of local price times that rate. Campaign Currency is
+      bts_currency_dim.currency_code. Product is bts_product_dim.product_name. Price,
+      agency commission %, rep commission %, and agency incentive % are averages. Week
+      number is calendar_week_num (view alias CAL_MONTH_WEEK_NUM).
+    meta:
+      view_scope: business
+      business: international
+      fact_table: digital_fact
+    cubes:
+      - join_path: cube_carl_dwhprd_gold_digital_fact
+        includes:
+          - source_system_region_key
+          - calendar_year_key
+          - calendar_month_key
+          - campaign_key
+          - channel_key
+          - site_key
+          - section_key
+          - format_key
+          - product_key
+          - action_type_key
+          - business_type_key
+          - holding_company_key
+          - spot_booking_status_key
+          - campaign_currency_key
+          - agency_key
+          - client_key
+          - digital_item_adserver_key
+          - digital_line_adserver_key
+          - name: calendar_week_num
+            title: Cal Month Week Number
+          - cal_month_week_start_dt
+          - cal_month_week_end_dt
+          - digital_item_num
+          - digital_item_start_dt
+          - digital_item_end_dt
+          - digital_line_num
+          - digital_line_start_dt
+          - digital_line_end_dt
+          - digital_buffer_pct
+          - digital_frequency_cap
+          - digital_placement_id
+          - digital_restrictions
+          - region_name
+          - campaign_sales_reps
+          - record_count
+          - digital_gross_revenue_loc
+          - digital_net_revenue_loc
+          - digital_impressions
+          - digital_price_loc_avg
+          - digital_gross_revenue_current_rate_usd
+          - digital_net_revenue_current_rate_usd
+          - digital_price_current_rate_usd
+          - agency_commission_pct_avg
+          - rep_commission_pct_avg
+          - agency_incentive_pct_avg
+          - action_type_basis
+          - action_type_desc
+          - action_type_factor
+          - action_type_id
+          - agency_id
+          - name: agency_name
+            title: Agency
+          - business_type_id
+          - name: business_type_name
+            title: Business Type
+          - name: cal_qtr_desc
+            title: Quarter
+          - calendar_month_label
+          - calendar_month_num
+          - name: calendar_year
+            title: Year
+          - name: campaign_currency_code
+            title: Campaign Currency
+          - name: campaign_delivery_type_name
+            title: Campaign Delivery Type
+          - name: campaign_master_id
+            alias: campaign_id
+            title: Campaign
+          - client_id
+          - name: client_name
+            title: Client
+          - name: digital_item_adserver_desc
+            title: Digital Item Adserver
+          - name: digital_item_adserver_id
+            title: Digital Item Adserver ID
+          - name: digital_line_adserver_desc
+            title: Digital Line Adserver
+          - name: digital_line_adserver_id
+            title: Digital Line Adserver ID
+          - name: display_channel_name
+            title: Channel
+          - format_id
+          - format_name
+          - name: holding_company_name
+            title: Holding Company
+          - master_channel
+          - product_category_1
+          - product_category_2
+          - product_category_3
+          - product_id
+          - product_name
+          - section_id
+          - section_name
+          - site_id
+          - site_name
+          - name: source_region_name
+            title: Source System Region
+          - spot_booking_status_desc

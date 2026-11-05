@@ -1,0 +1,1598 @@
+{
+ "pulled": "2026-11-05 14:05",
+ "epics": {
+  "CARL-4518": {
+   "summary": "IBM DataStage Migration [DS-MIG] [Hive] - Sequence 3",
+   "status": "To Do",
+   "category": "new",
+   "assignee": "",
+   "due": null,
+   "updated": "2026-11-02",
+   "tickets": 19,
+   "done": 3,
+   "inprog": 0,
+   "sp": 36.0,
+   "spDone": 0.0,
+   "byStatus": {
+    "To Do": 16,
+    "Archive": 3
+   }
+  },
+  "CARL-4517": {
+   "summary": "IBM DataStage Migration [DS-MIG] [Hive] - Sequence 2",
+   "status": "To Do",
+   "category": "new",
+   "assignee": "",
+   "due": null,
+   "updated": "2026-11-02",
+   "tickets": 19,
+   "done": 3,
+   "inprog": 0,
+   "sp": 36.0,
+   "spDone": 0.0,
+   "byStatus": {
+    "To Do": 16,
+    "Archive": 3
+   }
+  },
+  "CARL-4516": {
+   "summary": "IBM DataStage Migration [DS-MIG] [Hive] - Sequence 1",
+   "status": "To Do",
+   "category": "new",
+   "assignee": "",
+   "due": null,
+   "updated": "2026-11-02",
+   "tickets": 19,
+   "done": 3,
+   "inprog": 0,
+   "sp": 36.0,
+   "spDone": 0.0,
+   "byStatus": {
+    "To Do": 16,
+    "Archive": 3
+   }
+  },
+  "CARL-4440": {
+   "summary": "IBM DataStage Migration [DS-MIG] [US Adsales] - Sequence 7",
+   "status": "To Do",
+   "category": "new",
+   "assignee": "",
+   "due": null,
+   "updated": "2026-11-02",
+   "tickets": 19,
+   "done": 3,
+   "inprog": 0,
+   "sp": 36.0,
+   "spDone": 0.0,
+   "byStatus": {
+    "To Do": 16,
+    "Archive": 3
+   }
+  },
+  "CARL-4439": {
+   "summary": "IBM DataStage Migration [DS-MIG] [US Adsales] - Sequence 6",
+   "status": "To Do",
+   "category": "new",
+   "assignee": "",
+   "due": null,
+   "updated": "2026-11-02",
+   "tickets": 19,
+   "done": 3,
+   "inprog": 0,
+   "sp": 36.0,
+   "spDone": 0.0,
+   "byStatus": {
+    "To Do": 16,
+    "Archive": 3
+   }
+  },
+  "CARL-4438": {
+   "summary": "IBM DataStage Migration [DS-MIG] [US Adsales] - Sequence 5",
+   "status": "To Do",
+   "category": "new",
+   "assignee": "",
+   "due": null,
+   "updated": "2026-11-02",
+   "tickets": 19,
+   "done": 3,
+   "inprog": 0,
+   "sp": 36.0,
+   "spDone": 0.0,
+   "byStatus": {
+    "To Do": 16,
+    "Archive": 3
+   }
+  },
+  "CARL-4437": {
+   "summary": "IBM DataStage Migration [DS-MIG] [US Adsales] - Sequence 4",
+   "status": "To Do",
+   "category": "new",
+   "assignee": "",
+   "due": null,
+   "updated": "2026-11-02",
+   "tickets": 19,
+   "done": 3,
+   "inprog": 0,
+   "sp": 36.0,
+   "spDone": 0.0,
+   "byStatus": {
+    "To Do": 16,
+    "Archive": 3
+   }
+  },
+  "CARL-4436": {
+   "summary": "IBM DataStage Migration [DS-MIG] [US Adsales] - Sequence 3",
+   "status": "To Do",
+   "category": "new",
+   "assignee": "",
+   "due": null,
+   "updated": "2026-11-02",
+   "tickets": 19,
+   "done": 3,
+   "inprog": 0,
+   "sp": 36.0,
+   "spDone": 0.0,
+   "byStatus": {
+    "To Do": 16,
+    "Archive": 3
+   }
+  },
+  "CARL-4420": {
+   "summary": "IBM DataStage Migration [DS-MIG] [US Adsales] - SeqRatingsFactIncrPALACMDay1 Sequence",
+   "status": "To Do",
+   "category": "new",
+   "assignee": "Dheeraj Kontham",
+   "due": null,
+   "updated": "2026-11-04",
+   "tickets": 19,
+   "done": 3,
+   "inprog": 1,
+   "sp": 36.0,
+   "spDone": 0.0,
+   "byStatus": {
+    "To Do": 15,
+    "Archive": 3,
+    "In Progress": 1
+   }
+  },
+  "CARL-4318": {
+   "summary": "Microstrategy Reports P1: Hive",
+   "status": "To Do",
+   "category": "new",
+   "assignee": "Vinay Kumar CA",
+   "due": null,
+   "updated": "2026-11-03",
+   "tickets": 13,
+   "done": 0,
+   "inprog": 1,
+   "sp": 39.0,
+   "spDone": 0.0,
+   "byStatus": {
+    "Blocked": 1,
+    "To Do": 12
+   }
+  },
+  "CARL-4314": {
+   "summary": "NEW MSTR Report: 2026 - Sports Rev (Revamp Pacing)",
+   "status": "Ready For UAT",
+   "category": "indeterminate",
+   "assignee": "Ping Feng",
+   "due": null,
+   "updated": "2026-11-04",
+   "tickets": 0,
+   "done": 0,
+   "inprog": 0,
+   "sp": 0.0,
+   "spDone": 0.0,
+   "byStatus": {}
+  },
+  "CARL-4299": {
+   "summary": "Create IBM Stage Migration ADD",
+   "status": "In Review",
+   "category": "indeterminate",
+   "assignee": "Dheeraj Kontham",
+   "due": null,
+   "updated": "2026-11-03",
+   "tickets": 0,
+   "done": 0,
+   "inprog": 0,
+   "sp": 0.0,
+   "spDone": 0.0,
+   "byStatus": {}
+  },
+  "CARL-4153": {
+   "summary": "Ingest Salesforce Data [Oracle Batch 2]",
+   "status": "In Progress",
+   "category": "indeterminate",
+   "assignee": "Surendarvarma Sritharan",
+   "due": null,
+   "updated": "2026-11-03",
+   "tickets": 18,
+   "done": 18,
+   "inprog": 0,
+   "sp": 36.0,
+   "spDone": 36.0,
+   "byStatus": {
+    "Done": 18
+   }
+  },
+  "CARL-4137": {
+   "summary": "[Cross Project Support] Venus",
+   "status": "To Do",
+   "category": "new",
+   "assignee": "Surendarvarma Sritharan",
+   "due": null,
+   "updated": "2026-10-19",
+   "tickets": 2,
+   "done": 1,
+   "inprog": 0,
+   "sp": 0.0,
+   "spDone": 0.0,
+   "byStatus": {
+    "Done": 1,
+    "To Do": 1
+   }
+  },
+  "CARL-4087": {
+   "summary": "Gold Ad Sales Total Ad Revenue North Star [Phase2]",
+   "status": "In Triage",
+   "category": "new",
+   "assignee": "",
+   "due": null,
+   "updated": "2026-10-13",
+   "tickets": 0,
+   "done": 0,
+   "inprog": 0,
+   "sp": 0.0,
+   "spDone": 0.0,
+   "byStatus": {}
+  },
+  "CARL-4086": {
+   "summary": "Silver Ad Sales Total Ad Revenue North Star [Phase2]",
+   "status": "In Triage",
+   "category": "new",
+   "assignee": "",
+   "due": null,
+   "updated": "2026-10-13",
+   "tickets": 0,
+   "done": 0,
+   "inprog": 0,
+   "sp": 0.0,
+   "spDone": 0.0,
+   "byStatus": {}
+  },
+  "CARL-4035": {
+   "summary": "Ingest iDeal tables to linear_digital_revenue_bronze for Venus",
+   "status": "Ready For UAT",
+   "category": "indeterminate",
+   "assignee": "Ping Feng",
+   "due": null,
+   "updated": "2026-10-30",
+   "tickets": 9,
+   "done": 0,
+   "inprog": 9,
+   "sp": 27.0,
+   "spDone": 0.0,
+   "byStatus": {
+    "Ready For UAT": 9
+   }
+  },
+  "CARL-4001": {
+   "summary": "[Cross Project Support] DDL-forecasting",
+   "status": "To Do",
+   "category": "new",
+   "assignee": "Avinaag Bonam",
+   "due": null,
+   "updated": "2026-10-13",
+   "tickets": 6,
+   "done": 4,
+   "inprog": 2,
+   "sp": 5.0,
+   "spDone": 3.0,
+   "byStatus": {
+    "In Review": 1,
+    "In Progress": 1,
+    "Done": 3,
+    "Archive": 1
+   }
+  },
+  "CARL-3961": {
+   "summary": "[Cross Project Support] International",
+   "status": "To Do",
+   "category": "new",
+   "assignee": "Avinaag Bonam",
+   "due": null,
+   "updated": "2026-10-13",
+   "tickets": 6,
+   "done": 2,
+   "inprog": 2,
+   "sp": 8.0,
+   "spDone": 2.0,
+   "byStatus": {
+    "To Do": 2,
+    "In Progress": 2,
+    "Done": 2
+   }
+  },
+  "CARL-3960": {
+   "summary": "[Cross Project Support] UMP",
+   "status": "To Do",
+   "category": "new",
+   "assignee": "Avinaag Bonam",
+   "due": null,
+   "updated": "2026-10-12",
+   "tickets": 0,
+   "done": 0,
+   "inprog": 0,
+   "sp": 0.0,
+   "spDone": 0.0,
+   "byStatus": {}
+  },
+  "CARL-3958": {
+   "summary": "[Cross Project Support] AIP & NAL",
+   "status": "To Do",
+   "category": "new",
+   "assignee": "Ethan Garrison",
+   "due": null,
+   "updated": "2026-10-16",
+   "tickets": 0,
+   "done": 0,
+   "inprog": 0,
+   "sp": 0.0,
+   "spDone": 0.0,
+   "byStatus": {}
+  },
+  "CARL-3955": {
+   "summary": "Time Buy Looker to Quick Migration",
+   "status": "To Do",
+   "category": "new",
+   "assignee": "",
+   "due": null,
+   "updated": "2026-11-03",
+   "tickets": 4,
+   "done": 1,
+   "inprog": 0,
+   "sp": 5.0,
+   "spDone": 5.0,
+   "byStatus": {
+    "To Do": 3,
+    "Done": 1
+   }
+  },
+  "CARL-3954": {
+   "summary": "Ad Product Looker to Quick Migration",
+   "status": "In Triage",
+   "category": "new",
+   "assignee": "",
+   "due": null,
+   "updated": "2026-10-13",
+   "tickets": 1,
+   "done": 0,
+   "inprog": 0,
+   "sp": 8.0,
+   "spDone": 0.0,
+   "byStatus": {
+    "To Do": 1
+   }
+  },
+  "CARL-3932": {
+   "summary": "Research Measurement Data Support",
+   "status": "In Triage",
+   "category": "new",
+   "assignee": "Virginia Giacomini",
+   "due": null,
+   "updated": "2026-10-28",
+   "tickets": 3,
+   "done": 1,
+   "inprog": 1,
+   "sp": 8.0,
+   "spDone": 5.0,
+   "byStatus": {
+    "To Do": 1,
+    "Done": 1,
+    "In Progress": 1
+   }
+  },
+  "CARL-3790": {
+   "summary": "MicroStrategy Reports P1: Ad Sales Batch 2.3",
+   "status": "In Progress",
+   "category": "indeterminate",
+   "assignee": "AISHWARYA JAIRAM",
+   "due": null,
+   "updated": "2026-10-28",
+   "tickets": 27,
+   "done": 0,
+   "inprog": 26,
+   "sp": 81.0,
+   "spDone": 0.0,
+   "byStatus": {
+    "To Do": 1,
+    "Ready For UAT": 2,
+    "In UAT": 6,
+    "In Testing": 10,
+    "Ready for Testing": 3,
+    "In Progress": 4,
+    "Ready For Review": 1
+   }
+  },
+  "CARL-3789": {
+   "summary": "MicroStrategy Reports P1: Ad Sales Batch 2.2",
+   "status": "In Progress",
+   "category": "indeterminate",
+   "assignee": "AISHWARYA JAIRAM",
+   "due": null,
+   "updated": "2026-10-28",
+   "tickets": 30,
+   "done": 1,
+   "inprog": 28,
+   "sp": 110.0,
+   "spDone": 5.0,
+   "byStatus": {
+    "To Do": 1,
+    "In Progress": 1,
+    "Ready For UAT": 3,
+    "In Testing": 6,
+    "In UAT": 17,
+    "Blocked": 1,
+    "Done": 1
+   }
+  },
+  "CARL-3787": {
+   "summary": "MicroStrategy Reports P1: Affiliate Batch 3.2",
+   "status": "To Do",
+   "category": "new",
+   "assignee": "Anuj Singh",
+   "due": null,
+   "updated": "2026-11-03",
+   "tickets": 13,
+   "done": 0,
+   "inprog": 0,
+   "sp": 0.0,
+   "spDone": 0.0,
+   "byStatus": {
+    "To Do": 13
+   }
+  },
+  "CARL-3786": {
+   "summary": "MicroStrategy Reports P1: Affiliate Batch 3.1",
+   "status": "In Progress",
+   "category": "indeterminate",
+   "assignee": "Anuj Singh",
+   "due": null,
+   "updated": "2026-11-03",
+   "tickets": 11,
+   "done": 0,
+   "inprog": 1,
+   "sp": 10.0,
+   "spDone": 0.0,
+   "byStatus": {
+    "To Do": 10,
+    "In Progress": 1
+   }
+  },
+  "CARL-3783": {
+   "summary": "Semantic Model Deployment - CARL Published Dashboards in Production",
+   "status": "To Do",
+   "category": "new",
+   "assignee": "AISHWARYA JAIRAM",
+   "due": null,
+   "updated": "2026-09-24",
+   "tickets": 6,
+   "done": 0,
+   "inprog": 1,
+   "sp": 12.0,
+   "spDone": 0.0,
+   "byStatus": {
+    "To Do": 5,
+    "In Review": 1
+   }
+  },
+  "CARL-3779": {
+   "summary": "Nielsen NRLD Bronze",
+   "status": "Ready for Testing",
+   "category": "indeterminate",
+   "assignee": "Sean Malek",
+   "due": null,
+   "updated": "2026-11-04",
+   "tickets": 8,
+   "done": 0,
+   "inprog": 2,
+   "sp": 5.0,
+   "spDone": 0.0,
+   "byStatus": {
+    "To Do": 6,
+    "Ready for Testing": 2
+   }
+  },
+  "CARL-3775": {
+   "summary": "Research Market Share Insight BI Support",
+   "status": "In Progress",
+   "category": "indeterminate",
+   "assignee": "Daya Thakur",
+   "due": null,
+   "updated": "2026-10-28",
+   "tickets": 17,
+   "done": 0,
+   "inprog": 1,
+   "sp": 8.0,
+   "spDone": 0.0,
+   "byStatus": {
+    "To Do": 16,
+    "In Progress": 1
+   }
+  },
+  "CARL-3750": {
+   "summary": "Ingest STAQ Data in CARL (Bronze)",
+   "status": "In Triage",
+   "category": "new",
+   "assignee": "Ping Feng",
+   "due": null,
+   "updated": "2026-10-14",
+   "tickets": 1,
+   "done": 0,
+   "inprog": 1,
+   "sp": 3.0,
+   "spDone": 0.0,
+   "byStatus": {
+    "In Progress": 1
+   }
+  },
+  "CARL-3749": {
+   "summary": "[Unstructured Data]CNN RFP Query Insight Chatbot",
+   "status": "To Do",
+   "category": "new",
+   "assignee": "Colin Diemer",
+   "due": null,
+   "updated": "2026-10-28",
+   "tickets": 1,
+   "done": 0,
+   "inprog": 0,
+   "sp": 3.0,
+   "spDone": 0.0,
+   "byStatus": {
+    "To Do": 1
+   }
+  },
+  "CARL-3748": {
+   "summary": "Finance Ad Product Dashboard Modernization",
+   "status": "To Do",
+   "category": "new",
+   "assignee": "Daya Thakur",
+   "due": null,
+   "updated": "2026-10-28",
+   "tickets": 1,
+   "done": 1,
+   "inprog": 0,
+   "sp": 5.0,
+   "spDone": 5.0,
+   "byStatus": {
+    "Done": 1
+   }
+  },
+  "CARL-3694": {
+   "summary": "[Cross Project Support] Neo Data Layer Support",
+   "status": "In Progress",
+   "category": "indeterminate",
+   "assignee": "Virginia Giacomini",
+   "due": null,
+   "updated": "2026-10-28",
+   "tickets": 18,
+   "done": 8,
+   "inprog": 4,
+   "sp": 28.0,
+   "spDone": 10.0,
+   "byStatus": {
+    "Done": 8,
+    "To Do": 6,
+    "In Progress": 4
+   }
+  },
+  "CARL-3639": {
+   "summary": "Gold Ad Sales Total Ad Revenue North Star[Phase1]",
+   "status": "In Progress",
+   "category": "indeterminate",
+   "assignee": "Arlene Rose",
+   "due": null,
+   "updated": "2026-11-02",
+   "tickets": 6,
+   "done": 0,
+   "inprog": 5,
+   "sp": 29.0,
+   "spDone": 0.0,
+   "byStatus": {
+    "In Progress": 3,
+    "To Do": 1,
+    "In Review": 2
+   }
+  },
+  "CARL-3638": {
+   "summary": "Silver Ad Sales Total Ad Revenue North Star[Phase1]",
+   "status": "In Progress",
+   "category": "indeterminate",
+   "assignee": "Arlene Rose",
+   "due": null,
+   "updated": "2026-11-03",
+   "tickets": 9,
+   "done": 1,
+   "inprog": 8,
+   "sp": 66.0,
+   "spDone": 8.0,
+   "byStatus": {
+    "In Progress": 6,
+    "In Review": 2,
+    "Done": 1
+   }
+  },
+  "CARL-3571": {
+   "summary": "MicroStrategy Reports P1: Ad Sales Batch 2.1",
+   "status": "In Testing",
+   "category": "indeterminate",
+   "assignee": "Mary Thrower",
+   "due": null,
+   "updated": "2026-10-28",
+   "tickets": 25,
+   "done": 5,
+   "inprog": 20,
+   "sp": 107.0,
+   "spDone": 7.0,
+   "byStatus": {
+    "Done": 5,
+    "In UAT": 18,
+    "In Testing": 1,
+    "Blocked": 1
+   }
+  },
+  "CARL-3562": {
+   "summary": "IBM Data stage Migration [DS-MIG]",
+   "status": "In Progress",
+   "category": "indeterminate",
+   "assignee": "Avinaag Bonam",
+   "due": null,
+   "updated": "2026-11-03",
+   "tickets": 22,
+   "done": 1,
+   "inprog": 15,
+   "sp": 36.0,
+   "spDone": 5.0,
+   "byStatus": {
+    "To Do": 6,
+    "In Review": 1,
+    "In Progress": 8,
+    "Ready For Review": 4,
+    "Blocked": 2,
+    "Done": 1
+   }
+  },
+  "CARL-3553": {
+   "summary": "[Governance] Establish Governance and Access Controls for CARL Infrastructure Repos & AWS Environments",
+   "status": "In Progress",
+   "category": "indeterminate",
+   "assignee": "Avinaag Bonam",
+   "due": null,
+   "updated": "2026-10-28",
+   "tickets": 10,
+   "done": 6,
+   "inprog": 2,
+   "sp": 34.0,
+   "spDone": 23.0,
+   "byStatus": {
+    "In Progress": 1,
+    "Done": 6,
+    "To Do": 2,
+    "Blocked": 1
+   }
+  },
+  "CARL-3505": {
+   "summary": "M&A - CAPI Data",
+   "status": "To Do",
+   "category": "new",
+   "assignee": "Debarghyo Sengupta",
+   "due": null,
+   "updated": "2026-10-13",
+   "tickets": 0,
+   "done": 0,
+   "inprog": 0,
+   "sp": 0.0,
+   "spDone": 0.0,
+   "byStatus": {}
+  },
+  "CARL-3504": {
+   "summary": "M&A - Loopme, ispot Data",
+   "status": "To Do",
+   "category": "new",
+   "assignee": "Debarghyo Sengupta",
+   "due": null,
+   "updated": "2026-10-13",
+   "tickets": 0,
+   "done": 0,
+   "inprog": 0,
+   "sp": 0.0,
+   "spDone": 0.0,
+   "byStatus": {}
+  },
+  "CARL-3503": {
+   "summary": "M&A - VideoAmp Data into Iceberg",
+   "status": "To Do",
+   "category": "new",
+   "assignee": "Debarghyo Sengupta",
+   "due": null,
+   "updated": "2026-10-26",
+   "tickets": 1,
+   "done": 0,
+   "inprog": 0,
+   "sp": 5.0,
+   "spDone": 0.0,
+   "byStatus": {
+    "To Do": 1
+   }
+  },
+  "CARL-3501": {
+   "summary": "Ingest Stewardship Data",
+   "status": "In Triage",
+   "category": "new",
+   "assignee": "Debarghyo Sengupta",
+   "due": null,
+   "updated": "2026-10-13",
+   "tickets": 0,
+   "done": 0,
+   "inprog": 0,
+   "sp": 0.0,
+   "spDone": 0.0,
+   "byStatus": {}
+  },
+  "CARL-3500": {
+   "summary": "Nielsen Big MIT Bronze",
+   "status": "Ready For UAT",
+   "category": "indeterminate",
+   "assignee": "Colin Diemer",
+   "due": null,
+   "updated": "2026-10-29",
+   "tickets": 1,
+   "done": 0,
+   "inprog": 1,
+   "sp": 8.0,
+   "spDone": 0.0,
+   "byStatus": {
+    "Ready For UAT": 1
+   }
+  },
+  "CARL-3499": {
+   "summary": "Nielsen Ad Intel Bronze",
+   "status": "Ready For UAT",
+   "category": "indeterminate",
+   "assignee": "Colin Diemer",
+   "due": null,
+   "updated": "2026-10-28",
+   "tickets": 1,
+   "done": 0,
+   "inprog": 1,
+   "sp": 8.0,
+   "spDone": 0.0,
+   "byStatus": {
+    "Ready For UAT": 1
+   }
+  },
+  "CARL-3497": {
+   "summary": "Blueprint Pipeline",
+   "status": "In Progress",
+   "category": "indeterminate",
+   "assignee": "Ronald Ramsey",
+   "due": null,
+   "updated": "2026-10-28",
+   "tickets": 7,
+   "done": 3,
+   "inprog": 3,
+   "sp": 40.0,
+   "spDone": 9.0,
+   "byStatus": {
+    "Archive": 1,
+    "Done": 2,
+    "Ready For UAT": 1,
+    "To Do": 1,
+    "In Progress": 1,
+    "Ready to Deploy": 1
+   }
+  },
+  "CARL-3490": {
+   "summary": "Salesforce Opportunity Pipeline Dashboard",
+   "status": "To Do",
+   "category": "new",
+   "assignee": "Mike Hodge",
+   "due": null,
+   "updated": "2026-09-22",
+   "tickets": 1,
+   "done": 0,
+   "inprog": 1,
+   "sp": 5.0,
+   "spDone": 0.0,
+   "byStatus": {
+    "In Progress": 1
+   }
+  },
+  "CARL-2971": {
+   "summary": "MicroStrategy Reports P1: Full List",
+   "status": "To Do",
+   "category": "new",
+   "assignee": "",
+   "due": null,
+   "updated": "2026-10-28",
+   "tickets": 393,
+   "done": 16,
+   "inprog": 0,
+   "sp": 696.0,
+   "spDone": 48.0,
+   "byStatus": {
+    "To Do": 377,
+    "Archive": 16
+   }
+  },
+  "CARL-2898": {
+   "summary": "Ingest Bronze Data for Blueprint Aurora DB",
+   "status": "Done",
+   "category": "done",
+   "assignee": "Ronald Ramsey",
+   "due": null,
+   "updated": "2026-09-24",
+   "tickets": 15,
+   "done": 15,
+   "inprog": 0,
+   "sp": 30.0,
+   "spDone": 30.0,
+   "byStatus": {
+    "Done": 15
+   }
+  },
+  "CARL-2888": {
+   "summary": "Operative One (Silver)",
+   "status": "To Do",
+   "category": "new",
+   "assignee": "Mike Hodge",
+   "due": null,
+   "updated": "2026-10-26",
+   "tickets": 3,
+   "done": 0,
+   "inprog": 0,
+   "sp": 13.0,
+   "spDone": 0.0,
+   "byStatus": {
+    "To Do": 3
+   }
+  },
+  "CARL-2887": {
+   "summary": "Freewheel (Silver) - Phase-1",
+   "status": "In Progress",
+   "category": "indeterminate",
+   "assignee": "Hong Zhang",
+   "due": null,
+   "updated": "2026-10-28",
+   "tickets": 31,
+   "done": 6,
+   "inprog": 25,
+   "sp": 96.0,
+   "spDone": 16.0,
+   "byStatus": {
+    "Done": 5,
+    "In Progress": 5,
+    "Ready For UAT": 20,
+    "Archive": 1
+   }
+  },
+  "CARL-2778": {
+   "summary": "Ingest Salesforce Data [Oracle Batch1]",
+   "status": "Done",
+   "category": "done",
+   "assignee": "Saman Saran",
+   "due": null,
+   "updated": "2026-11-03",
+   "tickets": 38,
+   "done": 38,
+   "inprog": 0,
+   "sp": 110.0,
+   "spDone": 110.0,
+   "byStatus": {
+    "Done": 38
+   }
+  },
+  "CARL-2773": {
+   "summary": "Ingest iDeal DCI Schema to Bronze",
+   "status": "Done",
+   "category": "done",
+   "assignee": "Ronald Ramsey",
+   "due": null,
+   "updated": "2026-09-09",
+   "tickets": 3,
+   "done": 3,
+   "inprog": 0,
+   "sp": 9.0,
+   "spDone": 9.0,
+   "byStatus": {
+    "Done": 3
+   }
+  },
+  "CARL-2772": {
+   "summary": "Ingest iDeal Tables For UMP One Time Dump",
+   "status": "Done",
+   "category": "done",
+   "assignee": "Diana Saafi",
+   "due": null,
+   "updated": "2026-09-09",
+   "tickets": 13,
+   "done": 13,
+   "inprog": 0,
+   "sp": 13.0,
+   "spDone": 13.0,
+   "byStatus": {
+    "Done": 13
+   }
+  },
+  "CARL-2727": {
+   "summary": "MicroStrategy Reports P1: Finance Batch 1",
+   "status": "In UAT",
+   "category": "indeterminate",
+   "assignee": "Ping Feng",
+   "due": "2026-08-03",
+   "updated": "2026-10-28",
+   "tickets": 48,
+   "done": 7,
+   "inprog": 41,
+   "sp": 195.0,
+   "spDone": 17.0,
+   "byStatus": {
+    "Ready For UAT": 4,
+    "In Review": 2,
+    "In UAT": 35,
+    "Done": 7
+   }
+  },
+  "CARL-1756": {
+   "summary": "Ingest Freewheel Data (Bronze Phase 2)",
+   "status": "In Progress",
+   "category": "indeterminate",
+   "assignee": "Sean Malek",
+   "due": null,
+   "updated": "2026-11-02",
+   "tickets": 89,
+   "done": 1,
+   "inprog": 5,
+   "sp": 181.0,
+   "spDone": 5.0,
+   "byStatus": {
+    "In Progress": 2,
+    "Ready to Deploy": 3,
+    "To Do": 83,
+    "Done": 1
+   }
+  },
+  "CARL-1693": {
+   "summary": "Lumos Workflow Config",
+   "status": "Done",
+   "category": "done",
+   "assignee": "Debarghyo Sengupta",
+   "due": null,
+   "updated": "2026-09-28",
+   "tickets": 22,
+   "done": 22,
+   "inprog": 0,
+   "sp": 74.0,
+   "spDone": 74.0,
+   "byStatus": {
+    "Done": 20,
+    "Archive": 2
+   }
+  },
+  "CARL-1480": {
+   "summary": "Ingest Digital Sports Revenue OTB + PipeFeed to Bronze",
+   "status": "In Triage",
+   "category": "new",
+   "assignee": "Mike Hodge",
+   "due": null,
+   "updated": "2026-10-14",
+   "tickets": 1,
+   "done": 0,
+   "inprog": 0,
+   "sp": 5.0,
+   "spDone": 0.0,
+   "byStatus": {
+    "In Triage": 1
+   }
+  },
+  "CARL-1479": {
+   "summary": "Finance Forecast Feed",
+   "status": "In Progress",
+   "category": "indeterminate",
+   "assignee": "Arlene Rose",
+   "due": null,
+   "updated": "2026-10-28",
+   "tickets": 8,
+   "done": 2,
+   "inprog": 6,
+   "sp": 35.0,
+   "spDone": 10.0,
+   "byStatus": {
+    "In Review": 5,
+    "Done": 2,
+    "In Progress": 1
+   }
+  },
+  "CARL-1478": {
+   "summary": "Ingest iDeal MSA Schema to Bronze",
+   "status": "Done",
+   "category": "done",
+   "assignee": "Kedareswara Petluri",
+   "due": null,
+   "updated": "2026-09-13",
+   "tickets": 12,
+   "done": 12,
+   "inprog": 0,
+   "sp": 32.0,
+   "spDone": 32.0,
+   "byStatus": {
+    "Done": 12
+   }
+  },
+  "CARL-1477": {
+   "summary": "Ingest iDeal DEALBLDR Schema to Bronze",
+   "status": "Done",
+   "category": "done",
+   "assignee": "Arlene Rose",
+   "due": null,
+   "updated": "2026-11-03",
+   "tickets": 5,
+   "done": 5,
+   "inprog": 0,
+   "sp": 12.0,
+   "spDone": 12.0,
+   "byStatus": {
+    "Done": 5
+   }
+  },
+  "CARL-1380": {
+   "summary": "Ingest - FreeWheel API Bronze",
+   "status": "Ready for Testing",
+   "category": "indeterminate",
+   "assignee": "Hong Zhang",
+   "due": null,
+   "updated": "2026-10-06",
+   "tickets": 18,
+   "done": 2,
+   "inprog": 11,
+   "sp": 44.0,
+   "spDone": 5.0,
+   "byStatus": {
+    "In Progress": 2,
+    "In Review": 1,
+    "Done": 2,
+    "To Do": 5,
+    "Ready For UAT": 8
+   }
+  },
+  "CARL-1378": {
+   "summary": "Peer Review \u2014 D_STANDARD_* Dimensions Bronze Ingestion",
+   "status": "Done",
+   "category": "done",
+   "assignee": "",
+   "due": null,
+   "updated": "2026-07-17",
+   "tickets": 0,
+   "done": 0,
+   "inprog": 0,
+   "sp": 0.0,
+   "spDone": 0.0,
+   "byStatus": {}
+  },
+  "CARL-1364": {
+   "summary": "Finance Forecasting Pacing Dashboard",
+   "status": "In Progress",
+   "category": "indeterminate",
+   "assignee": "Arlene Rose",
+   "due": null,
+   "updated": "2026-10-28",
+   "tickets": 7,
+   "done": 2,
+   "inprog": 2,
+   "sp": 31.0,
+   "spDone": 13.0,
+   "byStatus": {
+    "In Progress": 2,
+    "To Do": 3,
+    "Done": 2
+   }
+  },
+  "CARL-804": {
+   "summary": "Create a separate DMS task and DAG to bring in CMP related tables (CDC)",
+   "status": "Done",
+   "category": "done",
+   "assignee": "Sahana Honnappa",
+   "due": null,
+   "updated": "2026-07-31",
+   "tickets": 2,
+   "done": 2,
+   "inprog": 0,
+   "sp": 0.0,
+   "spDone": 0.0,
+   "byStatus": {
+    "Done": 2
+   }
+  },
+  "CARL-803": {
+   "summary": "CARL Intake Form(s)",
+   "status": "Done",
+   "category": "done",
+   "assignee": "Nathan Hernandez-Adams",
+   "due": null,
+   "updated": "2026-10-04",
+   "tickets": 2,
+   "done": 2,
+   "inprog": 0,
+   "sp": 8.0,
+   "spDone": 8.0,
+   "byStatus": {
+    "Done": 2
+   }
+  },
+  "CARL-767": {
+   "summary": "CARL Playbook Creation",
+   "status": "To Do",
+   "category": "new",
+   "assignee": "Nathan Hernandez-Adams",
+   "due": null,
+   "updated": "2026-10-12",
+   "tickets": 23,
+   "done": 0,
+   "inprog": 0,
+   "sp": 110.0,
+   "spDone": 0.0,
+   "byStatus": {
+    "To Do": 22,
+    "In Triage": 1
+   }
+  },
+  "CARL-749": {
+   "summary": "Ingest GAM Data (Bronze)",
+   "status": "In Triage",
+   "category": "new",
+   "assignee": "Virginia Giacomini",
+   "due": null,
+   "updated": "2026-10-13",
+   "tickets": 1,
+   "done": 0,
+   "inprog": 1,
+   "sp": 5.0,
+   "spDone": 0.0,
+   "byStatus": {
+    "In Progress": 1
+   }
+  },
+  "CARL-746": {
+   "summary": "Ingest Freewheel Data (Bronze)",
+   "status": "Done",
+   "category": "done",
+   "assignee": "Hong Zhang",
+   "due": null,
+   "updated": "2026-09-09",
+   "tickets": 74,
+   "done": 71,
+   "inprog": 3,
+   "sp": 167.0,
+   "spDone": 161.0,
+   "byStatus": {
+    "Ready For UAT": 1,
+    "In Review": 1,
+    "In Progress": 1,
+    "Done": 70,
+    "Archive": 1
+   }
+  },
+  "CARL-744": {
+   "summary": "Ingest Operative Data (Bronze)",
+   "status": "Done",
+   "category": "done",
+   "assignee": "Diana Saafi",
+   "due": null,
+   "updated": "2026-09-09",
+   "tickets": 90,
+   "done": 90,
+   "inprog": 0,
+   "sp": 193.0,
+   "spDone": 193.0,
+   "byStatus": {
+    "Done": 89,
+    "Archive": 1
+   }
+  },
+  "CARL-666": {
+   "summary": "Reconcile data source requirement lists",
+   "status": "Done",
+   "category": "done",
+   "assignee": "Armando Garcia Gama",
+   "due": null,
+   "updated": "2026-05-19",
+   "tickets": 2,
+   "done": 0,
+   "inprog": 0,
+   "sp": 0.0,
+   "spDone": 0.0,
+   "byStatus": {
+    "To Do": 2
+   }
+  },
+  "CARL-634": {
+   "summary": "[Cross Project Support] US Affiliate Support",
+   "status": "In Progress",
+   "category": "indeterminate",
+   "assignee": "Daya Thakur",
+   "due": "2026-06-15",
+   "updated": "2026-11-04",
+   "tickets": 16,
+   "done": 2,
+   "inprog": 0,
+   "sp": 13.0,
+   "spDone": 5.0,
+   "byStatus": {
+    "Archive": 1,
+    "To Do": 11,
+    "In Triage": 3,
+    "Done": 1
+   }
+  },
+  "CARL-628": {
+   "summary": "Digital Forecasting Data Ingestion",
+   "status": "Done",
+   "category": "done",
+   "assignee": "Hong Zhang",
+   "due": null,
+   "updated": "2026-09-09",
+   "tickets": 23,
+   "done": 23,
+   "inprog": 0,
+   "sp": 49.0,
+   "spDone": 49.0,
+   "byStatus": {
+    "Done": 23
+   }
+  },
+  "CARL-597": {
+   "summary": "Ingest WRR Digital Dataset (Bronze)",
+   "status": "Done",
+   "category": "done",
+   "assignee": "Virginia Giacomini",
+   "due": null,
+   "updated": "2026-09-09",
+   "tickets": 4,
+   "done": 4,
+   "inprog": 0,
+   "sp": 12.0,
+   "spDone": 12.0,
+   "byStatus": {
+    "Done": 4
+   }
+  },
+  "CARL-580": {
+   "summary": "Configure Catalog Federation - Snowflake --> Glue",
+   "status": "Done",
+   "category": "done",
+   "assignee": "Virginia Giacomini",
+   "due": null,
+   "updated": "2026-10-13",
+   "tickets": 1,
+   "done": 1,
+   "inprog": 0,
+   "sp": 0.0,
+   "spDone": 0.0,
+   "byStatus": {
+    "Done": 1
+   }
+  },
+  "CARL-549": {
+   "summary": "Guaranteed Reach Data Readiness",
+   "status": "Done",
+   "category": "done",
+   "assignee": "Ping Feng",
+   "due": "2026-05-18",
+   "updated": "2026-09-09",
+   "tickets": 1,
+   "done": 1,
+   "inprog": 0,
+   "sp": 3.0,
+   "spDone": 3.0,
+   "byStatus": {
+    "Done": 1
+   }
+  },
+  "CARL-547": {
+   "summary": "Unified Semantic Layer Infra",
+   "status": "In Progress",
+   "category": "indeterminate",
+   "assignee": "Colin Diemer",
+   "due": "2026-06-30",
+   "updated": "2026-10-28",
+   "tickets": 57,
+   "done": 32,
+   "inprog": 1,
+   "sp": 140.0,
+   "spDone": 84.0,
+   "byStatus": {
+    "To Do": 24,
+    "Done": 28,
+    "In Review": 1,
+    "Archive": 4
+   }
+  },
+  "CARL-540": {
+   "summary": "Data Quality MVP",
+   "status": "In Progress",
+   "category": "indeterminate",
+   "assignee": "Avinaag Bonam",
+   "due": "2026-06-30",
+   "updated": "2026-10-13",
+   "tickets": 15,
+   "done": 15,
+   "inprog": 0,
+   "sp": 62.0,
+   "spDone": 62.0,
+   "byStatus": {
+    "Done": 9,
+    "Archive": 6
+   }
+  },
+  "CARL-538": {
+   "summary": "Data Discoverability: Data Catalog for Iceberg",
+   "status": "In Triage",
+   "category": "new",
+   "assignee": "Ping Feng",
+   "due": "2026-06-30",
+   "updated": "2026-10-13",
+   "tickets": 2,
+   "done": 0,
+   "inprog": 0,
+   "sp": 13.0,
+   "spDone": 0.0,
+   "byStatus": {
+    "To Do": 2
+   }
+  },
+  "CARL-497": {
+   "summary": "Bobby V Dashboard Development",
+   "status": "Done",
+   "category": "done",
+   "assignee": "Ping Feng",
+   "due": "2026-05-08",
+   "updated": "2026-10-13",
+   "tickets": 6,
+   "done": 6,
+   "inprog": 0,
+   "sp": 26.0,
+   "spDone": 26.0,
+   "byStatus": {
+    "Done": 6
+   }
+  },
+  "CARL-494": {
+   "summary": "QA: Enhance Visual Accuracy of Linear & Digital Converged Pacing Dashboard in Quick Suite",
+   "status": "Done",
+   "category": "done",
+   "assignee": "Arlene Rose",
+   "due": null,
+   "updated": "2026-10-19",
+   "tickets": 3,
+   "done": 3,
+   "inprog": 0,
+   "sp": 0.0,
+   "spDone": 0.0,
+   "byStatus": {
+    "Done": 3
+   }
+  },
+  "CARL-462": {
+   "summary": "CARL Production Support",
+   "status": "To Do",
+   "category": "new",
+   "assignee": "Virginia Giacomini",
+   "due": null,
+   "updated": "2026-10-28",
+   "tickets": 45,
+   "done": 36,
+   "inprog": 6,
+   "sp": 120.0,
+   "spDone": 101.0,
+   "byStatus": {
+    "In Review": 2,
+    "In Triage": 1,
+    "To Do": 2,
+    "Done": 36,
+    "In UAT": 2,
+    "Ready to Deploy": 1,
+    "Blocked": 1
+   }
+  },
+  "CARL-384": {
+   "summary": "Data Observability",
+   "status": "In Triage",
+   "category": "new",
+   "assignee": "Debarghyo Sengupta",
+   "due": null,
+   "updated": "2026-10-28",
+   "tickets": 7,
+   "done": 6,
+   "inprog": 0,
+   "sp": 31.0,
+   "spDone": 26.0,
+   "byStatus": {
+    "Done": 5,
+    "Archive": 1,
+    "In Triage": 1
+   }
+  },
+  "CARL-355": {
+   "summary": "CI/CD Orchestration",
+   "status": "Done",
+   "category": "done",
+   "assignee": "Virginia Giacomini",
+   "due": null,
+   "updated": "2026-09-09",
+   "tickets": 12,
+   "done": 12,
+   "inprog": 0,
+   "sp": 49.0,
+   "spDone": 49.0,
+   "byStatus": {
+    "Done": 12
+   }
+  },
+  "CARL-351": {
+   "summary": "CMP iDeal Data Foundation Readiness",
+   "status": "In Progress",
+   "category": "indeterminate",
+   "assignee": "Surendarvarma Sritharan",
+   "due": "2026-06-30",
+   "updated": "2026-10-28",
+   "tickets": 105,
+   "done": 90,
+   "inprog": 13,
+   "sp": 225.0,
+   "spDone": 205.0,
+   "byStatus": {
+    "To Do": 2,
+    "Done": 90,
+    "In Progress": 1,
+    "Ready For UAT": 1,
+    "Blocked": 11
+   }
+  },
+  "CARL-345": {
+   "summary": "[Goverannce]Data Compliance and SOX Control",
+   "status": "To Do",
+   "category": "new",
+   "assignee": "Ping Feng",
+   "due": null,
+   "updated": "2026-10-14",
+   "tickets": 6,
+   "done": 2,
+   "inprog": 0,
+   "sp": 22.0,
+   "spDone": 8.0,
+   "byStatus": {
+    "To Do": 4,
+    "Done": 2
+   }
+  },
+  "CARL-313": {
+   "summary": "Ingest Linear and Digital Revenue Data Set (Gold)",
+   "status": "Done",
+   "category": "done",
+   "assignee": "Arlene Rose",
+   "due": null,
+   "updated": "2026-10-27",
+   "tickets": 4,
+   "done": 4,
+   "inprog": 0,
+   "sp": 13.0,
+   "spDone": 13.0,
+   "byStatus": {
+    "Done": 4
+   }
+  },
+  "CARL-312": {
+   "summary": "Ingest Linear and Digital Revenue Data Set (Silver)",
+   "status": "Done",
+   "category": "done",
+   "assignee": "Arlene Rose",
+   "due": null,
+   "updated": "2026-10-27",
+   "tickets": 7,
+   "done": 7,
+   "inprog": 0,
+   "sp": 30.0,
+   "spDone": 30.0,
+   "byStatus": {
+    "Done": 7
+   }
+  },
+  "CARL-197": {
+   "summary": "Quick Suite Report: Direct Response Dashboard",
+   "status": "Done",
+   "category": "done",
+   "assignee": "Ping Feng",
+   "due": null,
+   "updated": "2026-09-02",
+   "tickets": 7,
+   "done": 7,
+   "inprog": 0,
+   "sp": 30.0,
+   "spDone": 30.0,
+   "byStatus": {
+    "Done": 7
+   }
+  },
+  "CARL-56": {
+   "summary": "Ingest Linear and Digital Revenue Data Set (Bronze)",
+   "status": "Done",
+   "category": "done",
+   "assignee": "Arlene Rose",
+   "due": null,
+   "updated": "2026-09-23",
+   "tickets": 24,
+   "done": 24,
+   "inprog": 0,
+   "sp": 49.0,
+   "spDone": 49.0,
+   "byStatus": {
+    "Done": 24
+   }
+  },
+  "CARL-11": {
+   "summary": "NextGen Dashboard Migration",
+   "status": "To Do",
+   "category": "new",
+   "assignee": "Daya Thakur",
+   "due": "2026-03-31",
+   "updated": "2026-10-28",
+   "tickets": 28,
+   "done": 6,
+   "inprog": 5,
+   "sp": 68.0,
+   "spDone": 28.0,
+   "byStatus": {
+    "To Do": 15,
+    "In Progress": 3,
+    "Done": 5,
+    "In Triage": 2,
+    "Ready For Review": 2,
+    "Archive": 1
+   }
+  },
+  "CARL-6": {
+   "summary": "Quick Suite Report: Converged Holes Report + Sports Holes and Shares Reports",
+   "status": "In Progress",
+   "category": "indeterminate",
+   "assignee": "Ping Feng",
+   "due": "2026-03-31",
+   "updated": "2026-11-02",
+   "tickets": 7,
+   "done": 6,
+   "inprog": 1,
+   "sp": 24.0,
+   "spDone": 21.0,
+   "byStatus": {
+    "Done": 6,
+    "Blocked": 1
+   }
+  },
+  "CARL-5": {
+   "summary": "Quick Suite Report: Linear and Digital Converged Pacing Dashboard",
+   "status": "Done",
+   "category": "done",
+   "assignee": "Arlene Rose",
+   "due": "2026-03-31",
+   "updated": "2026-09-23",
+   "tickets": 6,
+   "done": 6,
+   "inprog": 0,
+   "sp": 25.0,
+   "spDone": 25.0,
+   "byStatus": {
+    "Done": 6
+   }
+  }
+ }
+}

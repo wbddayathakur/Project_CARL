@@ -1,0 +1,66 @@
+views:
+  - name: sox_view_affiliate_fact
+    public: true
+    title: SOX — Affiliate Fact
+    description: >-
+      Business view for sox on affiliate_fact.
+      KNOWN GAPS (see cube_carl_dwhprd_gold_affiliate_fact's description): New Package ID/Name, New Contract, and
+      Network Name are not modelled — new_package_dim/new_contract_dim don't exist in the catalog, and network_dim
+      is a confirmed collision (51.6% orphan) with an unrelated table.
+    meta:
+      view_scope: business
+      business: sox
+      fact_table: affiliate_fact
+    cubes:
+      - join_path: cube_carl_dwhprd_gold_affiliate_fact
+        includes:
+          - pack_type
+          - reason_to_exclude
+          - link_type
+          - effective_on
+          - package_replace_ind
+          - vip_customer
+          - subs_indicator
+          - contract_currency_code
+          - contract_currency_name
+          - local_currency_code
+          - local_currency_name
+          - invoice_currency_code
+          - invoice_currency_name
+          - actual_subs
+          - billable_subs
+          - active_ind
+          - affiliate_cd
+          - affiliate_name
+          - name: base_currency_code
+            title: Base Currency Code
+          - name: base_currency_name
+            title: Base Currency Name
+          - billing_period_desc
+          - cal_qtr_desc
+          - calendar_month_label
+          - calendar_year
+          - contract_cd
+          - country_name
+          - customer_display
+          - customer_name
+          - inv_process_status_desc
+          - invoice_id
+          - invoice_type_desc
+          - manager_name
+          - owner_display
+          - owner_name
+          - package_id
+          - package_name
+          - rate_type_desc
+          - reporting_country_name
+          - revenue_type_desc
+          - sap_company_code
+          - sap_geography_code
+          - sap_geography_desc
+          - sap_platform_desc
+          - sap_platform_id
+          - sap_profit_center_code_display
+          - sap_profit_center_desc
+          - sap_region_name
+          - system_name

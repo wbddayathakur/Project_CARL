@@ -1,0 +1,56 @@
+views:
+  - name: sox_view_req_rights_episode_fact
+    public: true
+    title: SOX — Req Rights Episode Fact
+    description: Business view for sox on req_rights_episode_fact.
+    meta:
+      view_scope: business
+      business: sox
+      fact_table: req_rights_episode_fact
+    cubes:
+      - join_path: cube_carl_dwhprd_gold_req_rights_episode_fact
+        includes:
+          - deal_program_key
+          - deal_project_key
+          - internal_offer_key
+          - offering_entity_key
+          - originating_entity_name
+          - participating_entity_key
+          - participating_entity_name
+          - primary_cont_entity_name
+          - primary_prod_bus_cont_name
+          - record_count
+          - req_rights_line_prog_end_date
+          - req_rights_line_prog_episodes
+          - req_rights_line_prog_geography
+          - req_rights_line_prog_platform
+          - req_rights_line_prog_start_dt
+          - req_rights_line_prog_term
+          - budget_category_desc
+          - buy_in_response_desc
+          - contract_code
+          - day_date
+          - deal_name
+          - deal_program_name
+          - deal_program_status_key
+          - deal_status_desc
+          - deal_type_desc
+          - name: entity_name
+            title: Offer Entity Name
+          - fa_offer_status
+          - final_indicator_desc
+          - internal_offer_desc
+          - offering_region_key
+          - program_sap_order_num
+          - property_id
+          - name: region_long_name
+            title: Offering Region
+          - name: territory_name
+            title: Offering Territory Name
+      - join_path: cube_carl_dwhprd_gold_req_rights_episode_fact.cube_carl_dwhprd_gold_internal_offer_dim
+        includes:
+          - total_hours_offered
+      - join_path: cube_carl_dwhprd_gold_req_rights_episode_fact.cube_carl_dwhprd_gold_req_rights_participant_contribution
+        includes:
+          - total_participant_contribution_amount
+          - total_participant_contribution_per_hour

@@ -1,0 +1,80 @@
+cubes:
+  - name: cube_neo_gold_rpt_advertiser_summary
+    sql_table: "{{ catalog('neo_gold') }}.rpt_advertiser_summary"
+    public: false
+    data_source: default
+    title: NEO Advertiser Summary
+    description: >
+      Advertiser and agency rollups from neo_gold.rpt_advertiser_summary.
+    dimensions:
+      - name: advertiser_id
+        sql: '{CUBE}.advertiser_id'
+        type: string
+        primary_key: true
+        title: Advertiser ID
+        description: Advertiser identifier in NEO
+      - name: advertiser_name
+        sql: '{CUBE}.advertiser_name'
+        type: string
+        title: Advertiser Name
+        description: Advertiser / brand name
+      - name: agency_id
+        sql: '{CUBE}.agency_id'
+        type: number
+        title: Agency ID
+        description: Agency identifier in NEO
+      - name: agency_name
+        sql: '{CUBE}.agency_name'
+        type: string
+        title: Agency Name
+        description: Agency managing the advertiser
+    measures:
+      - name: count
+        type: count
+        title: Advertiser Count
+        description: Number of advertiser summary rows
+      - name: total_deals
+        sql: '{CUBE}.total_deals'
+        type: sum
+        title: Total Deals
+        description: Distinct deals for the advertiser
+      - name: active_deals
+        sql: '{CUBE}.active_deals'
+        type: sum
+        title: Active Deals
+        description: Distinct active deals for the advertiser
+      - name: total_impressions
+        sql: '{CUBE}.total_impressions'
+        type: sum
+        title: Total Impressions
+        description: Total delivered impressions
+      - name: total_revenue
+        sql: '{CUBE}.total_revenue'
+        type: sum
+        title: Total Revenue ($)
+        description: Total delivered spend
+      - name: total_completions
+        sql: '{CUBE}.total_completions'
+        type: sum
+        title: Total Completions
+        description: Total completed views
+      - name: avg_vcr
+        sql: >
+          CASE
+            WHEN SUM({CUBE}.total_impressions) > 0
+            THEN (CAST(SUM({CUBE}.total_completions) AS DOUBLE) / SUM({CUBE}.total_impressions)) * 100
+            ELSE 0
+          END
+        type: number
+        title: Average VCR (%)
+        description: Completions divided by impressions × 100
+      - name: avg_ecpm
+        sql: >
+          CASE
+            WHEN SUM({CUBE}.total_impressions) > 0
+            THEN (SUM({CUBE}.total_revenue) / SUM({CUBE}.total_impressions)) * 1000
+            ELSE 0
+          END
+        type: number
+        title: Average eCPM ($)
+        description: Revenue per thousand impressions

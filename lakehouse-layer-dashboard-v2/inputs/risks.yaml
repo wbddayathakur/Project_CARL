@@ -1,0 +1,148 @@
+# External dependencies and program risks for CARL.
+#
+# Written as "what CARL needs, where it stands, what happens next" — the point
+# is to show leadership which outside parties pace delivery, not to grade teams.
+#
+# status: resolved | on_track | monitoring | decision
+#   resolved    the dependency has been met
+#   on_track    engaged, dated, moving
+#   monitoring  engaged, but timing is set by the other party
+#   decision    needs a leadership or partner decision to proceed
+#
+# rows: roadmap row ids (roadmap_lanes.yaml) this affects.
+
+dependencies:
+  - id: D1
+    type: Vendor / external
+    party: FreeWheel
+    need: Log history retention, sustained load throughput, API scope for Neo and AIP.
+    position: Bronze ({fw_bronze_prod} tables) and canonical Silver ({fw_silver_prod} tables) are live in prod. The source keeps a short rolling window of log history.
+    next: CARL captures history daily into Iceberg, so retention is preserved on the CARL side. API and Phase 2 scope follow product requirements.
+    status: on_track
+    rows: [fw, neo, aip]
+
+  - id: D2
+    type: Vendor / external
+    party: Google Ad Manager (GAM)
+    need: Source access, data requirements and PRD.
+    position: In discovery, scheduled Oct 2026 – Jan 2027.
+    next: Confirm access path and table list with the UMP and AIP product teams.
+    status: on_track
+    rows: [gam, ump, aip]
+
+  - id: D3
+    type: Vendor / external
+    party: Nielsen (NRLD, Big MIT, Ad Intel, Stewardship)
+    need: Feed delivery schedules and Stewardship scope.
+    position: NRLD, Big MIT and Ad Intel enhancements are in testing and UAT. Stewardship is scheduled Oct 2026 – Jan 2027.
+    next: Complete UAT; agree the Stewardship scope with Research and UMP.
+    status: on_track
+    rows: [nielsen, res, ump, fc]
+
+  - id: D4
+    type: Vendor / external
+    party: Third-party measurement vendors (STAQ, VideoAmp, LoopMe, iSpot, CAPI, Clearline)
+    need: Data-access agreements and feed specifications.
+    position: Staged onboarding. STAQ and VideoAmp are in intake (Oct 2026 – Jan 2027); LoopMe, iSpot and CAPI are planned for Q1 2027.
+    next: Sequence feeds by business priority through the intake process.
+    status: monitoring
+    rows: [tp, fc, res]
+
+  - id: D5
+    type: Vendor / external
+    party: Salesforce / Metropolis
+    need: Phase 2 API access and scope.
+    position: Phase 1 Oracle Batch 1 delivered in October and feeds UC1; Batch 2 is in progress.
+    next: Scope Phase 2 API extraction with the Ad Sales owners.
+    status: on_track
+    rows: [sf, adsales]
+
+  - id: D6
+    type: Vendor / external
+    party: Operative One
+    need: Phase 2 API tables and business definitions for canonical Silver.
+    position: Bronze ({op1_bronze_prod} tables) live in prod since July; canonical Silver is scheduled from mid-October.
+    next: Confirm the Silver definitions with Ad Sales and the product teams.
+    status: on_track
+    rows: [op1, adsales]
+
+  - id: D7
+    type: Platform vendor
+    party: AWS + Snowflake
+    need: Catalog federation so Snowflake shares are queryable from Iceberg.
+    position: Federation configured (CARL-580 Done, 13 Oct 2026).
+    next: Extend to further shares as use cases need them.
+    status: resolved
+    rows: [fed]
+
+  - id: D8
+    type: Platform vendor
+    party: MicroStrategy and IBM DataStage (legacy BI and ETL)
+    need: API access for automated report extraction, and legacy runtime support until cut-over.
+    position: The Lumos accelerator is in production. IBM DataStage design (ADD) is in review, with implementation from November.
+    next: Keep legacy platforms in parallel run until each migration batch is signed off.
+    status: monitoring
+    rows: [bi, fin, adsales, sox, aff, intld, hive]
+
+  - id: D9
+    type: Internal partner
+    party: iDeal database administration
+    need: Change-data-capture (CDC) enablement on the iDeal transactional database.
+    position: CDC for CMP tables delivered; real-time ingestion pattern in development.
+    next: Agree the CDC rollout window for the remaining iDeal schemas.
+    status: monitoring
+    rows: [rt, ideal, venus]
+
+  - id: D10
+    type: Internal partner
+    party: Internal product teams (UMP, AIP, Neo, Venus, Forecasting)
+    need: Declared data requirements and Gold scope per product.
+    position: UMP and Neo are engaged with dated work; AIP and Forecasting scope is being defined.
+    next: Capture each product's requirements through the intake form before build.
+    status: on_track
+    rows: [ump, aip, neo, venus, fc]
+
+  - id: D11
+    type: Internal partner
+    party: Business owners (Ad Sales, Finance, Research, Affiliate, International)
+    need: UAT sign-off for migrated reports and dashboards.
+    position: Several migration batches are in UAT or testing.
+    next: Agree a fixed UAT cadence per batch.
+    status: monitoring
+    rows: [adsales, fin, res, aff, intld, sox]
+
+risks:
+  - id: R1
+    title: Demand growth outpacing planned capacity
+    detail: New requests arrive outside planning cycles as more teams adopt CARL.
+    mitigation: Demand intake form is live (CARL-803 Done); all requests flow through intake and quarterly prioritization.
+    status: on_track
+    rows: [intake]
+
+  - id: R2
+    title: Parallel running of legacy BI during migration
+    detail: MicroStrategy, Looker, Power BI and IBM DataStage stay live until each batch is signed off.
+    mitigation: Lumos accelerator automates conversion; sign-off cadence agreed per batch.
+    status: monitoring
+    rows: [bi]
+
+  - id: R3
+    title: Pace of promoting Gold and semantic models to prod
+    detail: Gold and Cube models are built in dev first and promoted after business validation.
+    mitigation: "{cube_prod_views} of {cube_views} Cube views are already deployed to the prod semantic layer; the DWH Gold tables behind the Lumos views are promoted to prod Glue as each migration batch is signed off."
+    status: on_track
+    rows: [sem, adsales, fin]
+
+  - id: R4
+    title: Usage terms for third-party data in AI use cases
+    detail: Licensed data (for example Nielsen and measurement vendors) may carry usage restrictions for AI and API access.
+    mitigation: Confirm licence terms with Legal before exposing licensed sources through the API and MCP server.
+    status: decision
+    rows: [ai, nielsen, tp]
+
+  - id: R5
+    title: Key-person concentration on specialist pipelines
+    detail: Some source pipelines (CDC, FreeWheel logs) rely on a small number of engineers.
+    mitigation: CARL playbook and runbooks; pairing on each new source onboarding.
+    status: monitoring
+    rows: [rt, fw, intake]

@@ -1,0 +1,492 @@
+[
+ {
+  "key": "staging/core/baked/sales_holes/combined_revenue_sales_holes_totals.yml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 7199
+ },
+ {
+  "key": "staging/core/baked/views/sales_holes/sales_holes_analysis.yml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 1265
+ },
+ {
+  "key": "staging/core/efs/Lumos/cubes/cube_carl_dwhprd_gold_ae_fraction_fact.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 2157
+ },
+ {
+  "key": "staging/core/efs/Lumos/cubes/cube_carl_dwhprd_gold_affiliate_fact.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 35714
+ },
+ {
+  "key": "staging/core/efs/Lumos/cubes/cube_carl_dwhprd_gold_airings_fact.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 73992
+ },
+ {
+  "key": "staging/core/efs/Lumos/cubes/cube_carl_dwhprd_gold_bi_to_bts_recon_fact.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 21775
+ },
+ {
+  "key": "staging/core/efs/Lumos/cubes/cube_carl_dwhprd_gold_break_fact.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 23979
+ },
+ {
+  "key": "staging/core/efs/Lumos/cubes/cube_carl_dwhprd_gold_bts_items_pln_rev.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 28135
+ },
+ {
+  "key": "staging/core/efs/Lumos/cubes/cube_carl_dwhprd_gold_bts_placements.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 21370
+ },
+ {
+  "key": "staging/core/efs/Lumos/cubes/cube_carl_dwhprd_gold_bts_targets.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 28456
+ },
+ {
+  "key": "staging/core/efs/Lumos/cubes/cube_carl_dwhprd_gold_campaign_fact.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 94269
+ },
+ {
+  "key": "staging/core/efs/Lumos/cubes/cube_carl_dwhprd_gold_digital_fact.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 35656
+ },
+ {
+  "key": "staging/core/efs/Lumos/cubes/cube_carl_dwhprd_gold_dimensions.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 548344
+ },
+ {
+  "key": "staging/core/efs/Lumos/cubes/cube_carl_dwhprd_gold_inventory_fact.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 26393
+ },
+ {
+  "key": "staging/core/efs/Lumos/cubes/cube_carl_dwhprd_gold_invoice_revenue_fact.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 153205
+ },
+ {
+  "key": "staging/core/efs/Lumos/cubes/cube_carl_dwhprd_gold_invoice_team_ae_bridge.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 3399
+ },
+ {
+  "key": "staging/core/efs/Lumos/cubes/cube_carl_dwhprd_gold_invoice_team_split_revenue.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 14043
+ },
+ {
+  "key": "staging/core/efs/Lumos/cubes/cube_carl_dwhprd_gold_projected_working_revenue_fact.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 64599
+ },
+ {
+  "key": "staging/core/efs/Lumos/cubes/cube_carl_dwhprd_gold_req_rights_episode_fact.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 22765
+ },
+ {
+  "key": "staging/core/efs/Lumos/cubes/cube_carl_dwhprd_gold_selling_title_airing_dim.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 8778
+ },
+ {
+  "key": "staging/core/efs/Lumos/cubes/cube_carl_dwhprd_gold_spot_fact.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 65402
+ },
+ {
+  "key": "staging/core/efs/Lumos/cubes/cube_carl_dwhprd_gold_tcr_approval_fact.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 4878
+ },
+ {
+  "key": "staging/core/efs/Lumos/cubes/cube_carl_dwhprd_gold_tcr_fact.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 15252
+ },
+ {
+  "key": "staging/core/efs/Lumos/views/affiliate_fact/sox_view_affiliate_fact.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 2098
+ },
+ {
+  "key": "staging/core/efs/Lumos/views/airings_fact/sox_view_airings_fact.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 4368
+ },
+ {
+  "key": "staging/core/efs/Lumos/views/amnistia_argentina/international_view_amnistia_argentina.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 7885
+ },
+ {
+  "key": "staging/core/efs/Lumos/views/audit_file_clientes_regulares_digital/international_view_audit_file_clientes_regulares_digital.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 8592
+ },
+ {
+  "key": "staging/core/efs/Lumos/views/audit_file_clientes_regulares_on_air/international_view_audit_file_clientes_regulares_on_air.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 8612
+ },
+ {
+  "key": "staging/core/efs/Lumos/views/bi_to_bts_recon_fact/international_view_bi_to_bts_recon_fact.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 3591
+ },
+ {
+  "key": "staging/core/efs/Lumos/views/billing_status_report/international_view_billing_status_report.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 7790
+ },
+ {
+  "key": "staging/core/efs/Lumos/views/break_fact/international_view_break_fact.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 5997
+ },
+ {
+  "key": "staging/core/efs/Lumos/views/bts_items/international_view_bts_items.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 3132
+ },
+ {
+  "key": "staging/core/efs/Lumos/views/bts_items_pln_rev/international_view_bts_items_pln_rev.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 4400
+ },
+ {
+  "key": "staging/core/efs/Lumos/views/bts_items_pln_rev/international_view_clab_revenue.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 4847
+ },
+ {
+  "key": "staging/core/efs/Lumos/views/bts_placements/international_view_bts_placements.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 2891
+ },
+ {
+  "key": "staging/core/efs/Lumos/views/bts_targets/international_view_bts_targets.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 4720
+ },
+ {
+  "key": "staging/core/efs/Lumos/views/campaign_fact/international_view_campaign_fact.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 4671
+ },
+ {
+  "key": "staging/core/efs/Lumos/views/campaign_fact/sox_view_campaign_fact.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 2709
+ },
+ {
+  "key": "staging/core/efs/Lumos/views/dashboard_spot_argentina_q1_25/international_view_dashboard_spot_argentina_q1_25.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 2964
+ },
+ {
+  "key": "staging/core/efs/Lumos/views/digital_fact/international_view_digital_fact.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 4234
+ },
+ {
+  "key": "staging/core/efs/Lumos/views/digital_report_2026/international_view_digital_report_2026.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 4927
+ },
+ {
+  "key": "staging/core/efs/Lumos/views/inventory_fact/ad_sales_view_inventory_fact.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 4444
+ },
+ {
+  "key": "staging/core/efs/Lumos/views/inventory_fact/finance_view_inventory_fact.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 1471
+ },
+ {
+  "key": "staging/core/efs/Lumos/views/invoice_revenue_fact/ad_sales_view_invoice_revenue_fact.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 23876
+ },
+ {
+  "key": "staging/core/efs/Lumos/views/invoice_revenue_fact/finance_view_invoice_revenue_fact.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 7460
+ },
+ {
+  "key": "staging/core/efs/Lumos/views/invoice_revenue_fact/sox_view_invoice_revenue_fact.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 4801
+ },
+ {
+  "key": "staging/core/efs/Lumos/views/invoice_team_split_revenue/ad_sales_view_invoice_team_split_revenue.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 3137
+ },
+ {
+  "key": "staging/core/efs/Lumos/views/monthly_order_tracker/international_view_monthly_order_tracker.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 8326
+ },
+ {
+  "key": "staging/core/efs/Lumos/views/monthly_order_tracker_chile_version_gaston/international_view_monthly_order_tracker_chile_version_gaston.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 9992
+ },
+ {
+  "key": "staging/core/efs/Lumos/views/monthly_order_tracker_with_invoicing_info/international_view_monthly_order_tracker_with_invoicing_info.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 9735
+ },
+ {
+  "key": "staging/core/efs/Lumos/views/monthly_revenue_share/international_view_monthly_revenue_share.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 9156
+ },
+ {
+  "key": "staging/core/efs/Lumos/views/monthly_tracker_portafolio_cristian_lavao/international_view_monthly_tracker_portafolio_cristian_lavao.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 8667
+ },
+ {
+  "key": "staging/core/efs/Lumos/views/non_linear_report_2026/international_view_non_linear_report_2026.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 4734
+ },
+ {
+  "key": "staging/core/efs/Lumos/views/projected_working_revenue_fact/ad_sales_view_projected_working_revenue_fact.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 5365
+ },
+ {
+  "key": "staging/core/efs/Lumos/views/projected_working_revenue_fact/finance_view_projected_working_revenue_fact.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 3217
+ },
+ {
+  "key": "staging/core/efs/Lumos/views/quarterly_business_review_net_aur/international_view_quarterly_business_review_net_aur.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 8496
+ },
+ {
+  "key": "staging/core/efs/Lumos/views/report_revenue_andres_orostegui/international_view_report_revenue_andres_orostegui.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 8989
+ },
+ {
+  "key": "staging/core/efs/Lumos/views/req_rights_episode_fact/sox_view_req_rights_episode_fact.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 2004
+ },
+ {
+  "key": "staging/core/efs/Lumos/views/selling_title_airing_dim/ad_sales_view_selling_title_airing_dim.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 1982
+ },
+ {
+  "key": "staging/core/efs/Lumos/views/spot_fact/international_view_spot_fact.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 2327
+ },
+ {
+  "key": "staging/core/efs/Lumos/views/tcr_fact/international_view_tcr_fact.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 4212
+ },
+ {
+  "key": "staging/core/efs/Lumos/views/version_report/international_view_version_report.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 8662
+ },
+ {
+  "key": "staging/core/efs/Lumos/views/wbdl_aur_review/international_view_wbdl_aur_review.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 3347
+ },
+ {
+  "key": "staging/core/efs/Lumos/views/wbdl_bonus_spot_review/international_view_wbdl_bonus_spot_review.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 3165
+ },
+ {
+  "key": "staging/core/efs/Neo/cubes/cube_neo_gold_prisma_deal_billing.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 4561
+ },
+ {
+  "key": "staging/core/efs/Neo/cubes/cube_neo_gold_reach_frequency_campaign.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 2251
+ },
+ {
+  "key": "staging/core/efs/Neo/cubes/cube_neo_gold_rpt_advertiser_summary.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 2618
+ },
+ {
+  "key": "staging/core/efs/Neo/cubes/cube_neo_gold_rpt_content_performance.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 7592
+ },
+ {
+  "key": "staging/core/efs/Neo/cubes/cube_neo_gold_rpt_creative_delivery.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 3421
+ },
+ {
+  "key": "staging/core/efs/Neo/cubes/cube_neo_gold_rpt_deal_daily_metrics.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 4925
+ },
+ {
+  "key": "staging/core/efs/Neo/cubes/cube_neo_gold_rpt_deal_delivery_enrichment.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 2219
+ },
+ {
+  "key": "staging/core/efs/Neo/cubes/cube_neo_gold_rpt_discrepancy.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 2625
+ },
+ {
+  "key": "staging/core/efs/Neo/cubes/cube_neo_gold_rpt_package_performance.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 3296
+ },
+ {
+  "key": "staging/core/efs/Neo/views/reach_frequency_campaign/ad_sales_view_neo_reach_frequency_campaign.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 687
+ },
+ {
+  "key": "staging/core/efs/Neo/views/rpt_advertiser_summary/ad_sales_view_neo_advertiser_summary.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 723
+ },
+ {
+  "key": "staging/core/efs/Neo/views/rpt_content_performance/ad_sales_view_neo_content_performance.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 1527
+ },
+ {
+  "key": "staging/core/efs/Neo/views/rpt_creative_delivery/ad_sales_view_neo_creative_delivery.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 841
+ },
+ {
+  "key": "staging/core/efs/Neo/views/rpt_deal_daily_metrics/ad_sales_view_neo_deal_daily_metrics.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 1028
+ },
+ {
+  "key": "staging/core/efs/Neo/views/rpt_deal_daily_metrics/ad_sales_view_neo_prisma_deal_billing.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 1006
+ },
+ {
+  "key": "staging/core/efs/Neo/views/rpt_deal_delivery_enrichment/ad_sales_view_neo_deal_billing_enrichment.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 738
+ },
+ {
+  "key": "staging/core/efs/Neo/views/rpt_discrepancy/ad_sales_view_neo_discrepancy.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 699
+ },
+ {
+  "key": "staging/core/efs/Neo/views/rpt_package_performance/ad_sales_view_neo_package_performance.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 825
+ },
+ {
+  "key": "staging/core/efs/Venus/cubes/cube_venus_silver_serving_impression_dimensions.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 56889
+ },
+ {
+  "key": "staging/core/efs/Venus/views/digital_impressions/venus_view_digital_impressions.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 2521
+ },
+ {
+  "key": "staging/core/efs/Venus/views/impression_dimensions/venus_view_combo_deals.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 3870
+ },
+ {
+  "key": "staging/core/efs/Venus/views/impression_dimensions/venus_view_delivery_summary.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 9261
+ },
+ {
+  "key": "staging/core/efs/Venus/views/impression_dimensions/venus_view_holdco.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 2185
+ },
+ {
+  "key": "staging/core/efs/Venus/views/impression_dimensions/venus_view_network.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 2454
+ },
+ {
+  "key": "staging/core/efs/Venus/views/impression_dimensions/venus_view_property.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 2470
+ },
+ {
+  "key": "staging/core/efs/Venus/views/impression_dimensions/venus_view_standard_deals.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 3761
+ },
+ {
+  "key": "staging/core/efs/Venus/views/impression_dimensions/venus_view_super_deals.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 5050
+ },
+ {
+  "key": "staging/core/efs/Venus/views/impression_dimensions/venus_view_weekly_trend.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 8961
+ },
+ {
+  "key": "staging/core/efs/linear_digital_revenue/cubes/cube_linear_digital_revenue_bronze_dimensions.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 5204
+ },
+ {
+  "key": "staging/core/efs/linear_digital_revenue/cubes/cube_linear_digital_revenue_gold_digital_impressions_combined.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 18271
+ },
+ {
+  "key": "staging/core/efs/linear_digital_revenue/cubes/cube_linear_digital_revenue_gold_fact_executive_revenue_month_v.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 16825
+ },
+ {
+  "key": "staging/core/efs/linear_digital_revenue/views/bobby_v/executive_view_bobby_v.yaml",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 2701
+ },
+ {
+  "key": "staging/core/globals.json",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 1853
+ },
+ {
+  "key": "staging/core/globals.py",
+  "modified": "2026-11-05T08:20:58+00:00",
+  "size": 5727
+ }
+]

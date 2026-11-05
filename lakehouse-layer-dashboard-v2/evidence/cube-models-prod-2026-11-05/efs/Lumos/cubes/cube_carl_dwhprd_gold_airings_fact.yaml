@@ -1,0 +1,1215 @@
+cubes:
+  - name: cube_carl_dwhprd_gold_airings_fact
+    sql_table: "{{ catalog('dwhprd_gold') }}.airings_fact"
+    data_source: default
+    public: false
+    title: Carl Dwhprd Gold — Airings Fact
+    description: >-
+      One row per content airing (a scheduled broadcast instance), the content-airings star. Distinct from
+      program_airing_dim (a different, non-fact table at program-airing grain covering a similar but not identical
+      concept) and from the advertising-revenue star (invoice_revenue_fact). MicroStrategy's SQL calls both
+      episode domains EPISODE_DIM, but this model keeps them separate: the existing advertising-side episode_dim
+      path remains unchanged for episode_number, episode_id, and episode_short_desc, while the HIVEDWH
+      hivedwh_episode_dim path joins by episode_key and supplies the content episode universe and its scheduling,
+      premiere, distribution-channel, source-episode, and repackaging attributes. One consumer only needs
+      EPISODE_SLOT_LENGTH, which this fact carries as its own column (no join needed); additive content_episode_*
+      aliases expose selected HIVEDWH attributes without repointing the advertising members. This fact also
+      supports a hybrid consumer that joins into the "deals and rights" star (deal_project_dim,
+      deal_io_part_prog_dim, internal_offer_type_dim). EPS_REPACKAGE_TYPE_NAME is still unavailable because the
+      HIVEDWH table carries the repackage type key but not its display name, so that attribute remains deferred.
+    dimensions:
+      - name: corporate_daypart_label
+        sql: |-
+          (
+            SELECT hop1.corporate_daypart_selling_desc || ' (' || hop1.corporate_daypart_name || ')'
+            FROM {{ catalog('dwhprd_gold') }}.corporate_daypart_dim hop1
+            WHERE {CUBE}.corporate_daypart_key = hop1.corporate_daypart_key
+          )
+        type: string
+        title: Corporate Daypart
+        description: '"<selling description> (<name>)", e.g. "Prime (P)", read via airings_fact''s corporate_daypart_key join. Matches MicroStrategy''s own concatenation. Defined
+          here rather than on airings_fact because Cube.js does not allow a member''s SQL to reference the same foreign cube''s columns more than once in one formula; a same-cube
+          self-reference has no such limit.'
+      - name: airing_month
+        sql: |-
+          (
+            SELECT CASE WHEN hop1.calendar_month_name = 'N/A' THEN NULL ELSE TRIM(hop1.calendar_month_name) || ' ' || substr(CAST(hop1.calendar_month_key AS VARCHAR), 1, 4) END
+            FROM {{ catalog('dwhprd_gold') }}.day_dim hop1
+            WHERE {CUBE}.local_bcast_day_key = hop1.day_key
+          )
+        type: string
+        title: Airing Month
+        description: '"<Month name> <year>" label for a day, e.g. "March 2024", read via airings_fact''s Local Broadcast Day role. Defined here rather than on airings_fact because
+          Cube.js does not allow a member''s SQL to reference the same foreign cube''s columns more than once in one formula; this needs calendar_month_name and calendar_month_key
+          from this cube twice over, which only a same-cube self-reference allows.'
+      - name: calendar_year
+        sql: |-
+          (
+            SELECT hop1.calendar_year
+            FROM {{ catalog('dwhprd_gold') }}.day_dim hop1
+            WHERE {CUBE}.local_bcast_day_key = hop1.day_key
+          )
+        type: number
+        title: Calendar Year
+        description: Calendar year for this day.
+      - name: calendar_year_key
+        sql: |-
+          (
+            SELECT hop1.calendar_year_key
+            FROM {{ catalog('dwhprd_gold') }}.day_dim hop1
+            WHERE {CUBE}.local_bcast_day_key = hop1.day_key
+          )
+        type: number
+        title: Calendar Year Key
+        description: Surrogate key for the calendar year, equal to calendar_year on this table.
+      - name: day_date
+        sql: |-
+          (
+            SELECT hop1.day_date
+            FROM {{ catalog('dwhprd_gold') }}.day_dim hop1
+            WHERE {CUBE}.local_bcast_day_key = hop1.day_key
+          )
+        type: time
+        title: Day Date
+        description: The calendar date this row represents.
+      - name: day_num_in_week
+        sql: |-
+          (
+            SELECT hop1.day_num_in_week
+            FROM {{ catalog('dwhprd_gold') }}.day_dim hop1
+            WHERE {CUBE}.local_bcast_day_key = hop1.day_key
+          )
+        type: number
+        title: Day Number In Week
+        description: Numeric day-of-week position, pairs with day_of_week_short.
+      - name: day_of_week_short
+        sql: |-
+          (
+            SELECT hop1.day_of_week_short
+            FROM {{ catalog('dwhprd_gold') }}.day_dim hop1
+            WHERE {CUBE}.local_bcast_day_key = hop1.day_key
+          )
+        type: string
+        title: Day Of Week (Short)
+        description: Abbreviated day-of-week name, e.g. Mon.
+      - name: dc_eps_days_fm_last_airing
+        sql: |-
+          (
+            SELECT hop1.dc_eps_days_fm_last_airing
+            FROM {{ catalog('dwhprd_gold') }}.dc_episode_dim hop1
+            WHERE {CUBE}.dc_episode_key = hop1.dc_episode_key
+          )
+        type: number
+        title: Dc Eps Days From Last Airing
+        description: Days elapsed since this episode last aired on this distribution channel.
+      - name: dc_eps_last_air_bday_key
+        sql: |-
+          (
+            SELECT hop1.dc_eps_last_air_bday_key
+            FROM {{ catalog('dwhprd_gold') }}.dc_episode_dim hop1
+            WHERE {CUBE}.dc_episode_key = hop1.dc_episode_key
+          )
+        type: number
+        title: Dc Eps Last Air Bday Key
+        description: Day key (YYYYMMDD) of this episode's most recent airing on this distribution channel.
+      - name: dc_eps_next_air_bday_key
+        sql: |-
+          (
+            SELECT hop1.dc_eps_next_air_bday_key
+            FROM {{ catalog('dwhprd_gold') }}.dc_episode_dim hop1
+            WHERE {CUBE}.dc_episode_key = hop1.dc_episode_key
+          )
+        type: number
+        title: Dc Eps Next Air Bday Key
+        description: Day key (YYYYMMDD) of this episode's next scheduled airing on this distribution channel; 21001231 is used as a sentinel for "none scheduled" and should be blanked
+          out when parsed into a date.
+      - name: dc_eps_reg_days_fm_last_airing
+        sql: |-
+          (
+            SELECT hop1.dc_eps_reg_days_fm_last_airing
+            FROM {{ catalog('dwhprd_gold') }}.dc_episode_dim hop1
+            WHERE {CUBE}.dc_episode_key = hop1.dc_episode_key
+          )
+        type: number
+        title: Dc Eps Regional Days From Last Airing
+        description: Days elapsed since this episode last aired on this distribution channel's region.
+      - name: dc_eps_reg_last_air_bday_key
+        sql: |-
+          (
+            SELECT hop1.dc_eps_reg_last_air_bday_key
+            FROM {{ catalog('dwhprd_gold') }}.dc_episode_dim hop1
+            WHERE {CUBE}.dc_episode_key = hop1.dc_episode_key
+          )
+        type: number
+        title: Dc Eps Regional Last Air Bday Key
+        description: Day key (YYYYMMDD) of this episode's most recent airing on this distribution channel's region.
+      - name: dc_eps_reg_next_air_bday_key
+        sql: |-
+          (
+            SELECT hop1.dc_eps_reg_next_air_bday_key
+            FROM {{ catalog('dwhprd_gold') }}.dc_episode_dim hop1
+            WHERE {CUBE}.dc_episode_key = hop1.dc_episode_key
+          )
+        type: number
+        title: Dc Eps Regional Next Air Bday Key
+        description: Day key (YYYYMMDD) of this episode's next scheduled airing on this distribution channel's region.
+      - name: dc_seas_days_fm_last_airing
+        sql: |-
+          (
+            SELECT hop1.dc_seas_days_fm_last_airing
+            FROM (SELECT * FROM ( SELECT *, row_number() OVER (PARTITION BY dc_season_key ORDER BY update_ts DESC) AS dedupe_rn FROM {{ catalog('dwhprd_gold') }}.dc_season_dim ) WHERE
+            dedupe_rn = 1) hop1
+            WHERE {CUBE}.dc_season_key = hop1.dc_season_key
+          )
+        type: number
+        title: Dc Seas Days From Last Airing
+        description: Days elapsed since this season last aired on this distribution channel.
+      - name: dc_seas_last_air_bday_key
+        sql: |-
+          (
+            SELECT hop1.dc_seas_last_air_bday_key
+            FROM (SELECT * FROM ( SELECT *, row_number() OVER (PARTITION BY dc_season_key ORDER BY update_ts DESC) AS dedupe_rn FROM {{ catalog('dwhprd_gold') }}.dc_season_dim ) WHERE
+            dedupe_rn = 1) hop1
+            WHERE {CUBE}.dc_season_key = hop1.dc_season_key
+          )
+        type: number
+        title: Dc Seas Last Air Bday Key
+        description: Day key (YYYYMMDD) of this season's most recent airing on this distribution channel.
+      - name: dc_seas_next_air_bday_key
+        sql: |-
+          (
+            SELECT hop1.dc_seas_next_air_bday_key
+            FROM (SELECT * FROM ( SELECT *, row_number() OVER (PARTITION BY dc_season_key ORDER BY update_ts DESC) AS dedupe_rn FROM {{ catalog('dwhprd_gold') }}.dc_season_dim ) WHERE
+            dedupe_rn = 1) hop1
+            WHERE {CUBE}.dc_season_key = hop1.dc_season_key
+          )
+        type: number
+        title: Dc Seas Next Air Bday Key
+        description: Day key (YYYYMMDD) of this season's next scheduled airing on this distribution channel.
+      - name: dc_seas_prem_bday_key
+        sql: |-
+          (
+            SELECT hop1.dc_seas_prem_bday_key
+            FROM (SELECT * FROM ( SELECT *, row_number() OVER (PARTITION BY dc_season_key ORDER BY update_ts DESC) AS dedupe_rn FROM {{ catalog('dwhprd_gold') }}.dc_season_dim ) WHERE
+            dedupe_rn = 1) hop1
+            WHERE {CUBE}.dc_season_key = hop1.dc_season_key
+          )
+        type: number
+        title: Dc Seas Prem Bday Key
+        description: Day key (YYYYMMDD) this season premiered on this distribution channel. Anchor date for ' Year Grouping derived dimension, which buckets each airing by elapsed
+          months since this date.
+      - name: dc_seas_prem_date
+        sql: |-
+          (
+            SELECT CASE WHEN hop1.dc_seas_prem_bday_key IS NULL OR hop1.dc_seas_prem_bday_key = 0 THEN NULL ELSE date_parse(CAST(CAST(hop1.dc_seas_prem_bday_key AS BIGINT) AS VARCHAR),
+            '%Y%m%d') END
+            FROM (SELECT * FROM ( SELECT *, row_number() OVER (PARTITION BY dc_season_key ORDER BY update_ts DESC) AS dedupe_rn FROM {{ catalog('dwhprd_gold') }}.dc_season_dim ) WHERE
+            dedupe_rn = 1) hop1
+            WHERE {CUBE}.dc_season_key = hop1.dc_season_key
+          )
+        type: time
+        title: Distribution Channel Season Premiere Date
+        description: dc_seas_prem_bday_key (YYYYMMDD integer) parsed into an actual date — the "Distribution Channel Season Premiere Date" attribute, previously exposed only as the
+          raw undecoded key. Same CAST-to-BIGINT-then-VARCHAR-then-date_parse idiom proven by year_grouping against this exact column (decimal(38,10), hence the BIGINT hop), guarded
+          against NULL/0 the same way.
+      - name: dc_seas_reg_days_fm_last_airng
+        sql: |-
+          (
+            SELECT hop1.dc_seas_reg_days_fm_last_airng
+            FROM (SELECT * FROM ( SELECT *, row_number() OVER (PARTITION BY dc_season_key ORDER BY update_ts DESC) AS dedupe_rn FROM {{ catalog('dwhprd_gold') }}.dc_season_dim ) WHERE
+            dedupe_rn = 1) hop1
+            WHERE {CUBE}.dc_season_key = hop1.dc_season_key
+          )
+        type: number
+        title: Dc Seas Regional Days From Last Airing
+        description: Days elapsed since this season last aired on this distribution channel's region.
+      - name: dc_seas_reg_last_air_bday_key
+        sql: |-
+          (
+            SELECT hop1.dc_seas_reg_last_air_bday_key
+            FROM (SELECT * FROM ( SELECT *, row_number() OVER (PARTITION BY dc_season_key ORDER BY update_ts DESC) AS dedupe_rn FROM {{ catalog('dwhprd_gold') }}.dc_season_dim ) WHERE
+            dedupe_rn = 1) hop1
+            WHERE {CUBE}.dc_season_key = hop1.dc_season_key
+          )
+        type: number
+        title: Dc Seas Reg Last Air Bday Key
+        description: Day key (YYYYMMDD) of this season's most recent airing on this distribution channel's region.
+      - name: dc_seas_reg_next_air_bday_key
+        sql: |-
+          (
+            SELECT hop1.dc_seas_reg_next_air_bday_key
+            FROM (SELECT * FROM ( SELECT *, row_number() OVER (PARTITION BY dc_season_key ORDER BY update_ts DESC) AS dedupe_rn FROM {{ catalog('dwhprd_gold') }}.dc_season_dim ) WHERE
+            dedupe_rn = 1) hop1
+            WHERE {CUBE}.dc_season_key = hop1.dc_season_key
+          )
+        type: number
+        title: Dc Seas Reg Next Air Bday Key
+        description: Day key (YYYYMMDD) of this season's next scheduled airing on this distribution channel's region.
+      - name: dc_seas_reg_prem_bday_key
+        sql: |-
+          (
+            SELECT hop1.dc_seas_reg_prem_bday_key
+            FROM (SELECT * FROM ( SELECT *, row_number() OVER (PARTITION BY dc_season_key ORDER BY update_ts DESC) AS dedupe_rn FROM {{ catalog('dwhprd_gold') }}.dc_season_dim ) WHERE
+            dedupe_rn = 1) hop1
+            WHERE {CUBE}.dc_season_key = hop1.dc_season_key
+          )
+        type: number
+        title: Dc Seas Reg Prem Bday Key
+        description: Day key (YYYYMMDD) this season premiered on this distribution channel's region.
+      - name: dc_seas_reg_prem_date
+        sql: |-
+          (
+            SELECT CASE WHEN hop1.dc_seas_reg_prem_bday_key IS NULL OR hop1.dc_seas_reg_prem_bday_key = 0 THEN NULL ELSE date_parse(CAST(CAST(hop1.dc_seas_reg_prem_bday_key AS BIGINT) AS
+            VARCHAR), '%Y%m%d') END
+            FROM (SELECT * FROM ( SELECT *, row_number() OVER (PARTITION BY dc_season_key ORDER BY update_ts DESC) AS dedupe_rn FROM {{ catalog('dwhprd_gold') }}.dc_season_dim ) WHERE
+            dedupe_rn = 1) hop1
+            WHERE {CUBE}.dc_season_key = hop1.dc_season_key
+          )
+        type: time
+        title: Season Regional Premiere Date
+        description: dc_seas_reg_prem_bday_key (YYYYMMDD integer) parsed into an actual date — the "Season Regional Premiere Date" attribute, previously exposed only as the raw undecoded
+          key. Same idiom and decimal(38,10)-via-BIGINT rationale as dc_seas_prem_date.
+      - name: dc_season_year_grouping
+        sql: |-
+          CASE WHEN {CUBE}.local_bcast_day_key IS NULL OR {CUBE}.local_bcast_day_key = 0 OR (
+            SELECT hop1.dc_seas_prem_bday_key
+            FROM (SELECT * FROM ( SELECT *, row_number() OVER (PARTITION BY dc_season_key ORDER BY update_ts DESC) AS dedupe_rn FROM {{ catalog('dwhprd_gold') }}.dc_season_dim ) WHERE
+            dedupe_rn = 1) hop1
+            WHERE {CUBE}.dc_season_key = hop1.dc_season_key
+          ) IS NULL THEN NULL WHEN date_diff('month', date_trunc('month', date_parse(CAST(CAST((
+            SELECT hop1.dc_seas_prem_bday_key
+            FROM (SELECT * FROM ( SELECT *, row_number() OVER (PARTITION BY dc_season_key ORDER BY update_ts DESC) AS dedupe_rn FROM {{ catalog('dwhprd_gold') }}.dc_season_dim ) WHERE
+            dedupe_rn = 1) hop1
+            WHERE {CUBE}.dc_season_key = hop1.dc_season_key
+          ) AS BIGINT) AS VARCHAR), '%Y%m%d')), date_trunc('month', date_parse(CAST(CAST({CUBE}.local_bcast_day_key AS BIGINT) AS VARCHAR), '%Y%m%d'))) BETWEEN 0 AND 11 THEN '0-11 months'
+          WHEN date_diff('month', date_trunc('month', date_parse(CAST(CAST((
+            SELECT hop1.dc_seas_prem_bday_key
+            FROM (SELECT * FROM ( SELECT *, row_number() OVER (PARTITION BY dc_season_key ORDER BY update_ts DESC) AS dedupe_rn FROM {{ catalog('dwhprd_gold') }}.dc_season_dim ) WHERE
+            dedupe_rn = 1) hop1
+            WHERE {CUBE}.dc_season_key = hop1.dc_season_key
+          ) AS BIGINT) AS VARCHAR), '%Y%m%d')), date_trunc('month', date_parse(CAST(CAST({CUBE}.local_bcast_day_key AS BIGINT) AS VARCHAR), '%Y%m%d'))) BETWEEN 12 AND 22 THEN '12-22 months'
+          WHEN date_diff('month', date_trunc('month', date_parse(CAST(CAST((
+            SELECT hop1.dc_seas_prem_bday_key
+            FROM (SELECT * FROM ( SELECT *, row_number() OVER (PARTITION BY dc_season_key ORDER BY update_ts DESC) AS dedupe_rn FROM {{ catalog('dwhprd_gold') }}.dc_season_dim ) WHERE
+            dedupe_rn = 1) hop1
+            WHERE {CUBE}.dc_season_key = hop1.dc_season_key
+          ) AS BIGINT) AS VARCHAR), '%Y%m%d')), date_trunc('month', date_parse(CAST(CAST({CUBE}.local_bcast_day_key AS BIGINT) AS VARCHAR), '%Y%m%d'))) BETWEEN 23 AND 33 THEN '23-33 months'
+          WHEN date_diff('month', date_trunc('month', date_parse(CAST(CAST((
+            SELECT hop1.dc_seas_prem_bday_key
+            FROM (SELECT * FROM ( SELECT *, row_number() OVER (PARTITION BY dc_season_key ORDER BY update_ts DESC) AS dedupe_rn FROM {{ catalog('dwhprd_gold') }}.dc_season_dim ) WHERE
+            dedupe_rn = 1) hop1
+            WHERE {CUBE}.dc_season_key = hop1.dc_season_key
+          ) AS BIGINT) AS VARCHAR), '%Y%m%d')), date_trunc('month', date_parse(CAST(CAST({CUBE}.local_bcast_day_key AS BIGINT) AS VARCHAR), '%Y%m%d'))) BETWEEN 34 AND 44 THEN '34-44 months'
+          WHEN date_diff('month', date_trunc('month', date_parse(CAST(CAST((
+            SELECT hop1.dc_seas_prem_bday_key
+            FROM (SELECT * FROM ( SELECT *, row_number() OVER (PARTITION BY dc_season_key ORDER BY update_ts DESC) AS dedupe_rn FROM {{ catalog('dwhprd_gold') }}.dc_season_dim ) WHERE
+            dedupe_rn = 1) hop1
+            WHERE {CUBE}.dc_season_key = hop1.dc_season_key
+          ) AS BIGINT) AS VARCHAR), '%Y%m%d')), date_trunc('month', date_parse(CAST(CAST({CUBE}.local_bcast_day_key AS BIGINT) AS VARCHAR), '%Y%m%d'))) BETWEEN 45 AND 55 THEN '45-55 months'
+          WHEN date_diff('month', date_trunc('month', date_parse(CAST(CAST((
+            SELECT hop1.dc_seas_prem_bday_key
+            FROM (SELECT * FROM ( SELECT *, row_number() OVER (PARTITION BY dc_season_key ORDER BY update_ts DESC) AS dedupe_rn FROM {{ catalog('dwhprd_gold') }}.dc_season_dim ) WHERE
+            dedupe_rn = 1) hop1
+            WHERE {CUBE}.dc_season_key = hop1.dc_season_key
+          ) AS BIGINT) AS VARCHAR), '%Y%m%d')), date_trunc('month', date_parse(CAST(CAST({CUBE}.local_bcast_day_key AS BIGINT) AS VARCHAR), '%Y%m%d'))) BETWEEN 56 AND 66 THEN '56-66 months'
+          WHEN date_diff('month', date_trunc('month', date_parse(CAST(CAST((
+            SELECT hop1.dc_seas_prem_bday_key
+            FROM (SELECT * FROM ( SELECT *, row_number() OVER (PARTITION BY dc_season_key ORDER BY update_ts DESC) AS dedupe_rn FROM {{ catalog('dwhprd_gold') }}.dc_season_dim ) WHERE
+            dedupe_rn = 1) hop1
+            WHERE {CUBE}.dc_season_key = hop1.dc_season_key
+          ) AS BIGINT) AS VARCHAR), '%Y%m%d')), date_trunc('month', date_parse(CAST(CAST({CUBE}.local_bcast_day_key AS BIGINT) AS VARCHAR), '%Y%m%d'))) BETWEEN 67 AND 77 THEN '67-77 months'
+          WHEN date_diff('month', date_trunc('month', date_parse(CAST(CAST((
+            SELECT hop1.dc_seas_prem_bday_key
+            FROM (SELECT * FROM ( SELECT *, row_number() OVER (PARTITION BY dc_season_key ORDER BY update_ts DESC) AS dedupe_rn FROM {{ catalog('dwhprd_gold') }}.dc_season_dim ) WHERE
+            dedupe_rn = 1) hop1
+            WHERE {CUBE}.dc_season_key = hop1.dc_season_key
+          ) AS BIGINT) AS VARCHAR), '%Y%m%d')), date_trunc('month', date_parse(CAST(CAST({CUBE}.local_bcast_day_key AS BIGINT) AS VARCHAR), '%Y%m%d'))) BETWEEN 78 AND 88 THEN '78-88 months'
+          WHEN date_diff('month', date_trunc('month', date_parse(CAST(CAST((
+            SELECT hop1.dc_seas_prem_bday_key
+            FROM (SELECT * FROM ( SELECT *, row_number() OVER (PARTITION BY dc_season_key ORDER BY update_ts DESC) AS dedupe_rn FROM {{ catalog('dwhprd_gold') }}.dc_season_dim ) WHERE
+            dedupe_rn = 1) hop1
+            WHERE {CUBE}.dc_season_key = hop1.dc_season_key
+          ) AS BIGINT) AS VARCHAR), '%Y%m%d')), date_trunc('month', date_parse(CAST(CAST({CUBE}.local_bcast_day_key AS BIGINT) AS VARCHAR), '%Y%m%d'))) BETWEEN 89 AND 99 THEN '89-99 months'
+          WHEN date_diff('month', date_trunc('month', date_parse(CAST(CAST((
+            SELECT hop1.dc_seas_prem_bday_key
+            FROM (SELECT * FROM ( SELECT *, row_number() OVER (PARTITION BY dc_season_key ORDER BY update_ts DESC) AS dedupe_rn FROM {{ catalog('dwhprd_gold') }}.dc_season_dim ) WHERE
+            dedupe_rn = 1) hop1
+            WHERE {CUBE}.dc_season_key = hop1.dc_season_key
+          ) AS BIGINT) AS VARCHAR), '%Y%m%d')), date_trunc('month', date_parse(CAST(CAST({CUBE}.local_bcast_day_key AS BIGINT) AS VARCHAR), '%Y%m%d'))) BETWEEN 100 AND 110 THEN
+          '100-110 months' ELSE NULL END
+        type: string
+        title: Year Grouping
+        description: 'Elapsed-month band between this airing''s local broadcast month and the season''s premiere month on this distribution channel (dc_season_dim.dc_seas_prem_bday_key)
+          — ten bands, months 0-11 through 100-110. See custom_daypart (on time_dim) for the other half of MicroStrategy''s 20-way AIREDCOUNT/GODWFLAG encoding this replaces. Uses
+          Cube''s cross-cube dimension reference notation (dot inside the braces) against dc_season_dim, which is already directly joined from this fact — a prior version used a
+          raw correlated subquery instead (on the mistaken assumption that Cube.js disallows cross-cube dimension references entirely; it does not, see
+          docs.cube.dev/data-modeling/dimensions#from-other-cubes),
+          which compiled fine but failed at query time against Athena with "NOT_SUPPORTED: Given correlated subquery is not supported" — Athena''s Trino engine only supports a correlated
+          subquery whose outer-table reference is confined to the WHERE clause; referencing the outer column inside the subquery''s own SELECT list (as the date-diff calculation
+          here needed to) is rejected outright, even with a single level of nesting. Also casts both decimal(38,10) key columns through BIGINT before VARCHAR/date_parse, since a
+          direct decimal-to-VARCHAR cast renders as "20070706.0000000000" and breaks the ''%Y%m%d'' format string.'
+      - name: dc_show_days_fm_last_airing
+        sql: |-
+          (
+            SELECT hop1.dc_show_days_fm_last_airing
+            FROM {{ catalog('dwhprd_gold') }}.dc_show_dim hop1
+            WHERE {CUBE}.dc_show_key = hop1.dc_show_key
+          )
+        type: number
+        title: Dc Show Days From Last Airing
+        description: Days elapsed since this show last aired on this distribution channel.
+      - name: dc_show_last_air_bday_key
+        sql: |-
+          (
+            SELECT hop1.dc_show_last_air_bday_key
+            FROM {{ catalog('dwhprd_gold') }}.dc_show_dim hop1
+            WHERE {CUBE}.dc_show_key = hop1.dc_show_key
+          )
+        type: number
+        title: Dc Show Last Air Bday Key
+        description: Day key (YYYYMMDD) of this show's most recent airing on this distribution channel.
+      - name: dc_show_next_air_bday_key
+        sql: |-
+          (
+            SELECT hop1.dc_show_next_air_bday_key
+            FROM {{ catalog('dwhprd_gold') }}.dc_show_dim hop1
+            WHERE {CUBE}.dc_show_key = hop1.dc_show_key
+          )
+        type: number
+        title: Dc Show Next Air Bday Key
+        description: Day key (YYYYMMDD) of this show's next scheduled airing on this distribution channel.
+      - name: dc_show_reg_days_fm_last_airng
+        sql: |-
+          (
+            SELECT hop1.dc_show_reg_days_fm_last_airng
+            FROM {{ catalog('dwhprd_gold') }}.dc_show_dim hop1
+            WHERE {CUBE}.dc_show_key = hop1.dc_show_key
+          )
+        type: number
+        title: Dc Show Regional Days From Last Airing
+        description: Days elapsed since this show last aired on this distribution channel's region.
+      - name: dc_show_reg_last_air_bday_key
+        sql: |-
+          (
+            SELECT hop1.dc_show_reg_last_air_bday_key
+            FROM {{ catalog('dwhprd_gold') }}.dc_show_dim hop1
+            WHERE {CUBE}.dc_show_key = hop1.dc_show_key
+          )
+        type: number
+        title: Dc Show Reg Last Air Bday Key
+        description: Day key (YYYYMMDD) of this show's most recent airing on this distribution channel's region.
+      - name: dc_show_reg_next_air_bday_key
+        sql: |-
+          (
+            SELECT hop1.dc_show_reg_next_air_bday_key
+            FROM {{ catalog('dwhprd_gold') }}.dc_show_dim hop1
+            WHERE {CUBE}.dc_show_key = hop1.dc_show_key
+          )
+        type: number
+        title: Dc Show Reg Next Air Bday Key
+        description: Day key (YYYYMMDD) of this show's next scheduled airing on this distribution channel's region.
+      - name: budget_category_desc
+        sql: |-
+          (
+            SELECT hop2.budget_category_desc
+            FROM {{ catalog('dwhprd_gold') }}.deal_io_part_prog_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.budget_category_dim hop2
+              ON hop1.budget_category_key = hop2.budget_category_key
+            WHERE {CUBE}.deal_io_part_prog_key = hop1.deal_io_part_prog_key AND {CUBE}.internal_offer_key = hop1.internal_offer_key
+          )
+        type: string
+        title: Budget Category
+        description: Human-readable description of the budget category.
+      - name: deal_prog_eps_status_desc
+        sql: |-
+          (
+            SELECT hop3.deal_prog_eps_status_desc
+            FROM {{ catalog('dwhprd_gold') }}.deal_io_part_prog_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.deal_program_episode_dim hop2
+              ON hop1.deal_program_episode_key = hop2.deal_program_episode_key
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.deal_prog_eps_status_dim hop3
+              ON hop2.deal_prog_eps_status_key = hop3.deal_prog_eps_status_key
+            WHERE {CUBE}.deal_io_part_prog_key = hop1.deal_io_part_prog_key AND {CUBE}.internal_offer_key = hop1.internal_offer_key
+          )
+        type: string
+        title: Deal Prog Eps Status Desc
+        description: Human-readable deal program episode status — e.g. Dead, Removed From Deal.
+      - name: deal_type_desc
+        sql: |-
+          (
+            SELECT hop2.deal_type_desc
+            FROM {{ catalog('dwhprd_gold') }}.deal_io_part_prog_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.deal_type_dim hop2
+              ON hop1.deal_type_key = hop2.deal_type_key
+            WHERE {CUBE}.deal_io_part_prog_key = hop1.deal_io_part_prog_key AND {CUBE}.internal_offer_key = hop1.internal_offer_key
+          )
+        type: string
+        title: Deal Type
+        description: Human-readable description of the deal type, e.g. DEVELOPMENT.
+      - name: deal_type_key
+        sql: |-
+          (
+            SELECT hop1.deal_type_key
+            FROM {{ catalog('dwhprd_gold') }}.deal_io_part_prog_dim hop1
+            WHERE {CUBE}.deal_io_part_prog_key = hop1.deal_io_part_prog_key AND {CUBE}.internal_offer_key = hop1.internal_offer_key
+          )
+        type: number
+        title: Deal Type Key
+        description: Foreign key to deal_type_dim.
+      - name: contract_code
+        sql: |-
+          (
+            SELECT hop1.contract_code
+            FROM {{ catalog('dwhprd_gold') }}.deal_project_dim hop1
+            WHERE {CUBE}.deal_project_key = hop1.deal_project_key
+          )
+        type: string
+        title: Contract Id
+        description: Contract code associated with this deal project.
+      - name: deal_name
+        sql: |-
+          (
+            SELECT hop1.deal_name
+            FROM {{ catalog('dwhprd_gold') }}.deal_project_dim hop1
+            WHERE {CUBE}.deal_project_key = hop1.deal_project_key
+          )
+        type: string
+        title: Deal Title
+        description: Human-readable name of the deal.
+      - name: deal_project_id
+        sql: |-
+          (
+            SELECT hop1.deal_project_id
+            FROM {{ catalog('dwhprd_gold') }}.deal_project_dim hop1
+            WHERE {CUBE}.deal_project_key = hop1.deal_project_key
+          )
+        type: number
+        title: Deal Project Id
+        description: Source-system identifier for the deal project.
+      - name: project_created_date
+        sql: |-
+          (
+            SELECT hop1.project_created_date
+            FROM {{ catalog('dwhprd_gold') }}.deal_project_dim hop1
+            WHERE {CUBE}.deal_project_key = hop1.deal_project_key
+          )
+        type: time
+        title: Deal Creation Date
+        description: 'Date this deal project was created, joined from airings_fact on deal_project_key alone (airings_fact does not carry this cube''s other composite-key columns,
+          budget_currency_key/premiere_status_key, to narrow it further). Despite this cube''s own description flagging deal_project_key as not unique on its own — true for the 3-column
+          composite key req_rights_episode_fact needs — probed directly against dev data for this specific join: deal_project_dim is 100% unique on deal_project_key alone across
+          all 163,380 rows, and every one of airings_fact''s 55.6M rows matches (0% orphan). Confirmed clean; the composite key appears to only matter for a different join path,
+          not for this one.'
+      - name: dc_brand_key
+        sql: |-
+          (
+            SELECT hop1.dc_brand_key
+            FROM {{ catalog('dwhprd_gold') }}.distribution_channel_dim hop1
+            WHERE {CUBE}.distribution_channel_key = hop1.distribution_channel_key
+          )
+        type: number
+        title: Distribution Channel Brand Key
+        description: Foreign key toward the brand this distribution channel belongs to.
+      - name: dc_brand_name
+        sql: |-
+          (
+            SELECT hop1.dc_brand_name
+            FROM {{ catalog('dwhprd_gold') }}.distribution_channel_dim hop1
+            WHERE {CUBE}.distribution_channel_key = hop1.distribution_channel_key
+          )
+        type: string
+        title: Distribution Channel Brand Name
+        description: Brand name for this distribution channel.
+      - name: distr_chnl_region_name
+        sql: |-
+          (
+            SELECT hop1.distr_chnl_region_name
+            FROM {{ catalog('dwhprd_gold') }}.distribution_channel_dim hop1
+            WHERE {CUBE}.distribution_channel_key = hop1.distribution_channel_key
+          )
+        type: string
+        title: Distribution Channel Region Name
+        description: Name of the region this distribution channel serves.
+      - name: distribution_channel_name
+        sql: |-
+          (
+            SELECT hop1.distribution_channel_name
+            FROM {{ catalog('dwhprd_gold') }}.distribution_channel_dim hop1
+            WHERE {CUBE}.distribution_channel_key = hop1.distribution_channel_key
+          )
+        type: string
+        title: Distribution Channel Name
+        description: Display name of the distribution channel, e.g. Discovery Channel - US.
+      - name: dc_hist_concat_names
+        sql: |-
+          (
+            SELECT hop1.dc_hist_concat_names
+            FROM {{ catalog('dwhprd_gold') }}.distribution_channel_hist_dim hop1
+            WHERE {CUBE}.distribution_channel_hist_key = hop1.distribution_channel_hist_key
+          )
+        type: string
+        title: Distribution Channel History Concatenated Names
+        description: Pipe-delimited concatenation of all historical names for this distribution channel.
+      - name: distribution_channel_hist_name
+        sql: |-
+          (
+            SELECT hop1.distribution_channel_hist_name
+            FROM {{ catalog('dwhprd_gold') }}.distribution_channel_hist_dim hop1
+            WHERE {CUBE}.distribution_channel_hist_key = hop1.distribution_channel_hist_key
+          )
+        type: string
+        title: Distribution Channel Hist Name
+        description: The distribution channel's name as of this historical record.
+      - name: controlling_entity_name
+        sql: |-
+          (
+            SELECT hop1.entity_name
+            FROM {{ catalog('dwhprd_gold') }}.entity_dim hop1
+            WHERE {CUBE}.controlling_entity_key = hop1.entity_key
+          )
+        type: string
+        title: Entity Name
+        description: Human-readable name of the entity.
+      - name: episode_id
+        sql: |-
+          (
+            SELECT hop1.episode_id
+            FROM {{ catalog('dwhprd_gold') }}.episode_dim hop1
+            WHERE {CUBE}.episode_key = hop1.episode_key
+          )
+        type: number
+        title: Episode Id
+        description: Source system identifier for the episode from the originating database. Joined from airings_fact via episode_key — probed against dev data at only 31.4% orphan-free
+          (68.6% of airings_fact rows have no matching row here, since this table's episode universe is advertising-scoped rather than content-scoped). Expect this blank on most
+          airings_fact rows.
+      - name: episode_number
+        sql: |-
+          (
+            SELECT hop1.episode_number
+            FROM {{ catalog('dwhprd_gold') }}.episode_dim hop1
+            WHERE {CUBE}.episode_key = hop1.episode_key
+          )
+        type: number
+        title: Episode Number
+        description: Sequential episode number within the season or series. Joined from airings_fact via episode_key — same 68.6% orphan rate as episode_id; see that column's description.
+      - name: episode_short_desc
+        sql: |-
+          (
+            SELECT hop1.episode_short_desc
+            FROM {{ catalog('dwhprd_gold') }}.episode_dim hop1
+            WHERE {CUBE}.episode_key = hop1.episode_key
+          )
+        type: string
+        title: Episode Short Desc
+        description: Brief summary or synopsis of the episode content. Joined from airings_fact via episode_key — same 68.6% orphan rate as episode_id; see that column's description.
+      - name: internal_offer_type_name
+        sql: |-
+          (
+            SELECT hop1.internal_offer_type_name
+            FROM {{ catalog('dwhprd_gold') }}.internal_offer_type_dim hop1
+            WHERE {CUBE}.internal_offer_type_key = hop1.internal_offer_type_key
+          )
+        type: string
+        title: Internal Offer Type Name
+        description: Human-readable internal offer type — e.g. Borrow, Buy-In. Displayed and filtered as "Internal Offer Type".
+      - name: seas_glbl_prem_bday_key
+        sql: |-
+          (
+            SELECT hop1.seas_glbl_prem_bday_key
+            FROM (SELECT * FROM ( SELECT *, row_number() OVER (PARTITION BY season_key ORDER BY update_ts DESC) AS dedupe_rn FROM {{ catalog('dwhprd_gold') }}.season_dim ) WHERE dedupe_rn =
+            1) hop1
+            WHERE {CUBE}.season_key = hop1.season_key
+          )
+        type: number
+        title: Seas Glbl Prem Bday Key
+        description: Date key for global premiere broadcast day in YYYYMMDD format.
+      - name: seas_us_prem_bday_key
+        sql: |-
+          (
+            SELECT hop1.seas_us_prem_bday_key
+            FROM (SELECT * FROM ( SELECT *, row_number() OVER (PARTITION BY season_key ORDER BY update_ts DESC) AS dedupe_rn FROM {{ catalog('dwhprd_gold') }}.season_dim ) WHERE dedupe_rn =
+            1) hop1
+            WHERE {CUBE}.season_key = hop1.season_key
+          )
+        type: number
+        title: Seas Us Prem Bday Key
+        description: Date key for US premiere broadcast day in YYYYMMDD format.
+      - name: season_associated_id
+        sql: |-
+          (
+            SELECT hop1.season_associated_id
+            FROM (SELECT * FROM ( SELECT *, row_number() OVER (PARTITION BY season_key ORDER BY update_ts DESC) AS dedupe_rn FROM {{ catalog('dwhprd_gold') }}.season_dim ) WHERE dedupe_rn =
+            1) hop1
+            WHERE {CUBE}.season_key = hop1.season_key
+          )
+        type: number
+        title: Season Associated Id
+        description: Associated identifier linking the season to related business entities.
+      - name: season_hours
+        sql: |-
+          (
+            SELECT seas_active_hours + seas_pending_hours
+            FROM (SELECT * FROM ( SELECT *, row_number() OVER (PARTITION BY season_key ORDER BY update_ts DESC) AS dedupe_rn FROM {{ catalog('dwhprd_gold') }}.season_dim ) WHERE dedupe_rn =
+            1) hop1
+            WHERE {CUBE}.season_key = hop1.season_key
+          )
+        type: number
+        title: Season Hours
+        description: Active plus pending hours combined — the "Season Hours" attribute, which does not distinguish active from pending.
+      - name: season_name
+        sql: |-
+          (
+            SELECT hop1.season_name
+            FROM (SELECT * FROM ( SELECT *, row_number() OVER (PARTITION BY season_key ORDER BY update_ts DESC) AS dedupe_rn FROM {{ catalog('dwhprd_gold') }}.season_dim ) WHERE dedupe_rn =
+            1) hop1
+            WHERE {CUBE}.season_key = hop1.season_key
+          )
+        type: string
+        title: Season Name
+        description: Display name of the season, often including season type or number designation.
+      - name: season_num_episodes
+        sql: |-
+          (
+            SELECT seas_num_active_episodes + seas_num_pending_episodes
+            FROM (SELECT * FROM ( SELECT *, row_number() OVER (PARTITION BY season_key ORDER BY update_ts DESC) AS dedupe_rn FROM {{ catalog('dwhprd_gold') }}.season_dim ) WHERE dedupe_rn =
+            1) hop1
+            WHERE {CUBE}.season_key = hop1.season_key
+          )
+        type: number
+        title: Season Number Of Episodes
+        description: Active plus pending episode counts combined — the "Season Number of Episodes" attribute Airings, which does not distinguish active from pending.
+      - name: season_property_id
+        sql: |-
+          (
+            SELECT hop1.season_property_id
+            FROM (SELECT * FROM ( SELECT *, row_number() OVER (PARTITION BY season_key ORDER BY update_ts DESC) AS dedupe_rn FROM {{ catalog('dwhprd_gold') }}.season_dim ) WHERE dedupe_rn =
+            1) hop1
+            WHERE {CUBE}.season_key = hop1.season_key
+          )
+        type: number
+        title: Season Property Id
+        description: Identifier linking the season to its associated property or franchise.
+      - name: season_short_desc
+        sql: |-
+          (
+            SELECT hop1.season_short_desc
+            FROM (SELECT * FROM ( SELECT *, row_number() OVER (PARTITION BY season_key ORDER BY update_ts DESC) AS dedupe_rn FROM {{ catalog('dwhprd_gold') }}.season_dim ) WHERE dedupe_rn =
+            1) hop1
+            WHERE {CUBE}.season_key = hop1.season_key
+          )
+        type: string
+        title: Season Short Desc
+        description: Brief text description of the season's content or theme.
+      - name: corp_genre_name
+        sql: |-
+          (
+            SELECT hop2.corp_genre_name
+            FROM {{ catalog('dwhprd_gold') }}.show_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.corp_genre_dim hop2
+              ON hop1.show_corp_genre_key = hop2.corp_genre_key
+            WHERE {CUBE}.show_key = hop1.show_key
+          )
+        type: string
+        title: Corp Genre Name
+        description: Display name of the corporate genre, e.g. Food.
+      - name: corp_subgenre_name
+        sql: |-
+          (
+            SELECT hop2.corp_subgenre_name
+            FROM {{ catalog('dwhprd_gold') }}.show_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.corp_subgenre_dim hop2
+              ON hop1.show_corp_subgenre_key = hop2.corp_subgenre_key
+            WHERE {CUBE}.show_key = hop1.show_key
+          )
+        type: string
+        title: Corp Subgenre Name
+        description: Display name of the corporate subgenre.
+      - name: show_genre_concat_name
+        sql: |-
+          (
+            SELECT hop2.show_genre_concat_name
+            FROM {{ catalog('dwhprd_gold') }}.show_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.show_genre_concat_dim hop2
+              ON hop1.show_genre_concat_key = hop2.show_genre_concat_key
+            WHERE {CUBE}.show_key = hop1.show_key
+          )
+        type: string
+        title: Show Genre Concat Name
+        description: Concatenated display value combining this show's genre levels.
+      - name: show_id_normalized
+        sql: |-
+          (
+            SELECT CASE WHEN hop1.show_id > 999900 THEN CAST(substr(CAST(hop1.show_id AS VARCHAR), 7, 100) AS DOUBLE) ELSE hop1.show_id END
+            FROM {{ catalog('dwhprd_gold') }}.show_dim hop1
+            WHERE {CUBE}.show_key = hop1.show_key
+          )
+        type: number
+        title: Show Id (normalized)
+        description: show_id with MicroStrategy's mangled-ID prefix stripped for values above 999900, matching the same normalization MicroStrategy itself applies in its own SQL
+          rather than reading show_id raw.
+      - name: show_name
+        sql: |-
+          (
+            SELECT hop1.show_name
+            FROM {{ catalog('dwhprd_gold') }}.show_dim hop1
+            WHERE {CUBE}.show_key = hop1.show_key
+          )
+        type: string
+        title: Show Name
+        description: Primary name or title of the show.
+      - name: show_short_desc
+        sql: |-
+          (
+            SELECT hop1.show_short_desc
+            FROM {{ catalog('dwhprd_gold') }}.show_dim hop1
+            WHERE {CUBE}.show_key = hop1.show_key
+          )
+        type: string
+        title: Show Short Desc
+        description: Brief description or synopsis of the show.
+      - name: custom_daypart
+        sql: |-
+          (
+            SELECT CASE WHEN hop1.time_hour_plus IS NULL THEN NULL WHEN hop1.time_hour_plus IN (20, 21, 22) THEN 'Prime (8-11pm)' ELSE 'Non-Prime' END
+            FROM {{ catalog('dwhprd_gold') }}.time_dim hop1
+            WHERE {CUBE}.local_bcast_time_key = hop1.time_key
+          )
+        type: string
+        title: Custom Daypart
+        description: Two-way prime split on the broadcast-day hour, read via airings_fact's Local Broadcast Time role. MicroStrategy's export encodes this as one of 20 AIREDCOUNT/GODWFLAG
+          measure pairs (10 elapsed-month bands x 2 dayparts); here it is one of two dimensions the aired_count measure is grouped or filtered by instead — see year_grouping (on
+          dc_season_dim) and aired_count. Defined here rather than on airings_fact because Cube.js does not allow a member's SQL to reference the same foreign cube's column more
+          than once in one formula; a same-cube self-reference has no such limit.
+      - name: time_wo_secs_plus
+        sql: |-
+          (
+            SELECT hop1.time_wo_secs_plus
+            FROM {{ catalog('dwhprd_gold') }}.time_dim hop1
+            WHERE {CUBE}.local_bcast_time_key = hop1.time_key
+          )
+        type: string
+        title: Time (without seconds, broadcast-day)
+        description: Broadcast-day time without seconds, e.g. 8:00PM.
+      - name: airing_count
+        sql: airing_count
+        type: number
+        title: Airing Count (raw)
+        description: Raw per-row airing count. Do not sum directly in ad-hoc queries; use the aired_count measure.
+      - name: row_id
+        sql: >-
+          concat(cast({CUBE}.season_key as varchar), '|', cast({CUBE}.show_key as varchar), '|',
+          cast({CUBE}.episode_key as varchar), '|', cast({CUBE}.distribution_channel_key as varchar), '|',
+          cast({CUBE}.local_bcast_day_key as varchar), '|', cast({CUBE}.local_bcast_time_key as varchar), '|',
+          cast({CUBE}.dc_episode_key as varchar), '|', cast({CUBE}.media_id as varchar), '|',
+          cast({CUBE}.create_ts as varchar))
+        type: string
+        primary_key: true
+        title: Row Id (synthetic)
+        description: >-
+          Cube.js requires a declared primary key on any cube that defines joins, for correct aggregate/pre-agg
+          behavior. This table has no natural single-column row identifier — checked against dev data: no
+          candidate column or combination tried was fully unique. This 9-column concatenation is the closest
+          available proxy, resolving 49.4M of 55.6M rows (88.9%) to a distinct value; the remainder are genuine
+          duplicate-looking rows in the source table (same key values, different underlying record), not a
+          modelling gap here. Treat this as a technical surrogate for Cube's requirement, not a verified natural
+          key — do not rely on it for exact per-row deduplication.
+      - name: airing_future_count
+        sql: airing_future_count
+        type: number
+        title: Airing Future Count (raw)
+        description: >-
+          Raw per-row future airing count. Do not sum directly in ad-hoc queries; use the future_airing_count
+          measure.
+      - name: controlling_entity_key
+        sql: controlling_entity_key
+        type: number
+        title: Controlling Entity Key
+        description: >-
+          Foreign key to entity_dim, in the Controlling Entity role — probed clean against dev data (unique on
+          entity_dim.entity_key, zero orphans). A sixth role for the same entity_dim table already role-played
+          five ways on req_rights_episode_fact and twice more on season_dim/show_dim.
+      - name: corporate_daypart_key
+        sql: corporate_daypart_key
+        type: number
+        title: Corporate Daypart Key
+        description: >-
+          Foreign key to corporate_daypart_dim — probed clean on fanout, but 10.3% of airings_fact rows have no
+          matching daypart record (the same 10.3% as distribution_channel_hist_key; see that column's description).
+      - name: dc_episode_key
+        sql: dc_episode_key
+        type: number
+        title: Dc Episode Key
+        description: Foreign key to dc_episode_dim (the distribution-channel-scoped episode dimension).
+      - name: dc_season_key
+        sql: dc_season_key
+        type: number
+        title: Dc Season Key
+        description: Foreign key to dc_season_dim (the distribution-channel-scoped season dimension).
+      - name: dc_show_key
+        sql: dc_show_key
+        type: number
+        title: Dc Show Key
+        description: Foreign key to dc_show_dim (the distribution-channel-scoped show dimension).
+      - name: distr_chnl_region_key
+        sql: distr_chnl_region_key
+        type: number
+        title: Distribution Channel Region Key
+        description: >-
+          Region this airing's distribution channel serves, carried directly on the fact. MicroStrategy's SQL
+          reads this key from the fact but the matching name (distr_chnl_region_name) from
+          distribution_channel_dim rather than from here — both should agree for a given distribution_channel_key,
+          but this fact-level copy is kept as-is to match the source rather than assumed identical.
+      - name: dc_has_chng_flag
+        sql: dc_has_chng_flag
+        type: string
+        title: Distribution Channel Has Changed
+        description: >-
+          Indicator for whether this airing's distribution channel has been renamed/changed historically,
+          alongside distribution_channel_hist_dim's historical name.
+      - name: distribution_channel_hist_key
+        sql: distribution_channel_hist_key
+        type: number
+        title: Distribution Channel Hist Key
+        description: >-
+          Foreign key to distribution_channel_hist_dim — probed clean on fanout, but 10.3% of airings_fact rows have
+          no matching history record (same rows as the corporate_daypart_key orphans below, suggesting a shared
+          subset of airings with incomplete dimensional attribution).
+      - name: distribution_channel_key
+        sql: distribution_channel_key
+        type: number
+        title: Distribution Channel Key
+        description: Foreign key to distribution_channel_dim.
+      - name: episode_key
+        sql: episode_key
+        type: number
+        title: Episode Key
+        description: >-
+          Foreign key to episode_dim — the advertising-side dimension (property_key/network_key grain), not the
+          content-side "EPISODE_DIM" MicroStrategy actually reads (see this cube's description for the
+          collision). Joined anyway because episode_dim's episode_number/episode_id/episode_short_desc happen to
+          overlap both tables' schemas — but probed against dev data at only 31.4% orphan-free (68.6% of
+          airings_fact rows have no matching episode_dim row). Expect those three columns blank on most rows; see
+          each column's own description on episode_dim.
+      - name: participant_region_flag
+        sql: participant_region_flag
+        type: string
+        title: Participant Region Flag (raw)
+        description: Raw D/O/P/null code. Use participant_region_flag_desc for the decoded label.
+      - name: deal_project_key
+        sql: deal_project_key
+        type: number
+        title: Deal Project Key
+        description: >-
+          Foreign key to deal_project_dim, carrying the deal ID, title, contract ID and creation date for this
+          airing's deal project.
+      - name: deal_io_part_prog_key
+        sql: deal_io_part_prog_key
+        type: number
+        title: Deal IO Participant Program Key
+        description: >-
+          Part of the composite key (with internal_offer_key) this fact joins deal_io_part_prog_dim on.
+      - name: internal_offer_key
+        sql: internal_offer_key
+        type: number
+        title: Internal Offer Key
+        description: >-
+          Part of the composite key (with deal_io_part_prog_key) this fact joins deal_io_part_prog_dim on.
+      - name: internal_offer_type_key
+        sql: internal_offer_type_key
+        type: number
+        title: Internal Offer Type Key
+        description: >-
+          Foreign key to internal_offer_type_dim, e.g. Borrow, Buy-In, N/A.
+      - name: airing_property_id
+        sql: airing_property_id
+        type: number
+        title: Airing Property Id
+        description: >-
+          Property identifier for this airing, carried directly on the fact.
+      - name: participating_entity_key
+        sql: participating_entity_key
+        type: number
+        title: Participating Entity Key
+        description: >-
+          Entity in the Participating Entity role. Read via
+          participating_entity_name's correlated subquery rather than a join, since entity_dim is already joined
+          once on this fact in the Controlling Entity role (see cube_carl_dwhprd_gold_entity_dim's description for
+          the role-play pattern). Probed against dev data: 100% of fact rows have a matching entity_dim row (0%
+          orphan) — unlike the equivalent role-play on req_rights_episode_fact, this one is fully populated.
+      - name: participating_entity_name
+        sql: >-
+          (SELECT ed.entity_name FROM {{ catalog('dwhprd_gold') }}.entity_dim ed WHERE ed.entity_key =
+          {CUBE}.participating_entity_key)
+        type: string
+        title: Participating Entity
+        description: >-
+          entity_dim.entity_name looked up by participating_entity_key via a correlated subquery, since entity_dim
+          is already joined once on this fact in the Controlling Entity role — same role-play pattern as
+          cube_carl_dwhprd_gold_req_rights_episode_fact's equivalent dimension, but fully populated here (see
+          participating_entity_key's description).
+      - name: participant_region_flag_desc
+        sql: >-
+          CASE WHEN {CUBE}.participant_region_flag = 'D' THEN 'Distribution channel region' WHEN
+          {CUBE}.participant_region_flag = 'O' THEN 'Offering region' WHEN {CUBE}.participant_region_flag = 'P' THEN
+          'Participating region' WHEN {CUBE}.participant_region_flag IS NULL THEN 'Not Assigned' ELSE NULL END
+        type: string
+        title: Participant Region Flag
+        description: >-
+          Decoded participant_region_flag — D/O/P/null map to Distribution channel region/Offering region/
+          Participating region/Not Assigned respectively (any other raw value is left blank, matching
+          MicroStrategy's own DECODE, which has no catch-all default).
+      - name: season_cont_entity_name
+        sql: >-
+          (SELECT ed.entity_name FROM {{ catalog('dwhprd_gold') }}.season_dim sd JOIN {{ catalog('dwhprd_gold') }}.entity_dim ed
+          ON ed.entity_key = sd.season_cont_entity_key WHERE sd.season_key = {CUBE}.season_key ORDER BY
+          sd.update_ts DESC LIMIT 1)
+        type: string
+        title: Season Controlling Entity
+        description: >-
+          entity_dim.entity_name for season_dim's Season Controlling Entity role (season_dim.season_cont_entity_key),
+          read via a correlated subquery through season_dim rather than a second join to entity_dim. entity_dim is
+          already joined once directly from this fact (Controlling Entity role); Cube's SQL API (cube-sql, what
+          QuickSight's data source speaks) cannot resolve a single query that needs entity_dim via more than one
+          join path at once — unlike the REST/JS query engine, which handles this role-play fine. Reproduced live:
+          selecting controlling_entity_name + season_cont_entity_name + show_cont_entity_name +
+          originating_entity_name together via the SQL API failed with "Can't find join path to join
+          'cube_carl_dwhprd_gold_airings_fact', ...'" while the identical REST query succeeded. Fixed by dropping
+          this member's join_path in the view down to a same-cube subquery, matching the participating_entity_name
+          precedent on this same cube. The subquery uses a plain JOIN to entity_dim inside it (not a second nested
+          correlated subquery) — Athena/Trino's engine rejects a correlated subquery whose own WHERE clause value
+          comes from another correlated subquery ("NOT_SUPPORTED: Given correlated subquery is not supported"),
+          confirmed live on an earlier version of this fix; only a single level of outer-cube correlation is
+          supported, with everything else expressed as ordinary joins inside that one subquery.
+          ORDER BY update_ts DESC LIMIT 1 mirrors cube_carl_dwhprd_gold_season_dim's own de-dupe query (see that
+          cube's description) — querying season_dim's raw table directly here (not through that cube's deduped
+          SQL) hit the two known duplicate season_key rows live, failing with
+          "SUBQUERY_MULTIPLE_ROWS: Scalar sub-query has returned multiple rows"; both known duplicates are
+          identical in every column so which one LIMIT 1 keeps doesn't matter, but ORDER BY makes the pick
+          deterministic rather than relying on engine-specific unordered-LIMIT behavior.
+      - name: season_cont_region_long_name
+        sql: >-
+          (SELECT rd.region_long_name FROM {{ catalog('dwhprd_gold') }}.season_dim sd JOIN
+          {{ catalog('dwhprd_gold') }}.entity_dim ed ON ed.entity_key = sd.season_cont_entity_key JOIN
+          {{ catalog('dwhprd_gold') }}.region_dim rd ON rd.region_key = ed.region_key WHERE sd.season_key =
+          {CUBE}.season_key ORDER BY sd.update_ts DESC LIMIT 1)
+        type: string
+        title: Season Controlling Region
+        description: >-
+          region_dim.region_long_name for the Season Controlling Entity's region, read via a single correlated
+          subquery through season_dim with two plain internal JOINs (to entity_dim, then region_dim) rather than
+          the three-hop join_path (season_dim.entity_dim.region_dim) — see season_cont_entity_name's description
+          for why this has to be one correlated subquery with internal joins (not nested correlated subqueries)
+          and why it needs the ORDER BY/LIMIT 1 de-dupe guard.
+      - name: show_cont_entity_name
+        sql: >-
+          (SELECT ed.entity_name FROM {{ catalog('dwhprd_gold') }}.show_dim shd JOIN {{ catalog('dwhprd_gold') }}.entity_dim ed
+          ON ed.entity_key = shd.show_cont_entity_key WHERE shd.show_key = {CUBE}.show_key ORDER BY shd.update_ts
+          DESC LIMIT 1)
+        type: string
+        title: Show Controlling Entity
+        description: >-
+          entity_dim.entity_name for show_dim's Show Controlling Entity role (show_dim.show_cont_entity_key), read
+          via a correlated subquery through show_dim rather than a second join to entity_dim — same cube-sql
+          join-path limitation as season_cont_entity_name, same single-correlated-subquery-with-internal-join fix.
+          show_dim isn't wrapped in a de-dupe query like season_dim is, but carries the same ORDER BY/LIMIT 1 guard
+          defensively, on the same "cube can only join a given target once" reasoning.
+      - name: show_cont_region_long_name
+        sql: >-
+          (SELECT rd.region_long_name FROM {{ catalog('dwhprd_gold') }}.show_dim shd JOIN {{ catalog('dwhprd_gold') }}.entity_dim
+          ed ON ed.entity_key = shd.show_cont_entity_key JOIN {{ catalog('dwhprd_gold') }}.region_dim rd ON rd.region_key =
+          ed.region_key WHERE shd.show_key = {CUBE}.show_key ORDER BY shd.update_ts DESC LIMIT 1)
+        type: string
+        title: Show Controlling Region
+        description: >-
+          region_dim.region_long_name for the Show Controlling Entity's region, read via a single correlated
+          subquery through show_dim with two plain internal JOINs (to entity_dim, then region_dim) rather than the
+          three-hop join_path (show_dim.entity_dim.region_dim) — see season_cont_entity_name's description for why,
+          and show_cont_entity_name's for the defensive ORDER BY/LIMIT 1 guard.
+      - name: originating_entity_name
+        sql: >-
+          (SELECT ed.entity_name FROM {{ catalog('dwhprd_gold') }}.deal_io_part_prog_dim dp JOIN
+          {{ catalog('dwhprd_gold') }}.entity_dim ed ON ed.entity_key = dp.originating_entity_key WHERE
+          dp.deal_io_part_prog_key = {CUBE}.deal_io_part_prog_key AND dp.internal_offer_key =
+          {CUBE}.internal_offer_key)
+        type: string
+        title: Originating Entity
+        description: >-
+          entity_dim.entity_name for deal_io_part_prog_dim's Originating Entity role
+          (deal_io_part_prog_dim.originating_entity_key), read via a correlated subquery through
+          deal_io_part_prog_dim rather than a second join to entity_dim — same cube-sql join-path limitation as
+          season_cont_entity_name. deal_io_part_prog_key + internal_offer_key is this table's declared composite
+          key, so no duplicate-row guard is needed — confirmed live a bare LIMIT (without ORDER BY) actually
+          breaks this shape, failing with the same "NOT_SUPPORTED: Given correlated subquery is not supported"
+          error as the nested-subquery case: Trino's engine only supports LIMIT inside a correlated subquery when
+          paired with ORDER BY (the "top-1 row" pattern used on season_cont_entity_name/show_cont_entity_name to
+          dodge their dedupe issue); an unordered LIMIT on an otherwise-unique join takes a different, unsupported
+          decorrelation path. Left as a plain single-row-by-construction correlated subquery instead.
+      - name: total_airing_count
+        sql: total_airing_count
+        type: number
+        title: Total Airing Count (raw)
+        description: Raw per-row total airing count. Do not sum directly in ad-hoc queries; use the total_airing_count_sum measure.
+      - name: eps_slot_length
+        sql: eps_slot_length
+        type: number
+        title: Episode Slot Length
+        description: >-
+          Slot length for this airing's episode, carried directly on the fact. See this cube's description for
+          why this is read from here rather than an episode_dim join.
+      - name: local_bcast_day_key
+        sql: local_bcast_day_key
+        type: number
+        title: Local Broadcast Day Key
+        description: >-
+          Foreign key to day_dim, in the Local Broadcast Day role — probed clean against dev data (0.09% orphan
+          rate). Source of day_dim's own airing_month derived dimension and this fact's year_grouping derived
+          dimension.
+      - name: local_bcast_time_key
+        sql: local_bcast_time_key
+        type: number
+        title: Local Broadcast Time Key
+        description: >-
+          Foreign key to time_dim, in the Local Broadcast Time role — probed clean against dev data (near-zero
+          orphan rate). Source of time_dim's own custom_daypart derived dimension.
+      - name: season_key
+        sql: season_key
+        type: number
+        title: Season Key
+        description: Foreign key to season_dim.
+      - name: show_key
+        sql: show_key
+        type: number
+        title: Show Key
+        description: Foreign key to show_dim.
+      - name: year_grouping
+        sql: >-
+          CASE WHEN {CUBE}.local_bcast_day_key IS NULL OR {CUBE}.local_bcast_day_key = 0 OR
+          {cube_carl_dwhprd_gold_dc_season_dim.dc_seas_prem_bday_key} IS NULL THEN NULL WHEN
+          date_diff('month', date_trunc('month', date_parse(CAST(CAST({cube_carl_dwhprd_gold_dc_season_dim.dc_seas_prem_bday_key}
+          AS BIGINT) AS VARCHAR), '%Y%m%d')), date_trunc('month', date_parse(CAST(CAST({CUBE}.local_bcast_day_key AS
+          BIGINT) AS VARCHAR), '%Y%m%d'))) BETWEEN 0 AND 11 THEN '0-11 months' WHEN date_diff('month',
+          date_trunc('month', date_parse(CAST(CAST({cube_carl_dwhprd_gold_dc_season_dim.dc_seas_prem_bday_key} AS
+          BIGINT) AS VARCHAR), '%Y%m%d')), date_trunc('month', date_parse(CAST(CAST({CUBE}.local_bcast_day_key AS
+          BIGINT) AS VARCHAR), '%Y%m%d'))) BETWEEN 12 AND 22 THEN '12-22 months' WHEN date_diff('month',
+          date_trunc('month', date_parse(CAST(CAST({cube_carl_dwhprd_gold_dc_season_dim.dc_seas_prem_bday_key} AS
+          BIGINT) AS VARCHAR), '%Y%m%d')), date_trunc('month', date_parse(CAST(CAST({CUBE}.local_bcast_day_key AS
+          BIGINT) AS VARCHAR), '%Y%m%d'))) BETWEEN 23 AND 33 THEN '23-33 months' WHEN date_diff('month',
+          date_trunc('month', date_parse(CAST(CAST({cube_carl_dwhprd_gold_dc_season_dim.dc_seas_prem_bday_key} AS
+          BIGINT) AS VARCHAR), '%Y%m%d')), date_trunc('month', date_parse(CAST(CAST({CUBE}.local_bcast_day_key AS
+          BIGINT) AS VARCHAR), '%Y%m%d'))) BETWEEN 34 AND 44 THEN '34-44 months' WHEN date_diff('month',
+          date_trunc('month', date_parse(CAST(CAST({cube_carl_dwhprd_gold_dc_season_dim.dc_seas_prem_bday_key} AS
+          BIGINT) AS VARCHAR), '%Y%m%d')), date_trunc('month', date_parse(CAST(CAST({CUBE}.local_bcast_day_key AS
+          BIGINT) AS VARCHAR), '%Y%m%d'))) BETWEEN 45 AND 55 THEN '45-55 months' WHEN date_diff('month',
+          date_trunc('month', date_parse(CAST(CAST({cube_carl_dwhprd_gold_dc_season_dim.dc_seas_prem_bday_key} AS
+          BIGINT) AS VARCHAR), '%Y%m%d')), date_trunc('month', date_parse(CAST(CAST({CUBE}.local_bcast_day_key AS
+          BIGINT) AS VARCHAR), '%Y%m%d'))) BETWEEN 56 AND 66 THEN '56-66 months' WHEN date_diff('month',
+          date_trunc('month', date_parse(CAST(CAST({cube_carl_dwhprd_gold_dc_season_dim.dc_seas_prem_bday_key} AS
+          BIGINT) AS VARCHAR), '%Y%m%d')), date_trunc('month', date_parse(CAST(CAST({CUBE}.local_bcast_day_key AS
+          BIGINT) AS VARCHAR), '%Y%m%d'))) BETWEEN 67 AND 77 THEN '67-77 months' WHEN date_diff('month',
+          date_trunc('month', date_parse(CAST(CAST({cube_carl_dwhprd_gold_dc_season_dim.dc_seas_prem_bday_key} AS
+          BIGINT) AS VARCHAR), '%Y%m%d')), date_trunc('month', date_parse(CAST(CAST({CUBE}.local_bcast_day_key AS
+          BIGINT) AS VARCHAR), '%Y%m%d'))) BETWEEN 78 AND 88 THEN '78-88 months' WHEN date_diff('month',
+          date_trunc('month', date_parse(CAST(CAST({cube_carl_dwhprd_gold_dc_season_dim.dc_seas_prem_bday_key} AS
+          BIGINT) AS VARCHAR), '%Y%m%d')), date_trunc('month', date_parse(CAST(CAST({CUBE}.local_bcast_day_key AS
+          BIGINT) AS VARCHAR), '%Y%m%d'))) BETWEEN 89 AND 99 THEN '89-99 months' WHEN date_diff('month',
+          date_trunc('month', date_parse(CAST(CAST({cube_carl_dwhprd_gold_dc_season_dim.dc_seas_prem_bday_key} AS
+          BIGINT) AS VARCHAR), '%Y%m%d')), date_trunc('month', date_parse(CAST(CAST({CUBE}.local_bcast_day_key AS
+          BIGINT) AS VARCHAR), '%Y%m%d'))) BETWEEN 100 AND 110 THEN '100-110 months' ELSE NULL END
+        type: string
+        title: Year Grouping
+        description: >-
+          Elapsed-month band between this airing's local broadcast month and the season's premiere month on this
+          distribution channel (dc_season_dim.dc_seas_prem_bday_key) — ten bands, months 0-11 through 100-110. See
+          custom_daypart (on time_dim) for the other half of MicroStrategy's 20-way AIREDCOUNT/GODWFLAG encoding
+          this replaces. Uses Cube's cross-cube dimension reference notation (dot inside the braces) against
+          dc_season_dim, which is already directly joined from this fact — a prior version used a raw correlated
+          subquery instead (on the mistaken assumption that Cube.js disallows cross-cube dimension references
+          entirely; it does not, see docs.cube.dev/data-modeling/dimensions#from-other-cubes), which compiled fine
+          but failed at query time against Athena with "NOT_SUPPORTED: Given correlated subquery is not
+          supported" — Athena's Trino engine only supports a correlated subquery whose outer-table reference is
+          confined to the WHERE clause; referencing the outer column inside the subquery's own SELECT list (as the
+          date-diff calculation here needed to) is rejected outright, even with a single level of nesting. Also
+          casts both decimal(38,10) key columns through BIGINT before VARCHAR/date_parse, since a direct
+          decimal-to-VARCHAR cast renders as "20070706.0000000000" and breaks the '%Y%m%d' format string.
+    joins:
+      - name: cube_carl_dwhprd_gold_corporate_daypart_dim
+        sql: '{CUBE}.corporate_daypart_key = {cube_carl_dwhprd_gold_corporate_daypart_dim}.corporate_daypart_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_deal_project_dim
+        sql: '{CUBE}.deal_project_key = {cube_carl_dwhprd_gold_deal_project_dim}.deal_project_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_deal_io_part_prog_dim
+        sql: >-
+          {CUBE}.deal_io_part_prog_key = {cube_carl_dwhprd_gold_deal_io_part_prog_dim}.deal_io_part_prog_key AND
+          {CUBE}.internal_offer_key = {cube_carl_dwhprd_gold_deal_io_part_prog_dim}.internal_offer_key
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_internal_offer_type_dim
+        sql: '{CUBE}.internal_offer_type_key = {cube_carl_dwhprd_gold_internal_offer_type_dim}.internal_offer_type_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_dc_episode_dim
+        sql: '{CUBE}.dc_episode_key = {cube_carl_dwhprd_gold_dc_episode_dim}.dc_episode_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_dc_season_dim
+        sql: '{CUBE}.dc_season_key = {cube_carl_dwhprd_gold_dc_season_dim}.dc_season_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_dc_show_dim
+        sql: '{CUBE}.dc_show_key = {cube_carl_dwhprd_gold_dc_show_dim}.dc_show_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_day_dim
+        sql: '{CUBE}.local_bcast_day_key = {cube_carl_dwhprd_gold_day_dim}.day_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_distribution_channel_dim
+        sql: '{CUBE}.distribution_channel_key = {cube_carl_dwhprd_gold_distribution_channel_dim}.distribution_channel_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_distribution_channel_hist_dim
+        sql: >-
+          {CUBE}.distribution_channel_hist_key =
+          {cube_carl_dwhprd_gold_distribution_channel_hist_dim}.distribution_channel_hist_key
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_entity_dim
+        sql: '{CUBE}.controlling_entity_key = {cube_carl_dwhprd_gold_entity_dim}.entity_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_episode_dim
+        sql: '{CUBE}.episode_key = {cube_carl_dwhprd_gold_episode_dim}.episode_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_hivedwh_episode_dim
+        sql: '{CUBE}.episode_key = {cube_carl_dwhprd_gold_hivedwh_episode_dim}.episode_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_season_dim
+        sql: '{CUBE}.season_key = {cube_carl_dwhprd_gold_season_dim}.season_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_show_dim
+        sql: '{CUBE}.show_key = {cube_carl_dwhprd_gold_show_dim}.show_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_time_dim
+        sql: '{CUBE}.local_bcast_time_key = {cube_carl_dwhprd_gold_time_dim}.time_key'
+        relationship: many_to_one
+    measures:
+      - name: aired_count
+        sql: airing_count
+        type: sum
+        title: Aired Count
+        description: >-
+          Sum of airing counts. Group or filter by year_grouping and/or custom_daypart to reproduce any of
+          MicroStrategy's original 20 AIREDCOUNT columns; summing without those dimensions gives the all-bands,
+          all-dayparts total.
+      - name: future_airing_count
+        sql: airing_future_count
+        type: sum
+        title: Future Airing Count
+        description: Sum of future airing counts.
+      - name: total_airing_count_sum
+        sql: total_airing_count
+        type: sum
+        title: Total Airing Count
+        description: >-
+          Sum of total airing counts — selected by MicroStrategy's SQL but not exposed as a named template
+          metric.
+      - name: record_count
+        sql: '*'
+        type: count
+        title: Record Count
+        description: Row count for smoke queries.
+        meta:
+          source: generated
+          used_by_report_ids: []

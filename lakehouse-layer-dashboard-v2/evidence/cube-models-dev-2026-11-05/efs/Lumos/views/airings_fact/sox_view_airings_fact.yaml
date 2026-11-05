@@ -1,0 +1,122 @@
+views:
+  - name: sox_view_airings_fact
+    public: true
+    title: SOX — Airings Fact
+    description: Business view for sox on airings_fact.
+    meta:
+      view_scope: business
+      business: sox
+      fact_table: airings_fact
+    cubes:
+      - join_path: cube_carl_dwhprd_gold_airings_fact
+        includes:
+          - aired_count
+          - airing_property_id
+          - dc_has_chng_flag
+          - eps_slot_length
+          - future_airing_count
+          - originating_entity_name
+          - participant_region_flag_desc
+          - participating_entity_name
+          - record_count
+          - season_cont_entity_name
+          - season_cont_region_long_name
+          - show_cont_entity_name
+          - show_cont_region_long_name
+          - total_airing_count_sum
+          - airing_month
+          - budget_category_desc
+          - calendar_year
+          - calendar_year_key
+          - contract_code
+          - name: controlling_entity_name
+            title: Controlling Entity
+          - corp_genre_name
+          - corp_subgenre_name
+          - corporate_daypart_label
+          - custom_daypart
+          - day_date
+          - day_num_in_week
+          - day_of_week_short
+          - dc_brand_key
+          - dc_brand_name
+          - dc_eps_days_fm_last_airing
+          - dc_eps_last_air_bday_key
+          - dc_eps_next_air_bday_key
+          - dc_eps_reg_days_fm_last_airing
+          - dc_eps_reg_last_air_bday_key
+          - dc_eps_reg_next_air_bday_key
+          - dc_hist_concat_names
+          - dc_seas_days_fm_last_airing
+          - dc_seas_last_air_bday_key
+          - dc_seas_next_air_bday_key
+          - dc_seas_prem_bday_key
+          - dc_seas_prem_date
+          - dc_seas_reg_days_fm_last_airng
+          - dc_seas_reg_last_air_bday_key
+          - dc_seas_reg_next_air_bday_key
+          - dc_seas_reg_prem_bday_key
+          - dc_seas_reg_prem_date
+          - dc_show_days_fm_last_airing
+          - dc_show_last_air_bday_key
+          - dc_show_next_air_bday_key
+          - dc_show_reg_days_fm_last_airng
+          - dc_show_reg_last_air_bday_key
+          - dc_show_reg_next_air_bday_key
+          - deal_name
+          - deal_prog_eps_status_desc
+          - deal_project_id
+          - deal_type_desc
+          - deal_type_key
+          - distr_chnl_region_name
+          - distribution_channel_hist_name
+          - distribution_channel_name
+          - name: episode_global_premiere_date
+            title: Episode Global Premiere Date
+          - episode_id
+          - name: episode_property_id
+            title: Episode Property ID
+          - name: slot_length
+            title: Slot Length
+          - episode_number
+          - episode_short_desc
+          - internal_offer_type_name
+          - project_created_date
+          - seas_glbl_prem_bday_key
+          - seas_us_prem_bday_key
+          - season_associated_id
+          - name: season_cont_entity_premiere_date
+            title: Season Controlling Entity Premiere Date
+          # CARL-4608 SOX UAT: BI International Borrows needs this as a date. The cube also carries
+          # seas_glbl_prem_bday_key, which is the same day as a raw YYYYMMDD integer; both stay exposed.
+          - name: season_global_premiere_date
+            title: Season Global Premiere Date
+          - season_hours
+          - season_name
+          - season_num_episodes
+          - season_property_id
+          - season_short_desc
+          - name: season_us_premiere_date
+            title: Season US Premiere Date
+          - show_genre_concat_name
+          - name: show_id_normalized
+            title: Show ID
+          - show_name
+          - show_short_desc
+          - time_wo_secs_plus
+          - name: dc_season_year_grouping
+            alias: year_grouping
+      - join_path: cube_carl_dwhprd_gold_airings_fact.cube_carl_dwhprd_gold_hivedwh_episode_dim
+        includes:
+          - name: episode_id
+            alias: content_episode_id
+            title: Content Episode ID
+          - name: episode_number
+            alias: content_episode_number
+            title: Content Episode Number
+          - name: episode_short_desc
+            alias: content_episode_short_desc
+            title: Content Episode Short Description
+          - name: episode_title
+            alias: content_episode_title
+            title: Content Episode Title

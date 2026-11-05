@@ -1,0 +1,2544 @@
+{
+ "ASOF": "2026-10-26",
+ "ITEMS": [
+  {
+   "id": "F-OP1B",
+   "n": "Operative One – Bronze (81 tables)",
+   "c": "F",
+   "g": "Operative One",
+   "k": "CARL-744",
+   "st": "Done",
+   "rag": "G",
+   "s": "2026-05-18",
+   "t": "2026-07-01",
+   "a": "2026-07-01",
+   "o": "Diana Saafi",
+   "pri": "P0",
+   "sp": [
+    190,
+    190,
+    0,
+    0
+   ],
+   "use": "UMP, AIP, Digital Forecasting, UC1",
+   "note": "Delivered to prod 7/1; QA sign-off 7/10."
+  },
+  {
+   "id": "F-OP1S",
+   "n": "Operative One – Canonical Silver",
+   "c": "F",
+   "g": "Operative One",
+   "k": "CARL-2888",
+   "st": "To Do",
+   "rag": "G",
+   "s": "2026-10-15",
+   "t": "2027-01-31",
+   "asm": 1,
+   "o": "Mike Hodge",
+   "pri": "P0",
+   "sp": [
+    13,
+    0,
+    0,
+    13
+   ],
+   "use": "AIP, UMP; Domain Analytics: Ad Sales",
+   "note": "Intake & discovery in progress.",
+   "chg": "Was pending scope with no dates → now scheduled 10/15/2026 start, Green; owner Mike, IC Maja.",
+   "flag": "Workbook target reads 01/31/2026 — before the 10/15/2026 start; shown as 01/31/2027."
+  },
+  {
+   "id": "F-FWB",
+   "n": "FreeWheel – Bronze (64 tables incl. v4 log)",
+   "c": "F",
+   "g": "FreeWheel",
+   "k": "CARL-746",
+   "st": "Done",
+   "rag": "G",
+   "s": "2026-05-18",
+   "t": "2026-07-01",
+   "a": "2026-07-01",
+   "o": "Hong Zhang",
+   "pri": "P0",
+   "sp": [
+    162,
+    159,
+    3,
+    0
+   ],
+   "use": "UMP, AIP, Digital Forecasting, UC1",
+   "note": "Snowflake-share log ingestion live."
+  },
+  {
+   "id": "F-FWAPI",
+   "n": "FreeWheel – API Bronze",
+   "c": "F",
+   "g": "FreeWheel",
+   "k": "CARL-1380",
+   "st": "Ready for Testing",
+   "rag": "G",
+   "s": "2026-07-06",
+   "t": "",
+   "o": "Hong Zhang",
+   "pri": "P2",
+   "sp": [
+    44,
+    5,
+    29,
+    10
+   ],
+   "use": "UMP, Neo, AIP, Digital Forecasting, UC1",
+   "note": "Pending further use case & product requirement (P2).",
+   "flag": "Roadmap row shows epic CARL-1378 but hyperlinks to CARL-1380."
+  },
+  {
+   "id": "F-FWP2",
+   "n": "FreeWheel – Bronze Phase 2",
+   "c": "F",
+   "g": "FreeWheel",
+   "k": "CARL-1756",
+   "st": "Ready for Testing",
+   "rag": "G",
+   "s": "2026-08-14",
+   "t": "",
+   "o": "Sean Malek",
+   "pri": "P2",
+   "sp": [
+    181,
+    5,
+    4,
+    172
+   ],
+   "use": "AIP",
+   "note": "Data not previously in WBD; 2.8% done (P2)."
+  },
+  {
+   "id": "F-FWS",
+   "n": "FreeWheel – Canonical Silver",
+   "c": "F",
+   "g": "FreeWheel",
+   "k": "CARL-2887",
+   "st": "In Progress",
+   "rag": "G",
+   "s": "2026-08-14",
+   "t": "2026-12-15",
+   "o": "Hong Zhang",
+   "pri": "P0",
+   "sp": [
+    76,
+    15,
+    61,
+    0
+   ],
+   "use": "AIP, UMP; Ad Sales",
+   "note": "All 70 SP in flight, none closed."
+  },
+  {
+   "id": "F-GAM",
+   "n": "GAM – Bronze",
+   "c": "F",
+   "g": "GAM",
+   "k": "CARL-749",
+   "st": "In Progress",
+   "rag": "G",
+   "s": "2026-10-01",
+   "t": "2027-01-31",
+   "o": "Virginia Giacomini",
+   "pri": "P0",
+   "sp": [
+    5,
+    0,
+    5,
+    0
+   ],
+   "use": "UMP, AIP, Digital Forecast; Ad Sales UC1",
+   "note": "In discovery stage.",
+   "chg": "Was pending intake/PRD with no dates → now 10/01/2026–01/31/2027, Green, 'in discovery stage'."
+  },
+  {
+   "id": "F-IDDB",
+   "n": "iDeal – DEALBLDR schema Bronze",
+   "c": "F",
+   "g": "iDeal",
+   "k": "CARL-1477",
+   "st": "In Progress",
+   "rag": "A",
+   "s": "2026-07-06",
+   "t": "2026-08-01",
+   "o": "Arlene Rose",
+   "pri": "P0",
+   "sp": [
+    12,
+    10,
+    2,
+    0
+   ],
+   "use": "Venus, UMP, UC1",
+   "note": "Past 8/1 target — 'Ongoing'. Roadmap comment: 'Delayed'."
+  },
+  {
+   "id": "F-IDMSA",
+   "n": "iDeal – MSA schema Bronze",
+   "c": "F",
+   "g": "iDeal",
+   "k": "CARL-1478",
+   "st": "Done",
+   "rag": "G",
+   "s": "2026-07-31",
+   "t": "2026-08-30",
+   "a": "2026-08-28",
+   "o": "Kedareswara Petluri",
+   "pri": "P1",
+   "sp": [
+    32,
+    32,
+    0,
+    0
+   ],
+   "use": "Venus, UMP",
+   "note": ""
+  },
+  {
+   "id": "F-IDDCI",
+   "n": "iDeal – DCI schema Bronze",
+   "c": "F",
+   "g": "iDeal",
+   "k": "CARL-2773",
+   "st": "Done",
+   "rag": "G",
+   "s": "2026-08-14",
+   "t": "2026-08-30",
+   "a": "2026-08-28",
+   "o": "Ronald Ramsey",
+   "pri": "P1",
+   "sp": [
+    9,
+    9,
+    0,
+    0
+   ],
+   "use": "Venus, UMP",
+   "note": ""
+  },
+  {
+   "id": "F-IDLDR",
+   "n": "iDeal tables → linear_digital_revenue Bronze",
+   "c": "F",
+   "g": "iDeal",
+   "k": "CARL-4035",
+   "st": "Blocked",
+   "rag": "R",
+   "s": "2026-09-30",
+   "t": "2026-10-31",
+   "o": "Christina McCoy",
+   "pri": "P0",
+   "sp": [
+    27,
+    0,
+    27,
+    0
+   ],
+   "use": "Venus",
+   "note": "No RAG set in roadmap; epic not in 9/30 Jira export.",
+   "nw": 1,
+   "chg": "New roadmap line."
+  },
+  {
+   "id": "F-CMP",
+   "n": "CMP iDeal Data Foundation (UMP Phase 2)",
+   "c": "F",
+   "g": "iDeal",
+   "k": "CARL-351",
+   "st": "In Progress",
+   "rag": "G",
+   "s": "2026-07-01",
+   "t": "2026-12-15",
+   "o": "Surendarvarma Sritharan",
+   "pri": "P0",
+   "sp": [
+    223,
+    201,
+    22,
+    0
+   ],
+   "use": "UMP",
+   "note": "Evergreen; 63% SP done; 8 stories blocked in Sept status."
+  },
+  {
+   "id": "F-IDS",
+   "n": "iDeal (Venus) – Canonical Silver",
+   "c": "F",
+   "g": "iDeal",
+   "k": "—",
+   "st": "In Progress",
+   "rag": "G",
+   "s": "2026-11-30",
+   "t": "2027-03-31",
+   "asm": 1,
+   "o": "Arlene / Mike",
+   "pri": "P0",
+   "sp": null,
+   "use": "Venus",
+   "note": "Intake & discovery in progress; no epic yet.",
+   "chg": "Was pending scope with no dates → now scheduled to 03/31/2027, Green; owner Arlene, IC Mike.",
+   "flag": "Workbook start reads 11/31/2026 (not a real date); shown as 11/30/2026."
+  },
+  {
+   "id": "F-SF1",
+   "n": "Salesforce/Metropolis Ph1 – Oracle DB → Bronze",
+   "c": "F",
+   "g": "Salesforce / Metropolis",
+   "k": "CARL-2778",
+   "st": "Done",
+   "rag": "G",
+   "s": "2026-07-20",
+   "t": "2026-08-30",
+   "fc": "2026-09-30",
+   "o": "Saman Saran",
+   "pri": "P0",
+   "sp": [
+    110,
+    110,
+    0,
+    0
+   ],
+   "use": "UC1 Opportunity Pipeline Dashboard",
+   "note": "Replacing LDR2; via Oracle, not direct Salesforce. Slipped 8/30 → 9/30. Roadmap comment: 'Delayed due to new request coming'.",
+   "a": "2026-10-21"
+  },
+  {
+   "id": "F-SF2",
+   "n": "Salesforce/Metropolis Ph2 – API → Bronze",
+   "c": "F",
+   "g": "Salesforce / Metropolis",
+   "k": "—",
+   "st": "Pending Scope",
+   "rag": "A",
+   "s": "",
+   "t": "",
+   "o": "Kiran (shown 'Kiran??' — unconfirmed)",
+   "pri": "P1",
+   "sp": null,
+   "use": "UC1 Opportunity Pipeline Dashboard",
+   "note": "DE lead tentative; IC TBD."
+  },
+  {
+   "id": "F-WRR",
+   "n": "WRR – Oracle DB → Bronze",
+   "c": "F",
+   "g": "WRR",
+   "k": "CARL-597",
+   "st": "Done",
+   "rag": "G",
+   "s": "2026-05-18",
+   "t": "2026-07-15",
+   "a": "2026-07-07",
+   "o": "Virginia Giacomini",
+   "pri": "P0",
+   "sp": [
+    12,
+    12,
+    0,
+    0
+   ],
+   "use": "UC1 pipeline revenue pacing",
+   "note": ""
+  },
+  {
+   "id": "F-LDR",
+   "n": "Linear & Digital Revenue – Bronze/Silver/Gold",
+   "c": "F",
+   "g": "Revenue feeds",
+   "k": "CARL-56 / 312 / 313",
+   "st": "Done",
+   "rag": "G",
+   "s": "",
+   "t": "",
+   "o": "Arlene Rose",
+   "pri": "—",
+   "sp": [
+    104,
+    92,
+    0,
+    12
+   ],
+   "use": "Linear & Digital Converged Revenue Data Product",
+   "note": "Bronze done; Silver 79% / Gold 76% SP done. Not dated in Q4 roadmap.",
+   "a": "2026-10-13"
+  },
+  {
+   "id": "F-DFC",
+   "n": "Digital Forecasting data ingestion",
+   "c": "F",
+   "g": "Revenue feeds",
+   "k": "CARL-628",
+   "st": "Done",
+   "rag": "G",
+   "s": "",
+   "t": "",
+   "o": "Hong Zhang",
+   "pri": "—",
+   "sp": [
+    49,
+    49,
+    0,
+    0
+   ],
+   "use": "Finance Ad Revenue Pacing",
+   "note": "",
+   "a": "2026-09-09"
+  },
+  {
+   "id": "F-FFF",
+   "n": "Finance Forecast Feed → Bronze (S3)",
+   "c": "F",
+   "g": "Revenue feeds",
+   "k": "CARL-1479",
+   "st": "In Progress",
+   "rag": "A",
+   "s": "2026-08-14",
+   "t": "2026-09-30",
+   "fc": "2026-10-16",
+   "o": "Arlene Rose",
+   "pri": "P0",
+   "sp": [
+    35,
+    10,
+    25,
+    0
+   ],
+   "use": "UC1 Finance Pacing",
+   "note": "Standardized weekly CSV template.",
+   "chg": "Revised date 10/22 → 10/16."
+  },
+  {
+   "id": "F-OTB",
+   "n": "Digital Sports Revenue OTB + PipeFeed → Bronze",
+   "c": "F",
+   "g": "Revenue feeds",
+   "k": "CARL-1480",
+   "st": "In Triage",
+   "rag": "G",
+   "s": "",
+   "t": "",
+   "o": "Mike Hodge",
+   "pri": "—",
+   "sp": [
+    5,
+    0,
+    0,
+    5
+   ],
+   "use": "Ad Sales North Star",
+   "note": ""
+  },
+  {
+   "id": "F-STAQ",
+   "n": "STAQ – Bronze",
+   "c": "F",
+   "g": "Revenue feeds",
+   "k": "CARL-3750",
+   "st": "In Progress",
+   "rag": "G",
+   "s": "2026-10-15",
+   "t": "2027-01-31",
+   "o": "Ping Feng",
+   "pri": "P0",
+   "sp": [
+    3,
+    0,
+    3,
+    0
+   ],
+   "use": "Domain Analytics: Ad Sales",
+   "note": "Still pending discovery, requirements & PRD.",
+   "chg": "Was pending scope → now 10/15/2026–01/31/2027, Green."
+  },
+  {
+   "id": "F-NRLD",
+   "n": "Nielsen NRLD – Bronze enhancement",
+   "c": "F",
+   "g": "Nielsen",
+   "k": "CARL-3779",
+   "st": "In Progress",
+   "rag": "G",
+   "s": "2026-09-30",
+   "t": "2026-10-31",
+   "o": "Sean Malek",
+   "pri": "P0",
+   "sp": [
+    5,
+    0,
+    5,
+    0
+   ],
+   "use": "Research; UMP, Linear Forecast, NextGen Dashboard",
+   "note": ""
+  },
+  {
+   "id": "F-ADI",
+   "n": "Nielsen Ad Intel (Market Share) – Bronze enh.",
+   "c": "F",
+   "g": "Nielsen",
+   "k": "CARL-3499",
+   "st": "Ready For UAT",
+   "rag": "G",
+   "s": "2026-09-30",
+   "t": "2026-10-31",
+   "o": "Colin Diemer",
+   "pri": "P1",
+   "sp": [
+    8,
+    0,
+    8,
+    0
+   ],
+   "use": "Research",
+   "note": "",
+   "flag": "Roadmap pipeline all stages Complete; Jira epic In Progress, 0 SP done."
+  },
+  {
+   "id": "F-MIT",
+   "n": "Nielsen Big MIT – Bronze enhancement",
+   "c": "F",
+   "g": "Nielsen",
+   "k": "CARL-3500",
+   "st": "Ready For UAT",
+   "rag": "G",
+   "s": "2026-09-30",
+   "t": "2026-10-31",
+   "o": "Colin Diemer",
+   "pri": "P1",
+   "sp": [
+    8,
+    0,
+    8,
+    0
+   ],
+   "use": "Research",
+   "note": "",
+   "flag": "Roadmap pipeline all stages Complete; Jira epic In Progress, 0 SP done."
+  },
+  {
+   "id": "F-STW",
+   "n": "Nielsen Stewardship – Bronze",
+   "c": "F",
+   "g": "Nielsen",
+   "k": "CARL-3501",
+   "st": "In Triage",
+   "rag": "N",
+   "s": "2026-10-15",
+   "t": "2027-01-31",
+   "o": "Debarghyo Sengupta",
+   "pri": "P0",
+   "sp": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "use": "UMP, Linear Forecast, Analytics",
+   "note": "Intake & discovery in progress.",
+   "chg": "Was pending scope → now 10/15/2026–01/31/2027, Green."
+  },
+  {
+   "id": "F-BPB",
+   "n": "Blueprint Aurora DB – Bronze",
+   "c": "F",
+   "g": "Blueprint",
+   "k": "CARL-2898",
+   "st": "Done",
+   "rag": "G",
+   "s": "2026-07-20",
+   "t": "2026-09-29",
+   "a": "2026-09-30",
+   "o": "Ronald Ramsey",
+   "pri": "P0",
+   "sp": [
+    30,
+    30,
+    0,
+    0
+   ],
+   "use": "Internal Product: Blueprint",
+   "note": "",
+   "flag": "Roadmap marks Done 9/30; Jira epic In UAT at 60% SP."
+  },
+  {
+   "id": "F-CLR",
+   "n": "Clearline – Bronze",
+   "c": "F",
+   "g": "Measurement & 3P",
+   "k": "—",
+   "st": "Pending Scope",
+   "rag": "A",
+   "s": "",
+   "t": "",
+   "o": "Avinaag",
+   "pri": "P0",
+   "sp": null,
+   "use": "Neo",
+   "note": "Still in triage; no epic yet."
+  },
+  {
+   "id": "F-VA",
+   "n": "VideoAmp – Measurement Bronze",
+   "c": "F",
+   "g": "Measurement & 3P",
+   "k": "CARL-3503",
+   "st": "To Do",
+   "rag": "G",
+   "s": "2026-10-01",
+   "t": "2027-01-31",
+   "o": "Debarghyo Sengupta",
+   "pri": "P1",
+   "sp": [
+    5,
+    0,
+    0,
+    5
+   ],
+   "use": "M&A Dashboard; Forecasting",
+   "note": "Still pending discovery, requirements & PRD.",
+   "chg": "Was pending scope → now 10/01/2026–01/31/2027, Green."
+  },
+  {
+   "id": "F-LIC",
+   "n": "LoopMe, iSpot, CAPI – Measurement Bronze",
+   "c": "F",
+   "g": "Measurement & 3P",
+   "k": "CARL-3504 / 3505",
+   "st": "To Do",
+   "rag": "N",
+   "s": "2027-01-01",
+   "t": "2027-03-31",
+   "o": "Debarghyo Sengupta",
+   "pri": "P1",
+   "sp": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "use": "Research M&A Dashboard",
+   "note": "Roadmap RAG cell reads 'In Triage'.",
+   "chg": "Was undated → now planned 01/01–03/31/2027 (still in triage)."
+  },
+  {
+   "id": "F-PERM",
+   "n": "CNNI Permutive – ingestion discovery",
+   "c": "F",
+   "g": "Measurement & 3P",
+   "k": "CARL-631",
+   "st": "In Triage",
+   "rag": "N",
+   "s": "",
+   "t": "",
+   "o": "Ping Feng",
+   "pri": "—",
+   "sp": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "use": "CNN International",
+   "note": ""
+  },
+  {
+   "id": "F-IBM",
+   "n": "IBM DataStage → Iceberg (Lumos Ph2)",
+   "c": "F",
+   "g": "Legacy ETL",
+   "k": "CARL-3562",
+   "st": "In Progress",
+   "rag": "G",
+   "s": "2026-09-15",
+   "t": "2027-01-31",
+   "asm": 1,
+   "o": "Avinaag Bonam",
+   "pri": "P0",
+   "sp": [
+    26,
+    5,
+    16,
+    5
+   ],
+   "use": "MicroStrategy (Oracle DB migration)",
+   "note": "POC done 9/11, design 9/15; migrates entire Oracle DB to Iceberg.",
+   "flag": "Workbook target reads 01/31/2026 — before the 9/15/2026 start; shown as 01/31/2027 (v2 showed 12/31/2026)."
+  },
+  {
+   "id": "P-UMP",
+   "n": "UMP – Unified Media Plan data support",
+   "c": "P",
+   "g": "UMP",
+   "k": "CARL-3960 / 2772",
+   "st": "Done",
+   "rag": "G",
+   "s": "2026-07-01",
+   "t": "2026-12-15",
+   "o": "Avinaag Bonam +",
+   "pri": "P0",
+   "sp": [
+    13,
+    13,
+    0,
+    0
+   ],
+   "use": "Media planning",
+   "note": "One-time iDeal dump done (CARL-2772); CARL-3960 unsized.",
+   "a": "2026-10-12"
+  },
+  {
+   "id": "P-AIP",
+   "n": "AIP – Audience Intelligence Platform data",
+   "c": "P",
+   "g": "AIP",
+   "k": "CARL-3958",
+   "st": "To Do",
+   "rag": "N",
+   "s": "2026-09-01",
+   "t": "2026-12-15",
+   "o": "Ethan Garrison",
+   "pri": "P0",
+   "sp": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "use": "Internal Product: AIP",
+   "note": "Placeholder, pending scoping; epic unsized."
+  },
+  {
+   "id": "P-NEO",
+   "n": "Neo – analytics & data support",
+   "c": "P",
+   "g": "Neo",
+   "k": "CARL-3694",
+   "st": "In Progress",
+   "rag": "G",
+   "s": "2026-08-15",
+   "t": "2026-12-15",
+   "o": "Virginia Giacomini",
+   "pri": "P0",
+   "sp": [
+    28,
+    7,
+    5,
+    16
+   ],
+   "use": "First-party reach & frequency (FreeWheel 1P + ID spine)",
+   "note": "33% SP done.",
+   "flag": "Roadmap lists an actual delivery date of 09/29/2026 while target is 12/15/2026 and Jira is 33% done — confirm."
+  },
+  {
+   "id": "P-VEN",
+   "n": "iDeal Modernization (Venus / OMS)",
+   "c": "P",
+   "g": "iDeal / Venus",
+   "k": "CARL-4137",
+   "st": "To Do",
+   "rag": "N",
+   "s": "2026-07-06",
+   "t": "",
+   "o": "Surendarvarma Sritharan",
+   "pri": "P0",
+   "sp": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "use": "Order mgmt modernization",
+   "note": "Tracking epic done; CARL-3959 unsized."
+  },
+  {
+   "id": "P-FC",
+   "n": "DDL / Linear / Digital Forecasting",
+   "c": "P",
+   "g": "Forecasting",
+   "k": "CARL-4001",
+   "st": "To Do",
+   "rag": "G",
+   "s": "",
+   "t": "",
+   "o": "Avinaag Bonam",
+   "pri": "P0",
+   "sp": [
+    3,
+    0,
+    0,
+    3
+   ],
+   "use": "Forecasting Gold product",
+   "note": "In triage."
+  },
+  {
+   "id": "P-BP",
+   "n": "Blueprint – full model (Bronze→Semantic)",
+   "c": "P",
+   "g": "Blueprint / MSC",
+   "k": "CARL-3497",
+   "st": "In Progress",
+   "rag": "R",
+   "s": "2026-09-11",
+   "t": "2026-10-09",
+   "o": "Ronald Ramsey",
+   "pri": "P0",
+   "sp": [
+    40,
+    7,
+    28,
+    5
+   ],
+   "use": "Content supply chain",
+   "note": "Due 10/09 with 0 of 10 SP done; 1 story blocked in Sept status."
+  },
+  {
+   "id": "P-INTL",
+   "n": "International – cross-project support",
+   "c": "P",
+   "g": "International",
+   "k": "CARL-3961",
+   "st": "In Progress",
+   "rag": "G",
+   "s": "2026-09-01",
+   "t": "2026-12-31",
+   "o": "Avinaag Bonam",
+   "pri": "P0",
+   "sp": [
+    8,
+    2,
+    5,
+    1
+   ],
+   "use": "International",
+   "note": "Discovery & scoping."
+  },
+  {
+   "id": "P-CNN",
+   "n": "CNN RFP Insight Chatbot (unstructured → Iceberg)",
+   "c": "P",
+   "g": "CNN / AI",
+   "k": "CARL-3749",
+   "st": "To Do",
+   "rag": "G",
+   "s": "2026-09-30",
+   "t": "2026-12-15",
+   "o": "Colin Diemer",
+   "pri": "P1",
+   "sp": [
+    3,
+    0,
+    0,
+    3
+   ],
+   "use": "AI query over RFPs",
+   "note": "POC.",
+   "chg": "Target 11/30 → 12/15/2026."
+  },
+  {
+   "id": "D-UC1S",
+   "n": "UC1 Total Ad Revenue North Star – Silver (Ph1)",
+   "c": "D",
+   "g": "Ad Sales",
+   "k": "CARL-3638",
+   "st": "In Progress",
+   "rag": "R",
+   "s": "2026-08-14",
+   "t": "2026-10-09",
+   "o": "Arlene Rose",
+   "pri": "P0",
+   "sp": [
+    66,
+    8,
+    58,
+    0
+   ],
+   "use": "Ad Sales north-star metrics",
+   "note": "Due 10/09 with 0 of 32 SP done (Jira 9/30).",
+   "flag": "Green in roadmap but 75% SP To Do, 3 days before target."
+  },
+  {
+   "id": "D-UC1G",
+   "n": "UC1 Total Ad Revenue North Star – Gold (Ph1)",
+   "c": "D",
+   "g": "Ad Sales",
+   "k": "CARL-3639",
+   "st": "In Progress",
+   "rag": "R",
+   "s": "2026-08-14",
+   "t": "2026-10-09",
+   "fc": "2026-10-22",
+   "o": "Arlene Rose",
+   "pri": "P0",
+   "sp": [
+    29,
+    0,
+    16,
+    13
+   ],
+   "use": "Ad Sales north-star metrics",
+   "note": "Epic unsized.",
+   "chg": "Revised date 10/15 → 10/22."
+  },
+  {
+   "id": "D-UC1P2",
+   "n": "UC1 North Star – Phase 2 (>20 reports)",
+   "c": "D",
+   "g": "Ad Sales",
+   "k": "CARL-4086 / 4087",
+   "st": "In Triage",
+   "rag": "N",
+   "s": "2026-11-01",
+   "t": "2027-02-28",
+   "o": "—",
+   "pri": "P1",
+   "sp": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "use": "Additional north-star dimensions & metrics enabling >20 reports",
+   "note": "Epics not in 9/30 Jira export.",
+   "nw": 1,
+   "chg": "New: two Phase 2 roadmap lines.",
+   "flag": "Both rows are titled '[Silver] … Phase2' and the CARL-4087 row hyperlinks to CARL-4086 — confirm whether one is Gold."
+  },
+  {
+   "id": "D-SFD",
+   "n": "UC1 Salesforce Converged Opportunity Pipeline data",
+   "c": "D",
+   "g": "Ad Sales",
+   "k": "CARL-4050",
+   "st": "In Progress",
+   "rag": "N",
+   "s": "2026-08-14",
+   "t": "2026-10-09",
+   "fc": "2026-10-15",
+   "o": "Mike Hodge",
+   "pri": "P0",
+   "sp": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "use": "UC1",
+   "note": "Epic created after 9/30 Jira export."
+  },
+  {
+   "id": "D-SFDB",
+   "n": "Salesforce Opportunity Pipeline Dashboard",
+   "c": "D",
+   "g": "Ad Sales",
+   "k": "CARL-3490",
+   "st": "In Progress",
+   "rag": "G",
+   "s": "2026-10-20",
+   "t": "2026-11-09",
+   "o": "Mike Hodge",
+   "pri": "P0",
+   "sp": [
+    5,
+    0,
+    5,
+    0
+   ],
+   "use": "Ad Sales pipeline",
+   "note": ""
+  },
+  {
+   "id": "D-BV",
+   "n": "Ad Sales Converged Executive Dashboard (Bobby V)",
+   "c": "D",
+   "g": "Ad Sales",
+   "k": "CARL-497",
+   "st": "Done",
+   "rag": "G",
+   "s": "2026-05-08",
+   "t": "2026-09-30",
+   "a": "2026-06-22",
+   "o": "Ping Feng",
+   "pri": "P0",
+   "sp": [
+    26,
+    26,
+    0,
+    0
+   ],
+   "use": "Ad Sales President",
+   "note": "",
+   "flag": "Roadmap: Done (6/22); Jira epic In Progress at 81%."
+  },
+  {
+   "id": "D-INC",
+   "n": "Ad Sales National Incentive Dashboard 2.0",
+   "c": "D",
+   "g": "Ad Sales",
+   "k": "CARL-494",
+   "st": "Done",
+   "rag": "G",
+   "s": "2026-04-15",
+   "t": "2026-09-01",
+   "a": "2026-09-30",
+   "o": "Arlene Rose / Mike",
+   "pri": "P0",
+   "sp": null,
+   "use": "Ad Sales",
+   "note": "Pending final AE screenshot as evidence."
+  },
+  {
+   "id": "D-HOL",
+   "n": "Converged Holes + Sports Holes & Shares",
+   "c": "D",
+   "g": "Ad Sales",
+   "k": "CARL-6",
+   "st": "In Progress",
+   "rag": "G",
+   "s": "",
+   "t": "",
+   "o": "Ping Feng",
+   "pri": "—",
+   "sp": [
+    24,
+    21,
+    3,
+    0
+   ],
+   "use": "Ad Sales",
+   "note": ""
+  },
+  {
+   "id": "D-DR",
+   "n": "Direct Response Dashboard",
+   "c": "D",
+   "g": "Ad Sales",
+   "k": "CARL-197",
+   "st": "Done",
+   "rag": "G",
+   "s": "",
+   "t": "",
+   "o": "Ping Feng",
+   "pri": "—",
+   "sp": [
+    30,
+    30,
+    0,
+    0
+   ],
+   "use": "Ad Sales",
+   "note": "",
+   "a": "2026-09-02"
+  },
+  {
+   "id": "D-CPD",
+   "n": "Linear & Digital Converged Pacing Dashboard",
+   "c": "D",
+   "g": "Ad Sales",
+   "k": "CARL-5",
+   "st": "Done",
+   "rag": "G",
+   "s": "",
+   "t": "",
+   "o": "Arlene Rose",
+   "pri": "—",
+   "sp": [
+    25,
+    25,
+    0,
+    0
+   ],
+   "use": "Ad Sales",
+   "note": "",
+   "a": "2026-09-23"
+  },
+  {
+   "id": "D-MAS",
+   "n": "MSTR Accounting / SOX (Batch 2.1)",
+   "c": "D",
+   "g": "Ad Sales",
+   "k": "CARL-3571",
+   "st": "In Testing",
+   "rag": "R",
+   "s": "2026-08-28",
+   "t": "2026-10-16",
+   "o": "Mary Thrower",
+   "pri": "P0",
+   "sp": [
+    107,
+    7,
+    100,
+    0
+   ],
+   "use": "MicroStrategy → Quick",
+   "note": "SOX target 10/16. CARL-3571 also counted in US Ad Sales line (10/31)."
+  },
+  {
+   "id": "D-MAS2",
+   "n": "MSTR US Ad Sales (Batch 2.2 + 2.3)",
+   "c": "D",
+   "g": "Ad Sales",
+   "k": "CARL-3789 / 3790",
+   "st": "In Progress",
+   "rag": "G",
+   "s": "2026-09-15",
+   "t": "2026-10-31",
+   "o": "AISHWARYA JAIRAM",
+   "pri": "P0",
+   "sp": [
+    188,
+    5,
+    180,
+    3
+   ],
+   "use": "MicroStrategy → Quick",
+   "note": "Batch 2.3 (78 SP) has no Jira assignee."
+  },
+  {
+   "id": "D-FPD",
+   "n": "Finance Ad Revenue Pacing (Booked vs Budget vs Forecast)",
+   "c": "D",
+   "g": "Finance",
+   "k": "CARL-1364",
+   "st": "In Progress",
+   "rag": "A",
+   "s": "2026-08-14",
+   "t": "2026-09-30",
+   "fc": "2026-10-22",
+   "o": "Arlene Rose",
+   "pri": "P0",
+   "sp": [
+    31,
+    13,
+    10,
+    8
+   ],
+   "use": "Finance weekly pacing",
+   "note": "Slipped 9/30 → 10/22."
+  },
+  {
+   "id": "D-MFIN",
+   "n": "MSTR US Finance Batch 1",
+   "c": "D",
+   "g": "Finance",
+   "k": "CARL-2727",
+   "st": "In UAT",
+   "rag": "R",
+   "s": "2026-08-03",
+   "t": "2026-09-30",
+   "o": "Ping Feng",
+   "pri": "P0",
+   "sp": [
+    180,
+    17,
+    163,
+    0
+   ],
+   "use": "MicroStrategy → Quick",
+   "note": "Past 9/30; Intake→QA complete in roadmap; 98% SP in UAT awaiting business sign-off."
+  },
+  {
+   "id": "D-FAP",
+   "n": "Finance Ad Product Dashboard modernization",
+   "c": "D",
+   "g": "Finance",
+   "k": "CARL-3748",
+   "st": "In Progress",
+   "rag": "G",
+   "s": "",
+   "t": "",
+   "o": "Daya Thakur",
+   "pri": "—",
+   "sp": [
+    5,
+    5,
+    0,
+    0
+   ],
+   "use": "Finance",
+   "note": ""
+  },
+  {
+   "id": "D-MSI",
+   "n": "Research Market Share Insight model enhancement",
+   "c": "D",
+   "g": "Research",
+   "k": "CARL-3775",
+   "st": "In Progress",
+   "rag": "G",
+   "s": "2026-09-01",
+   "t": "2026-11-30",
+   "o": "Daya Thakur",
+   "pri": "P0",
+   "sp": [
+    8,
+    0,
+    8,
+    0
+   ],
+   "use": "Research, NextGen",
+   "note": "Nielsen Big MIT, NRLD, Ad Intel, SMI."
+  },
+  {
+   "id": "D-RLK",
+   "n": "Research Market Share Looker → Quick",
+   "c": "D",
+   "g": "Research",
+   "k": "CARL-3775",
+   "st": "In Progress",
+   "rag": "G",
+   "s": "2026-09-30",
+   "t": "2026-11-30",
+   "o": "Daya Thakur",
+   "pri": "P0",
+   "sp": [
+    8,
+    0,
+    8,
+    0
+   ],
+   "use": "Market research exploration",
+   "note": ""
+  },
+  {
+   "id": "D-RSD",
+   "n": "Research Measurement data support",
+   "c": "D",
+   "g": "Research",
+   "k": "CARL-3932",
+   "st": "In Progress",
+   "rag": "G",
+   "s": "",
+   "t": "",
+   "o": "Virginia Giacomini",
+   "pri": "—",
+   "sp": [
+    13,
+    5,
+    0,
+    8
+   ],
+   "use": "Research & Measurement",
+   "note": "Row added to the epic workbook; not on the Q4 roadmap.",
+   "nw": 1,
+   "chg": "New row in epic workbook (13 SP).",
+   "flag": "CARL-3932 is also used for the Time Buy row in the epic workbook."
+  },
+  {
+   "id": "D-NG",
+   "n": "NextGen Dashboard: Power BI → Quick",
+   "c": "D",
+   "g": "Research",
+   "k": "CARL-11",
+   "st": "In Progress",
+   "rag": "G",
+   "s": "2026-09-30",
+   "t": "2026-12-15",
+   "o": "Daya Thakur",
+   "pri": "P0",
+   "sp": [
+    63,
+    7,
+    8,
+    48
+   ],
+   "use": "Research & Measurement",
+   "note": "12% SP done.",
+   "chg": "Target 11/30 → 12/15/2026."
+  },
+  {
+   "id": "D-TB",
+   "n": "Time Buy Looker → Quick",
+   "c": "D",
+   "g": "Research",
+   "k": "CARL-3955",
+   "st": "In Triage",
+   "rag": "G",
+   "s": "2026-12-01",
+   "t": "2027-01-30",
+   "o": "—",
+   "pri": "P1",
+   "sp": [
+    5,
+    0,
+    0,
+    5
+   ],
+   "use": "Time Buy (2 reports)",
+   "note": "",
+   "chg": "Target 12/15/2026 → 01/30/2027.",
+   "flag": "Roadmap cites CARL-3955; epic workbook lists Time Buy under CARL-3932."
+  },
+  {
+   "id": "D-GR",
+   "n": "Guaranteed Reach data readiness",
+   "c": "D",
+   "g": "Research",
+   "k": "CARL-549",
+   "st": "Done",
+   "rag": "G",
+   "s": "",
+   "t": "",
+   "o": "Ping Feng",
+   "pri": "—",
+   "sp": [
+    3,
+    3,
+    0,
+    0
+   ],
+   "use": "Research & Measurement",
+   "note": "",
+   "a": "2026-09-09"
+  },
+  {
+   "id": "D-ADP",
+   "n": "Ad Product Looker → Quick",
+   "c": "D",
+   "g": "Ad Product",
+   "k": "CARL-3954",
+   "st": "In Triage",
+   "rag": "G",
+   "s": "2026-12-01",
+   "t": "2027-03-15",
+   "o": "—",
+   "pri": "P2",
+   "sp": [
+    8,
+    0,
+    0,
+    8
+   ],
+   "use": "Ad Product Innovation & Finance",
+   "note": "",
+   "chg": "Target 01/31/2027 → 03/15/2027."
+  },
+  {
+   "id": "D-MAFF",
+   "n": "MSTR Affiliate Batch 3.1 + 3.2",
+   "c": "D",
+   "g": "Affiliate",
+   "k": "CARL-3786 / 3787",
+   "st": "In Progress",
+   "rag": "N",
+   "s": "2026-09-30",
+   "t": "",
+   "o": "Anuj Singh",
+   "pri": "P0",
+   "sp": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "use": "MicroStrategy → Quick",
+   "note": "58 tickets, not pointed.",
+   "flag": "Roadmap target '11/01/1931' — likely 11/01/2026; left undated."
+  },
+  {
+   "id": "D-AFFS",
+   "n": "Affiliate data support + AMS Tableau troubleshoot",
+   "c": "D",
+   "g": "Affiliate",
+   "k": "CARL-634",
+   "st": "In Progress",
+   "rag": "G",
+   "s": "",
+   "t": "",
+   "o": "Anuj Singh",
+   "pri": "P0",
+   "sp": [
+    13,
+    5,
+    0,
+    8
+   ],
+   "use": "Affiliate AMS",
+   "note": ""
+  },
+  {
+   "id": "D-MINT",
+   "n": "MSTR International",
+   "c": "D",
+   "g": "International",
+   "k": "CARL-2971",
+   "st": "To Do",
+   "rag": "G",
+   "s": "2026-09-15",
+   "t": "",
+   "o": "AISHWARYA JAIRAM",
+   "pri": "P0",
+   "sp": [
+    666,
+    0,
+    0,
+    666
+   ],
+   "use": "MicroStrategy → Quick",
+   "note": "717 SP / 400 tickets, 0% done, 'Pending reprojection'.",
+   "flag": "Roadmap RAG is Green (v2 showed Red as an analyst call) — 0 of 717 SP done and no target date; Epic x Status tab labels CARL-2971 'Ad Sales Full List'."
+  },
+  {
+   "id": "D-HIVE",
+   "n": "MSTR HIVE reporting",
+   "c": "D",
+   "g": "Hive",
+   "k": "—",
+   "st": "To Do",
+   "rag": "N",
+   "s": "2026-12-01",
+   "t": "2027-03-01",
+   "asm": 1,
+   "o": "Aishwarya / Vinay CA, Onkar K, Shubham H",
+   "pri": "P0",
+   "sp": null,
+   "use": "Domain Analytics: Hive",
+   "note": "Roadmap RAG cell reads 'To Do'; no epic.",
+   "nw": 1,
+   "chg": "Added to this version (in roadmap; not shown in v2).",
+   "flag": "Workbook target reads 03/01/2026 — before the 12/01/2026 start; shown as 03/01/2027."
+  },
+  {
+   "id": "E-SEM",
+   "n": "Unified Semantic Layer (Cube) infra + Phase 2",
+   "c": "E",
+   "g": "Semantic",
+   "k": "CARL-547",
+   "st": "In Progress",
+   "rag": "G",
+   "s": "2026-04-20",
+   "t": "2027-01-31",
+   "o": "Colin Diemer",
+   "pri": "P0",
+   "sp": [
+    116,
+    78,
+    0,
+    38
+   ],
+   "use": "All published dashboards",
+   "note": "Infra delivered 6/30. Phase 2 (SOP, authoring process, pre-aggregation) 10/01/2026–01/31/2027.",
+   "chg": "Phase 2 target 10/31/2026 → 01/31/2027."
+  },
+  {
+   "id": "E-SEMD",
+   "n": "Semantic model on published prod dashboards",
+   "c": "E",
+   "g": "Semantic",
+   "k": "CARL-3783",
+   "st": "In Progress",
+   "rag": "G",
+   "s": "2026-07-31",
+   "t": "2026-11-01",
+   "o": "AISHWARYA JAIRAM",
+   "pri": "P0",
+   "sp": [
+    12,
+    0,
+    3,
+    9
+   ],
+   "use": "Holes, DR, BV, Incentive, Global Channel, VideoAmp Selling Title",
+   "note": "Missed deadline; SOP alignment pending feedback from Colin."
+  },
+  {
+   "id": "E-API",
+   "n": "API & MCP server for AI integration",
+   "c": "E",
+   "g": "AI enablement",
+   "k": "—",
+   "st": "To Do",
+   "rag": "N",
+   "s": "2027-01-15",
+   "t": "2027-01-31",
+   "o": "TBD",
+   "pri": "P1",
+   "sp": null,
+   "use": "AI agents & API consumers of CARL data products",
+   "note": "Pending additional scope.",
+   "nw": 1,
+   "chg": "New roadmap line."
+  },
+  {
+   "id": "E-LUM",
+   "n": "Lumos AI accelerator (BI migration)",
+   "c": "E",
+   "g": "BI migration",
+   "k": "CARL-1693",
+   "st": "Done",
+   "rag": "G",
+   "s": "2026-07-20",
+   "t": "2026-07-31",
+   "a": "2026-08-03",
+   "o": "Debarghyo Sengupta",
+   "pri": "P0",
+   "sp": [
+    70,
+    70,
+    0,
+    0
+   ],
+   "use": "All MSTR / Looker / PBI migrations",
+   "note": ""
+  },
+  {
+   "id": "E-CDC",
+   "n": "iDeal CDC solution",
+   "c": "E",
+   "g": "Ingestion",
+   "k": "—",
+   "st": "In Progress",
+   "rag": "G",
+   "s": "2026-07-15",
+   "t": "2026-08-15",
+   "o": "Deb / Avinaag, Kedar",
+   "pri": "P0",
+   "sp": null,
+   "use": "Venus, iDeal Modernization",
+   "note": "Past 8/15 target; actual '?'.",
+   "chg": "Start date 07/15 added."
+  },
+  {
+   "id": "E-RT",
+   "n": "Real-time ingestion (transactional)",
+   "c": "E",
+   "g": "Ingestion",
+   "k": "—",
+   "st": "In Progress",
+   "rag": "G",
+   "s": "2026-07-15",
+   "t": "2026-09-15",
+   "o": "Deb / TBD",
+   "pri": "P0",
+   "sp": null,
+   "use": "Venus, UMP, other operational apps",
+   "note": "Past 9/15 target; actual '?'.",
+   "chg": "Start date 07/15 added."
+  },
+  {
+   "id": "E-FED",
+   "n": "Catalog federation (Snowflake share → Iceberg)",
+   "c": "E",
+   "g": "Ingestion",
+   "k": "CARL-580",
+   "st": "Pending Scope",
+   "rag": "N",
+   "s": "2026-07-20",
+   "t": "2026-09-01",
+   "o": "—",
+   "pri": "P0",
+   "sp": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "use": "Snowflake-share sources",
+   "note": "'Ongoing'. Delayed by AWS + Snowflake technical hurdle; POC ongoing.",
+   "chg": "Target corrected from '09/01/1931' to 09/01/2026 — now past due."
+  },
+  {
+   "id": "E-DQ",
+   "n": "Data Quality framework Ph1",
+   "c": "E",
+   "g": "Trust",
+   "k": "CARL-540",
+   "st": "In Progress",
+   "rag": "G",
+   "s": "2026-05-18",
+   "t": "2026-11-30",
+   "o": "Avinaag Bonam",
+   "pri": "P1",
+   "sp": [
+    62,
+    39,
+    0,
+    23
+   ],
+   "use": "All layers",
+   "note": "Roadmap comments: timeline re-adjusted; deprioritized though not completely finished."
+  },
+  {
+   "id": "E-OBS",
+   "n": "Observability & alerting",
+   "c": "E",
+   "g": "Trust",
+   "k": "CARL-384",
+   "st": "In Progress",
+   "rag": "G",
+   "s": "2026-04-20",
+   "t": "2026-11-30",
+   "o": "Debarghyo Sengupta",
+   "pri": "P1",
+   "sp": [
+    31,
+    26,
+    0,
+    5
+   ],
+   "use": "All layers",
+   "note": "Roadmap comments: timeline re-adjusted; deprioritized though not completely finished."
+  },
+  {
+   "id": "E-CAT",
+   "n": "Catalog & discoverability (SageMaker)",
+   "c": "E",
+   "g": "Trust",
+   "k": "CARL-538",
+   "st": "In Triage",
+   "rag": "G",
+   "s": "2026-10-15",
+   "t": "2027-03-01",
+   "asm": 1,
+   "o": "Ping Feng",
+   "pri": "P1",
+   "sp": [
+    13,
+    0,
+    0,
+    13
+   ],
+   "use": "Certification, data dictionary",
+   "note": "Intake complete; discovery in progress.",
+   "chg": "Was in triage, undated → now scheduled from 10/15/2026, Green.",
+   "flag": "Workbook target reads 03/01/2026 — before the 10/15/2026 start; shown as 03/01/2027."
+  },
+  {
+   "id": "E-GOV",
+   "n": "Governance & access control",
+   "c": "E",
+   "g": "Trust",
+   "k": "CARL-3553 / 462 / 345",
+   "st": "In Progress",
+   "rag": "G",
+   "s": "2026-04-20",
+   "t": "2026-12-15",
+   "o": "Avinaag Bonam +",
+   "pri": "P0",
+   "sp": [
+    170,
+    124,
+    26,
+    20
+   ],
+   "use": "Repos, AWS, Quick, Iceberg, Cube",
+   "note": "Evergreen."
+  },
+  {
+   "id": "E-INT",
+   "n": "Demand intake form + CARL playbook",
+   "c": "E",
+   "g": "Demand governance",
+   "k": "CARL-803 / 767",
+   "st": "In Progress",
+   "rag": "G",
+   "s": "",
+   "t": "",
+   "o": "Nathan Hernandez-Adams",
+   "pri": "—",
+   "sp": [
+    118,
+    8,
+    0,
+    110
+   ],
+   "use": "All new demand",
+   "note": "Intake form 37.5% done; playbook 0 of 110 SP. This is the control that protects the roadmap from ad-hoc demand."
+  }
+ ],
+ "RELS": [
+  [
+   "F-OP1B",
+   "F-OP1S",
+   "doc"
+  ],
+  [
+   "F-OP1B",
+   "P-UMP",
+   "doc"
+  ],
+  [
+   "F-OP1B",
+   "P-AIP",
+   "doc"
+  ],
+  [
+   "F-OP1B",
+   "P-FC",
+   "doc"
+  ],
+  [
+   "F-OP1B",
+   "D-UC1S",
+   "doc"
+  ],
+  [
+   "F-FWB",
+   "F-FWS",
+   "doc"
+  ],
+  [
+   "F-FWB",
+   "F-FWAPI",
+   "doc"
+  ],
+  [
+   "F-FWB",
+   "P-UMP",
+   "doc"
+  ],
+  [
+   "F-FWB",
+   "P-AIP",
+   "doc"
+  ],
+  [
+   "F-FWB",
+   "P-FC",
+   "doc"
+  ],
+  [
+   "F-FWB",
+   "D-UC1S",
+   "doc"
+  ],
+  [
+   "F-FWAPI",
+   "F-FWS",
+   "doc"
+  ],
+  [
+   "F-FWAPI",
+   "P-NEO",
+   "doc"
+  ],
+  [
+   "F-FWP2",
+   "P-AIP",
+   "doc"
+  ],
+  [
+   "F-FWB",
+   "P-NEO",
+   "doc"
+  ],
+  [
+   "F-FWS",
+   "D-UC1S",
+   "doc"
+  ],
+  [
+   "F-FWS",
+   "P-AIP",
+   "doc"
+  ],
+  [
+   "F-FWS",
+   "P-UMP",
+   "doc"
+  ],
+  [
+   "F-FWS",
+   "P-FC",
+   "doc"
+  ],
+  [
+   "F-OP1S",
+   "D-UC1S",
+   "doc"
+  ],
+  [
+   "F-OP1S",
+   "P-AIP",
+   "doc"
+  ],
+  [
+   "F-OP1S",
+   "P-UMP",
+   "doc"
+  ],
+  [
+   "F-OP1S",
+   "P-FC",
+   "doc"
+  ],
+  [
+   "F-GAM",
+   "P-UMP",
+   "doc"
+  ],
+  [
+   "F-GAM",
+   "P-AIP",
+   "doc"
+  ],
+  [
+   "F-GAM",
+   "P-FC",
+   "doc"
+  ],
+  [
+   "F-GAM",
+   "D-UC1G",
+   "doc"
+  ],
+  [
+   "F-IDDB",
+   "P-VEN",
+   "doc"
+  ],
+  [
+   "F-IDDB",
+   "P-UMP",
+   "doc"
+  ],
+  [
+   "F-IDDB",
+   "D-UC1G",
+   "doc"
+  ],
+  [
+   "F-IDMSA",
+   "P-VEN",
+   "doc"
+  ],
+  [
+   "F-IDMSA",
+   "P-UMP",
+   "doc"
+  ],
+  [
+   "F-IDDCI",
+   "P-VEN",
+   "doc"
+  ],
+  [
+   "F-IDDCI",
+   "P-UMP",
+   "doc"
+  ],
+  [
+   "F-IDLDR",
+   "P-VEN",
+   "doc"
+  ],
+  [
+   "F-IDLDR",
+   "F-LDR",
+   "inf"
+  ],
+  [
+   "F-CMP",
+   "P-UMP",
+   "doc"
+  ],
+  [
+   "F-IDS",
+   "P-VEN",
+   "doc"
+  ],
+  [
+   "E-CDC",
+   "F-IDDB",
+   "doc"
+  ],
+  [
+   "E-CDC",
+   "P-VEN",
+   "doc"
+  ],
+  [
+   "E-CDC",
+   "F-IDS",
+   "doc"
+  ],
+  [
+   "E-RT",
+   "P-VEN",
+   "doc"
+  ],
+  [
+   "E-RT",
+   "P-UMP",
+   "doc"
+  ],
+  [
+   "F-SF1",
+   "D-SFD",
+   "doc"
+  ],
+  [
+   "F-SF1",
+   "D-UC1G",
+   "doc"
+  ],
+  [
+   "F-SF1",
+   "D-SFDB",
+   "doc"
+  ],
+  [
+   "F-SF2",
+   "D-SFDB",
+   "doc"
+  ],
+  [
+   "D-SFD",
+   "D-SFDB",
+   "doc"
+  ],
+  [
+   "F-WRR",
+   "D-UC1G",
+   "doc"
+  ],
+  [
+   "F-WRR",
+   "D-SFDB",
+   "doc"
+  ],
+  [
+   "F-FFF",
+   "D-FPD",
+   "doc"
+  ],
+  [
+   "F-DFC",
+   "D-FPD",
+   "doc"
+  ],
+  [
+   "D-UC1S",
+   "D-UC1G",
+   "doc"
+  ],
+  [
+   "D-UC1G",
+   "D-FPD",
+   "doc"
+  ],
+  [
+   "D-UC1S",
+   "D-UC1P2",
+   "inf"
+  ],
+  [
+   "D-UC1G",
+   "D-UC1P2",
+   "inf"
+  ],
+  [
+   "F-STAQ",
+   "D-UC1G",
+   "doc"
+  ],
+  [
+   "F-OTB",
+   "D-UC1S",
+   "doc"
+  ],
+  [
+   "F-LDR",
+   "D-CPD",
+   "inf"
+  ],
+  [
+   "F-NRLD",
+   "P-UMP",
+   "doc"
+  ],
+  [
+   "F-NRLD",
+   "P-FC",
+   "doc"
+  ],
+  [
+   "F-NRLD",
+   "D-NG",
+   "doc"
+  ],
+  [
+   "F-NRLD",
+   "D-MSI",
+   "doc"
+  ],
+  [
+   "F-ADI",
+   "D-MSI",
+   "doc"
+  ],
+  [
+   "F-MIT",
+   "D-MSI",
+   "doc"
+  ],
+  [
+   "D-MSI",
+   "D-RLK",
+   "doc"
+  ],
+  [
+   "D-MSI",
+   "D-NG",
+   "doc"
+  ],
+  [
+   "F-STW",
+   "P-UMP",
+   "doc"
+  ],
+  [
+   "F-STW",
+   "P-FC",
+   "doc"
+  ],
+  [
+   "F-BPB",
+   "P-BP",
+   "doc"
+  ],
+  [
+   "F-CLR",
+   "P-NEO",
+   "doc"
+  ],
+  [
+   "F-VA",
+   "P-FC",
+   "doc"
+  ],
+  [
+   "E-LUM",
+   "D-MAS",
+   "doc"
+  ],
+  [
+   "E-LUM",
+   "D-MAS2",
+   "doc"
+  ],
+  [
+   "E-LUM",
+   "D-MFIN",
+   "doc"
+  ],
+  [
+   "E-LUM",
+   "D-MAFF",
+   "doc"
+  ],
+  [
+   "E-LUM",
+   "D-MINT",
+   "doc"
+  ],
+  [
+   "E-LUM",
+   "D-HIVE",
+   "doc"
+  ],
+  [
+   "E-LUM",
+   "D-RLK",
+   "doc"
+  ],
+  [
+   "E-LUM",
+   "D-NG",
+   "doc"
+  ],
+  [
+   "E-LUM",
+   "D-ADP",
+   "doc"
+  ],
+  [
+   "E-LUM",
+   "D-TB",
+   "inf"
+  ],
+  [
+   "E-LUM",
+   "F-IBM",
+   "doc"
+  ],
+  [
+   "F-IBM",
+   "D-MINT",
+   "inf"
+  ],
+  [
+   "P-INTL",
+   "D-MINT",
+   "inf"
+  ],
+  [
+   "E-SEM",
+   "E-SEMD",
+   "doc"
+  ],
+  [
+   "E-SEM",
+   "E-API",
+   "inf"
+  ],
+  [
+   "E-SEMD",
+   "D-BV",
+   "doc"
+  ],
+  [
+   "E-SEMD",
+   "D-INC",
+   "doc"
+  ],
+  [
+   "E-SEMD",
+   "D-HOL",
+   "doc"
+  ],
+  [
+   "E-SEMD",
+   "D-DR",
+   "doc"
+  ],
+  [
+   "E-FED",
+   "E-CAT",
+   "doc"
+  ],
+  [
+   "E-DQ",
+   "E-OBS",
+   "doc"
+  ],
+  [
+   "E-DQ",
+   "E-CAT",
+   "doc"
+  ],
+  [
+   "X-SF",
+   "F-SF1",
+   "ext"
+  ],
+  [
+   "X-SF",
+   "F-SF2",
+   "ext"
+  ],
+  [
+   "X-SF",
+   "D-SFD",
+   "ext"
+  ],
+  [
+   "X-OP1",
+   "F-OP1S",
+   "ext"
+  ],
+  [
+   "X-FW",
+   "F-FWAPI",
+   "ext"
+  ],
+  [
+   "X-FW",
+   "F-FWP2",
+   "ext"
+  ],
+  [
+   "X-FW",
+   "F-FWS",
+   "ext"
+  ],
+  [
+   "X-GAM",
+   "F-GAM",
+   "ext"
+  ],
+  [
+   "X-NIE",
+   "F-STW",
+   "ext"
+  ],
+  [
+   "X-NIE",
+   "F-NRLD",
+   "ext"
+  ],
+  [
+   "X-3P",
+   "F-STAQ",
+   "ext"
+  ],
+  [
+   "X-3P",
+   "F-CLR",
+   "ext"
+  ],
+  [
+   "X-3P",
+   "F-VA",
+   "ext"
+  ],
+  [
+   "X-3P",
+   "F-LIC",
+   "ext"
+  ],
+  [
+   "X-DBA",
+   "E-CDC",
+   "ext"
+  ],
+  [
+   "X-DBA",
+   "E-RT",
+   "ext"
+  ],
+  [
+   "X-SNW",
+   "E-FED",
+   "ext"
+  ],
+  [
+   "X-MSTR",
+   "D-MINT",
+   "ext"
+  ],
+  [
+   "X-MSTR",
+   "D-MAS2",
+   "ext"
+  ],
+  [
+   "Y-NEO",
+   "F-CLR",
+   "ext"
+  ],
+  [
+   "Y-NEO",
+   "F-FWAPI",
+   "ext"
+  ],
+  [
+   "Y-NEO",
+   "P-NEO",
+   "ext"
+  ],
+  [
+   "Y-UMP",
+   "F-GAM",
+   "ext"
+  ],
+  [
+   "Y-UMP",
+   "F-STW",
+   "ext"
+  ],
+  [
+   "Y-UMP",
+   "P-UMP",
+   "ext"
+  ],
+  [
+   "Y-AIP",
+   "F-FWP2",
+   "ext"
+  ],
+  [
+   "Y-AIP",
+   "P-AIP",
+   "ext"
+  ],
+  [
+   "Y-FC",
+   "P-FC",
+   "ext"
+  ],
+  [
+   "Y-FC",
+   "F-VA",
+   "ext"
+  ],
+  [
+   "Y-VEN",
+   "F-IDS",
+   "ext"
+  ],
+  [
+   "Y-VEN",
+   "F-IDLDR",
+   "ext"
+  ],
+  [
+   "Y-VEN",
+   "P-VEN",
+   "ext"
+  ],
+  [
+   "B-BIZ",
+   "D-MFIN",
+   "ext"
+  ],
+  [
+   "B-BIZ",
+   "D-MAS",
+   "ext"
+  ],
+  [
+   "B-BIZ",
+   "D-INC",
+   "ext"
+  ],
+  [
+   "B-BIZ",
+   "F-FFF",
+   "ext"
+  ],
+  [
+   "B-BIZ",
+   "D-MINT",
+   "ext"
+  ],
+  [
+   "Z-ADH",
+   "D-UC1S",
+   "ext"
+  ],
+  [
+   "Z-ADH",
+   "F-SF1",
+   "ext"
+  ],
+  [
+   "Z-ADH",
+   "E-SEMD",
+   "ext"
+  ],
+  [
+   "Z-ADH",
+   "D-MINT",
+   "ext"
+  ],
+  [
+   "Z-ADH",
+   "F-FWS",
+   "ext"
+  ],
+  [
+   "E-INT",
+   "Z-ADH",
+   "ctl"
+  ]
+ ],
+ "DEPS": [
+  {
+   "id": "X-SF",
+   "t": "S",
+   "n": "Salesforce / Metropolis source team",
+   "ask": "Oracle DB access & schema (Ph1); API access, scope and confirmed DE lead (Ph2)",
+   "st": "Partial",
+   "ev": "Ph1 ingests via Oracle, not direct Salesforce; Ph1 slipped 8/30 → 9/30 ('Delayed due to new request coming'); Ph2 'Pending scope', lead still 'Kiran??'",
+   "b": [
+    "F-SF1",
+    "F-SF2",
+    "D-SFD"
+   ]
+  },
+  {
+   "id": "X-OP1",
+   "t": "S",
+   "n": "Operative One (Op1) source team",
+   "ask": "Phase 2 API tables + additional Snowflake share; business definitions for canonical Silver",
+   "st": "Partial",
+   "ev": "Bronze live 7/1; Op1 canonical Silver now scheduled from 10/15 (Mike / Maja) — target date in workbook needs correcting",
+   "b": [
+    "F-OP1S"
+   ]
+  },
+  {
+   "id": "X-FW",
+   "t": "S",
+   "n": "FreeWheel source / vendor",
+   "ask": "History retention, load throughput, API scope",
+   "st": "Open",
+   "ev": "Exec summary (Jul 16): source keeps only last 7 days; high volume slows QA/Stage/Prod loads. FW API and Phase 2 remain P2 / pending scope",
+   "b": [
+    "F-FWAPI",
+    "F-FWP2",
+    "F-FWS"
+   ]
+  },
+  {
+   "id": "X-GAM",
+   "t": "S",
+   "n": "GAM (Google Ad Manager) data owner",
+   "ask": "Source access, requirements and PRD",
+   "st": "Partial",
+   "ev": "Now scheduled 10/01/2026–01/31/2027, 'in discovery stage' (was pending intake/PRD in v2); epic CARL-749 still 0 of 5 SP",
+   "b": [
+    "F-GAM"
+   ]
+  },
+  {
+   "id": "X-NIE",
+   "t": "S",
+   "n": "Nielsen data owners",
+   "ask": "Stewardship scope; NRLD second IC",
+   "st": "Partial",
+   "ev": "Stewardship now scheduled 10/15/2026–01/31/2027 (was pending scope); NRLD IC still 'Sean + ???'",
+   "b": [
+    "F-STW",
+    "F-NRLD"
+   ]
+  },
+  {
+   "id": "X-3P",
+   "t": "S",
+   "n": "3P vendors: STAQ, Clearline, VideoAmp, LoopMe, iSpot, CAPI",
+   "ask": "Data access/feeds, requirements & PRD",
+   "st": "Partial",
+   "ev": "STAQ (from 10/15) and VideoAmp (from 10/01) now scheduled to 01/31/2027 but still 'pending intake discovery, requirement gathering, and PRD'; LoopMe/iSpot/CAPI planned 01/01–03/31/2027, in triage; Clearline still pending scope",
+   "b": [
+    "F-STAQ",
+    "F-CLR",
+    "F-VA",
+    "F-LIC"
+   ]
+  },
+  {
+   "id": "X-DBA",
+   "t": "S",
+   "n": "iDeal DBA team (CDC)",
+   "ask": "CDC enablement on iDeal transactional DB",
+   "st": "Open",
+   "ev": "Exec summary (Jul 16): ~84 SP CDC-blocked, single owner, DBA team engaged; CDC 8/15 and real-time 9/15 targets passed, actuals '?'",
+   "b": [
+    "E-CDC",
+    "E-RT"
+   ]
+  },
+  {
+   "id": "X-SNW",
+   "t": "S",
+   "n": "AWS + Snowflake (platform)",
+   "ask": "Resolve catalog-federation technical hurdle",
+   "st": "Open",
+   "ev": "Roadmap comment: delayed due to AWS + Snowflake technical hurdle, POC ongoing; target now reads 09/01/2026 and is past due",
+   "b": [
+    "E-FED"
+   ]
+  },
+  {
+   "id": "X-MSTR",
+   "t": "S",
+   "n": "MicroStrategy platform / API access",
+   "ask": "API access for Lumos automation",
+   "st": "Unverified",
+   "ev": "Exec summary (Jul 16): API access unresolved, interim SQL extraction from UI — not re-confirmed since",
+   "b": [
+    "D-MINT",
+    "D-MAS2"
+   ]
+  },
+  {
+   "id": "Y-NEO",
+   "t": "Y",
+   "n": "Neo product team",
+   "ask": "Declare what Neo needs pulled (Clearline, FreeWheel API) + Gold scope & owner",
+   "st": "Open",
+   "ev": "FW API 'pending further use case and product requirement'; Clearline still in triage / pending PRD",
+   "b": [
+    "F-CLR",
+    "F-FWAPI",
+    "P-NEO"
+   ]
+  },
+  {
+   "id": "Y-UMP",
+   "t": "Y",
+   "n": "UMP product team",
+   "ask": "Confirm source list (GAM, Nielsen Stewardship/NRLD) & Gold scope",
+   "st": "Partial",
+   "ev": "GAM and Nielsen Stewardship now scheduled (Oct starts); UMP Phase 2 evergreen to 12/15",
+   "b": [
+    "F-GAM",
+    "F-STW",
+    "P-UMP"
+   ]
+  },
+  {
+   "id": "Y-AIP",
+   "t": "Y",
+   "n": "AIP product team",
+   "ask": "Define FreeWheel Phase 2 data (new to WBD) and AIP Gold scope",
+   "st": "Open",
+   "ev": "FW Phase 2 'Pending scope' (P2); AIP support epic is a 'placeholder, pending scoping' and unsized",
+   "b": [
+    "F-FWP2",
+    "P-AIP"
+   ]
+  },
+  {
+   "id": "Y-FC",
+   "t": "Y",
+   "n": "Forecasting (DDL / linear / digital) team",
+   "ask": "Scope the Forecasting Gold product",
+   "st": "Open",
+   "ev": "DDL-Forecasting still 'Pending scope / In triage'",
+   "b": [
+    "P-FC",
+    "F-VA"
+   ]
+  },
+  {
+   "id": "Y-VEN",
+   "t": "Y",
+   "n": "iDeal / Venus / OMS product team",
+   "ask": "Confirm iDeal Silver/Gold scope; name Gold (OMS) owner",
+   "st": "Partial",
+   "ev": "iDeal canonical Silver now scheduled 11/2026–03/2027 (Arlene / Mike); new iDeal → linear_digital_revenue Bronze (CARL-4035) due 10/31; DealBLDR flagged 'Delayed'",
+   "b": [
+    "F-IDS",
+    "F-IDLDR",
+    "P-VEN"
+   ]
+  },
+  {
+   "id": "B-BIZ",
+   "t": "B",
+   "n": "Business owners (Ad Sales, Finance, Research, Affiliate, International)",
+   "ask": "UAT sign-off, forecast-feed template, report-list reprojection",
+   "st": "Open",
+   "ev": "Finance B1 98% SP in UAT past 9/30; Incentive 2.0 awaiting AE screenshot; forecast feed needs standard CSV; International pending reprojection",
+   "b": [
+    "D-MFIN",
+    "D-MAS",
+    "D-INC",
+    "F-FFF",
+    "D-MINT"
+   ]
+  },
+  {
+   "id": "Z-ADH",
+   "t": "Z",
+   "n": "Unplanned / ad-hoc data requests",
+   "ask": "All new demand through intake & prioritization — no side-door one-time pulls",
+   "st": "Open",
+   "ev": "Roadmap comment on Metropolis Ph1: 'Delayed due to new request coming'; one-time iDeal dump for UMP (CARL-2772, 13 SP); Q3 capacity 112% utilized; intake form 37.5%, playbook 0/110 SP",
+   "b": [
+    "D-UC1S",
+    "F-SF1",
+    "E-SEMD",
+    "D-MINT",
+    "F-FWS"
+   ]
+  }
+ ]
+}

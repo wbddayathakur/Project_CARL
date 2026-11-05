@@ -1,0 +1,382 @@
+cubes:
+  - name: cube_carl_dwhprd_gold_tcr_fact
+    sql: >
+      SELECT sales_holding_company,
+             CAST(added_date AS timestamp(3)) AS added_date,
+             tcr_id,
+             added_by,
+             current_approval_status,
+             current_approval_stage,
+             current_approved_by,
+             CAST(current_approval_date AS timestamp(3)) AS current_approval_date,
+             header_change,
+             multiple_change,
+             multiple_items,
+             change_source,
+             change_reason,
+             adjustment_type,
+             adjustment_count,
+             calendar,
+             contract_currency,
+             original_amount_local,
+             original_amount_home,
+             adjustment_amount_local,
+             adjustment_amount_home,
+             new_amount_local,
+             new_amount_home,
+             month,
+             deal_number,
+             contract_number,
+             invoice_number,
+             agent,
+             advertiser,
+             product,
+             revenue_type,
+             source_system_region_key,
+             current_approval_stage_status
+        FROM {{ catalog('dwhprd_gold') }}.tcr_fact
+    data_source: default
+    public: false
+    title: Carl Dwhprd Gold — TCR Fact
+    description: >-
+      TCR header, one row per TCR (tcr_id is unique: 10,605 rows on dev, 2026-10-09). Backs the
+      international MSTR reports TCR rprt 1 and TCR rprt 2. Both read the Oracle view
+      TCR_FACT_VW, which landed as two gold tables: tcr_fact (this cube) and tcr_approval_fact
+      (cube_carl_dwhprd_gold_tcr_approval_fact). This cube joins the approval cube one_to_many on
+      tcr_id and source_system_region_key. Rooted here, the join is a LEFT JOIN, so the 262 TCRs
+      with no approval rows stay in the report grain (37,461 joined rows on dev). The reports'
+      grain is TCR x approval stage, and MSTR's select distinct collapses 2 surplus approval
+      rows that match on every report column, which any grouped query here also does. Amount
+      and adjustment-count columns are dimensions because the reports show them row by row and
+      never aggregate them. The only report metric is tcr_count. Prompts are not baked in.
+      current_approval_date (and, on the approval cube, approval_date and completed_date) is
+      typed as text so one rollup can hold the full report grid (see pre_aggregations).
+      added_date and current_approval_date are timestamp with time zone in gold. This SQL
+      casts both to timestamp(3) on this table alone, so a SQL API query does not return
+      that type.
+    dimensions:
+      - name: sales_holding_company
+        sql: sales_holding_company
+        type: string
+        title: Sales Holding Company
+        description: Sales holding company on the TCR. TCR rprt 1 can filter on this column. The filter is not baked in.
+      - name: added_date
+        sql: added_date
+        type: time
+        title: TCR Added Date
+        description: >-
+          Date the TCR was added. The value is the added_date column from this cube's SQL,
+          cast from timestamp with time zone to timestamp(3) on tcr_fact alone. The report
+          SQL aliases the source column ADDED_DATE1. Both reports can filter on a date or a
+          date range. The filter is not baked in.
+      - name: tcr_id
+        sql: tcr_id
+        type: string
+        primary_key: true
+        title: TCR ID
+        description: >-
+          TCR identifier, unique in tcr_fact (one row per TCR). In the TCR report views it repeats
+          once per approval stage because of the join to the approval cube. tcr_count counts
+          distinct values of this column.
+      - name: added_by
+        sql: added_by
+        type: string
+        title: TCR Added By
+        description: Person who added the TCR.
+      - name: current_approval_status
+        sql: current_approval_status
+        type: string
+        title: TCR Current Approval Status
+        description: >-
+          Current approval status of the TCR header. TCR rprt 2 can filter on this column. The
+          filter is not baked in.
+      - name: current_approval_stage
+        sql: current_approval_stage
+        type: string
+        title: TCR Current Approval Stage
+        description: Current approval stage of the TCR header.
+      - name: current_approved_by
+        sql: current_approved_by
+        type: string
+        title: TCR Current Approved By
+        description: Person who currently approved the TCR.
+      - name: current_approval_date
+        sql: "date_format({CUBE}.current_approval_date, '%Y-%m-%d %H:%i:%s')"
+        type: string
+        title: TCR Current Approval Date
+        description: >-
+          Date of the TCR's current approval. Shown as text (yyyy-mm-dd hh:mm:ss) so the report
+          grid pre-aggregation can match. Not a report prompt.
+      - name: header_change
+        sql: header_change
+        type: string
+        title: Header Change Flag
+        description: Flag for whether the TCR changes the header.
+      - name: multiple_change
+        sql: multiple_change
+        type: string
+        title: Multiple Change Flag
+        description: Flag for whether the TCR contains multiple changes.
+      - name: multiple_items
+        sql: multiple_items
+        type: number
+        title: Multiple Items
+        description: >-
+          Multiple-items indicator carried on the TCR (numeric in the source). Shown on the row,
+          not aggregated. (provisional)
+      - name: change_source
+        sql: change_source
+        type: string
+        title: Change Source
+        description: Source of the TCR change.
+      - name: change_reason
+        sql: change_reason
+        type: string
+        title: Change Reason
+        description: Reason recorded for the TCR change.
+      - name: adjustment_type
+        sql: adjustment_type
+        type: string
+        title: Adjustment Type
+        description: Type of financial adjustment on the TCR. Shown on the row, not aggregated.
+      - name: adjustment_count
+        sql: adjustment_count
+        type: number
+        title: Adjustment Count
+        description: >-
+          Adjustment count carried on the TCR row. The reports treat it as an attribute, so this
+          is a dimension and not a sum.
+      - name: calendar
+        sql: calendar
+        type: string
+        title: Calendar
+        description: Calendar label on the TCR row.
+      - name: contract_currency
+        sql: contract_currency
+        type: string
+        title: Contract Currency
+        description: Currency of the contract amounts on the TCR.
+      - name: original_amount_local
+        sql: original_amount_local
+        type: number
+        title: Original Amount LOC
+        description: Original amount in local currency. Shown on the row, not summed.
+      - name: original_amount_home
+        sql: original_amount_home
+        type: number
+        title: Original Amount HOME
+        description: Original amount in home currency. Shown on the row, not summed.
+      - name: adjustment_amount_local
+        sql: adjustment_amount_local
+        type: number
+        title: Adjustment Amount LOC
+        description: Adjustment amount in local currency. Shown on the row, not summed.
+      - name: adjustment_amount_home
+        sql: adjustment_amount_home
+        type: number
+        title: Adjustment Amount HOME
+        description: Adjustment amount in home currency. Shown on the row, not summed.
+      - name: new_amount_local
+        sql: new_amount_local
+        type: number
+        title: New Amount LOC
+        description: New amount in local currency after the adjustment. Shown on the row, not summed.
+      - name: new_amount_home
+        sql: new_amount_home
+        type: number
+        title: New Amount HOME
+        description: New amount in home currency after the adjustment. Shown on the row, not summed.
+      - name: month
+        sql: "{CUBE}.month"
+        type: string
+        title: Month
+        description: Month on the TCR. TCR rprt 1 can filter on this column. The filter is not baked in.
+      - name: deal_number
+        sql: deal_number
+        type: string
+        title: Deal Number
+        description: Deal number. TCR rprt 1 can filter on this column. The filter is not baked in.
+      - name: contract_number
+        sql: contract_number
+        type: string
+        title: Contract Number
+        description: Contract number. TCR rprt 1 can filter on this column. The filter is not baked in.
+      - name: invoice_number
+        sql: invoice_number
+        type: string
+        title: Invoice Number
+        description: Invoice number. TCR rprt 1 can filter on this column. The filter is not baked in.
+      - name: agent
+        sql: agent
+        type: string
+        title: Agent
+        description: Agent on the TCR. TCR rprt 1 can filter on this column. The filter is not baked in.
+      - name: advertiser
+        sql: advertiser
+        type: string
+        title: Advertiser
+        description: Advertiser on the TCR. TCR rprt 1 can filter on this column. The filter is not baked in.
+      - name: product
+        sql: product
+        type: string
+        title: Product
+        description: Product on the TCR. TCR rprt 1 can filter on this column. The filter is not baked in.
+      - name: revenue_type
+        sql: revenue_type
+        type: string
+        title: Revenue Type
+        description: Revenue type on the TCR row.
+      - name: source_system_region_key
+        sql: source_system_region_key
+        type: number
+        title: Source System Region Key
+        description: >-
+          Source system region of the TCR. Part of the join key to the approval cube. One region
+          on dev (2026-10-09). Not on the report views.
+      - name: current_approval_stage_status
+        sql: current_approval_stage_status
+        type: string
+        title: TCR Current Approval Stage Status
+        description: >-
+          Status of the TCR's current approval stage (provisional). Not on either report template,
+          so not on the views.
+    measures:
+      - name: record_count
+        sql: '*'
+        type: count
+        title: Record Count
+        description: >-
+          Row count for smoke queries. On this cube alone it counts TCRs; joined to the
+          approval cube it counts TCR x approval-stage rows. Omitted from both views on purpose:
+          it is not the report metric.
+      - name: tcr_count
+        sql: '{CUBE}.tcr_id'
+        type: count_distinct
+        title: TCR Count
+        description: >-
+          Exact distinct count of tcr_id. The only metric on TCR rprt 1 and TCR rprt 2
+          (MSTR Count of TCR ID at report level, no qualification). Stays exact across the
+          approval-stage join. Not additive: totals must be recomputed, never summed. Both
+          views reuse this measure.
+    pre_aggregations:
+      # QuickSight shape: a DATETIME field in a table visual is sent as DATE_TRUNC('day', ...),
+      # which Cube's SQL API turns into a time dimension at day granularity.
+      - name: tcr_report_grid
+        measures:
+          - tcr_count
+        time_dimension: added_date
+        granularity: day
+        dimensions:
+          - sales_holding_company
+          - tcr_id
+          - added_by
+          - current_approval_status
+          - current_approval_stage
+          - current_approved_by
+          - current_approval_date
+          - header_change
+          - multiple_change
+          - multiple_items
+          - change_source
+          - change_reason
+          - adjustment_type
+          - adjustment_count
+          - calendar
+          - contract_currency
+          - original_amount_local
+          - original_amount_home
+          - adjustment_amount_local
+          - adjustment_amount_home
+          - new_amount_local
+          - new_amount_home
+          - month
+          - deal_number
+          - contract_number
+          - invoice_number
+          - agent
+          - advertiser
+          - product
+          - revenue_type
+          - cube_carl_dwhprd_gold_tcr_approval_fact.approval_stage_seq
+          - cube_carl_dwhprd_gold_tcr_approval_fact.approval_stage_status
+          - cube_carl_dwhprd_gold_tcr_approval_fact.approval_stage
+          - cube_carl_dwhprd_gold_tcr_approval_fact.approval_team
+          - cube_carl_dwhprd_gold_tcr_approval_fact.approved_by
+          - cube_carl_dwhprd_gold_tcr_approval_fact.approval_date
+          - cube_carl_dwhprd_gold_tcr_approval_fact.completed_by
+          - cube_carl_dwhprd_gold_tcr_approval_fact.completed_date
+        refresh_key:
+          every: 1 hour
+        indexes:
+          - name: by_current_approval_status
+            columns:
+              - current_approval_status
+          - name: by_contract_number
+            columns:
+              - contract_number
+      # Same grid with added_date as a plain dimension, for clients (REST/MCP, SQL API without
+      # DATE_TRUNC) that group by the raw timestamp.
+      - name: tcr_report_grid_raw_added_date
+        measures:
+          - tcr_count
+        dimensions:
+          - added_date
+          - sales_holding_company
+          - tcr_id
+          - added_by
+          - current_approval_status
+          - current_approval_stage
+          - current_approved_by
+          - current_approval_date
+          - header_change
+          - multiple_change
+          - multiple_items
+          - change_source
+          - change_reason
+          - adjustment_type
+          - adjustment_count
+          - calendar
+          - contract_currency
+          - original_amount_local
+          - original_amount_home
+          - adjustment_amount_local
+          - adjustment_amount_home
+          - new_amount_local
+          - new_amount_home
+          - month
+          - deal_number
+          - contract_number
+          - invoice_number
+          - agent
+          - advertiser
+          - product
+          - revenue_type
+          - cube_carl_dwhprd_gold_tcr_approval_fact.approval_stage_seq
+          - cube_carl_dwhprd_gold_tcr_approval_fact.approval_stage_status
+          - cube_carl_dwhprd_gold_tcr_approval_fact.approval_stage
+          - cube_carl_dwhprd_gold_tcr_approval_fact.approval_team
+          - cube_carl_dwhprd_gold_tcr_approval_fact.approved_by
+          - cube_carl_dwhprd_gold_tcr_approval_fact.approval_date
+          - cube_carl_dwhprd_gold_tcr_approval_fact.completed_by
+          - cube_carl_dwhprd_gold_tcr_approval_fact.completed_date
+        refresh_key:
+          every: 1 hour
+        indexes:
+          - name: by_current_approval_status
+            columns:
+              - current_approval_status
+          - name: by_contract_number
+            columns:
+              - contract_number
+      # Unfiltered grand total (QuickSight totals / KPI with no filters).
+      - name: tcr_total
+        measures:
+          - tcr_count
+        refresh_key:
+          every: 1 hour
+    joins:
+      - name: cube_carl_dwhprd_gold_tcr_approval_fact
+        sql: >-
+          {CUBE}.tcr_id = {cube_carl_dwhprd_gold_tcr_approval_fact}.tcr_id
+          AND {CUBE}.source_system_region_key = {cube_carl_dwhprd_gold_tcr_approval_fact}.source_system_region_key
+        relationship: one_to_many

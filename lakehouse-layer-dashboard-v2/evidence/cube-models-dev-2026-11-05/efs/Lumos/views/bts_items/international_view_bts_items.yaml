@@ -1,0 +1,87 @@
+views:
+  - name: international_view_bts_items
+    public: true
+    title: International — Items
+    description: >-
+      Business view for international on bts_items (MSTR Items Rpt). One row per
+      campaign, contract, and contract item. Apply in QuickSight:
+      source_system_region_key = 21 AND campaign_start_date >= 2026-01-01.
+      The eight template metrics are the *_sum measures. The same columns stay
+      dimensions for the item attributes. Do not include those sums on the
+      placements or targets views, where the value repeats once per child row.
+      Campaign Currency is bts_currency_dim.currency_code. Deal Name and Deal
+      Type are bts_deal_dim.deal_name and deal_type_desc, one row per deal_key.
+    meta:
+      view_scope: business
+      business: international
+      fact_table: bts_items
+      mstr_report_name: Items Rpt
+    cubes:
+      - join_path: cube_carl_dwhprd_gold_bts_items
+        includes:
+          - source_system_region_key
+          - campaign_key
+          - contract_id
+          - contract_item_id
+          - item_code
+          - item_start_date
+          - item_channels
+          - item_channel_names
+          - item_product_code
+          - name: item_prod_desc
+            title: Item Product Description
+          - item_description
+          - item_spot_pricing_method
+          - item_revenue_event
+          - name: item_value_usd_curr_pln_rate
+            title: Item Value Current Rate USD (attribute)
+          - name: item_value_loc
+            title: Item Value LOC (attribute)
+          - name: item_target_grp
+            title: Item Target Grp (attribute)
+          - name: item_pred_grp
+            title: Item Pred Grp (attribute)
+          - name: item_comb_grp
+            title: Item Comb Grp (attribute)
+          - name: item_booked_grp
+            title: Item Booked Grp (attribute)
+          - name: item_actual_grp
+            title: Item Actual Grp (attribute)
+          - name: item_achieved_grp
+            title: Item Achieved Grp (attribute)
+          - record_count
+          - item_value_usd_curr_pln_rate_sum
+          - item_value_loc_sum
+          - item_pred_grp_sum
+          - item_comb_grp_sum
+          - item_booked_grp_sum
+          - item_actual_grp_sum
+          - item_achieved_grp_sum
+          - item_target_grp_sum
+          - agency_key
+          - agency_name
+          - name: campaign_currency_code
+            title: Campaign Currency
+          - campaign_currency_key
+          - campaign_end_date
+          - name: campaign_id
+            title: Campaign
+          - campaign_start_date
+          - campaign_start_end_date
+          - campaign_status_key
+          - campaign_status_name
+          - campaign_target_spots
+          - campaign_target_value_loc
+          - campaign_target_value_usd
+          - client_key
+          - client_name
+          - contract_basis_desc
+          - contract_basis_key
+          - contract_type_desc
+          - contract_type_key
+          - deal_id
+          - deal_key
+          - deal_name
+          - deal_type_desc
+          - deal_type_key
+          - revenue_event_desc

@@ -1,0 +1,405 @@
+cubes:
+  - name: cube_linear_digital_revenue_gold_digital_impressions_combined
+    public: false
+    title: Digital Impression Line Summary
+    description: >-
+      One current row per guaranteed digital line on
+      linear_digital_revenue_gold.digital_impressions_combined. Channel on this table is
+      Digital. Impression columns are flight-to-date totals. First-party
+      delivery is FreeWheel. Billable impressions, expected-to-date pacing,
+      and a property category are still not on this table.
+    data_source: default
+    sql: >
+      SELECT
+        line.*,
+        MIN(CAST(line.sales_order_line_item_start_date AS timestamp))
+          OVER (PARTITION BY line.sales_order_id) AS order_flight_start,
+        MAX(CAST(line.sales_order_line_item_end_date AS timestamp))
+          OVER (PARTITION BY line.sales_order_id) AS order_flight_end
+      FROM {{ catalog('linear_digital_revenue_gold') }}.digital_impressions_combined AS line
+
+    dimensions:
+      - name: sales_order_line_item_id
+        sql: sales_order_line_item_id
+        type: number
+        primary_key: true
+        title: ID
+        description: Operative identifier for the guaranteed digital line.
+      - name: sales_order_line_item_name
+        sql: sales_order_line_item_name
+        type: string
+        title: Name
+        description: Name of the digital line.
+      - name: sales_order_id
+        sql: sales_order_id
+        type: string
+        title: Sales Order Id
+        description: Operative order that contains the line.
+      - name: advertiser_name
+        sql: advertiser_name
+        type: string
+        title: Advertiser
+        description: Advertiser name on the line.
+      - name: advertiser_id
+        sql: advertiser_id
+        type: string
+        title: Advertiser Id
+        description: Advertiser id from the digital impressions table.
+      - name: opportunity_id
+        sql: opportunity_id
+        type: string
+        title: Opportunity Id
+        description: Opportunity id from the digital impressions table.
+      - name: market_type_id
+        sql: market_type_id
+        type: string
+        title: Market Type Id
+        description: Market type id from the digital impressions table.
+      - name: order_status
+        sql: order_status
+        type: string
+        title: Order Status
+        description: Operative order status, such as active_order.
+      - name: channel
+        sql: channel
+        type: string
+        title: Channel
+        description: Channel on the combined digital table. Values are Digital.
+      - name: sli_product
+        sql: sli_product
+        type: string
+        title: Products
+        description: Operative product on the sales line item.
+      - name: production_line_item_name
+        sql: production_line_item_name
+        type: string
+        title: Production Line Item Name
+        description: Production line item name pushed toward the ad server.
+      - name: package_name
+        sql: package_name
+        type: string
+        title: Package
+        description: Package name when the line sits in a package.
+      - name: line_item_type
+        sql: line_item_type
+        type: string
+        title: Line Item Type
+        description: Line item type when the source supplies one.
+      - name: cost_method_name
+        sql: cost_method_name
+        type: string
+        title: Cost Method
+        description: How the line is priced, such as CPM.
+      - name: billable_third_party
+        sql: billable_third_party
+        type: string
+        title: Billable Third-Party Server
+        description: >-
+          Third-party server the line is billed from. None means no billable
+          server is configured.
+      - name: has_coview
+        sql: coview_factor
+        type: boolean
+        title: Has Co-View
+        description: Yes/no co-view flag from the source column.
+      - name: co_view_factor
+        sql: >-
+          CASE
+            WHEN coview_factor = true
+              OR lower(CAST(coview_factor AS varchar)) = 'true'
+            THEN 1.24
+            ELSE 1.0
+          END
+        type: number
+        title: Co-View Factor
+        description: >-
+          1.24 when the line has co-view. 1.0 when it does not, so delivery
+          is unchanged. Demo composition is not applied.
+      - name: targeting_summary
+        sql: targeting_summary
+        type: string
+        title: Targeting Summary
+        description: Targeting summary when the source supplies one.
+      - name: version_nr
+        sql: version_nr
+        type: string
+        title: Version Number
+        description: Source version number when present.
+      - name: all_sources_delivery_date_aligned
+        sql: all_sources_delivery_date_aligned
+        type: boolean
+        title: All Sources Delivery Date Aligned
+        description: True when first-party and AdJuster delivery dates line up.
+      - name: operative_freshness_timestamp
+        sql: CAST(oper_sli_freshness_ts AS TIMESTAMP)
+        type: time
+        title: Operative Freshness Timestamp
+        description: When the Operative line inputs were last fresh.
+      - name: adjuster_freshness_timestamp
+        sql: CAST(adj_sli_freshness_ts AS TIMESTAMP)
+        type: time
+        title: AdJuster Freshness Timestamp
+        description: When the AdJuster line inputs were last fresh.
+      - name: freewheel_freshness_timestamp
+        sql: CAST(fw_sli_freshness_ts AS TIMESTAMP)
+        type: time
+        title: FreeWheel Freshness Timestamp
+        description: When the FreeWheel line inputs were last fresh.
+      - name: freshness_ts
+        sql: CAST(fw_sli_freshness_ts AS TIMESTAMP)
+        type: time
+        title: Freshness Timestamp
+        description: FreeWheel line freshness timestamp from fw_sli_freshness_ts.
+      - name: created_timestamp
+        sql: created_ts
+        type: time
+        title: Created Timestamp
+        description: When this line summary was first written.
+      - name: modified_timestamp
+        sql: modified_ts
+        type: time
+        title: Modified Timestamp
+        description: When the line inputs or impression totals last changed.
+
+    measures:
+      - name: sales_order_line_item_start_date
+        sql: "date_format(MIN(order_flight_start), '%Y-%m-%d')"
+        type: string
+        title: Start Date
+        description: Earliest contracted start among the lines in the selection.
+      - name: sales_order_line_item_end_date
+        sql: "date_format(MAX(order_flight_end), '%Y-%m-%d')"
+        type: string
+        title: End Date
+        description: Latest contracted end among the lines in the selection.
+      - name: record_count
+        sql: "*"
+        type: count
+        title: Record Count
+        description: Number of line-summary rows.
+      - name: line_item_count
+        sql: "*"
+        type: count
+        title: Line Item Count
+        description: Number of guaranteed digital lines.
+      - name: lines_with_billable_server
+        sql: "*"
+        type: count
+        filters:
+          - sql: >-
+              {CUBE}.billable_third_party IS NOT NULL
+              AND {CUBE}.billable_third_party <> 'None'
+              AND {CUBE}.billable_third_party <> ''
+        title: Lines With Billable Server
+        description: Lines that have a billable third-party server configured.
+      - name: quantity
+        sql: guaranteed_impressions
+        type: sum
+        title: Quantity
+        description: Contracted impression promise.
+      - name: guaranteed_impressions
+        sql: guaranteed_impressions
+        type: sum
+        title: Guaranteed Impressions
+        description: >-
+          Contracted impression promise for the line. Same value as quantity.
+          Not split by first party or third party.
+      - name: production_quantity
+        sql: production_qty
+        type: sum
+        title: Production Quantity
+        description: Impression goal sent to the ad server.
+      - name: net_unit_cost
+        sql: net_unit_cost
+        type: sum
+        title: Net Unit Cost
+        description: Contracted net unit cost of the line.
+      - name: net_cost
+        sql: net_cost
+        type: sum
+        title: Net Cost
+        description: Contracted net cost of the line.
+      - name: first_party_impressions
+        sql: delivered_impressions_fp
+        type: sum
+        title: Delivered Impressions FW 1P
+        description: Flight-to-date FreeWheel impressions. Raw counts, not billable.
+      - name: delivered_impressions_fw_1p
+        sql: delivered_impressions_fp
+        type: sum
+        title: Delivered Impressions FW 1P
+        description: Flight-to-date FreeWheel first-party impressions.
+      - name: delivered_impressions_1p
+        sql: >-
+          CASE
+            WHEN delivered_impressions_fp IS NULL
+            THEN delivered_impressions_adjuster_fp
+            ELSE delivered_impressions_fp
+          END
+        type: sum
+        title: Delivered Impressions 1P (FW, else AdJuster)
+        description: >-
+          FreeWheel first-party impressions when that value is present.
+          AdJuster first-party impressions when FreeWheel is null. A FreeWheel
+          zero is kept.
+      - name: delivered_impressions_adjuster_3p
+        sql: delivered_impressions_adjuster_tp
+        type: sum
+        title: Delivered Impressions AdJuster 3P
+        description: Flight-to-date AdJuster third-party impressions.
+      - name: delivered_impressions_adjuster_1p
+        sql: delivered_impressions_adjuster_fp
+        type: sum
+        title: Delivered Impressions AdJuster 1P
+        description: AdJuster's copy of first-party delivery.
+      - name: adjuster_first_party_impressions
+        sql: delivered_impressions_adjuster_fp
+        type: sum
+        title: Delivered Impressions AdJuster 1P
+        description: AdJuster's directional copy of first-party delivery.
+      - name: adjuster_third_party_impressions
+        sql: delivered_impressions_adjuster_tp
+        type: sum
+        title: Delivered Impressions AdJuster 3P
+        description: >-
+          Flight-to-date AdJuster third-party impressions. Directional, not
+          the client billing figure.
+      - name: first_party_on_billable_lines
+        sql: >-
+          CASE
+            WHEN billable_third_party IS NOT NULL
+              AND billable_third_party <> 'None'
+              AND billable_third_party <> ''
+            THEN delivered_impressions_fp
+            ELSE 0
+          END
+        type: sum
+        title: First-Party Impressions on Billable Lines
+        description: FreeWheel impressions on lines that have a billable third-party server.
+      - name: third_party_on_billable_lines
+        sql: >-
+          CASE
+            WHEN billable_third_party IS NOT NULL
+              AND billable_third_party <> 'None'
+              AND billable_third_party <> ''
+            THEN delivered_impressions_adjuster_tp
+            ELSE 0
+          END
+        type: sum
+        title: Third-Party Impressions on Billable Lines
+        description: AdJuster third-party impressions on lines that have a billable server.
+      - name: buffer_impressions
+        type: number
+        sql: "{production_quantity} - {quantity}"
+        title: Buffer Impressions
+        description: Production quantity minus contracted quantity.
+      - name: buffer_pct
+        type: number
+        sql: >-
+          CASE
+            WHEN COALESCE({quantity}, 0) = 0 THEN NULL
+            ELSE ({production_quantity} / {quantity}) - 1
+          END
+        title: Buffer Percentage
+        description: (Production quantity / quantity) - 1. Null when quantity is zero.
+      - name: directional_discrepancy_impressions
+        type: number
+        sql: "{first_party_on_billable_lines} - {third_party_on_billable_lines}"
+        title: Directional Discrepancy Impressions
+        description: >-
+          First-party minus AdJuster third-party, only on lines with a billable
+          server. Lines with no billable server contribute zero.
+      - name: directional_discrepancy_pct
+        type: number
+        sql: >-
+          CASE
+            WHEN COALESCE({lines_with_billable_server}, 0) = 0 THEN 0
+            WHEN COALESCE({first_party_on_billable_lines}, 0) = 0 THEN NULL
+            ELSE 1 - ({third_party_on_billable_lines} / {first_party_on_billable_lines})
+          END
+        title: Directional Discrepancy Percentage
+        description: >-
+          0 when no line in the selection has a billable third-party server.
+          Otherwise 1 - (AdJuster third-party / FreeWheel) on those lines.
+          Null when those lines have zero first-party impressions.
+      - name: expected_to_date
+        type: sum
+        sql: >-
+          CASE
+            WHEN sales_order_line_item_start_date IS NULL OR sales_order_line_item_end_date IS NULL THEN NULL
+            WHEN date_diff('day', CAST(sales_order_line_item_start_date AS date), CAST(sales_order_line_item_end_date AS date)) + 1 <= 0 THEN NULL
+            ELSE guaranteed_impressions
+              * LEAST(
+                  GREATEST(
+                    date_diff('day', CAST(sales_order_line_item_start_date AS date), current_date) + 1,
+                    0
+                  ),
+                  date_diff('day', CAST(sales_order_line_item_start_date AS date), CAST(sales_order_line_item_end_date AS date)) + 1
+                )
+              / CAST(
+                  date_diff('day', CAST(sales_order_line_item_start_date AS date), CAST(sales_order_line_item_end_date AS date)) + 1
+                  AS double
+                )
+          END
+        title: Expected to Date
+        description: >-
+          Even proration of quantity across the flight, from the Oct 13 sheet.
+          Flight days are end minus start plus 1. Day 1 expects quantity divided
+          by flight days. The value is capped at quantity after the flight ends
+          and is 0 before the flight starts. Custom pacing and shared budget
+          are not on this table.
+      - name: billable_impressions
+        type: sum
+        sql: >-
+          CASE
+            WHEN billable_third_party IS NOT NULL
+              AND billable_third_party <> 'None'
+              AND billable_third_party <> ''
+            THEN delivered_impressions_adjuster_tp
+            ELSE delivered_impressions_fp
+          END
+          * CASE
+              WHEN coview_factor = true
+                OR lower(CAST(coview_factor AS varchar)) = 'true'
+              THEN 1.24
+              ELSE 1.0
+            END
+        title: Billable Impressions
+        description: >-
+          Third-party impressions when a billable server is set, otherwise
+          FreeWheel. Multiplied by 1.24 when the line has co-view, and by 1.0
+          when it does not. Demo composition is not on this table.
+      - name: impression_variance
+        type: number
+        sql: "{delivered_impressions_1p} - {guaranteed_impressions}"
+        title: Impression Variance
+        description: >-
+          Delivered impressions 1P minus guaranteed impressions. Delivered 1P
+          is FreeWheel when that value is present, otherwise AdJuster
+          first-party. Negative is under delivery. Positive is over delivery.
+      - name: delivery_status
+        type: string
+        sql: >-
+          CASE
+            WHEN {impression_variance} < 0 THEN 'Under'
+            WHEN {impression_variance} > 0 THEN 'Over'
+            ELSE 'Even'
+          END
+        title: Delivery Status
+        description: >-
+          Under when impression variance is negative. Over when it is positive.
+          Even when delivered 1P equals guaranteed impressions. Calculated
+          after the impressions are summed.
+      - name: pacing_pct
+        type: number
+        format: percent
+        sql: >-
+          CASE
+            WHEN COALESCE({billable_impressions}, 0) = 0 THEN 0
+            WHEN COALESCE({expected_to_date}, 0) = 0 THEN 0
+            ELSE {billable_impressions} / {expected_to_date}
+          END
+        title: Pacing Percentage
+        description: >-
+          Billable impressions divided by expected-to-date, shown as a
+          percentage. 0 when billable impressions or expected-to-date is zero.

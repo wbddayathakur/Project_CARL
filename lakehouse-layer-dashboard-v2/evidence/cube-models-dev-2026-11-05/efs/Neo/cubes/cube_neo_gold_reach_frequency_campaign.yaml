@@ -1,0 +1,58 @@
+cubes:
+  - name: cube_neo_gold_reach_frequency_campaign
+    sql_table: "{{ catalog('neo_gold') }}.reach_frequency_campaign"
+    public: false
+    data_source: default
+    title: FreeWheel Reach and Frequency Campaign
+    description: 'One row per FreeWheel campaign_id from neo_gold.reach_frequency_campaign.
+
+      Reach and household frequency are already campaign-level distincts. Do not sum them.
+
+      '
+    dimensions:
+      - name: campaign_id
+        sql: '{CUBE}.campaign_id'
+        type: number
+        primary_key: true
+        title: FreeWheel Campaign ID
+        description: FreeWheel campaign id. This is not the NEO campaign id.
+      - name: advertiser_name
+        sql: '{CUBE}.advertiser_name'
+        type: string
+        title: Advertiser Name
+        description: Advertiser name on the campaign reach row.
+      - name: first_impression_date
+        sql: CAST({CUBE}.first_impression_date AS TIMESTAMP)
+        type: time
+        title: First Impression Date
+        description: Earliest impression date in the campaign window.
+      - name: last_impression_date
+        sql: CAST({CUBE}.last_impression_date AS TIMESTAMP)
+        type: time
+        title: Last Impression Date
+        description: Latest impression date in the campaign window.
+      - name: impressions
+        sql: '{CUBE}.impressions'
+        type: number
+        title: Impressions
+        description: Delivered impressions for the campaign.
+      - name: reach_device
+        sql: '{CUBE}.reach_device'
+        type: number
+        title: Device Reach
+        description: Distinct device reach for the campaign. Do not sum across campaigns.
+      - name: reach_household_floor
+        sql: '{CUBE}.reach_household_floor'
+        type: number
+        title: Household Reach
+        description: Distinct matched households for the campaign. Do not sum across campaigns.
+      - name: frequency_household_floor
+        sql: '{CUBE}.frequency_household_floor'
+        type: number
+        title: Household Frequency
+        description: Impressions divided by household reach for the campaign. Do not sum across campaigns.
+    measures:
+      - name: count
+        type: count
+        title: Campaign Count
+        description: Number of campaign rows.

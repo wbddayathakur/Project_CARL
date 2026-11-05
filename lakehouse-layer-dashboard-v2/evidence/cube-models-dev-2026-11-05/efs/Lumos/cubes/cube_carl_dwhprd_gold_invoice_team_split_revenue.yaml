@@ -1,0 +1,267 @@
+cubes:
+  - name: cube_carl_dwhprd_gold_invoice_team_split_revenue
+    sql: >
+      SELECT irf.revenue_area_key,
+             irf.network_key,
+             irf.revenue_eff_cal_month_key,
+             irf.deal_revenue_snapshot_key,
+             f.sales_team_member_key,
+             f.acct_cov_team_member_key,
+             cm.calendar_year,
+             SUM(irf.revenue * f.fraction) AS split_revenue
+        FROM {{ catalog('dwhprd_gold') }}.invoice_revenue_fact irf
+        INNER JOIN {{ catalog('dwhprd_gold') }}.acct_cov_team_member_dim m
+          ON irf.acct_cov_team_key = m.acct_cov_team_key
+        INNER JOIN {{ catalog('dwhprd_gold') }}.ae_fraction_fact f
+          ON f.acct_cov_team_member_key = m.acct_cov_team_member_key
+         AND f.unit_sched_bcast_month_key = irf.unit_sched_bcast_month_key
+        INNER JOIN {{ catalog('dwhprd_gold') }}.revenue_eff_cal_month_dim cm
+          ON irf.revenue_eff_cal_month_key = cm.revenue_eff_cal_month_key
+       WHERE irf.revenue_eff_cal_month_key IS NOT NULL
+         AND {FILTER_PARAMS.cube_carl_dwhprd_gold_invoice_team_split_revenue.calendar_year.filter('cm.calendar_year')}
+         AND {FILTER_PARAMS.cube_carl_dwhprd_gold_invoice_team_split_revenue.revenue_area_key.filter('irf.revenue_area_key')}
+         AND {FILTER_PARAMS.cube_carl_dwhprd_gold_invoice_team_split_revenue.network_key.filter('irf.network_key')}
+         AND {FILTER_PARAMS.cube_carl_dwhprd_gold_invoice_team_split_revenue.revenue_eff_cal_month_key.filter('irf.revenue_eff_cal_month_key')}
+         AND {FILTER_PARAMS.cube_carl_dwhprd_gold_invoice_team_split_revenue.deal_revenue_snapshot_key.filter('irf.deal_revenue_snapshot_key')}
+         AND {FILTER_PARAMS.cube_carl_dwhprd_gold_invoice_team_split_revenue.sales_team_member_key.filter('f.sales_team_member_key')}
+         AND {FILTER_PARAMS.cube_carl_dwhprd_gold_invoice_team_split_revenue.acct_cov_team_member_key.filter('f.acct_cov_team_member_key')}
+       GROUP BY irf.revenue_area_key,
+                irf.network_key,
+                irf.revenue_eff_cal_month_key,
+                irf.deal_revenue_snapshot_key,
+                f.sales_team_member_key,
+                f.acct_cov_team_member_key,
+                cm.calendar_year
+    data_source: default
+    public: false
+    title: Carl Dwhprd Gold — Invoice Team Split Revenue
+    description: >-
+      Query-backed cube for CARL-3016 "Invoiced-Booked Revenue by Team", whose only metric is Split
+      Revenue — MSTR's Revenue (Sales Team) times Fraction.
+      That product cannot be a measure on invoice_revenue_fact: Cube rejects a member that references
+      another cube ("references foreign cubes ... please split and move this definition"), so it has to
+      be computed inside the SQL of one cube that physically holds both columns. This is that cube.
+      The join is the same fan-out the report performs — invoice to ae_fraction_fact on unit broadcast
+      month plus the coverage team key, via acct_cov_team_member_dim. MSTR aggregates revenue per
+      coverage member first and then multiplies by the fraction, but the fraction is constant within one
+      of those groups, so multiplying per row and summing afterwards is the same arithmetic and needs no
+      second pass. Both forms were run against dev 2026-09-30 and agree: the row-level product over all
+      1,156,152 joined rows returns 297,857,564.00, and MSTR's two-pass form returns 297,857,564.00,
+      matching the CNN / calendar 2025 export exactly across its 969 populated cells.
+      Grouped to foreign keys only, with no labels in this SQL. Revenue Group, Revenue Area, Sales
+      Office, Sales Team, AE and the month label all come from the shared dimension cubes through the
+      joins below, so they cannot drift from what the rest of the model shows for the same key.
+      Rows with no revenue-effective calendar month are excluded, matching the report and keeping the
+      month key non-null in the composite primary key below.
+      The month dimension is joined here, rather than only through the declared join below, so that the
+      report's Calendar Year filter can be pushed inside this aggregate via FILTER_PARAMS. Without it
+      every query joins and aggregates the whole invoice fact before any filter applies: measured
+      against dev 2026-10-01, CNN / calendar 2025 took 229.7s unpushed and 7.8s with the year pushed in,
+      for identical output — 19,653 groups and 297,857,564.00 either way. Bytes scanned were 197 MB in
+      both, so this was never I/O; narrowing the fact to one year before the fan-out join to
+      ae_fraction_fact is what collapses the work. Calendar Year remains the required report-level bound
+      and provides nearly all of the measured gain. The six grouped key dimensions are also passed through
+      FILTER_PARAMS so targeted API and validation queries do not aggregate unrelated keys before applying an
+      outer predicate. These predicates are semantics-preserving because every pushed column is selected and
+      grouped unchanged.
+    dimensions:
+      - name: coverage_team_member_label
+        sql: |-
+          (
+            SELECT hop1.member_lname || ', ' || hop1.member_fname || ' (' || hop1.member_role_desc || ')'
+            FROM {{ catalog('dwhprd_gold') }}.acct_cov_team_member_dim hop1
+            WHERE {CUBE}.acct_cov_team_member_key = hop1.acct_cov_team_member_key
+          )
+        type: string
+        title: Account Coverage Team Member
+        description: 'Display label for the coverage team member (MSTR CustCol_11: last, first (role)).'
+      - name: deal_revenue_snapshot_desc
+        sql: |-
+          (
+            SELECT hop1.deal_revenue_snapshot_desc
+            FROM {{ catalog('dwhprd_gold') }}.deal_revenue_snapshot_dim hop1
+            WHERE {CUBE}.deal_revenue_snapshot_key = hop1.deal_revenue_snapshot_key
+          )
+        type: string
+        title: Deal Revenue Snapshot
+        description: Descriptive text or label for the deal revenue snapshot.
+      - name: net_name
+        sql: |-
+          (
+            SELECT hop1.net_name
+            FROM {{ catalog('dwhprd_gold') }}.network_dim hop1
+            WHERE {CUBE}.network_key = hop1.network_key
+          )
+        type: string
+        title: Network
+        description: Official name of the broadcast network.
+      - name: revenue_area_desc
+        sql: |-
+          (
+            SELECT hop1.revenue_area_desc
+            FROM {{ catalog('dwhprd_gold') }}.revenue_area_dim hop1
+            WHERE {CUBE}.revenue_area_key = hop1.revenue_area_key
+          )
+        type: string
+        title: Revenue Area
+        description: Human-readable description or name of the revenue area.
+      - name: revenue_group_desc
+        sql: |-
+          (
+            SELECT hop1.revenue_group_desc
+            FROM {{ catalog('dwhprd_gold') }}.revenue_area_dim hop1
+            WHERE {CUBE}.revenue_area_key = hop1.revenue_area_key
+          )
+        type: string
+        title: Revenue Group
+        description: Description or name of the revenue group classification.
+      - name: revenue_eff_calendar_month
+        sql: |-
+          (
+            SELECT TRIM(hop1.calendar_month_name) || ' ' || CAST(hop1.calendar_year AS VARCHAR)
+            FROM {{ catalog('dwhprd_gold') }}.revenue_eff_cal_month_dim hop1
+            WHERE {CUBE}.revenue_eff_cal_month_key = hop1.revenue_eff_cal_month_key
+          )
+        type: string
+        title: Calendar Month Label
+        description: Formatted "<Month Name> <Year>" label for revenue-effective calendar months, matching MSTR's custom display column such as "July 2026".
+      - name: sales_office_name
+        sql: |-
+          (
+            SELECT hop2.sales_office_name
+            FROM {{ catalog('dwhprd_gold') }}.sales_team_member_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.sales_office_team_dim hop2
+              ON hop1.sales_team_key = hop2.sales_team_key
+            WHERE {CUBE}.sales_team_member_key = hop1.sales_team_member_key
+          )
+        type: string
+        title: Sales Office Name
+        description: Name of the sales office.
+      - name: sales_team_name
+        sql: |-
+          (
+            SELECT hop2.sales_team_name
+            FROM {{ catalog('dwhprd_gold') }}.sales_team_member_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.sales_office_team_dim hop2
+              ON hop1.sales_team_key = hop2.sales_team_key
+            WHERE {CUBE}.sales_team_member_key = hop1.sales_team_member_key
+          )
+        type: string
+        title: Sales Team Name
+        description: Name of the sales team.
+      - name: sales_team_member_name
+        sql: |-
+          (
+            SELECT hop1.member_lname || ', ' || hop1.member_fname
+            FROM {{ catalog('dwhprd_gold') }}.sales_team_member_dim hop1
+            WHERE {CUBE}.sales_team_member_key = hop1.sales_team_member_key
+          )
+        type: string
+        title: Sales Team Member
+        description: Display name (MSTR CustCol_16).
+      - name: revenue_area_key
+        sql: revenue_area_key
+        type: number
+        title: Revenue Area (ID)
+        description: >-
+          Part of the grain; joins to revenue_area_dim for Revenue Area and Revenue Group. This is the
+          fact's own revenue_area_key, which MSTR aliases REVENUE_AREA_ID — not revenue_area_mapping_key.
+          The report filters it to non-zero.
+        primary_key: true
+      - name: network_key
+        sql: network_key
+        type: number
+        title: Network (ID)
+        description: Part of the grain; joins to network_dim for the network name the report is run for.
+        primary_key: true
+      - name: revenue_eff_cal_month_key
+        sql: revenue_eff_cal_month_key
+        type: number
+        title: Revenue Effective Calendar Month (ID)
+        description: >-
+          Part of the grain; joins to revenue_eff_cal_month_dim for the "January 2025" month label and
+          the calendar year. This is the revenue-effective calendar month, which is what the report's
+          Year Type = Calendar resolves to — not the unit-scheduled month.
+        primary_key: true
+      - name: deal_revenue_snapshot_key
+        sql: deal_revenue_snapshot_key
+        type: number
+        title: Deal Revenue Snapshot (ID)
+        description: >-
+          Part of the grain; joins to deal_revenue_snapshot_dim. Left unfiltered here so the cube is not
+          pinned to one snapshot — the report filters it to 8 (Invoiced/Current Booked) at query time.
+        primary_key: true
+      - name: sales_team_member_key
+        sql: sales_team_member_key
+        type: number
+        title: Sales Team Member Key
+        description: >-
+          Part of the grain; joins to sales_team_member_dim for the AE, and on to sales_office_team_dim
+          for Sales Team and Sales Office. This is who the revenue is split to.
+        primary_key: true
+      - name: acct_cov_team_member_key
+        sql: acct_cov_team_member_key
+        type: number
+        title: Account Coverage Team Member Key
+        description: >-
+          Part of the grain; joins to acct_cov_team_member_dim. This is whose coverage the revenue came
+          through, which is a different person from the sales team member the fraction splits it to.
+        primary_key: true
+      - name: calendar_year
+        sql: calendar_year
+        type: number
+        title: Calendar Year
+        description: >-
+          The revenue-effective calendar year, carried in this cube's own SQL rather than read through
+          revenue_eff_cal_month_dim, because FILTER_PARAMS can only push a filter that lands on this
+          cube's own member. Filter the year here and the predicate moves inside the aggregate; filter
+          the month dimension's calendar_year instead and it stays outside, which is the 229.7s path.
+          Not part of the primary key: it is functionally dependent on revenue_eff_cal_month_key, so
+          selecting it leaves the grain at the same 19,653 groups.
+    joins:
+      - name: cube_carl_dwhprd_gold_revenue_area_dim
+        sql: '{CUBE}.revenue_area_key = {cube_carl_dwhprd_gold_revenue_area_dim}.revenue_area_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_network_dim
+        sql: '{CUBE}.network_key = {cube_carl_dwhprd_gold_network_dim}.network_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_revenue_eff_cal_month_dim
+        sql: >-
+          {CUBE}.revenue_eff_cal_month_key =
+          {cube_carl_dwhprd_gold_revenue_eff_cal_month_dim}.revenue_eff_cal_month_key
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_deal_revenue_snapshot_dim
+        sql: >-
+          {CUBE}.deal_revenue_snapshot_key =
+          {cube_carl_dwhprd_gold_deal_revenue_snapshot_dim}.deal_revenue_snapshot_key
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_sales_team_member_dim
+        sql: >-
+          {CUBE}.sales_team_member_key =
+          {cube_carl_dwhprd_gold_sales_team_member_dim}.sales_team_member_key
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_acct_cov_team_member_dim
+        sql: >-
+          {CUBE}.acct_cov_team_member_key =
+          {cube_carl_dwhprd_gold_acct_cov_team_member_dim}.acct_cov_team_member_key
+        relationship: many_to_one
+    measures:
+      - name: split_revenue
+        sql: '{CUBE}.split_revenue'
+        type: sum
+        title: Split Revenue
+        description: >-
+          MSTR's Split Revenue: invoice revenue allocated to a sales team member by that member's AE
+          fraction for the unit broadcast month. Additive over every dimension this cube exposes — sum it
+          in QuickSight, no calculated field needed.
+        meta:
+          source: generated
+          used_by_report_ids: []
+      - name: record_count
+        sql: '*'
+        type: count
+        title: Record Count
+        description: Row count for smoke queries.
+        meta:
+          source: generated
+          used_by_report_ids: []

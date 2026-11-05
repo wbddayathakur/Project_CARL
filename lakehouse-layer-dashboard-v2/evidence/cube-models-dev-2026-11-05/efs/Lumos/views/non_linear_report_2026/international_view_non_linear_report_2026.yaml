@@ -1,0 +1,117 @@
+views:
+  - name: international_view_non_linear_report_2026
+    public: true
+    title: "International — Non-Linear Report (2026)"
+    description: >-
+      Non-Linear Report (2026). Share-weighted campaign revenue for regions 20, 21,
+      and 30 in calendar months 202601 through 202612. Apply in QuickSight: channel
+      type On Air or On AIr, gross revenue greater than 0, and campaign spots booked
+      equal to 0. Those filters are not on the cube. Sales Rep and Sales Rep Code
+      come from bts_sales_rep_dim, with the region sentinel key when the campaign
+      has no fraction row. Current-rate USD measures multiply by plan_curr_currency_rate.
+      Deal Type count is the distinct BTS deal type key. Deal Type ID comes from
+      bts_deal_type_dim.
+    meta:
+      view_scope: business
+      business: international
+      fact_table: campaign_fact
+      mstr_report_name: Non-Linear Report (2026)
+      catalog_key: lumos_carl_dwhprd_gold
+      ai_context: >
+        Use this view for Non-Linear Report (2026). Filter source_system_region_key
+        to 20, 21, and 30, calendar_month_key to 202601 through 202612,
+        channel_type_desc to On Air and On AIr, gross_revenue_loc greater than 0,
+        and campaign_spots_booked equal to 0. Measures are multiplied by
+        sales_rep_revenue_share. USD measures use the current planned exchange factor.
+    cubes:
+      - join_path: cube_carl_dwhprd_gold_campaign_fact
+        includes:
+          - name: source_system_region_key
+            title: Source System Region Key
+          - name: calendar_month_key
+            title: Month Key
+          - name: channel_key
+            title: Channel Key
+          - name: source_region_name
+            title: Source System Region
+          - name: holding_company_name
+            title: Holding Company
+          - name: calendar_month_label
+            title: Month
+          - name: channel_id
+            title: Channel ID
+          - name: client_id
+            title: Client ID
+          - name: client_name
+            title: Client
+          - name: bts_sales_rep_code
+            title: Sales Rep Code
+          - name: bts_sales_rep_name
+            title: Sales Rep
+          - name: agency_id
+            title: Agency ID
+          - name: agency_name
+            title: Agency
+          - name: campaign_id
+            title: Campaign
+          - name: bts_campaign_currency_code
+            title: Campaign Currency
+          - name: deal_type_count
+            title: Count (Deal Type)
+          - name: agency_commission_loc
+            title: Agency Commission LOC
+          - name: gross_revenue_loc
+            title: Gross Revenue LOC
+          - name: campaign_net_revenue_loc
+            title: Campaign Net Revenue LOC
+          - name: campaign_net_net_revenue_loc
+            title: Campaign Net Net Revenue LOC
+          - name: agency_commission_current_rate_usd
+            title: Agency Commission Current Rate(USD)
+          - name: gross_revenue_current_rate_usd
+            title: Gross Revenue Curr Rate(USD)
+          - name: campaign_net_revenue_current_rate_usd
+            title: Campaign Net Revenue Current Rate(USD)
+          - name: campaign_net_net_revenue_current_rate_usd
+            title: Campaign Net Net Revenue Current Rate(USD)
+          - name: campaign_spots_booked
+            title: Campaign Spots Booked
+          - name: channel_type_desc
+            title: Channel Type Desc
+          - name: business_type_id
+            title: Business Type ID
+          - name: business_type_name
+            title: Business Type
+          - name: onair_flag
+            title: Onair Flag
+          - name: campaign_start_date
+            title: Campaign Start Date
+          - name: campaign_end_date
+            title: Campaign End Date
+          - name: revenue_event_desc
+            title: Revenue Event
+          - name: revenue_event_desc
+            alias: item_revenue_event
+            title: Item Revenue Event
+          - name: contract_type_desc
+            title: Contract Type
+          - name: product_id
+            title: Product ID
+          - name: product_name
+            title: Product
+          - name: product_category_3
+            title: Product Category 3
+          - name: deal_id
+            title: Deal ID
+          - name: deal_name
+            title: Deal Name
+          - name: deal_type_desc
+            title: Deal Type
+          - name: deal_type_id
+            title: Deal Type ID
+          - name: sales_holding_company_name
+            title: Sales Holding Company
+          - name: adv_market_sector_desc
+            title: Adv Market Sector
+          - name: invoice_holding_company_name
+            title: Invoice Holding Company

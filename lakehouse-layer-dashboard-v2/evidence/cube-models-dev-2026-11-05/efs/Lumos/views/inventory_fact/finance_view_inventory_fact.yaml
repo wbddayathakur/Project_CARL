@@ -1,0 +1,45 @@
+views:
+  - name: finance_view_inventory_fact
+    public: true
+    title: Finance — Inventory Fact
+    description: Business view for finance on inventory_fact.
+    meta:
+      view_scope: business
+      business: finance
+      fact_table: inventory_fact
+    cubes:
+      - join_path: cube_carl_dwhprd_gold_inventory_fact
+        includes:
+          - available_seconds_eqv30
+          - booked_pressure_ind
+          - name: log_denied_flag
+            title: Denied Units
+          - booked_pressure_eqv30_spots
+          - episode_version_key
+          - inventory_status_key
+          - inventory_type_key
+          - network_key
+          - num_of_eqv30_spots
+          - act_air_daypart_day_time_name
+          - name: act_air_total_day_ind_desc
+            title: Total Day Indicator
+          - name: unit_sched_bday_bcast_qtr_desc
+            alias: bcast_qtr_desc
+          - broadcast_qtr_key
+          - name: unit_sched_bday_broadcast_year
+            alias: broadcast_year
+          - calendar_qtr_key
+          - name: unit_sched_bday_calendar_year
+            alias: calendar_year
+          - day_date
+          - inventory_status_desc
+          - inventory_type_desc
+          - master_selling_title_desc
+          - net_name
+          - name: property_category
+            title: Sell Property Category
+          - property_desc
+          - property_desc_id
+          - property_id
+          - sell_property_category_key
+          - selling_title_desc

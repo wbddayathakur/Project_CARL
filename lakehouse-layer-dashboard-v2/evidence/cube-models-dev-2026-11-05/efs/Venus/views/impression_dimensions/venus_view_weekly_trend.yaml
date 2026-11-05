@@ -1,0 +1,212 @@
+views:
+  - name: venus_view_weekly_trend
+    public: true
+    title: Weekly Trend
+    description: >-
+      Same fields as the delivery summary. Week Start is the Monday of the
+      week the calc version was created. Filter Next Version In Week to not
+      set to keep the latest version created in that week. A week with no new
+      version has no row. Group by Week Start for the trend.
+    meta:
+      view_scope: business
+      business: venus
+      fact_table: impression_dimensions
+    cubes:
+      - join_path: cube_venus_silver_serving_impression_dimensions
+        includes:
+          - name: as_of_week
+            title: Week Start
+          - name: next_version_in_week
+            title: Next Version In Week
+          - record_count
+          - name: line_type
+            title: Line Type
+          - name: combo_ind
+            title: Combo Indicator
+          - name: channel
+            title: Channel
+          - name: deal_id
+            title: Deal Id
+          - name: opportunity_id
+            title: Opportunity Id
+          - name: super_deal_id
+            title: Super Deal Id
+          - name: is_latest_deal_version
+            title: Is Latest Deal Version
+          - name: created_date
+            title: Created Date
+          - name: calc_version_no
+            title: Calc Version No
+          - name: network_id
+            title: Network Id
+          - name: property_id
+            title: Property Id
+          - name: division
+            title: Division
+          - name: daypart
+            title: Daypart
+          - name: selling_title
+            title: Selling Title
+          - name: impression_type
+            title: Impression Type
+          - name: guaranteed_demo
+            title: Guaranteed Demo
+          - name: deal_start_date
+            title: Deal Start Date
+          - name: deal_end_date
+            title: Deal End Date
+          - name: guaranteed_percentage
+            title: Guaranteed Percentage
+          - name: market_type_id
+            title: Market Type Id
+          - name: advertiser_id
+            title: Advertiser Id
+          - name: agency_id
+            title: Agency Id
+          - name: guaranteed_impressions
+            title: Guaranteed Impressions
+          - name: threshold_guaranteed_impressions
+            title: Threshold Guaranteed Impressions
+          - name: guaranteed_actual_impressions
+            title: Guaranteed Actual
+          - name: guaranteed_preactual_impressions
+            title: Guaranteed Pre-Actual
+          - name: delivered_impressions
+            title: Delivered Impressions
+          - name: delivered_actual_impressions
+            title: Delivered Actual
+          - name: delivered_preactual_impressions
+            title: Delivered Pre-Actual
+          - name: guaranteed_combined_impressions
+            title: Guaranteed Combined
+          - name: delivered_combined_impressions
+            title: Delivered Combined
+          - name: impression_variance
+            title: Impression Variance
+          - name: delivery_status
+            title: Delivery Status
+          - name: dollar_liability
+            title: Member Dollar Liability
+          - name: super_dollar_liability
+            title: Super Deal Dollar Liability
+          - name: deal_count
+            title: Deal Count
+          - name: standard_guaranteed_impressions
+            title: Standard Guaranteed Impressions
+          - name: standard_guaranteed_actual_impressions
+            title: Standard Guaranteed Actual Impressions
+          - name: standard_guaranteed_preactual_impressions
+            title: Standard Guaranteed Pre-Actual Impressions
+          - name: standard_delivered_impressions
+            title: Standard Delivered Impressions
+          - name: standard_delivered_actual_impressions
+            title: Standard Delivered Actual Impressions
+          - name: standard_delivered_preactual_impressions
+            title: Standard Delivered Pre-Actual Impressions
+          - name: standard_guaranteed_combined_impressions
+            title: Standard Guaranteed Combined Impressions
+          - name: standard_delivered_combined_impressions
+            title: Standard Delivered Combined Impressions
+          - name: standard_delivery_status
+            title: Standard Delivery Status
+          - name: standard_adu_units_count
+            title: Standard ADU Units
+          - name: standard_unaired_unit_count
+            title: Standard Unaired Units
+          - name: standard_recap_units_count
+            title: Standard Recap Units
+          - name: standard_cpm
+            title: Standard CPM
+          - name: standard_variance
+            title: Standard Variance
+          - name: standard_dollar_liability
+            title: Standard Member Dollar Liability
+          - name: combo_guaranteed_impressions
+            title: Combo Guaranteed Impressions
+          - name: combo_guaranteed_actual_impressions
+            title: Combo Guaranteed Actual Impressions
+          - name: combo_guaranteed_preactual_impressions
+            title: Combo Guaranteed Pre-Actual Impressions
+          - name: combo_delivered_impressions
+            title: Combo Delivered Impressions
+          - name: combo_delivered_actual_impressions
+            title: Combo Delivered Actual Impressions
+          - name: combo_delivered_preactual_impressions
+            title: Combo Delivered Pre-Actual Impressions
+          - name: combo_guaranteed_combined_impressions
+            title: Combo Guaranteed Combined Impressions
+          - name: combo_delivered_combined_impressions
+            title: Combo Delivered Combined Impressions
+          - name: combo_delivery_status
+            title: Combo Delivery Status
+          - name: combo_adu_units_count
+            title: Combo ADU Units
+          - name: combo_unaired_unit_count
+            title: Combo Unaired Units
+          - name: combo_recap_units_count
+            title: Combo Recap Units
+          - name: combo_cpm
+            title: Combo CPM
+          - name: combo_variance
+            title: Combo Variance
+          - name: combo_net_variance
+            title: Combo Net Variance
+          - name: combo_gross_dollar_liability
+            title: Combo Gross Dollar Liability
+          - name: combo_dollar_liability
+            title: Combo Member Dollar Liability
+          - name: cost
+            title: Total Cost
+          - name: super_cost
+            title: Super Cost
+          - name: super_guaranteed_impressions
+            title: Super Guaranteed Impressions
+          - name: super_guaranteed_actual_impressions
+            title: Super Guaranteed Actual Impressions
+          - name: super_guaranteed_preactual_impressions
+            title: Super Guaranteed Pre-Actual Impressions
+          - name: super_delivered_impressions
+            title: Super Delivered Impressions
+          - name: super_delivered_actual_impressions
+            title: Super Delivered Actual Impressions
+          - name: super_delivered_preactual_impressions
+            title: Super Delivered Pre-Actual Impressions
+          - name: super_guaranteed_combined_impressions
+            title: Super Guaranteed Combined Impressions
+          - name: super_delivered_combined_impressions
+            title: Super Delivered Combined Impressions
+          - name: super_delivery_status
+            title: Super Delivery Status
+          - name: super_adu_units_count
+            title: Super ADU Units
+          - name: super_unaired_unit_count
+            title: Super Unaired Units
+          - name: unaired_unit_count
+            title: Unaired Units
+          - name: super_recap_units_count
+            title: Super Recap Units
+          - name: super_cpm
+            title: Super CPM
+          - name: super_variance
+            title: Super Variance
+          - name: super_pacing
+            title: Super Pacing
+      - join_path: cube_venus_silver_serving_impression_dimensions.cube_linear_digital_revenue_bronze_ideal_posting_stw_network
+        includes:
+          - network_name
+          - network_label
+      - join_path: cube_venus_silver_serving_impression_dimensions.cube_linear_digital_revenue_bronze_ideal_dci_sell_property_category
+        includes:
+          - property_category_name
+      - join_path: cube_venus_silver_serving_impression_dimensions.cube_linear_digital_revenue_bronze_ideal_msa_de_deal_hdr
+        includes:
+          - deal_name
+      - join_path: cube_venus_silver_serving_impression_dimensions.cube_linear_digital_revenue_bronze_ideal_dci_super_deal
+        includes:
+          - super_deal_name
+      - join_path: cube_venus_silver_serving_impression_dimensions.cube_linear_digital_revenue_bronze_ideal_msa_ge_advertisers
+        includes:
+          - advertiser_name
+      - join_path: cube_venus_silver_serving_impression_dimensions.cube_linear_digital_revenue_bronze_ideal_msa_ge_agencies
+        includes:
+          - agency_name

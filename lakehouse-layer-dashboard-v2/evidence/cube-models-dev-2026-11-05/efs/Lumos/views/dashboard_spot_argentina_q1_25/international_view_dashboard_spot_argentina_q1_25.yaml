@@ -1,0 +1,76 @@
+views:
+  - name: international_view_dashboard_spot_argentina_q1_25
+    public: true
+    title: International — Dashboard Spot Report - Argentina Q1'25
+    description: >-
+      Spot dashboard for Argentina holding companies in 1st Qtr 2025.
+      Reads cube_carl_dwhprd_gold_spot_fact. Apply in QuickSight:
+      holding_company_key in 1, 80, 87, source_system_region_key = 21,
+      spot_status_key in 4, 5, and calendar_qtr_key = 20251.
+      Those filters are not on the cube. Equivalent spots divide the
+      share-weighted Spot Seconds by 30. Avg Current Rate USD-ROUNDED and
+      Bonus Indicator are calculated after that total.
+    meta:
+      view_scope: business
+      business: international
+      fact_table: spot_fact
+      mstr_report_name: Dashboard Spot Report - Argentina Q1'25
+      catalog_key: lumos_carl_dwhprd_gold
+      ai_context: >
+        Use this view for Dashboard Spot Report - Argentina Q1'25.
+        Filter holding_company_key to 1, 80, and 87, source_system_region_key
+        to 21, spot_status_key to 4 and 5, and calendar_qtr_key to 20251.
+        Measures multiply by sales_rep_revenue_share. USD measures multiply
+        by the planned current exchange factor inside the spot cube.
+    cubes:
+      - join_path: cube_carl_dwhprd_gold_spot_fact
+        includes:
+          - source_system_region_key
+          - spot_status_key
+          - calendar_qtr_key
+          - name: spot_id
+            title: Spot
+          - name: sales_rep_name
+            title: Sales Rep
+          - name: day_date
+            title: Date
+          - name: spot_seconds_value
+            title: Spot Length
+          - name: agency_commission_pct_points
+            title: Agency Commission %
+          - name: spot_price_current_rate_usd
+            title: Spot Price Current Rate(USD)
+          - name: net_revenue_current_rate_usd
+            title: Net Revenue Current Rate(USD - Spots)
+          - name: spot_price_loc
+            title: Spot Price LOC
+          - name: spot_seconds
+            title: Spot Seconds Total
+          - equivalent_spots
+          - name: avg_equiv_unit_current_rate_usd
+            title: Avg Current Rate USD
+          - avg_current_rate_usd_rounded
+          - bonus_indicator
+          - name: currency_code
+            title: Base Currency
+          - name: business_type_name
+            title: Business Type
+          - name: campaign_id
+            title: Campaign
+          - name: display_channel_name
+            title: Channel
+          - name: client_name
+            title: Client
+          - name: agency_name
+            title: Agency
+          - holding_company_key
+          - name: holding_company_name
+            title: Holding Company
+          - name: deal_id
+            title: Deal ID
+          - name: cal_qtr_desc
+            title: Quarter
+          - name: spot_status_desc
+            title: Spot Status
+          - name: spot_daypart_name
+            title: Spot Daypart Name

@@ -1,0 +1,739 @@
+cubes:
+  - name: cube_carl_dwhprd_gold_affiliate_fact
+    sql: >
+      SELECT af.customer_key, af.affiliate_key, af.sap_geography_key, af.sap_profit_center_key, af.sap_platform_key,
+             af.pack_type, af.reason_to_exclude, af.sap_region_key, af.network_key, af.base_currency_key,
+             af.billing_period_key, af.contract_key, af.contract_currency_key, af.country_key, af.effective_on,
+             af.invoice_key, af.inv_process_status_key, af.invoice_type_key, af.link_type, af.local_currency_key,
+             af.calendar_month_key, af.new_package_key, af.package_key, af.package_replace_ind, af.calendar_qtr_key,
+             af.rate_type_key, af.sap_company_code_key, af.source_system_key, af.vip_customer, af.calendar_year_key,
+             af.invoice_currency_key, af.revenue_type_key, af.subs_indicator, af.new_actual_subs, af.new_billable_subs
+        FROM {{ catalog('dwhprd_gold') }}.affiliate_fact af
+      UNION ALL
+      SELECT ext.customer_key, CAST(0 AS DECIMAL(38,10)) AS affiliate_key, ext.sap_geography_key,
+             ext.sap_profit_center_key, ext.sap_platform_key, 'External Source' AS pack_type,
+             '0' AS reason_to_exclude, ext.sap_region_key, CAST(0 AS DECIMAL(38,10)) AS network_key,
+             CAST(0 AS DECIMAL(38,10)) AS base_currency_key, CAST(0 AS DECIMAL(38,10)) AS billing_period_key,
+             CAST(0 AS DECIMAL(38,10)) AS contract_key, CAST(0 AS DECIMAL(38,10)) AS contract_currency_key,
+             CAST(0 AS DECIMAL(38,10)) AS country_key, CAST(NULL AS TIMESTAMP) AS effective_on,
+             CAST(0 AS DECIMAL(38,10)) AS invoice_key, CAST(0 AS DECIMAL(38,10)) AS inv_process_status_key,
+             CAST(0 AS DECIMAL(38,10)) AS invoice_type_key, '0' AS link_type,
+             CAST(0 AS DECIMAL(38,10)) AS local_currency_key, ext.calendar_month_key,
+             CAST(0 AS DECIMAL(38,10)) AS new_package_key, CAST(0 AS DECIMAL(38,10)) AS package_key,
+             'Y' AS package_replace_ind, ext.calendar_qtr_key, CAST(0 AS DECIMAL(38,10)) AS rate_type_key,
+             ext.sap_company_code_key, ext.source_system_key, ext.vip_customer, ext.calendar_year_key,
+             ext.invoice_currency_key, CAST(0 AS DECIMAL(38,10)) AS revenue_type_key, 'Y' AS subs_indicator,
+             ext.new_actual_subs, ext.new_billable_subs
+        FROM {{ catalog('dwhprd_gold') }}.ext_src_affiliate_fact ext
+    data_source: default
+    public: false
+    title: Carl Dwhprd Gold — Affiliate Fact
+    description: >-
+      Affiliate carriage and subscriber counts from five affiliate billing systems (DLA/DNA/DNE/DNR/EXT), joined
+      to SAP master data. Same international source system as the campaign_fact star — country_dim,
+      currency_dim, calendar_month_dim and calendar_qtr_dim are the exact same physical Glue tables and cubes
+      already authored there, confirming the shared-dimension question sox-triage.md left open.
+
+      QUERY-BACKED, 2026-08-28 — added a UNION ALL with ext_src_affiliate_fact to reproduce Oracle's
+      DNIAFFDWH.AFFILIATE_FACT_VW, which the Pack Type filter actually depends on: `Pack Type =
+      'External Source'` rows physically live only in ext_src_affiliate_fact (923,563 rows), never in
+      affiliate_fact itself (confirmed via Athena — 0 rows match that value there). Found by
+      `semantic-authoring re-coverage` flagging ext_src_affiliate_fact as reconstructed-but-unread, the same
+      shape as the campaign_fact/sales_rep_fraction_fact query-backed join. Oracle's view fills every
+      FK ext_src_affiliate_fact lacks (country/invoice/contract/package/currencies/etc.) with a sentinel 0 (or
+      '0' for text columns) — reproduced exactly here so numbers reconcile to MicroStrategy. Every dimension
+      joined from this cube resolves those sentinel rows to NULL rather than dropping them, since Cube always
+      compiles its join graph as a LEFT JOIN with this fact on the left (confirmed against Cube's own docs) —
+      unlike the raw AI-reverse-engineered transformation.sql, which INNER JOINs 14 dimensions and would
+      silently return zero External Source rows if run directly against Athena. sap_exchange_rate (also flagged
+      by re-coverage, also read by the same Oracle view for an EXCHANGE_RATE column) is deliberately NOT added
+      here — MicroStrategy's own SELECT never surfaces exchange_rate, so there is nothing currently needing it.
+
+      RESOLVED — SAP GL Account exclusion needs no dedup after all. MicroStrategy's metric definitions carry an
+      aggregation-level qualifier on the sum of New Actual/Billable Subs — MSTR's own notation for "sum, with SAP
+      GL Account excluded from the aggregation level" — which was initially read as meaning the fact repeats an
+      identical subscriber count once
+      per SAP GL Account row (the same shape as cube_carl_dwhprd_gold_req_rights_participant_contribution's
+      dedup-then-sum pattern) and would need a MAX-based dedup before summing. Checked against dev data instead of
+      assumed: grouping affiliate_fact at MicroStrategy's own 8-key aggregation grain (affiliate, customer,
+      geography, month, pack_type, platform, profit_center, region) finds 410,550 combos with more than one row
+      (1,305,309 rows total) — but only 16% of those combos (65,843) carry an identical new_actual_subs value
+      across their duplicate rows, and only 14.5% (59,579) for new_billable_subs. If this were a repeated-value
+      GL-account pattern, that figure would be at or near 100%; instead the overwhelming majority of duplicate
+      combos carry genuinely different values, meaning they are separate legitimate contributions (e.g. different
+      invoices/contracts active in the same month) that should be added, not deduplicated. This cube therefore
+      defines new_actual_subs/new_billable_subs as plain sum measures — mathematically identical to MicroStrategy's
+      own two-stage aggregation (its SQL groups at ~34-attribute grain, then its analytical engine sums again at
+      the 8-key grain; summing twice at progressively coarser grains equals summing once at the coarsest,
+      with no join fan-out in between to invalidate that). Flagged for business confirmation since it reverses an
+      earlier, unverified assumption, but shipped rather than blocked given the data now supports it.
+
+      KNOWN GAPS: `new_package_dim` and `new_contract_dim` (a package/contract "before/after" swap pair, the same
+      shape as cube_carl_dwhprd_gold_package_dim's own before/after role) do not exist anywhere in the ingested
+      catalog (`aws glue get-table` returns EntityNotFoundException for both) — the "New Package ID/Name" and
+      "New Contract" fields are not modelled. `network_dim` is a confirmed collision, not the affiliate-billing
+      network: probed against dev data, joining affiliate_fact.network_key to network_dim.network_key produces a
+      51.6% orphan rate (1,585,191 of 3,073,121 rows) — far too high to be the same table. Network Name is not
+      modelled.
+
+      RESOLVED — invoice_dim is NOT a collision. sox-triage.md flagged this table name alongside network_dim as a
+      possible US-ad-sales collision (missing an INVOICE_NO-equivalent column). Probing the join found 0% orphan
+      (all 3,073,121 rows match), and cube_carl_dwhprd_gold_invoice_dim already existed in this model — generically
+      authored, exposing invoice_id and invoice_type_desc — reused as-is here rather than re-declared, which
+      avoided a duplicate-cube-name conflict caught by semantic-authoring audit's unknown_view_member check
+      against finance_view_invoice_revenue_fact. invoice_dim is the single shared physical table across both the
+      finance/invoice_revenue_fact star and this affiliate star; no separate affiliate-only table exists.
+
+      DATA-QUALITY GAP — country_dim is significantly under-populated for this fact's country universe. All other
+      19 joins on this cube probed 0% orphan against dev data (perfectly clean), but country_dim — the same
+      cube reused from the campaign_fact, confirming it as a genuinely shared physical table — orphans
+      65.9% of affiliate_fact's 3,073,121 rows (2,024,071 unmatched). country_dim currently holds only 92 rows with
+      country_key ranging -2 to 89, while affiliate_fact's unmatched country_key values run into the 300s (e.g.
+      93, 152, 246, 266, 303, 362) — real-looking, non-null, non-sentinel IDs outside that range, not a wrong-table
+      mismatch. This looks like country_dim was populated only for the countries campaign_fact's APAC scope
+      touches, and was never backfilled with the fuller country list affiliate_fact's five global billing systems
+      (DLA/DNA/DNE/DNR/EXT) reference. Kept as a declared join (same key space, correct table) rather than dropped,
+      but Country Name/Reporting Country Name will read NULL for roughly two-thirds of rows until country_dim is
+      backfilled — flagged to the ingestion team rather than worked around here.
+    dimensions:
+      - name: active_ind
+        sql: |-
+          (
+            SELECT hop1.active_ind
+            FROM {{ catalog('dwhprd_gold') }}.affiliate_dim hop1
+            WHERE {CUBE}.affiliate_key = hop1.affiliate_key
+          )
+        type: string
+        title: Active Indicator
+        description: Whether this affiliate is currently active.
+      - name: affiliate_cd
+        sql: |-
+          (
+            SELECT hop1.affiliate_cd
+            FROM {{ catalog('dwhprd_gold') }}.affiliate_dim hop1
+            WHERE {CUBE}.affiliate_key = hop1.affiliate_key
+          )
+        type: string
+        title: Affiliate Code
+        description: Natural code identifying the affiliate.
+      - name: affiliate_name
+        sql: |-
+          (
+            SELECT hop1.affiliate_name
+            FROM {{ catalog('dwhprd_gold') }}.affiliate_dim hop1
+            WHERE {CUBE}.affiliate_key = hop1.affiliate_key
+          )
+        type: string
+        title: Affiliate Name
+        description: The affiliate's full name.
+      - name: manager_name
+        sql: |-
+          (
+            SELECT hop1.manager_name
+            FROM {{ catalog('dwhprd_gold') }}.affiliate_dim hop1
+            WHERE {CUBE}.affiliate_key = hop1.affiliate_key
+          )
+        type: string
+        title: Manager Name
+        description: The affiliate account manager's name.
+      - name: billing_period_desc
+        sql: |-
+          (
+            SELECT hop1.billing_period_desc
+            FROM {{ catalog('dwhprd_gold') }}.billing_period_dim hop1
+            WHERE {CUBE}.billing_period_key = hop1.billing_period_key
+          )
+        type: string
+        title: Billing Period
+        description: Human-readable name of the billing period.
+      - name: calendar_month_label
+        sql: |-
+          (
+            SELECT hop1.calendar_month_name || ' ' || CAST(hop1.calendar_year AS VARCHAR)
+            FROM {{ catalog('dwhprd_gold') }}.calendar_month_dim hop1
+            WHERE {CUBE}.calendar_month_key = hop1.calendar_month_key
+          )
+        type: string
+        title: Month
+        description: 'Formatted "<Month Name> <Year>" label, reproducing MSTR''s custom column (CustCol_400/CustCol_3). Both operands now explicitly cube-qualified — RESOLVED 2026-08-27:
+          the previous unqualified `calendar_year` reference compiled fine and worked via the REST API, but broke both sox_view_campaign_fact and sox_view_affiliate_fact live against
+          Cube''s SQL API (what QuickSight''s data source speaks) with `AMBIGUOUS_NAME: Column ''calendar_year'' is ambiguous` — Trino/Athena resolves unqualified column references
+          against every physical table in the generated JOIN, not just the cube that declares the dimension, and at least one sibling table joined alongside calendar_month_dim on
+          each of those two views also carries a raw `calendar_year` column (e.g. calendar_year_dim on sox_view_affiliate_fact). Confirmed via live dev CloudWatch logs on both views.
+          Always qualify cross-column references in multi-column derived dimensions with the cube-reference prefix to avoid this class of bug.'
+      - name: cal_qtr_desc
+        sql: |-
+          (
+            SELECT hop1.cal_qtr_desc
+            FROM {{ catalog('dwhprd_gold') }}.calendar_qtr_dim hop1
+            WHERE {CUBE}.calendar_qtr_key = hop1.calendar_qtr_key
+          )
+        type: string
+        title: Calendar Quarter Description
+        description: Human-readable calendar quarter, e.g. Q1 2024.
+      - name: calendar_year
+        sql: |-
+          (
+            SELECT hop1.calendar_year
+            FROM {{ catalog('dwhprd_gold') }}.calendar_year_dim hop1
+            WHERE {CUBE}.calendar_year_key = hop1.calendar_year_key
+          )
+        type: number
+        title: Calendar Year
+        description: Four-digit calendar year.
+      - name: contract_cd
+        sql: |-
+          (
+            SELECT hop1.contract_cd
+            FROM {{ catalog('dwhprd_gold') }}.contract_dim hop1
+            WHERE {CUBE}.contract_key = hop1.contract_key
+          )
+        type: string
+        title: Contract Code
+        description: Human-readable name of the contract code.
+      - name: country_name
+        sql: |-
+          (
+            SELECT hop1.country_name
+            FROM {{ catalog('dwhprd_gold') }}.country_dim hop1
+            WHERE {CUBE}.country_key = hop1.country_key
+          )
+        type: string
+        title: Country Name
+        description: Human-readable name of the country.
+      - name: reporting_country_name
+        sql: |-
+          (
+            SELECT hop1.reporting_country_name
+            FROM {{ catalog('dwhprd_gold') }}.country_dim hop1
+            WHERE {CUBE}.country_key = hop1.country_key
+          )
+        type: string
+        title: Reporting Country Name
+        description: Standardized country name used for reporting rollups, distinct from the raw country_name.
+      - name: base_currency_code
+        sql: |-
+          (
+            SELECT hop1.currency_cd
+            FROM {{ catalog('dwhprd_gold') }}.currency_dim hop1
+            WHERE {CUBE}.base_currency_key = hop1.currency_key
+          )
+        type: string
+        title: Currency Code
+        description: ISO-style currency code — e.g. USD, AUD.
+      - name: base_currency_name
+        sql: |-
+          (
+            SELECT hop1.currency_name
+            FROM {{ catalog('dwhprd_gold') }}.currency_dim hop1
+            WHERE {CUBE}.base_currency_key = hop1.currency_key
+          )
+        type: string
+        title: Currency Name
+        description: Human-readable currency name.
+      - name: customer_display
+        sql: |-
+          (
+            SELECT hop1.customer_display
+            FROM {{ catalog('dwhprd_gold') }}.customer_dim hop1
+            WHERE {CUBE}.customer_key = hop1.customer_key
+          )
+        type: string
+        title: Customer (Display)
+        description: Display-formatted customer identifier — MSTR's template column ("Customer Name"@[CustCol]), distinct from customer_name.
+      - name: customer_name
+        sql: |-
+          (
+            SELECT hop1.customer_name
+            FROM {{ catalog('dwhprd_gold') }}.customer_dim hop1
+            WHERE {CUBE}.customer_key = hop1.customer_key
+          )
+        type: string
+        title: Customer Name
+        description: Human-readable value "Customer Name".
+      - name: owner_display
+        sql: |-
+          (
+            SELECT hop1.owner_display
+            FROM {{ catalog('dwhprd_gold') }}.customer_dim hop1
+            WHERE {CUBE}.customer_key = hop1.customer_key
+          )
+        type: string
+        title: Customer Group
+        description: MSTR labels this metric-independent attribute "Owner" internally — owner_display is the display-formatted form used in the calc-steps aggregation grain.
+      - name: owner_name
+        sql: |-
+          (
+            SELECT hop1.owner_name
+            FROM {{ catalog('dwhprd_gold') }}.customer_dim hop1
+            WHERE {CUBE}.customer_key = hop1.customer_key
+          )
+        type: string
+        title: Owner Name
+        description: Raw owner/customer-group name.
+      - name: inv_process_status_desc
+        sql: |-
+          (
+            SELECT hop1.inv_process_status_desc
+            FROM {{ catalog('dwhprd_gold') }}.inv_process_status_dim hop1
+            WHERE {CUBE}.inv_process_status_key = hop1.inv_process_status_key
+          )
+        type: string
+        title: Invoice Process Status
+        description: Human-readable name of the invoice process status.
+      - name: invoice_id
+        sql: |-
+          (
+            SELECT hop1.invoice_id
+            FROM {{ catalog('dwhprd_gold') }}.invoice_dim hop1
+            WHERE {CUBE}.invoice_key = hop1.invoice_key
+          )
+        type: number
+        title: Invoice Id
+        description: Business identifier for the current invoice.
+      - name: invoice_type_desc
+        sql: |-
+          (
+            SELECT hop1.invoice_type_desc
+            FROM {{ catalog('dwhprd_gold') }}.invoice_type_dim hop1
+            WHERE {CUBE}.invoice_type_key = hop1.invoice_type_key
+          )
+        type: string
+        title: Invoice Type
+        description: Human-readable name of the invoice type.
+      - name: package_id
+        sql: |-
+          (
+            SELECT hop1.package_id
+            FROM {{ catalog('dwhprd_gold') }}.package_dim hop1
+            WHERE {CUBE}.package_key = hop1.package_key
+          )
+        type: number
+        title: Package ID
+        description: Natural identifier for the package. Glue type is numeric despite the "ID" naming.
+      - name: package_name
+        sql: |-
+          (
+            SELECT hop1.package_name
+            FROM {{ catalog('dwhprd_gold') }}.package_dim hop1
+            WHERE {CUBE}.package_key = hop1.package_key
+          )
+        type: string
+        title: Package Name
+        description: The package's full name.
+      - name: rate_type_desc
+        sql: |-
+          (
+            SELECT hop1.rate_type_desc
+            FROM {{ catalog('dwhprd_gold') }}.rate_type_dim hop1
+            WHERE {CUBE}.rate_type_key = hop1.rate_type_key
+          )
+        type: string
+        title: Rate Type
+        description: Human-readable name of the rate type.
+      - name: revenue_type_desc
+        sql: |-
+          (
+            SELECT hop1.revenue_type_desc
+            FROM {{ catalog('dwhprd_gold') }}.revenue_type_dim hop1
+            WHERE {CUBE}.revenue_type_key = hop1.revenue_type_key
+          )
+        type: string
+        title: Revenue Type
+        description: Human-readable name of the revenue type.
+      - name: sap_company_code
+        sql: |-
+          (
+            SELECT hop1.sap_company_code
+            FROM {{ catalog('dwhprd_gold') }}.sap_company_code_dim hop1
+            WHERE {CUBE}.sap_company_code_key = hop1.sap_company_code_key
+          )
+        type: string
+        title: SAP Company Code
+        description: Human-readable name of the sap company code.
+      - name: sap_geography_code
+        sql: |-
+          (
+            SELECT hop1.sap_geography_code
+            FROM {{ catalog('dwhprd_gold') }}.sap_geography_dim hop1
+            WHERE {CUBE}.sap_geography_key = hop1.sap_geography_key
+          )
+        type: string
+        title: SAP Geography Code
+        description: Natural code for the SAP geography.
+      - name: sap_geography_desc
+        sql: |-
+          (
+            SELECT hop1.sap_geography_desc
+            FROM {{ catalog('dwhprd_gold') }}.sap_geography_dim hop1
+            WHERE {CUBE}.sap_geography_key = hop1.sap_geography_key
+          )
+        type: string
+        title: Geography
+        description: Human-readable value "Geography".
+      - name: sap_platform_desc
+        sql: |-
+          (
+            SELECT hop1.sap_platform_desc
+            FROM {{ catalog('dwhprd_gold') }}.sap_platform_dim hop1
+            WHERE {CUBE}.sap_platform_key = hop1.sap_platform_key
+          )
+        type: string
+        title: Platform
+        description: Human-readable value "Platform".
+      - name: sap_platform_id
+        sql: |-
+          (
+            SELECT hop1.sap_platform_id
+            FROM {{ catalog('dwhprd_gold') }}.sap_platform_dim hop1
+            WHERE {CUBE}.sap_platform_key = hop1.sap_platform_key
+          )
+        type: number
+        title: SAP Platform ID
+        description: Natural identifier for the SAP platform. Glue type is numeric despite the "ID" naming.
+      - name: sap_profit_center_code_display
+        sql: |-
+          (
+            SELECT hop1.sap_profit_center_code_display
+            FROM {{ catalog('dwhprd_gold') }}.sap_profit_center_dim hop1
+            WHERE {CUBE}.sap_profit_center_key = hop1.sap_profit_center_key
+          )
+        type: string
+        title: SAP Profit Center Code
+        description: Display-formatted profit center code.
+      - name: sap_profit_center_desc
+        sql: |-
+          (
+            SELECT hop1.sap_profit_center_desc
+            FROM {{ catalog('dwhprd_gold') }}.sap_profit_center_dim hop1
+            WHERE {CUBE}.sap_profit_center_key = hop1.sap_profit_center_key
+          )
+        type: string
+        title: Profit Center
+        description: Human-readable value "Profit Center".
+      - name: sap_region_name
+        sql: |-
+          (
+            SELECT hop1.sap_region_name
+            FROM {{ catalog('dwhprd_gold') }}.sap_region_dim hop1
+            WHERE {CUBE}.sap_region_key = hop1.sap_region_key
+          )
+        type: string
+        title: Region
+        description: Human-readable value "Region".
+      - name: system_name
+        sql: |-
+          (
+            SELECT hop1.system_name
+            FROM {{ catalog('dwhprd_gold') }}.source_system_dim hop1
+            WHERE {CUBE}.source_system_key = hop1.source_system_key
+          )
+        type: string
+        title: Affiliate System
+        description: Human-readable name of the affiliate billing source system, e.g. DLA, DNA, DNE, DNR, EXT.
+      - name: customer_key
+        sql: customer_key
+        type: number
+        title: Customer Key
+        description: Foreign key to customer_dim.
+        primary_key: true
+      - name: affiliate_key
+        sql: affiliate_key
+        type: number
+        title: Affiliate Key
+        description: Foreign key to affiliate_dim.
+      - name: sap_geography_key
+        sql: sap_geography_key
+        type: number
+        title: SAP Geography Key
+        description: Foreign key to sap_geography_dim.
+      - name: sap_profit_center_key
+        sql: sap_profit_center_key
+        type: number
+        title: SAP Profit Center Key
+        description: Foreign key to sap_profit_center_dim.
+      - name: sap_platform_key
+        sql: sap_platform_key
+        type: number
+        title: SAP Platform Key
+        description: Foreign key to sap_platform_dim.
+      - name: pack_type
+        sql: pack_type
+        type: string
+        title: Pack Type
+        description: >-
+          Pack type classification, e.g. External Source, Invoice and Subs (Include), Subs Only (Include).
+      - name: reason_to_exclude
+        sql: reason_to_exclude
+        type: string
+        title: Reason To Exclude
+        description: Why a row is excluded, if flagged.
+      - name: sap_region_key
+        sql: sap_region_key
+        type: number
+        title: SAP Region Key
+        description: Foreign key to sap_region_dim.
+      - name: network_key
+        sql: network_key
+        type: number
+        title: Network Key
+        description: >-
+          KNOWN GAP — the ingested network_dim is confirmed to be a different, wrong-source-system table (51.6%
+          orphan rate on this join). Network Name is not modelled. See cube description.
+      - name: base_currency_key
+        sql: base_currency_key
+        type: number
+        title: Base Currency Key
+        description: >-
+          Foreign key to currency_dim, in the Base Currency role — joined directly, since this is the only
+          currency_dim role joined from this cube (a cube can only join a given target cube once). Invoice/Local/
+          Contract Currency are read via correlated-subquery dimensions instead — see invoice_currency_code,
+          local_currency_code, contract_currency_code.
+      - name: billing_period_key
+        sql: billing_period_key
+        type: number
+        title: Billing Period Key
+        description: Foreign key to billing_period_dim.
+      - name: contract_key
+        sql: contract_key
+        type: number
+        title: Contract Key
+        description: Foreign key to contract_dim.
+      - name: contract_currency_key
+        sql: contract_currency_key
+        type: number
+        title: Contract Currency Key
+        description: >-
+          Foreign key to currency_dim, in the Contract Currency role — read via correlated subquery, see
+          contract_currency_code/name.
+      - name: contract_currency_code
+        sql: >-
+          (SELECT cd.currency_cd FROM {{ catalog('dwhprd_gold') }}.currency_dim cd
+            WHERE cd.currency_key = {CUBE}.contract_currency_key)
+        type: string
+        title: Contract Currency Code
+        description: currency_dim.currency_cd looked up by contract_currency_key via a correlated subquery.
+      - name: contract_currency_name
+        sql: >-
+          (SELECT cd.currency_name FROM {{ catalog('dwhprd_gold') }}.currency_dim cd
+            WHERE cd.currency_key = {CUBE}.contract_currency_key)
+        type: string
+        title: Contract Currency Name
+        description: currency_dim.currency_name looked up by contract_currency_key via a correlated subquery.
+      - name: country_key
+        sql: country_key
+        type: number
+        title: Country Key
+        description: Foreign key to country_dim (the same cube authored for campaign_fact).
+      - name: effective_on
+        sql: effective_on
+        type: time
+        title: Effective On
+        description: the row's effective date.
+      - name: invoice_key
+        sql: invoice_key
+        type: number
+        title: Invoice Key
+        description: >-
+          Foreign key to invoice_dim (the pre-existing generic cube, also used by finance_view_invoice_revenue_fact)
+          — probed 0% orphan, confirmed the same shared table rather than a collision. See cube description.
+      - name: inv_process_status_key
+        sql: inv_process_status_key
+        type: number
+        title: Invoice Process Status Key
+        description: Foreign key to inv_process_status_dim.
+      - name: invoice_type_key
+        sql: invoice_type_key
+        type: number
+        title: Invoice Type Key
+        description: Foreign key to invoice_type_dim.
+      - name: link_type
+        sql: link_type
+        type: string
+        title: Link Type
+        description: The Link Type attribute.
+      - name: local_currency_key
+        sql: local_currency_key
+        type: number
+        title: Local Currency Key
+        description: >-
+          Foreign key to currency_dim, in the Local Currency role — read via correlated subquery, see
+          local_currency_code/name.
+      - name: local_currency_code
+        sql: >-
+          (SELECT cd.currency_cd FROM {{ catalog('dwhprd_gold') }}.currency_dim cd
+            WHERE cd.currency_key = {CUBE}.local_currency_key)
+        type: string
+        title: Local Currency Code
+        description: currency_dim.currency_cd looked up by local_currency_key via a correlated subquery.
+      - name: local_currency_name
+        sql: >-
+          (SELECT cd.currency_name FROM {{ catalog('dwhprd_gold') }}.currency_dim cd
+            WHERE cd.currency_key = {CUBE}.local_currency_key)
+        type: string
+        title: Local Currency Name
+        description: currency_dim.currency_name looked up by local_currency_key via a correlated subquery.
+      - name: calendar_month_key
+        sql: calendar_month_key
+        type: number
+        title: Calendar Month Key
+        description: Foreign key to calendar_month_dim (the same cube authored for campaign_fact).
+      - name: new_package_key
+        sql: new_package_key
+        type: number
+        title: New Package Key
+        description: >-
+          KNOWN GAP — new_package_dim does not exist in the ingested catalog. New Package ID/Name are not
+          modelled. See cube description.
+      - name: package_key
+        sql: package_key
+        type: number
+        title: Package Key
+        description: Foreign key to package_dim.
+      - name: package_replace_ind
+        sql: package_replace_ind
+        type: string
+        title: Package Replace Indicator
+        description: The Package Replace IND attribute.
+      - name: calendar_qtr_key
+        sql: calendar_qtr_key
+        type: number
+        title: Calendar Qtr Key
+        description: Foreign key to calendar_qtr_dim (the same cube authored for campaign_fact).
+      - name: rate_type_key
+        sql: rate_type_key
+        type: number
+        title: Rate Type Key
+        description: Foreign key to rate_type_dim.
+      - name: sap_company_code_key
+        sql: sap_company_code_key
+        type: number
+        title: SAP Company Code Key
+        description: Foreign key to sap_company_code_dim.
+      - name: source_system_key
+        sql: source_system_key
+        type: number
+        title: Source System Key
+        description: Foreign key to source_system_dim.
+      - name: vip_customer
+        sql: vip_customer
+        type: string
+        title: VIP Customer
+        description: Indicator for whether this customer is a VIP customer, e.g. Yes.
+      - name: calendar_year_key
+        sql: calendar_year_key
+        type: number
+        title: Calendar Year Key
+        description: Foreign key to calendar_year_dim.
+      - name: invoice_currency_key
+        sql: invoice_currency_key
+        type: number
+        title: Invoice Currency Key
+        description: >-
+          Foreign key to currency_dim, in the Invoice Currency role — read via correlated subquery, see
+          invoice_currency_code/name.
+      - name: invoice_currency_code
+        sql: >-
+          (SELECT cd.currency_cd FROM {{ catalog('dwhprd_gold') }}.currency_dim cd
+            WHERE cd.currency_key = {CUBE}.invoice_currency_key)
+        type: string
+        title: Invoice Currency Code
+        description: currency_dim.currency_cd looked up by invoice_currency_key via a correlated subquery.
+      - name: invoice_currency_name
+        sql: >-
+          (SELECT cd.currency_name FROM {{ catalog('dwhprd_gold') }}.currency_dim cd
+            WHERE cd.currency_key = {CUBE}.invoice_currency_key)
+        type: string
+        title: Invoice Currency Name
+        description: currency_dim.currency_name looked up by invoice_currency_key via a correlated subquery.
+      - name: revenue_type_key
+        sql: revenue_type_key
+        type: number
+        title: Revenue Type Key
+        description: Foreign key to revenue_type_dim.
+      - name: subs_indicator
+        sql: subs_indicator
+        type: string
+        title: Subs Indicator
+        description: Subs indicator attribute.
+    measures:
+      - name: actual_subs
+        sql: new_actual_subs
+        type: sum
+        title: Actual Subs
+        description: >-
+          Sum of new_actual_subs. See cube description for why this is a plain sum rather than a
+          dedup-then-sum, reversing an earlier unverified assumption based on empirical evidence.
+      - name: billable_subs
+        sql: new_billable_subs
+        type: sum
+        title: Billable Subs
+        description: >-
+          Sum of new_billable_subs. See cube description for why this is a plain sum rather than a
+          dedup-then-sum, reversing an earlier unverified assumption based on empirical evidence.
+    joins:
+      - name: cube_carl_dwhprd_gold_affiliate_dim
+        sql: '{CUBE}.affiliate_key = {cube_carl_dwhprd_gold_affiliate_dim}.affiliate_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_customer_dim
+        sql: '{CUBE}.customer_key = {cube_carl_dwhprd_gold_customer_dim}.customer_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_sap_geography_dim
+        sql: '{CUBE}.sap_geography_key = {cube_carl_dwhprd_gold_sap_geography_dim}.sap_geography_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_sap_platform_dim
+        sql: '{CUBE}.sap_platform_key = {cube_carl_dwhprd_gold_sap_platform_dim}.sap_platform_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_sap_profit_center_dim
+        sql: >-
+          {CUBE}.sap_profit_center_key = {cube_carl_dwhprd_gold_sap_profit_center_dim}.sap_profit_center_key
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_sap_region_dim
+        sql: '{CUBE}.sap_region_key = {cube_carl_dwhprd_gold_sap_region_dim}.sap_region_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_currency_dim
+        sql: '{CUBE}.base_currency_key = {cube_carl_dwhprd_gold_currency_dim}.currency_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_billing_period_dim
+        sql: '{CUBE}.billing_period_key = {cube_carl_dwhprd_gold_billing_period_dim}.billing_period_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_contract_dim
+        sql: '{CUBE}.contract_key = {cube_carl_dwhprd_gold_contract_dim}.contract_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_country_dim
+        sql: '{CUBE}.country_key = {cube_carl_dwhprd_gold_country_dim}.country_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_invoice_dim
+        sql: '{CUBE}.invoice_key = {cube_carl_dwhprd_gold_invoice_dim}.invoice_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_inv_process_status_dim
+        sql: >-
+          {CUBE}.inv_process_status_key = {cube_carl_dwhprd_gold_inv_process_status_dim}.inv_process_status_key
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_invoice_type_dim
+        sql: '{CUBE}.invoice_type_key = {cube_carl_dwhprd_gold_invoice_type_dim}.invoice_type_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_calendar_month_dim
+        sql: '{CUBE}.calendar_month_key = {cube_carl_dwhprd_gold_calendar_month_dim}.calendar_month_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_package_dim
+        sql: '{CUBE}.package_key = {cube_carl_dwhprd_gold_package_dim}.package_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_calendar_qtr_dim
+        sql: '{CUBE}.calendar_qtr_key = {cube_carl_dwhprd_gold_calendar_qtr_dim}.calendar_qtr_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_rate_type_dim
+        sql: '{CUBE}.rate_type_key = {cube_carl_dwhprd_gold_rate_type_dim}.rate_type_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_sap_company_code_dim
+        sql: '{CUBE}.sap_company_code_key = {cube_carl_dwhprd_gold_sap_company_code_dim}.sap_company_code_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_source_system_dim
+        sql: '{CUBE}.source_system_key = {cube_carl_dwhprd_gold_source_system_dim}.source_system_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_calendar_year_dim
+        sql: '{CUBE}.calendar_year_key = {cube_carl_dwhprd_gold_calendar_year_dim}.calendar_year_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_revenue_type_dim
+        sql: '{CUBE}.revenue_type_key = {cube_carl_dwhprd_gold_revenue_type_dim}.revenue_type_key'
+        relationship: many_to_one

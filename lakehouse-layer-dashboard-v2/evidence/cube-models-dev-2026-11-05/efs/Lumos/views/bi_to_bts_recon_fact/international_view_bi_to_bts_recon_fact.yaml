@@ -1,0 +1,90 @@
+views:
+  - name: international_view_bi_to_bts_recon_fact
+    public: true
+    title: International — BI to BTS Recon Fact
+    description: >-
+      Business view for international on bi_to_bts_recon_fact. One view covers both MSTR
+      reports: BI to BTS recon report and BI to BTS recon report summary. Both QuickSight
+      analyses apply source_system_region_key IN (20, 21). The detail analysis also applies
+      (discrepancy_flag = '1' OR hold_closed_flag = '1'). The summary analysis groups by
+      Finance Audit Type, Holding Company, Base Currency, and BTS Batch Date, and omits
+      discrepancy_flag, hold_closed_flag, and bi_spot_hold_revenue (summary SQL alias
+      WJXBFS11, not on the summary template). min_month and max_month are min and max of
+      calendar_month_key at the summary grain. Total Absolute Diff (WJXBFSd) is a QuickSight
+      calculated field after aggregation. Cube measure descriptions that cite WJXBFS aliases
+      describe the detail report; the summary reuses those measures by business meaning, and
+      the summary's own aliases differ from WJXBFSd onward. Includes only members that already
+      exist on the live gold cubes — campaign booking-channel fields and calendar quarter
+      attributes are omitted because campaign_dim / calendar_month_dim do not expose them.
+    meta:
+      view_scope: business
+      business: international
+      fact_table: bi_to_bts_recon_fact
+      mstr_report_names:
+        - BI to BTS recon report
+        - BI to BTS recon report summary
+    cubes:
+      - join_path: cube_carl_dwhprd_gold_bi_to_bts_recon_fact
+        includes:
+          - bi_contract_value
+          - bts_contract_value
+          - contract_value_diff
+          - bi_number_of_spots
+          - bts_number_of_spots
+          - spot_count_diff
+          - bi_spot_revenue_less_hold
+          - bts_spot_revenue_gross
+          - spot_revenue_no_hold_diff
+          - bi_off_air_revenue_gross
+          - bts_off_air_revenue_gross
+          - off_air_revenue_diff
+          - bi_spot_hold_spots
+          - bts_number_of_hold_spots
+          - bi_spot_hold_revenue_rotator
+          - bi_spot_hold_spots_rotator
+          - bi_spot_hold_revenue
+          - bts_spot_revenue_transmitted
+          - bi_spot_revenue_booked
+          - bi_spot_revenue_transmitted
+          - spot_revenue_transmitted_diff
+          - min_month
+          - max_month
+          - campaign_key
+          - campaign_status_key
+          - calendar_month_key
+          - agency_key
+          - client_key
+          - holding_company_key
+          - base_currency_key
+          - invoice_holding_company_key
+          - channel_key
+          - contract_number
+          - fin_audit_type
+          - hold_closed_flag
+          - discrepancy_flag
+          - source_system_region_key
+          - bts_batch_date
+          - bi_create_ts
+          - bts_create_ts
+          - agency_id
+          - agency_name
+          - name: base_currency_code
+            title: Base Currency Code
+          - base_currency_name
+          - calendar_month_label
+          - name: calendar_month_calendar_year
+            alias: calendar_year
+          - campaign_desc
+          - campaign_id
+          - campaign_start_end_date
+          - campaign_status_code
+          - campaign_status_name
+          - name: channel_dimension_id
+            alias: channel_id
+          - client_id
+          - client_name
+          - display_channel_name
+          - holding_company_name
+          - invoice_holding_company_name
+          - master_channel
+          - source_region_name

@@ -1,0 +1,36 @@
+views:
+  - name: ad_sales_view_neo_deal_daily_metrics
+    public: true
+    title: "NEO Deal Daily Metrics Report"
+    description: >
+      Campaign Cockpit and Reporting Suite delivery KPIs: impressions, spend, pacing, VCR, and daily trends.
+    meta:
+      view_scope: business
+      business: ad_sales
+      fact_table: rpt_deal_daily_metrics
+    cubes:
+      - join_path: cube_neo_gold_rpt_deal_daily_metrics
+        includes:
+          - event_date_et
+          - deal_id
+          - deal_name
+          - deal_type
+          - deal_status
+          - campaign_id
+          - campaign_name
+          - advertiser_id
+          - advertiser_name
+          - agency_id
+          - agency_name
+          - shared_external_deal_id
+          - deal_start_date
+          - deal_end_date
+          - count
+          - total_impressions
+          - contracted_impressions
+          - total_revenue
+          - total_completions
+          - avg_vcr
+          - effective_cpm
+          - pacing_pct
+          - latest_time_elapsed_pct

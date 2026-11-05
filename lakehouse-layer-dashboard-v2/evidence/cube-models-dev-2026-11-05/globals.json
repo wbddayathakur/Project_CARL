@@ -1,0 +1,47 @@
+{
+  "_comment": "Environment-specific catalog mappings for Cube model templating. Consumed by model/globals.py to resolve {{ catalog('key') }} in YAML models. Keys are logical names (no env suffix); values are the actual Glue catalog database names. Every key MUST have entries for all four environments (dev, qa, stage, prod) — enforced by scripts/validate_globals_json.py. Self-mapping keys (same value in every env) are registered deliberately so all catalog references go through one resolution path; future per-env divergence is then a one-line change here with no model edits.",
+  "catalogs": {
+    "dwhprd_gold": {
+      "dev": "carl_dwhprd_gold_dev",
+      "qa": "carl_dwhprd_gold_qa",
+      "stage": "carl_dwhprd_gold_stage",
+      "prod": "carl_dwhprd_gold_prod"
+    },
+    "neo_gold": {
+      "dev": "neo_gold",
+      "qa": "neo_gold",
+      "stage": "neo_gold",
+      "prod": "neo_gold"
+    },
+    "linear_digital_revenue_gold": {
+      "dev": "linear_digital_revenue_gold",
+      "qa": "linear_digital_revenue_gold",
+      "stage": "linear_digital_revenue_gold",
+      "prod": "linear_digital_revenue_gold"
+    },
+    "linear_digital_revenue_bronze": {
+      "dev": "linear_digital_revenue_bronze",
+      "qa": "linear_digital_revenue_bronze",
+      "stage": "linear_digital_revenue_bronze",
+      "prod": "linear_digital_revenue_bronze"
+    },
+    "operative_bronze": {
+      "dev": "operative_bronze",
+      "qa": "operative_bronze",
+      "stage": "operative_bronze",
+      "prod": "operative_bronze"
+    },
+    "venus_silver_serving": {
+      "dev": "venus_silver_serving",
+      "qa": "venus_silver_serving",
+      "stage": "venus_silver_serving",
+      "prod": "venus_silver_serving"
+    },
+    "venus_gold": {
+      "dev": "venus_gold",
+      "qa": "venus_gold",
+      "stage": "venus_gold",
+      "prod": "venus_gold"
+    }
+  }
+}

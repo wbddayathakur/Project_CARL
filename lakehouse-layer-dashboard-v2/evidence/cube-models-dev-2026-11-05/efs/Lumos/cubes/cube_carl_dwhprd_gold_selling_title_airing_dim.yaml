@@ -1,0 +1,186 @@
+cubes:
+  - name: cube_carl_dwhprd_gold_selling_title_airing_dim
+    sql_table: "{{ catalog('dwhprd_gold') }}.selling_title_airing_dim"
+    data_source: default
+    public: false
+    title: Carl Dwhprd Gold — Selling Title Airing Dim
+    description: >-
+      One row per selling title airing: a scheduled run of a selling title on one network and broadcast day, carrying
+      that airing's commercial break counts and break seconds. Named _dim in the warehouse but used as a fact by the MSTR
+      Commercial Breaks report (CARL-4352), which sums ST_NUM_OF_BREAKS over it. selling_title_airing_key is unique across
+      every row (2,623,216 of 2,623,216 in dev), so it is the primary key.
+    dimensions:
+      - name: selling_title_airing_key
+        sql: selling_title_airing_key
+        type: number
+        title: Selling Title Airing Key
+        description: Surrogate key of the selling title airing. Unique per row.
+        primary_key: true
+      - name: selling_title_key
+        sql: selling_title_key
+        type: number
+        title: Selling Title Key
+        description: >-
+          Foreign key joining selling_title_airing_dim to selling_title_dim. Filtered on directly downstream, because MSTR
+          emits key literals rather than names.
+      - name: selling_title_daypart_key
+        sql: selling_title_daypart_key
+        type: number
+        title: Selling Title Daypart Key
+        description: >-
+          Foreign key joining selling_title_airing_dim to selling_title_daypart_dim. Filtered on directly downstream, because
+          MSTR emits key literals rather than names.
+      - name: network_key
+        sql: network_key
+        type: number
+        title: Network Key
+        description: Foreign key joining selling_title_airing_dim to network_dim.
+      - name: unit_sched_bday_key
+        sql: unit_sched_bday_key
+        type: number
+        title: Unit Sched Bday Key
+        description: >-
+          Foreign key joining selling_title_airing_dim to unit_sched_bday_dim, the broadcast day the airing is scheduled
+          on. 79 dev rows carry a key with no matching day.
+      - name: selling_title_start_hr
+        sql: selling_title_start_hr
+        type: number
+        title: Selling Title Start Hour
+        description: >-
+          Hour the selling title airing starts. -99 is the N/A member, which the MSTR view filter Selling Title Start Hour
+          <> N/A excludes.
+      - name: net_name
+        sql: |-
+          (
+            SELECT hop1.net_name
+            FROM {{ catalog('dwhprd_gold') }}.network_dim hop1
+            WHERE {CUBE}.network_key = hop1.network_key
+          )
+        type: string
+        title: Network
+        description: Official name of the broadcast network.
+      - name: selling_title_desc
+        sql: |-
+          (
+            SELECT hop1.selling_title_desc
+            FROM {{ catalog('dwhprd_gold') }}.selling_title_dim hop1
+            WHERE {CUBE}.selling_title_key = hop1.selling_title_key
+          )
+        type: string
+        title: Selling Title
+        description: Description of the selling title. Not unique across networks, so group on selling_title_key as well.
+      - name: selling_title_type_key
+        sql: |-
+          (
+            SELECT hop1.selling_title_type_key
+            FROM {{ catalog('dwhprd_gold') }}.selling_title_dim hop1
+            WHERE {CUBE}.selling_title_key = hop1.selling_title_key
+          )
+        type: number
+        title: Selling Title Type Key
+        description: >-
+          Selling title type surrogate key. MSTR's report filter Selling Title Type <> N/A, Time Rotation is keys 0 and 4.
+      - name: selling_title_type_desc
+        sql: |-
+          (
+            SELECT hop1.selling_title_type_desc
+            FROM {{ catalog('dwhprd_gold') }}.selling_title_dim hop1
+            WHERE {CUBE}.selling_title_key = hop1.selling_title_key
+          )
+        type: string
+        title: Selling Title Type
+        description: Description of the selling title type.
+      - name: sell_title_dpart_selling_desc
+        sql: |-
+          (
+            SELECT hop1.sell_title_dpart_selling_desc
+            FROM {{ catalog('dwhprd_gold') }}.selling_title_daypart_dim hop1
+            WHERE {CUBE}.selling_title_daypart_key = hop1.selling_title_daypart_key
+          )
+        type: string
+        title: Selling Title Selling Daypart
+        description: Selling description of the selling title's daypart, e.g. PRIMETIME or LATE.
+      - name: broadcast_qtr_key
+        sql: |-
+          (
+            SELECT hop1.broadcast_qtr_key
+            FROM {{ catalog('dwhprd_gold') }}.unit_sched_bday_dim hop1
+            WHERE {CUBE}.unit_sched_bday_key = hop1.unit_sched_bday_key
+          )
+        type: number
+        title: Unit Broadcast Quarter Key
+        description: >-
+          Broadcast quarter (e.g. 20264) of the airing's scheduled broadcast day. Matches MSTR's path through
+          unit_sched_bcast_month_dim on every dev row.
+      - name: bcast_qtr_desc
+        sql: |-
+          (
+            SELECT hop1.bcast_qtr_desc
+            FROM {{ catalog('dwhprd_gold') }}.unit_sched_bday_dim hop1
+            WHERE {CUBE}.unit_sched_bday_key = hop1.unit_sched_bday_key
+          )
+        type: string
+        title: Unit Broadcast Quarter
+        description: Broadcast quarter label of the airing's scheduled broadcast day, e.g. "4th Qtr 2026".
+      - name: broadcast_week_key
+        sql: |-
+          (
+            SELECT hop1.broadcast_week_key
+            FROM {{ catalog('dwhprd_gold') }}.unit_sched_bday_dim hop1
+            WHERE {CUBE}.unit_sched_bday_key = hop1.unit_sched_bday_key
+          )
+        type: number
+        title: Unit Broadcast Week Key
+        description: Surrogate key of the broadcast week containing the airing's scheduled broadcast day.
+      - name: unit_sched_broadcast_week_range
+        sql: |-
+          (
+            SELECT date_format(hop1.broadcast_week_begin_date, '%m/%d/%Y') || ' - ' || date_format(hop1.broadcast_week_end_date, '%m/%d/%Y')
+            FROM {{ catalog('dwhprd_gold') }}.unit_sched_bday_dim hop1
+            WHERE {CUBE}.unit_sched_bday_key = hop1.unit_sched_bday_key
+          )
+        type: string
+        title: Unit Broadcast Week
+        description: >-
+          "mm/dd/yyyy - mm/dd/yyyy" broadcast-week range, e.g. "09/28/2026 - 10/04/2026". Reproduces MSTR's
+          to_char(begin,'mm/dd/yyyy')||' - '||to_char(end,'mm/dd/yyyy') display form for Unit Broadcast Week.
+    joins:
+      - name: cube_carl_dwhprd_gold_network_dim
+        sql: '{CUBE}.network_key = {cube_carl_dwhprd_gold_network_dim}.network_key'
+        relationship: many_to_one
+      # Order Property Category: MSTR's Commercial Breaks SQL CROSS JOINs PROPERTY_CATEGORY_DIM (no key relates it
+      # to an airing), so this join has no key either. Every airing repeats once per property category, so a query
+      # grouping on property_category without filtering it returns the full total under each of the 34 categories,
+      # exactly as MSTR does. Filter property_category_id (MSTR view filter: = 1, Entertainment) to get one copy. The
+      # join is only emitted when a property_category_dim member is queried.
+      # relationship is one_to_many because '1 = 1' matches every category row for each airing. Cube therefore
+      # treats this cube's measures as fanned out by the join and sums them over distinct selling_title_airing_key,
+      # so a total across categories is not multiplied by the category count.
+      - name: cube_carl_dwhprd_gold_property_category_dim
+        sql: '1 = 1'
+        relationship: one_to_many
+      - name: cube_carl_dwhprd_gold_selling_title_daypart_dim
+        sql: '{CUBE}.selling_title_daypart_key = {cube_carl_dwhprd_gold_selling_title_daypart_dim}.selling_title_daypart_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_selling_title_dim
+        sql: '{CUBE}.selling_title_key = {cube_carl_dwhprd_gold_selling_title_dim}.selling_title_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_unit_sched_bday_dim
+        sql: '{CUBE}.unit_sched_bday_key = {cube_carl_dwhprd_gold_unit_sched_bday_dim}.unit_sched_bday_key'
+        relationship: many_to_one
+    measures:
+      - name: record_count
+        sql: '*'
+        type: count
+        title: Record Count
+        description: Row count for smoke queries.
+        meta:
+          source: generated
+          used_by_report_ids: []
+      - name: st_no_of_breaks
+        sql: '{CUBE}.st_num_of_breaks'
+        type: sum
+        title: ST No. of Breaks
+        description: >-
+          Number of commercial breaks in the selling title airings. MSTR metric ST No. of Breaks = Sum(ST Num Of Breaks)
+          (CARL-4352 Commercial Breaks).

@@ -1,0 +1,253 @@
+cubes:
+  - name: combined_revenue_sales_holes_totals
+    sql_table: "{{ catalog('linear_digital_revenue_gold') }}.combined_revenue_sales_holes_totals"
+    data_source: default
+    public: false
+    title: "Combined Revenue Sales Holes Totals"
+    description: "Revenue data combining linear and digital sources for sales holes analysis. Backs the Converged Total Sales Holes dashboard."
+
+    dimensions:
+      - name: table_name
+        sql: table_name
+        type: string
+        title: "Source Table"
+        description: "Source table identifier (sales_holes_totals or sports_holes_analysis)"
+
+      - name: business_source
+        sql: business_source
+        type: string
+        title: "Business Source"
+        description: "DIGITAL or LINEAR"
+
+      - name: advertiser_id
+        sql: advertiser_id
+        type: string
+        title: "Advertiser ID"
+        description: "Unique identifier for the advertiser"
+
+      - name: advertiser
+        sql: advertiser
+        type: string
+        title: "Advertiser"
+        description: "Advertiser name"
+
+      - name: advertiser_reporting_parent
+        sql: advertiser_reporting_parent
+        type: string
+        title: "Advertiser Reporting Parent"
+        description: "Parent company of the advertiser for rollup reporting"
+
+      - name: agency_id
+        sql: agency_id
+        type: string
+        title: "Agency ID"
+        description: "Unique identifier for the agency"
+
+      - name: agency
+        sql: agency
+        type: string
+        title: "Agency"
+        description: "Agency name"
+
+      - name: agency_reporting_parent
+        sql: agency_reporting_parent
+        type: string
+        title: "Agency Reporting Parent"
+        description: "Parent agency for rollup reporting"
+
+      - name: mega_agency
+        sql: mega_agency
+        type: string
+        title: "Mega Agency"
+        description: "Holding company (e.g. GroupM, Publicis)"
+
+      - name: market
+        sql: market
+        type: string
+        title: "Market"
+        description: "Market type (e.g. Scatter, Non-Upfront)"
+
+      - name: network
+        sql: network
+        type: string
+        title: "Network"
+        description: "Network name (e.g. AHC, Warner Bros Syne)"
+
+      - name: revenue_type
+        sql: revenue_type
+        type: string
+        title: "Revenue Type"
+        description: "BOOKED/INVOICED or WORKING"
+
+      - name: revenue_type_detail
+        sql: revenue_type_detail
+        type: string
+        title: "Revenue Type Detail"
+        description: "Granular revenue type (finer than revenue_type)"
+
+      - name: year
+        sql: "{CUBE}.year"
+        type: number
+        title: "Year"
+        description: "Fiscal year"
+
+      - name: month
+        sql: "{CUBE}.month"
+        type: number
+        title: "Month"
+        description: "Fiscal month (1-12)"
+
+      - name: division
+        sql: division
+        type: string
+        title: "Division"
+        description: "Entertainment or Sports"
+
+      - name: general_category
+        sql: general_category
+        type: string
+        title: "General Category"
+        description: "Advertiser category (e.g. ALCOHOL, VARIOUS)"
+
+      - name: office
+        sql: office
+        type: string
+        title: "Office"
+        description: "Sales office location"
+
+      - name: ae_name
+        sql: ae_name
+        type: string
+        title: "Account Executive"
+        description: "Name of the account executive"
+
+      - name: property_category
+        sql: property_category
+        type: string
+        title: "Property Category"
+        description: "Property/platform category"
+
+      - name: ncaa
+        sql: ncaa
+        type: string
+        title: "NCAA"
+        description: "NCAA sports flag or category"
+
+      - name: updated_date
+        sql: updated_date
+        type: time
+        title: "Updated Date"
+        description: "Timestamp when the record was last updated"
+
+      - name: database_check_date
+        sql: database_check_date
+        type: time
+        title: "Database Check Date"
+        description: "Date of the database check"
+
+    measures:
+      - name: total_revenue
+        sql: revenue
+        type: sum
+        title: "Total Revenue"
+        description: "Sum of revenue across all records"
+
+      - name: booked_revenue
+        sql: revenue
+        type: sum
+        title: "Booked/Invoiced Revenue"
+        description: "Revenue from BOOKED/INVOICED records only"
+        filters:
+          - sql: "{CUBE}.revenue_type = 'BOOKED/INVOICED'"
+
+      - name: working_revenue
+        sql: revenue
+        type: sum
+        title: "Working Revenue"
+        description: "Revenue from WORKING (pipeline) records only"
+        filters:
+          - sql: "{CUBE}.revenue_type = 'WORKING'"
+
+      - name: linear_revenue
+        sql: revenue
+        type: sum
+        title: "Linear Revenue"
+        description: "Revenue from LINEAR business source only"
+        filters:
+          - sql: "{CUBE}.business_source = 'LINEAR'"
+
+      - name: digital_revenue
+        sql: revenue
+        type: sum
+        title: "Digital Revenue"
+        description: "Revenue from DIGITAL business source only"
+        filters:
+          - sql: "{CUBE}.business_source = 'DIGITAL'"
+
+      - name: sales_hole
+        sql: "{total_revenue} - {booked_revenue}"
+        type: number
+        title: "Sales Hole"
+        description: "Gap between total revenue and booked revenue (the unfilled pipeline)"
+
+      - name: record_count
+        sql: "*"
+        type: count
+        title: "Record Count"
+        description: "Number of records"
+
+      - name: unique_advertisers
+        sql: advertiser
+        type: count_distinct
+        title: "Unique Advertisers"
+        description: "Distinct advertiser count"
+
+      - name: unique_agencies
+        sql: agency
+        type: count_distinct
+        title: "Unique Agencies"
+        description: "Distinct agency count"
+
+      - name: unique_networks
+        sql: network
+        type: count_distinct
+        title: "Unique Networks"
+        description: "Distinct network count"
+
+    pre_aggregations:
+      - name: monthly_by_source_and_network
+        measures:
+          - total_revenue
+          - booked_revenue
+          - working_revenue
+          - record_count
+        dimensions:
+          - business_source
+          - network
+          - year
+          - month
+        refresh_key:
+          every: "1 hour"
+
+      # Matches the deployed QuickSight dataset SQL (sql/sales_holes.sql in carl-infra).
+      # Without this, the 8-dim QS query falls through to Athena via Cube Store
+      # and produces ~66K rows (~33MB) which fits the buffer TODAY but has no
+      # safety margin. This pre-agg ensures instant response and eliminates
+      # buffer overflow risk regardless of data growth.
+      - name: quicksight_sales_holes_dataset
+        measures:
+          - total_revenue
+          - booked_revenue
+          - working_revenue
+          - record_count
+        dimensions:
+          - business_source
+          - network
+          - division
+          - revenue_type
+          - year
+          - month
+          - mega_agency
+          - office
+        refresh_key:
+          every: "1 hour"

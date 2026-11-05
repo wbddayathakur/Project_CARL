@@ -1,0 +1,121 @@
+views:
+  - name: international_view_digital_report_2026
+    public: true
+    title: "International — Digital Report (2026)"
+    description: >-
+      Digital Report (2026). Share-weighted campaign revenue for regions 20, 21,
+      and 30 in calendar months 202601 through 202612. Apply in QuickSight: channel
+      type Off Air, and exclude channel keys 502, 503, 504, 505, 506, 507, 508,
+      509, 497, 498, 499, and 500. Those filters are not on the cube. Sales Rep
+      and Sales Rep Code come from bts_sales_rep_dim. Current-rate USD measures
+      multiply by plan_curr_currency_rate. Deal Type ID comes from bts_deal_type_dim.
+      The engine's Agency Commission LOC level 2 and level rows are the same
+      Agency Commission LOC sum redrawn at coarser grains.
+    meta:
+      view_scope: business
+      business: international
+      fact_table: campaign_fact
+      mstr_report_name: Digital Report (2026)
+      catalog_key: lumos_carl_dwhprd_gold
+      ai_context: >
+        Use this view for Digital Report (2026). Filter source_system_region_key
+        to 20, 21, and 30, calendar_month_key to 202601 through 202612,
+        channel_type_desc to Off Air, and exclude channel_key 502, 503, 504, 505,
+        506, 507, 508, 509, 497, 498, 499, 500. Measures are multiplied by
+        sales_rep_revenue_share.
+    cubes:
+      - join_path: cube_carl_dwhprd_gold_campaign_fact
+        includes:
+          - name: source_system_region_key
+            title: Source System Region Key
+          - name: calendar_month_key
+            title: Month Key
+          - name: channel_key
+            title: Channel Key
+          - name: source_region_name
+            title: Source System Region
+          - name: holding_company_name
+            title: Holding Company
+          - name: calendar_month_label
+            title: Month
+          - name: channel_id
+            title: Channel ID
+          - name: client_id
+            title: Client ID
+          - name: client_name
+            title: Client
+          - name: bts_sales_rep_code
+            title: Sales Rep Code
+          - name: bts_sales_rep_name
+            title: Sales Rep
+          - name: agency_id
+            title: Agency ID
+          - name: agency_name
+            title: Agency
+          - name: campaign_id
+            title: Campaign
+          - name: bts_campaign_currency_code
+            title: Campaign Currency
+          - name: agency_commission_loc
+            title: Agency Commission LOC
+          - name: agency_commission_loc
+            alias: agency_commission_loc_level
+            title: Agency Commission LOC Level
+          - name: agency_commission_loc
+            alias: agency_commission_loc_level_2
+            title: Agency Commission LOC level 2
+          - name: gross_revenue_loc
+            title: Gross Revenue LOC
+          - name: campaign_net_revenue_loc
+            title: Campaign Net Revenue LOC
+          - name: campaign_net_net_revenue_loc
+            title: Campaign Net Net Revenue LOC
+          - name: agency_commission_current_rate_usd
+            title: Agency Commission Current Rate(USD)
+          - name: gross_revenue_current_rate_usd
+            title: Gross Revenue Curr Rate(USD)
+          - name: campaign_net_revenue_current_rate_usd
+            title: Campaign Net Revenue Current Rate(USD)
+          - name: campaign_net_net_revenue_current_rate_usd
+            title: Campaign Net Net Revenue Current Rate(USD)
+          - name: campaign_spots_booked
+            title: Campaign Spots Booked
+          - name: channel_type_desc
+            title: Channel Type Desc
+          - name: business_type_id
+            title: Business Type ID
+          - name: business_type_name
+            title: Business Type
+          - name: campaign_start_date
+            title: Campaign Start Date
+          - name: campaign_end_date
+            title: Campaign End Date
+          - name: revenue_event_desc
+            title: Revenue Event
+          - name: revenue_event_desc
+            alias: max_item_revenue_event
+            title: Max (Item Revenue Event)
+          - name: campaign_disc_sur_pct
+            title: "Campaign Discount/Surcharge %"
+          - name: contract_type_desc
+            title: Contract Type
+          - name: product_id
+            title: Product ID
+          - name: product_name
+            title: Product
+          - name: product_category_3
+            title: Product Category 3
+          - name: deal_id
+            title: Deal ID
+          - name: deal_name
+            title: Deal Name
+          - name: deal_type_desc
+            title: Deal Type
+          - name: deal_type_id
+            title: Deal Type ID
+          - name: sales_holding_company_name
+            title: Sales Holding Company
+          - name: adv_market_sector_desc
+            title: Adv Market Sector
+          - name: invoice_holding_company_name
+            title: Invoice Holding Company

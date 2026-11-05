@@ -42,3 +42,6 @@ pnpm-debug.log*
 
 # Legacy company source (do not publish)
 uc1-field-mapping/work/legacy/
+
+# Contains a live .env and virtualenv
+carl-roadmap-agent.zip

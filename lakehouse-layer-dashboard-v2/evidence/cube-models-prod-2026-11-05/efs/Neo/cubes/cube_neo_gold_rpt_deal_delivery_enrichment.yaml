@@ -1,0 +1,56 @@
+cubes:
+  - name: cube_neo_gold_rpt_deal_delivery_enrichment
+    sql_table: "{{ catalog('neo_gold') }}.rpt_deal_delivery_enrichment"
+    public: false
+    data_source: default
+    title: NEO Deal Billing Delivery Enrichment
+    description: >
+      Deal-level delivery dimension fields sourced from FreeWheel ad stream impressions.
+      Proxies for NEO 1.0 billing enrichment (brand/site, property/sports, ad type, insertion order).
+    dimensions:
+      - name: deal_id
+        sql: '{CUBE}.deal_id'
+        type: number
+        primary_key: true
+        title: Deal ID
+        description: NEO internal deal identifier (numeric)
+      - name: shared_external_deal_id
+        sql: '{CUBE}.shared_external_deal_id'
+        type: string
+        title: Shared External Deal ID
+        description: External deal identifier when present (e.g. Prisma code)
+      - name: campaign_id
+        sql: '{CUBE}.campaign_id'
+        type: number
+        title: NEO Campaign ID
+        description: Campaign identifier in NEO
+      - name: deal_name
+        sql: '{CUBE}.deal_name'
+        type: string
+        title: Deal Name
+        description: Placement / deal name
+      - name: insertion_order_no
+        sql: '{CUBE}.insertion_order_no'
+        type: string
+        title: Insertion Order No
+        description: FreeWheel insertion order id (dominant by impressions)
+      - name: delivered_brand_site
+        sql: '{CUBE}.delivered_brand_site'
+        type: string
+        title: Delivered Brand / Site
+        description: Dominant fw_brand / site_name from delivery (proxy for finance lookup)
+      - name: delivered_property_sports_category
+        sql: '{CUBE}.delivered_property_sports_category'
+        type: string
+        title: Delivered Property / Sports Category
+        description: Dominant first genre token from delivery (proxy for finance lookup)
+      - name: delivered_ad_type
+        sql: '{CUBE}.delivered_ad_type'
+        type: string
+        title: Delivered Ad Type
+        description: Dominant modality/classification/ad unit from delivery (raw FreeWheel value)
+    measures:
+      - name: count
+        type: count
+        title: Deal Count
+        description: Number of deals in the result set

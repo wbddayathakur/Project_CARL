@@ -1,0 +1,138 @@
+cubes:
+  - name: cube_neo_gold_rpt_deal_daily_metrics
+    sql_table: "{{ catalog('neo_gold') }}.rpt_deal_daily_metrics"
+    public: false
+    data_source: default
+    title: NEO Deal Daily Metrics
+    description: >
+      Daily deal-level delivery, pacing, revenue, and VCR from neo_gold.rpt_deal_daily_metrics.
+      Primary view for Campaign Cockpit and Reporting Suite campaign reporting tabs.
+    dimensions:
+      - name: event_date_et
+        sql: CAST({CUBE}.event_date_et AS TIMESTAMP)
+        type: time
+        title: Event Date
+        description: Date of delivery in Eastern Time
+      - name: deal_id
+        sql: '{CUBE}.deal_id'
+        type: number
+        primary_key: true
+        title: Deal ID
+        description: NEO internal deal identifier
+      - name: deal_name
+        sql: '{CUBE}.deal_name'
+        type: string
+        title: Deal Name
+        description: Placement / deal name
+      - name: deal_type
+        sql: '{CUBE}.deal_type'
+        type: string
+        title: Deal Type
+        description: Guaranteed or Non-Guaranteed
+      - name: deal_status
+        sql: '{CUBE}.deal_status'
+        type: string
+        title: Deal Status
+        description: Active, Completed, or Pending
+      - name: campaign_id
+        sql: '{CUBE}.campaign_id'
+        type: number
+        title: Campaign ID
+        description: NEO campaign identifier
+      - name: campaign_name
+        sql: '{CUBE}.campaign_name'
+        type: string
+        title: Campaign Name
+        description: Campaign name materialized in neo_gold.rpt_deal_daily_metrics
+      - name: advertiser_id
+        sql: '{CUBE}.advertiser_id'
+        type: string
+        title: Advertiser ID
+        description: Advertiser identifier in NEO
+      - name: advertiser_name
+        sql: '{CUBE}.advertiser_name'
+        type: string
+        title: Advertiser Name
+        description: Advertiser / brand name
+      - name: agency_id
+        sql: '{CUBE}.agency_id'
+        type: number
+        title: Agency ID
+        description: Agency identifier in NEO
+      - name: agency_name
+        sql: '{CUBE}.agency_name'
+        type: string
+        title: Agency Name
+        description: Agency managing the deal
+      - name: shared_external_deal_id
+        sql: '{CUBE}.shared_external_deal_id'
+        type: string
+        title: External Deal ID
+        description: Prisma / Mediaocean external deal code when present
+      - name: deal_start_date
+        sql: CAST({CUBE}.deal_start_date AS TIMESTAMP)
+        type: time
+        title: Deal Start Date
+        description: Flight start date from dim_deals
+      - name: deal_end_date
+        sql: CAST({CUBE}.deal_end_date AS TIMESTAMP)
+        type: time
+        title: Deal End Date
+        description: Flight end date from dim_deals
+    measures:
+      - name: count
+        type: count
+        title: Record Count
+        description: Number of daily deal delivery rows
+      - name: total_impressions
+        sql: '{CUBE}.impressions'
+        type: sum
+        title: Delivered Impressions
+        description: First-party delivered impressions for the selected period
+      - name: contracted_impressions
+        sql: '{CUBE}.contracted_impressions'
+        type: max
+        title: Contracted Impressions
+        description: Booked impression goal (constant per deal; use max when aggregating over time)
+      - name: total_revenue
+        sql: '{CUBE}.revenue'
+        type: sum
+        title: Spend / Revenue ($)
+        description: Delivered media spend for the selected period
+      - name: total_completions
+        sql: '{CUBE}.completions'
+        type: sum
+        title: Video Completions
+        description: Completed views for the selected period
+      - name: avg_vcr
+        sql: >
+          CASE
+            WHEN SUM({CUBE}.impressions) > 0
+            THEN (CAST(SUM({CUBE}.completions) AS DOUBLE) / SUM({CUBE}.impressions)) * 100
+            ELSE 0
+          END
+        type: number
+        title: Video Completion Rate (%)
+        description: Completions divided by impressions × 100
+      - name: effective_cpm
+        sql: >
+          CASE
+            WHEN SUM({CUBE}.impressions) > 0
+            THEN (SUM({CUBE}.revenue) / SUM({CUBE}.impressions)) * 1000
+            ELSE 0
+          END
+        type: number
+        title: Effective CPM ($)
+        description: Revenue per thousand impressions for the selected period
+      - name: pacing_pct
+        sql: '{CUBE}.pacing_pct'
+        type: max
+        title: Pacing (%)
+        description: >
+          Flight-to-date pacing from gold (cumulative_impressions / contracted_impressions × 100
+          per delivery day). MAX returns pacing as of the latest delivery date in the query window.
+      - name: latest_time_elapsed_pct
+        sql: '{CUBE}.time_elapsed_pct'
+        type: max
+        title: Time Elapsed (%)
+        description: Percent of flight elapsed on the latest delivery date

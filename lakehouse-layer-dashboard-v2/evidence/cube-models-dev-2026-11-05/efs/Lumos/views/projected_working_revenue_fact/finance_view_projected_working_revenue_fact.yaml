@@ -1,0 +1,88 @@
+views:
+  - name: finance_view_projected_working_revenue_fact
+    public: true
+    title: Finance — Projected Working Revenue Fact
+    description: Business view for finance on projected_working_revenue_fact.
+    meta:
+      view_scope: business
+      business: finance
+      fact_table: projected_working_revenue_fact
+    cubes:
+      - join_path: cube_carl_dwhprd_gold_projected_working_revenue_fact
+        includes:
+          - cash_acm7_net_corp_imps_000
+          - cash_acm7_net_sec_demo_imps_000
+          - cash_acm_guar_target_imps_000_guar
+          - cash_acm_guar_target_imps_000_tracking
+          - cash_ecm_guar_target_imps_000_tracking
+          - cash_working_revenue
+          - cash_working_revenue_acm3_guar
+          - cash_working_revenue_acm3_tracking
+          - cash_working_revenue_ecm3_tracking
+          - cash_working_revenue_tracked
+          - deal_revenue_status_key
+          - market_key
+          - network_key
+          - pressure_type_key
+          - program_avg_daypart_key
+          - projected_working_revenue
+          - projected_working_revenue_000
+          - revenue_eff_cal_qtr_key
+          - working_acm_net_corp_imps_000
+          - working_as_sold_cost
+          - working_ecm_net_corp_imps_000
+          - working_eqv30_spots
+          - working_num_spots
+          - working_pal_net_corp_imps_000
+          - working_ratecard_cost
+          - working_ratecard_pct
+          - working_revenue
+          # CARL-4311: Working CPM metrics + back-solved impression totals for
+          # 2026 - Linear Pending (Revamp Pacing).
+          - working_acm_net_corp_cpm
+          - working_pal_net_corp_cpm
+          - working_guar_target_cpm_acm_guar
+          - working_guar_target_cpm_pal_guar
+          - total_corp_imps
+          - total_demo_imps
+          - adv_id
+          - adv_name
+          - adv_name_id
+          - bcast_qtr_desc
+          - name: revenue_eff_bcast_qtr_broadcast_year
+            alias: broadcast_year
+          - buying_agency_id
+          - buying_agency_name
+          - buying_agency_name_id
+          - name: revenue_eff_cal_qtr_calendar_year
+            alias: calendar_year
+          - deal_comments
+          - deal_create_date
+          - deal_revenue_status_desc
+          - deal_type_desc
+          - deal_year
+          - gab_deal_id
+          - guaranteed_ind
+          - market_desc
+          - net_name
+          - pressure_type_desc
+          - name: primary_ae
+            title: Buying AE
+          - name: primary_ae_office
+            title: Buying AE Office
+          - name: primary_ae_sales_team_sname
+            title: Buying AE Sales Team Short Name
+          - property_category
+          - property_category_id
+          - sold_loa_audit_num
+          - submitted_date
+          # CARL-4311: additional report-object attributes for
+          # 2026 - Linear Pending (Revamp Pacing). All are fact-resident
+          # correlated-subquery dimensions on the root cube (DENSE_RANK-safe).
+          - sub_account
+          - name: demo_name
+            title: Guar/Target Demographic
+          - prog_avg_daypart_selling_desc
+          - name: deal_eqv_ind
+            title: Deal Eqv Indicator
+          - cal_qtr_desc

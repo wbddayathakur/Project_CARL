@@ -1,0 +1,77 @@
+views:
+  - name: venus_view_digital_impressions
+    public: true
+    title: Digital Impressions
+    description: >-
+      One view for digital pacing and discrepancy. Expected-to-date is quantity
+      spread evenly over the flight, from the Oct 13 sheet. Pacing is billable
+      impressions divided by expected-to-date. Co-view uses 1.24, otherwise 1.0.
+    meta:
+      view_scope: business
+      business: venus
+      fact_table: digital_impressions_combined
+      catalog_key: linear_digital_revenue_gold
+    cubes:
+      - join_path: cube_linear_digital_revenue_gold_digital_impressions_combined
+        includes:
+          - record_count
+          - line_item_count
+          - lines_with_billable_server
+          - sales_order_line_item_id
+          - sales_order_line_item_name
+          - sales_order_id
+          - advertiser_name
+          - advertiser_id
+          - opportunity_id
+          - market_type_id
+          - order_status
+          - channel
+          - sli_product
+          - production_line_item_name
+          - package_id
+          - package_name
+          - line_item_type
+          - name: sales_order_line_item_start_date
+            alias: flight_start_date
+          - name: sales_order_line_item_end_date
+            alias: flight_end_date
+          - cost_method_name
+          - net_unit_cost
+          - net_cost
+          - billable_third_party
+          - billed_on
+          - agency_id
+          - agency_name
+          - primary_salesperson_name
+          - owner_name
+          - division
+          - currency_code
+          - order_start_date
+          - order_end_date
+          - has_coview
+          - co_view_factor
+          - targeting_summary
+          - version_nr
+          - is_latest_version
+          - all_sources_delivery_date_aligned
+          - modified_timestamp
+          - freshness_ts
+          - quantity
+          - guaranteed_impressions
+          - production_quantity
+          - first_party_impressions
+          - delivered_impressions_fw_1p
+          - delivered_impressions_1p
+          - delivered_impressions_adjuster_3p
+          - delivered_impressions_adjuster_1p
+          - adjuster_first_party_impressions
+          - adjuster_third_party_impressions
+          - expected_to_date
+          - billable_impressions
+          - pacing_pct
+          - buffer_impressions
+          - buffer_pct
+          - directional_discrepancy_impressions
+          - directional_discrepancy_pct
+          - impression_variance
+          - delivery_status

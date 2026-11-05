@@ -1,0 +1,494 @@
+cubes:
+  - name: cube_carl_dwhprd_gold_bi_to_bts_recon_fact
+    sql_table: "{{ catalog('dwhprd_gold') }}.bi_to_bts_recon_fact"
+    data_source: default
+    public: false
+    title: Carl Dwhprd Gold — BI To BTS Recon Fact
+    description: >-
+      BI vs BTS reconciliation fact capturing contract value, spot counts, and revenue for broadcast
+      advertising campaigns, along with the BI-minus-BTS differences for each. Each row is a
+      campaign/calendar-month/channel grain reconciliation record. Does not alter joins on
+      campaign_fact or other existing facts — all joins below are declared only on this cube.
+      campaign_status_dim and holding_company_dim are reached through campaign_dim (same snowflake
+      as sox_view_campaign_fact) so this cube does not add a second join instance to those cubes.
+      Invoice-side holding company uses cube_carl_dwhprd_gold_invoice_holding_company_dim, a
+      distinct cube over the same table, so Cube does not collapse it with the campaign-side
+      holding company. Base currency uses cube_carl_dwhprd_gold_base_currency_dim over
+      bts_currency_dim. currency_dim.currency_key is a different surrogate.
+    dimensions:
+      - name: agency_id
+        sql: |-
+          (
+            SELECT hop1.agency_id
+            FROM {{ catalog('dwhprd_gold') }}.agency_dim hop1
+            WHERE {CUBE}.agency_key = hop1.agency_key
+          )
+        type: string
+        title: Agency ID
+        description: Natural identifier for the agency.
+      - name: agency_name
+        sql: |-
+          (
+            SELECT hop1.agency_name
+            FROM {{ catalog('dwhprd_gold') }}.agency_dim hop1
+            WHERE {CUBE}.agency_key = hop1.agency_key
+          )
+        type: string
+        title: Agency Name
+        description: Human-readable value "Agency".
+      - name: base_currency_code
+        sql: |-
+          (
+            SELECT hop1.currency_code
+            FROM {{ catalog('dwhprd_gold') }}.bts_currency_dim hop1
+            WHERE {CUBE}.base_currency_key = hop1.currency_key
+          )
+        type: string
+        title: Base Currency
+        description: Currency code on bts_currency_dim. The column is currency_code. currency_dim.currency_cd is a different list and is not this code.
+      - name: base_currency_name
+        sql: |-
+          (
+            SELECT hop1.currency_name
+            FROM {{ catalog('dwhprd_gold') }}.bts_currency_dim hop1
+            WHERE {CUBE}.base_currency_key = hop1.currency_key
+          )
+        type: string
+        title: Base Currency Name
+        description: Currency name for the fact row's base currency.
+      - name: calendar_month_label
+        sql: |-
+          (
+            SELECT hop1.calendar_month_name || ' ' || CAST(hop1.calendar_year AS VARCHAR)
+            FROM {{ catalog('dwhprd_gold') }}.calendar_month_dim hop1
+            WHERE {CUBE}.calendar_month_key = hop1.calendar_month_key
+          )
+        type: string
+        title: Month
+        description: 'Formatted "<Month Name> <Year>" label, reproducing MSTR''s custom column (CustCol_400/CustCol_3). Both operands now explicitly cube-qualified — RESOLVED 2026-08-27:
+          the previous unqualified `calendar_year` reference compiled fine and worked via the REST API, but broke both sox_view_campaign_fact and sox_view_affiliate_fact live against
+          Cube''s SQL API (what QuickSight''s data source speaks) with `AMBIGUOUS_NAME: Column ''calendar_year'' is ambiguous` — Trino/Athena resolves unqualified column references
+          against every physical table in the generated JOIN, not just the cube that declares the dimension, and at least one sibling table joined alongside calendar_month_dim on
+          each of those two views also carries a raw `calendar_year` column (e.g. calendar_year_dim on sox_view_affiliate_fact). Confirmed via live dev CloudWatch logs on both views.
+          Always qualify cross-column references in multi-column derived dimensions with the cube-reference prefix to avoid this class of bug.'
+      - name: calendar_month_calendar_year
+        sql: |-
+          (
+            SELECT hop1.calendar_year
+            FROM {{ catalog('dwhprd_gold') }}.calendar_month_dim hop1
+            WHERE {CUBE}.calendar_month_key = hop1.calendar_month_key
+          )
+        type: number
+        title: Calendar Year (raw)
+        description: Raw calendar year, used to build calendar_month_label.
+      - name: campaign_desc
+        sql: |-
+          (
+            SELECT hop1.campaign_desc
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Campaign Description
+        description: Free-text campaign description.
+      - name: campaign_id
+        sql: |-
+          (
+            SELECT hop1.campaign_id
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Campaign ID
+        description: Natural identifier for the campaign.
+      - name: campaign_start_end_date
+        sql: |-
+          (
+            SELECT date_format(campaign_start_date, '%m/%d/%Y') || ' - ' || date_format(campaign_end_date, '%m/%d/%Y')
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Campaign Start and End Date
+        description: 'Formatted start/end date range, reproducing MSTR''s custom column (CustCol_40) exactly — both dates as MM/DD/YYYY, concatenated with '' - ''. Uses date_format
+          (MySQL-style %m/%d/%Y tokens), not to_char: probed live against Athena — to_char(''MM/DD/YYYY'') throws "INVALID_FUNCTION_ARGUMENT: Failed to tokenize string [M] at offset
+          [0]" on this engine, since Trino''s to_char expects a different token syntax than the Oracle/Teradata-style pattern MSTR used.'
+      - name: campaign_status_code
+        sql: |-
+          (
+            SELECT hop2.campaign_status_code
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.campaign_status_dim hop2
+              ON hop1.campaign_status_key = hop2.campaign_status_key
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Campaign Status Code
+        description: Natural code for the campaign status.
+      - name: campaign_status_name
+        sql: |-
+          (
+            SELECT hop2.campaign_status_name
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.campaign_status_dim hop2
+              ON hop1.campaign_status_key = hop2.campaign_status_key
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Campaign Status Name
+        description: Human-readable name of the campaign status.
+      - name: holding_company_name
+        sql: |-
+          (
+            SELECT hop2.holding_company_name
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.holding_company_dim hop2
+              ON hop1.holding_company_key = hop2.holding_company_key
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Holding Company Name
+        description: Human-readable name of the holding company.
+      - name: channel_dimension_id
+        sql: |-
+          (
+            SELECT hop1.channel_id
+            FROM {{ catalog('dwhprd_gold') }}.channel_dim hop1
+            WHERE {CUBE}.channel_key = hop1.channel_key
+          )
+        type: string
+        title: Channel ID
+        description: Natural identifier for the channel.
+      - name: display_channel_name
+        sql: |-
+          (
+            SELECT hop1.display_channel_name
+            FROM {{ catalog('dwhprd_gold') }}.channel_dim hop1
+            WHERE {CUBE}.channel_key = hop1.channel_key
+          )
+        type: string
+        title: Channel Name
+        description: Display-formatted channel name, distinct from the raw channel_name column.
+      - name: master_channel
+        sql: |-
+          (
+            SELECT hop1.master_channel
+            FROM {{ catalog('dwhprd_gold') }}.channel_dim hop1
+            WHERE {CUBE}.channel_key = hop1.channel_key
+          )
+        type: string
+        title: Master Channel
+        description: Parent network grouping, e.g. Animal Planet, Discovery Channel, Discovery ID, Discovery Science, Discovery Turbo, TLC.
+      - name: client_id
+        sql: |-
+          (
+            SELECT hop1.client_id
+            FROM {{ catalog('dwhprd_gold') }}.client_dim hop1
+            WHERE {CUBE}.client_key = hop1.client_key
+          )
+        type: string
+        title: Client ID
+        description: Natural identifier for the client.
+      - name: client_name
+        sql: |-
+          (
+            SELECT hop1.client_name
+            FROM {{ catalog('dwhprd_gold') }}.client_dim hop1
+            WHERE {CUBE}.client_key = hop1.client_key
+          )
+        type: string
+        title: Client Name
+        description: Human-readable name of the client.
+      - name: invoice_holding_company_name
+        sql: |-
+          (
+            SELECT hop1.holding_company_name
+            FROM {{ catalog('dwhprd_gold') }}.holding_company_dim hop1
+            WHERE {CUBE}.invoice_holding_company_key = hop1.holding_company_key
+          )
+        type: string
+        title: Invoice Holding Company
+        description: Name of the invoice-side holding company. This is not the campaign-side holding company — for that use cube_carl_dwhprd_gold_holding_company_dim.holding_company_name.
+      - name: source_region_name
+        sql: |-
+          (
+            SELECT hop1.source_region_name
+            FROM {{ catalog('dwhprd_gold') }}.source_system_region_dim hop1
+            WHERE {CUBE}.source_system_region_key = hop1.source_system_region_key
+          )
+        type: string
+        title: Source Region Name
+        description: Human-readable name of the source region.
+      - name: campaign_key
+        sql: campaign_key
+        type: number
+        title: Campaign Key
+        description: >-
+          Foreign key to campaign_dim. Part of this cube's composite grain
+          (campaign × calendar month × channel). Required as a primary key because
+          Cube refuses joins on a cube with no PK.
+        primary_key: true
+      - name: campaign_status_key
+        sql: campaign_status_key
+        type: number
+        title: Campaign Status Key
+        description: >-
+          Degenerate campaign-status key on the recon row. Readable status is snowflaked from
+          campaign_dim.campaign_status_dim, not joined from this cube.
+      - name: calendar_month_key
+        sql: calendar_month_key
+        type: number
+        title: Calendar Month Key
+        description: >-
+          Foreign key to calendar_month_dim. Part of this cube's composite grain
+          (campaign × calendar month × channel).
+        primary_key: true
+      - name: agency_key
+        sql: agency_key
+        type: number
+        title: Agency Key
+        description: Foreign key to agency_dim.
+      - name: client_key
+        sql: client_key
+        type: number
+        title: Client Key
+        description: Foreign key to client_dim.
+      - name: holding_company_key
+        sql: holding_company_key
+        type: number
+        title: Holding Company Key
+        description: >-
+          Campaign-side holding company key. Readable name is snowflaked from
+          campaign_dim.holding_company_dim, not joined from this cube.
+      - name: base_currency_key
+        sql: base_currency_key
+        type: number
+        title: Base Currency Key
+        description: >-
+          Foreign key to cube_carl_dwhprd_gold_base_currency_dim
+          (bts_currency_dim.currency_key). Do not retarget this join at
+          cube_carl_dwhprd_gold_currency_dim. That cube reads currency_dim, whose
+          currency_key does not identify these codes.
+      - name: invoice_holding_company_key
+        sql: invoice_holding_company_key
+        type: number
+        title: Invoice Holding Company Key
+        description: >-
+          Foreign key to cube_carl_dwhprd_gold_invoice_holding_company_dim (second cube over
+          holding_company_dim). Do not retarget this join at holding_company_dim.
+      - name: channel_key
+        sql: channel_key
+        type: number
+        title: Channel Key
+        description: >-
+          Foreign key to channel_dim. Part of this cube's composite grain
+          (campaign × calendar month × channel).
+        primary_key: true
+      - name: contract_number
+        sql: contract_number
+        type: string
+        title: Contract Number
+        description: Contract number on the reconciliation row.
+      - name: calendar_year
+        sql: calendar_year
+        type: number
+        title: Calendar Year
+        description: Degenerate calendar year on the fact row.
+      - name: calendar_month_num
+        sql: calendar_month_num
+        type: number
+        title: Calendar Month Number
+        description: Degenerate calendar month number (1-12) on the fact row.
+      - name: channel_id
+        sql: channel_id
+        type: string
+        title: Channel Id
+        description: >-
+          Degenerate channel identifier on the fact row (string codes such as APAR). Prefer
+          channel_dim.channel_id for display.
+      - name: fin_audit_type
+        sql: fin_audit_type
+        type: string
+        title: Finance Audit Type
+        description: Finance audit type classification on the reconciliation row.
+      - name: hold_closed_flag
+        sql: hold_closed_flag
+        type: string
+        title: Hold Closed Flag
+        description: Flag indicating hold-closed reconciliation rows (MSTR filter value '1').
+      - name: discrepancy_flag
+        sql: discrepancy_flag
+        type: string
+        title: Discrepancy Flag
+        description: Flag indicating BI vs BTS discrepancy rows (MSTR filter value '1').
+      - name: source_system_region_key
+        sql: source_system_region_key
+        type: number
+        title: Source System Region Key
+        description: Foreign key to source_system_region_dim (international filter, e.g. 20 and 21 for APAC).
+      - name: bts_batch_date
+        sql: bts_batch_date
+        type: time
+        title: BTS Batch Date
+        description: BTS batch date for the reconciliation row.
+      - name: bts_create_ts
+        sql: bts_create_ts
+        type: time
+        title: BTS Create Timestamp
+        description: Timestamp when the BTS side of the reconciliation row was created.
+      - name: bi_create_ts
+        sql: bi_create_ts
+        type: time
+        title: BI Create Timestamp
+        description: Timestamp when the BI side of the reconciliation row was created.
+    joins:
+      - name: cube_carl_dwhprd_gold_campaign_dim
+        sql: '{CUBE}.campaign_key = {cube_carl_dwhprd_gold_campaign_dim}.campaign_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_agency_dim
+        sql: '{CUBE}.agency_key = {cube_carl_dwhprd_gold_agency_dim}.agency_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_client_dim
+        sql: '{CUBE}.client_key = {cube_carl_dwhprd_gold_client_dim}.client_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_invoice_holding_company_dim
+        sql: '{CUBE}.invoice_holding_company_key = {cube_carl_dwhprd_gold_invoice_holding_company_dim}.holding_company_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_calendar_month_dim
+        sql: '{CUBE}.calendar_month_key = {cube_carl_dwhprd_gold_calendar_month_dim}.calendar_month_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_channel_dim
+        sql: '{CUBE}.channel_key = {cube_carl_dwhprd_gold_channel_dim}.channel_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_base_currency_dim
+        sql: '{CUBE}.base_currency_key = {cube_carl_dwhprd_gold_base_currency_dim}.currency_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_source_system_region_dim
+        sql: '{CUBE}.source_system_region_key = {cube_carl_dwhprd_gold_source_system_region_dim}.source_system_region_key'
+        relationship: many_to_one
+    measures:
+      - name: record_count
+        sql: '*'
+        type: count
+        title: Record Count
+        description: Row count for smoke queries.
+      - name: bi_contract_value
+        sql: '{CUBE}.bi_contract_value'
+        type: sum
+        title: BI Contract Value LOC
+        description: Sum of BI-side contract value in local currency.
+      - name: bts_contract_value
+        sql: '{CUBE}.bts_contract_value'
+        type: sum
+        title: BTS Contract Value LOC
+        description: Sum of BTS-side contract value in local currency.
+      - name: contract_value_diff
+        sql: '{CUBE}.contract_value_diff'
+        type: sum
+        title: Contract Value Diff LOC
+        description: Sum of BI minus BTS contract value in local currency.
+      - name: bi_number_of_spots
+        sql: '{CUBE}.bi_number_of_spots'
+        type: sum
+        title: Number Of Spots - BI
+        description: Sum of BI-side spot count.
+      - name: bts_number_of_spots
+        sql: '{CUBE}.bts_number_of_spots'
+        type: sum
+        title: Number Of Spots - BTS
+        description: Sum of BTS-side spot count.
+      - name: spot_count_diff
+        sql: '{CUBE}.spot_count_diff'
+        type: sum
+        title: Spots Diff
+        description: Sum of BI minus BTS spot count.
+      - name: bi_spot_revenue_less_hold
+        sql: '{CUBE}.bi_spot_revenue_less_hold'
+        type: sum
+        title: BI Spot Revenue LOC (excl Rotator Hold)
+        description: Sum of BI spot revenue excluding rotator hold, in local currency.
+      - name: bts_spot_revenue_gross
+        sql: '{CUBE}.bts_spot_revenue_gross'
+        type: sum
+        title: BTS Spot Revenue LOC (Gross)
+        description: Sum of BTS gross spot revenue in local currency.
+      - name: spot_revenue_no_hold_diff
+        sql: '{CUBE}.spot_revenue_no_hold_diff'
+        type: sum
+        title: Spot Revenue Diff LOC (excl Rotator Hold)
+        description: Sum of BI minus BTS spot revenue excluding rotator hold, in local currency.
+      - name: bi_off_air_revenue_gross
+        sql: '{CUBE}.bi_off_air_revenue_gross'
+        type: sum
+        title: BI Off Air Revenue LOC (Gross)
+        description: Sum of BI gross off-air revenue in local currency.
+      - name: bts_off_air_revenue_gross
+        sql: '{CUBE}.bts_off_air_revenue_gross'
+        type: sum
+        title: BTS Off Air Revenue LOC (Gross)
+        description: Sum of BTS gross off-air revenue in local currency.
+      - name: off_air_revenue_diff
+        sql: '{CUBE}.off_air_revenue_diff'
+        type: sum
+        title: Off Air Revenue LOC Diff
+        description: Sum of BI minus BTS gross off-air revenue in local currency.
+      - name: bi_spot_hold_spots
+        sql: '{CUBE}.bi_spot_hold_spots'
+        type: sum
+        title: Number of Hold Spots - BI
+        description: Sum of BI-side hold spot count.
+      - name: bts_number_of_hold_spots
+        sql: '{CUBE}.bts_number_of_hold_spots'
+        type: sum
+        title: Number of Hold Spots - BTS
+        description: Sum of BTS-side hold spot count.
+      - name: bi_spot_hold_revenue_rotator
+        sql: '{CUBE}.bi_spot_hold_revenue_rotator'
+        type: sum
+        title: BI Spot Revenue - Rotator Hold LOC
+        description: Sum of BI rotator-hold spot revenue in local currency.
+      - name: bi_spot_hold_spots_rotator
+        sql: '{CUBE}.bi_spot_hold_spots_rotator'
+        type: sum
+        title: Number of Rotator Spots - BI
+        description: Sum of BI-side rotator hold spot count.
+      - name: bi_spot_hold_revenue
+        sql: '{CUBE}.bi_spot_hold_revenue'
+        type: sum
+        title: BI Spot Hold Revenue LOC
+        description: Sum of BI hold spot revenue in local currency.
+      - name: bts_spot_revenue_transmitted
+        sql: '{CUBE}.bts_spot_revenue_transmitted'
+        type: sum
+        title: BTS Spot Revenue LOC (Transmitted)
+        description: Sum of BTS transmitted spot revenue in local currency.
+      - name: bi_spot_revenue_booked
+        sql: '{CUBE}.bi_spot_revenue_booked'
+        type: sum
+        title: BI Spot Revenue LOC - Booked
+        description: Sum of BI booked spot revenue in local currency.
+      - name: bi_spot_revenue_transmitted
+        sql: '{CUBE}.bi_spot_revenue_transmitted'
+        type: sum
+        title: BI Spot Revenue LOC - Transmitted
+        description: Sum of BI transmitted spot revenue in local currency.
+      - name: spot_revenue_transmitted_diff
+        sql: '{CUBE}.spot_revenue_transmitted_diff'
+        type: sum
+        title: Spot Revenue - Transmitted LOC Diff
+        description: Sum of BI minus BTS transmitted spot revenue in local currency.
+      - name: min_month
+        sql: '{CUBE}.calendar_month_key'
+        type: min
+        title: Min (Month)
+        description: >-
+          Earliest calendar_month_key at the query grain. On the summary report that grain is
+          finance audit type, holding company, base currency, and BTS batch date. The value is
+          the month key, not the month name.
+      - name: max_month
+        sql: '{CUBE}.calendar_month_key'
+        type: max
+        title: Max (Month)
+        description: >-
+          Latest calendar_month_key at the same summary grain. The value is the month key,
+          not the month name.

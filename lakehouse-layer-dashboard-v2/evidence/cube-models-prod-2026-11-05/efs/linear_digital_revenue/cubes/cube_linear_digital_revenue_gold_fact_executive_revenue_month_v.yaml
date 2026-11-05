@@ -1,0 +1,461 @@
+cubes:
+  - name: cube_linear_digital_revenue_gold_fact_executive_revenue_month_v
+    # {{ catalog('linear_digital_revenue_gold') }} resolves per-env at Cube compile
+    # time via model/globals.py/globals.json (CARL-2943) — required on every
+    # sql_table regardless of catalog, enforced by scripts/validate_model_yaml.py.
+    # linear_digital_revenue_gold happens to map to the same literal Glue database
+    # name in every environment (see model/globals.json), but the template is
+    # still mandatory; it's what the structural CI check and the real Cube
+    # deploy both key off, not a per-program convention. Separation into its
+    # own program/model root follows the Glue catalog a model's tables
+    # actually come from (Neo <- the neo db, Lumos <- carl_dwhprd_gold, this
+    # program <- linear_digital_revenue_gold/_silver) — see shared_catalogs on
+    # the linear_digital_revenue program in programs.yaml for the (now mostly
+    # vestigial, since this cube is templated) semantic-authoring-side note.
+    sql_table: "{{ catalog('linear_digital_revenue_gold') }}.fact_executive_revenue_month_v"
+    data_source: default
+    public: false
+    title: Linear Digital Revenue Gold — Fact Executive Revenue Month
+    description: >-
+      One row per advertiser/agency/network/month revenue slice feeding the Bobby V
+      executive dashboard (CARL-497/CARL-559). Pre-aggregated monthly, not per-spot —
+      do not expect this to reconcile with spot-level invoice facts. 815,481 rows in
+      dev as of 2026-10. CARL-2923.
+
+    dimensions:
+      # Identifiers
+      - name: net_account_id
+        sql: net_account_id
+        type: number
+        title: Net Account ID
+        description: "(provisional) Account identifier — see also account_id/net_account_id_abs."
+      - name: account_id
+        sql: account_id
+        type: number
+        title: Account ID
+        description: "(provisional) Account identifier."
+      - name: adver_id
+        sql: adver_id
+        type: number
+        title: Advertiser ID (numeric)
+        description: "(provisional) Numeric advertiser identifier variant of advertiser_id."
+      - name: table_name
+        sql: table_name
+        type: string
+        title: Source Table
+        description: "(provisional) Source table identifier this row originated from upstream."
+
+      # Business source / platform
+      - name: business_source
+        sql: business_source
+        type: string
+        title: Business Source
+        description: >-
+          DIGITAL or LINEAR. Same two values and meaning as business_source on
+          combined_revenue_sales_holes_totals (linear_digital_revenue_gold).
+
+      # Advertiser / agency hierarchy
+      - name: advertiser_id
+        sql: advertiser_id
+        type: string
+        title: Advertiser ID
+        description: Unique identifier for the advertiser.
+      - name: advertiser
+        sql: advertiser
+        type: string
+        title: Advertiser
+        description: Advertiser name.
+      - name: advertiser_reporting_parent
+        sql: advertiser_reporting_parent
+        type: string
+        title: Advertiser Reporting Parent
+        description: Parent company of the advertiser for rollup reporting.
+      - name: agency_id
+        sql: agency_id
+        type: string
+        title: Agency ID
+        description: Unique identifier for the agency.
+      - name: agency
+        sql: agency
+        type: string
+        title: Agency
+        description: Agency name.
+      - name: agency_reporting_parent
+        sql: agency_reporting_parent
+        type: string
+        title: Agency Reporting Parent
+        description: Parent agency for rollup reporting.
+      - name: mega_agency
+        sql: mega_agency
+        type: string
+        title: Mega Agency
+        description: Holding company (e.g. GroupM, Publicis).
+
+      # Market / deal structure
+      - name: upfront_scatter
+        sql: upfront_scatter
+        type: string
+        title: Upfront or Scatter
+        description: "Observed values: Upfront, Scatter."
+      - name: upfront_market
+        sql: upfront_market
+        type: string
+        title: Upfront Market
+        description: "(provisional) Finer-grained market classification within upfront/scatter."
+      - name: upfront_type
+        sql: upfront_type
+        type: string
+        title: Upfront Type
+        description: "(provisional)"
+      - name: market
+        sql: market
+        type: string
+        title: Market
+        description: >-
+          (provisional) Observed codes B/S/C; blank for all DIGITAL business_source
+          rows — this field only populates for LINEAR.
+      - name: classification
+        sql: classification
+        type: string
+        title: Classification
+        description: "(provisional)"
+      - name: is_programmatic
+        sql: is_programmatic
+        type: string
+        title: Is Programmatic
+        description: "Y/N flag. Observed: N=700,227 rows, Y=115,254 rows (dev)."
+      - name: programmatic_type
+        sql: programmatic_type
+        type: string
+        title: Programmatic Type
+        description: "(provisional) Detail when is_programmatic = Y."
+      - name: national_direct_response
+        sql: national_direct_response
+        type: string
+        title: National Direct Response
+        description: "(provisional) Likely the 'Direct Response' market bucket referenced on CARL-559."
+      - name: is_local_affiliate
+        sql: is_local_affiliate
+        type: string
+        title: Is Local Affiliate
+        description: "(provisional) Y/N flag."
+      - name: is_adu
+        sql: is_adu
+        type: string
+        title: Is ADU
+        description: "(provisional) Y/N flag; ADU meaning not yet confirmed."
+
+      # Network / platform
+      - name: network
+        sql: network
+        type: string
+        title: Network
+        description: Network name.
+      - name: network_short
+        sql: network_short
+        type: string
+        title: Network (Short)
+        description: "(provisional) Abbreviated network code."
+      - name: digital_brand
+        sql: digital_brand
+        type: string
+        title: Digital Brand
+        description: "(provisional) Likely the Max/USN/News/BR digital bucket referenced on CARL-559."
+
+      # Revenue classification
+      - name: revenue_type
+        sql: revenue_type
+        type: string
+        title: Revenue Type
+        description: >-
+          BOOKED/INVOICED or WORKING. Same two values and meaning as revenue_type on
+          combined_revenue_sales_holes_totals (linear_digital_revenue_gold).
+      - name: revenue_type_detail
+        sql: revenue_type_detail
+        type: string
+        title: Revenue Type Detail
+        description: "(provisional) Finer-grained revenue type than revenue_type."
+
+      # Time
+      - name: year
+        sql: "{CUBE}.year"
+        type: number
+        title: Year
+        description: Fiscal/calendar year.
+      - name: quarter
+        sql: quarter
+        type: string
+        title: Quarter
+        description: "(provisional) Quarter label."
+      - name: month
+        sql: "{CUBE}.month"
+        type: number
+        title: Month
+        description: Month number (1-12).
+      - name: year_month
+        sql: year_month
+        type: number
+        title: Year-Month
+        description: "(provisional) YYYYMM integer form of year + month."
+      - name: year_quarter
+        sql: year_quarter
+        type: string
+        title: Year-Quarter
+        description: "(provisional) Year + quarter label form."
+      - name: updated_date
+        sql: updated_date
+        type: time
+        title: Updated Date
+        description: Timestamp this row was last updated upstream.
+
+      # Operational
+      - name: office
+        sql: office
+        type: string
+        title: Office
+        description: Sales office location.
+      - name: ae_name
+        sql: ae_name
+        type: string
+        title: Account Executive
+        description: Name of the account executive.
+      - name: general_category
+        sql: general_category
+        type: string
+        title: General Category
+        description: Advertiser category (e.g. ALCOHOL, VARIOUS).
+      - name: property_category
+        sql: property_category
+        type: string
+        title: Property Category
+        description: Property/platform category.
+      - name: is_ncaa
+        sql: is_ncaa
+        type: string
+        title: NCAA
+        description: "(provisional) NCAA sports flag/category."
+      - name: division_original
+        sql: division_original
+        type: string
+        title: Division (Original)
+        description: >-
+          (provisional) Has inconsistent casing/duplicate labels in dev (e.g. ENT vs
+          Entertainment, SPORTS vs Sports) — prefer consolidated_division for
+          grouping/reporting.
+      - name: consolidated_division
+        sql: consolidated_division
+        type: string
+        title: Consolidated Division
+        description: Cleaned division classification; prefer this over division_original.
+      - name: linear_revenue_area
+        sql: linear_revenue_area
+        type: string
+        title: Linear Revenue Area
+        description: "(provisional)"
+      - name: is_streaming
+        sql: is_streaming
+        type: string
+        title: Is Streaming
+        description: "(provisional) Y/N flag."
+      - name: streaming_type
+        sql: streaming_type
+        type: string
+        title: Streaming Type
+        description: "(provisional) Detail when is_streaming = Y."
+
+      # ETL — excluded from views, kept on the cube for debugging
+      - name: ingest_timestamp_utc_bronze
+        sql: ingest_timestamp_utc_bronze
+        type: time
+        public: false
+        title: Bronze Ingest Timestamp
+        description: ETL ingestion timestamp from the bronze layer; not business-meaningful.
+
+      # "_abs" reconciliation variants — excluded from views pending confirmation of
+      # what distinguishes them from their non-_abs counterparts above
+      - name: net_account_id_abs
+        sql: net_account_id_abs
+        type: number
+        public: false
+        title: Net Account ID (Abs)
+        description: "(provisional) Reconciliation variant of net_account_id; not for display."
+      - name: advertiser_abs
+        sql: advertiser_abs
+        type: string
+        public: false
+        title: Advertiser (Abs)
+        description: "(provisional) Reconciliation variant of advertiser; not for display."
+      - name: market_type_abs
+        sql: market_type_abs
+        type: string
+        public: false
+        title: Market Type (Abs)
+        description: "(provisional) Reconciliation variant; not for display."
+      - name: account_abs
+        sql: account_abs
+        type: string
+        public: false
+        title: Account (Abs)
+        description: "(provisional) Reconciliation variant of account_id; not for display."
+      - name: division_abs
+        sql: division_abs
+        type: string
+        public: false
+        title: Division (Abs)
+        description: "(provisional) Reconciliation variant of division; not for display."
+      - name: network_abs
+        sql: network_abs
+        type: string
+        public: false
+        title: Network (Abs)
+        description: "(provisional) Reconciliation variant of network; not for display."
+      - name: sales_group_abs
+        sql: sales_group_abs
+        type: string
+        public: false
+        title: Sales Group (Abs)
+        description: "(provisional) Reconciliation variant; not for display."
+      - name: property_category_abs
+        sql: property_category_abs
+        type: string
+        public: false
+        title: Property Category (Abs)
+        description: "(provisional) Reconciliation variant of property_category; not for display."
+
+    measures:
+      - name: revenue_gross
+        sql: revenue_gross
+        type: sum
+        title: Gross Revenue
+        description: Sum of gross revenue across all records.
+      - name: revenue_net
+        sql: revenue_net
+        type: sum
+        title: Net Revenue
+        description: Sum of net revenue across all records.
+      - name: booked_revenue
+        sql: revenue_net
+        type: sum
+        title: Booked/Invoiced Revenue
+        description: Net revenue from BOOKED/INVOICED records only.
+        filters:
+          - sql: "{CUBE}.revenue_type = 'BOOKED/INVOICED'"
+      - name: working_revenue
+        sql: revenue_net
+        type: sum
+        title: Working Revenue
+        description: Net revenue from WORKING (pipeline) records only.
+        filters:
+          - sql: "{CUBE}.revenue_type = 'WORKING'"
+      - name: linear_revenue
+        sql: revenue_net
+        type: sum
+        title: Linear Revenue
+        description: Net revenue from LINEAR business_source only.
+        filters:
+          - sql: "{CUBE}.business_source = 'LINEAR'"
+      - name: digital_revenue
+        sql: revenue_net
+        type: sum
+        title: Digital Revenue
+        description: Net revenue from DIGITAL business_source only.
+        filters:
+          - sql: "{CUBE}.business_source = 'DIGITAL'"
+      - name: record_count
+        sql: "*"
+        type: count
+        title: Record Count
+        description: Row count for smoke queries.
+        meta:
+          source: generated
+          used_by_report_ids: []
+
+    pre_aggregations:
+      # Low-cardinality rollup — platform/market/time, the shape of CARL-559's
+      # "Total net revenue by quarter by platform/market" asks.
+      - name: executive_revenue_by_source_and_market
+        measures:
+          - revenue_gross
+          - revenue_net
+          - booked_revenue
+          - working_revenue
+          - linear_revenue
+          - digital_revenue
+          - record_count
+        dimensions:
+          - business_source
+          - consolidated_division
+          - upfront_scatter
+          - upfront_market
+          - year
+          - quarter
+          - month
+        refresh_key:
+          every: "1 hour"
+
+      # Advertiser-anchored. Never combine with agency in the same pre-agg or
+      # dataset — advertiser (3,397 distinct) x agency (1,191 distinct) is the
+      # catastrophic-cardinality pairing the dashboard-migration guidance warns
+      # about. advertiser_reporting_parent (3,245 distinct) is a rollup OF
+      # advertiser, not an independent axis — adding it only grows the
+      # advertiser x business_source x year x quarter grain from ~9K to 22,684
+      # distinct combos (measured directly against fact_executive_revenue_month_v),
+      # nowhere near the ~200K-row buffer-overflow threshold. Needed by the Bobby V
+      # "Advertiser by Net Revenue" table (CARL-2923); without
+      # advertiser_reporting_parent in dimensions, that query's dimension set
+      # isn't a subset of this pre-agg's and Cube falls through to a live Athena
+      # scan ("Continue wait" in the REST/SQL API, surfaces as a QuickSight SQL
+      # exception after it times out).
+      - name: executive_revenue_by_advertiser
+        measures:
+          - revenue_net
+          - booked_revenue
+          - record_count
+        dimensions:
+          - advertiser
+          - advertiser_reporting_parent
+          - business_source
+          - year
+          - quarter
+        refresh_key:
+          every: "1 hour"
+
+      # Agency-anchored, isolated from advertiser for the same reason.
+      # agency_reporting_parent (501 distinct) is a rollup OF agency, same
+      # reasoning as advertiser_reporting_parent above — grows this grain to
+      # 8,286 distinct combos, still tiny. Needed by the Bobby V "Agency by Net
+      # Revenue" table (CARL-2923); same "Continue wait" fallthrough without it.
+      - name: executive_revenue_by_agency
+        measures:
+          - revenue_net
+          - booked_revenue
+          - record_count
+        dimensions:
+          - agency
+          - agency_reporting_parent
+          - mega_agency
+          - business_source
+          - year
+          - quarter
+        refresh_key:
+          every: "1 hour"
+
+      # Sales-org-anchored (office x AE). Both are low cardinality (45 offices,
+      # 271 AEs; 977 distinct office x ae_name x year combos measured directly)
+      # — nothing like the advertiser/agency cardinality risk, safe to combine.
+      # Needed by the Bobby V "Office Net Revenue Contribution" and "AE Net
+      # Revenue Contribution" pivots (CARL-2923); same "Continue wait"
+      # fallthrough without it, since neither office nor ae_name was in any
+      # pre-agg before this.
+      - name: executive_revenue_by_sales_org
+        measures:
+          - revenue_net
+          - booked_revenue
+          - record_count
+        dimensions:
+          - office
+          - ae_name
+          - year
+          - quarter
+        refresh_key:
+          every: "1 hour"

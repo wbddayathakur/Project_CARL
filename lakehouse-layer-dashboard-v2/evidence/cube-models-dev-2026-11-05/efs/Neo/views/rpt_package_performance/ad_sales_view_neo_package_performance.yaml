@@ -1,0 +1,29 @@
+views:
+  - name: ad_sales_view_neo_package_performance
+    public: true
+    title: "NEO Package Performance Report"
+    description: >
+      Package-level impressions, spend, CPM, and VCR for campaign reporting and cockpit top-packages widgets.
+    meta:
+      view_scope: business
+      business: ad_sales
+      fact_table: rpt_package_performance
+    cubes:
+      - join_path: cube_neo_gold_rpt_package_performance
+        includes:
+          - event_date_et
+          - deal_id
+          - deal_name
+          - campaign_id
+          - package_id
+          - package_name
+          - advertiser_id
+          - advertiser_name
+          - agency_id
+          - agency_name
+          - count
+          - total_impressions
+          - total_revenue
+          - total_completions
+          - avg_vcr
+          - effective_cpm

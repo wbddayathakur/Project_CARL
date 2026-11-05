@@ -1,0 +1,1900 @@
+cubes:
+  - name: cube_carl_dwhprd_gold_campaign_fact
+    sql: >
+      SELECT cf.campaign_key, cf.source_system_region_key, cf.business_type_key, cf.base_currency_key,
+             cf.country_key, cf.agency_key, cf.client_key, cf.product_key, cf.invoice_currency_key, cf.channel_key,
+             cf.calendar_month_key, cf.calendar_qtr_key, cf.calendar_year_key, cf.deal_key, cf.invoice_date_key,
+             cf.campaign_ccp, cf.campaign_cps, cf.campaign_cpt, cf.campaign_budget, cf.campaign_invoice_value,
+             cf.gross_revenue, cf.campaign_spots_booked, cf.campaign_spots_target, cf.campaign_spots_price,
+             cf.campaign_tax_value, cf.campaign_ratings_booked, cf.campaign_ratings_delivered,
+             cf.campaign_ratings_sold, cf.campaign_impacts_booked, cf.campaign_impacts_delivered,
+             cf.campaign_impacts_sold, cf.agency_commission_pct, cf.agency_incentive_pct, cf.rep_commission_pct,
+             srf.sales_rep_key, srf.sales_rep_name, srf.sales_rep_team_key, srf.sales_rep_team_desc,
+             srf.sales_rep_revenue_share, rep.sales_rep_name AS bts_sales_rep_name,
+             cf.contract_type_key, cf.contract_basis_key, cf.adv_market_sector_key, cf.invoice_holding_company_key,
+             cf.invoice_territory_key, cf.base_currency_year, cf.consumption_indicator,
+             CASE
+               WHEN cf.source_system_region_key = 30 THEN
+                 CASE WHEN srf.sales_holding_company_key = -2 THEN cf.holding_company_key
+                      ELSE COALESCE(srf.sales_holding_company_key, cf.holding_company_key) END
+               WHEN cf.source_system_region_key = 20 THEN
+                 CASE WHEN srf.sales_holding_company_key = -1 THEN cf.holding_company_key
+                      ELSE COALESCE(srf.sales_holding_company_key, cf.holding_company_key) END
+               ELSE
+                 CASE WHEN COALESCE(srf.sales_holding_company_key, 0) = 0 THEN cf.holding_company_key
+                      ELSE srf.sales_holding_company_key END
+             END AS sales_holding_company_key,
+             curr.exchange_factor AS plan_curr_exchange_factor,
+             hist.exchange_factor AS plan_hist_exchange_factor,
+             ROW_NUMBER() OVER (
+               PARTITION BY cf.campaign_key, cf.source_system_region_key, cf.business_type_key,
+                 cf.base_currency_key, cf.country_key, cf.agency_key, cf.client_key, cf.product_key,
+                 cf.invoice_currency_key, cf.channel_key, cf.calendar_month_key, cf.calendar_qtr_key,
+                 cf.calendar_year_key, cf.deal_key, cf.invoice_date_key, cf.holding_company_key,
+                 cf.invoice_holding_company_key
+               ORDER BY srf.sales_rep_key
+             ) AS fact_row_rep_ordinal
+        FROM {{ catalog('dwhprd_gold') }}.campaign_fact cf
+        LEFT JOIN {{ catalog('dwhprd_gold') }}.sales_rep_fraction_fact srf ON cf.campaign_key = srf.campaign_key
+        LEFT JOIN {{ catalog('dwhprd_gold') }}.bts_sales_rep_dim rep ON srf.sales_rep_key = rep.sales_rep_key
+        LEFT JOIN {{ catalog('dwhprd_gold') }}.plan_curr_currency_rate curr
+          ON cf.base_currency_key = curr.base_currency_key
+        LEFT JOIN {{ catalog('dwhprd_gold') }}.plan_hist_currency_rate hist
+          ON cf.base_currency_key = hist.base_currency_key
+         AND cf.base_currency_year = hist.base_currency_year
+    data_source: default
+    public: false
+    title: Carl Dwhprd Gold — Campaign Fact
+    description: >-
+      Query-backed — APAC ad-sales campaigns, a different source system from the US ad-sales star used
+      elsewhere; see sox-triage.md for the write-up. Reproduces MicroStrategy's `CAMPAIGN_FACT_VW`, which reads every measure
+      at campaign x sales-rep grain, multiplying each raw measure by SALES_REP_REVENUE_SHARE before summing (one
+      row per rep assigned to a campaign; confirmed unique on (campaign_key, sales_rep_key) against dev data —
+      427,206 sales_rep_fraction_fact rows, ~413K distinct campaigns, ~14K campaigns split across more than one
+      rep). campaign_fact itself is not unique on campaign_key alone either (confirmed against dev data: 1.80M
+      rows across 481K distinct campaign_keys — it already fans out by channel/product/deal/month); the sales-rep
+      join adds a second, independent fan-out on top of that. This is safe specifically because every rep-
+      allocated measure below multiplies through by sales_rep_revenue_share before summing (never a bare sum() of
+      a raw column) — since a campaign's rep shares are fractions of the same total, summing (raw_measure * share)
+      across the fanned-out rep rows reconstructs the original total exactly once, distributed across reps, rather
+      than inflating it.
+
+      REVISED, 2026-08-26 — the sales-rep join is embedded directly in this cube's own sql: (a LEFT JOIN to
+      sales_rep_fraction_fact) rather than declared as a native one_to_many joins: entry to a separate cube, which
+      is how it originally shipped in carl-semantic-authoring#34. That native-join version passed every offline
+      check (verify, audit, Athena probes) but failed the very first live QuickSight smoke test after deploy:
+      Cube's SQL API — which is what QuickSight's data source actually speaks, not the REST API this repo's other
+      tooling exercises — unconditionally refuses any measure whose formula crosses a one_to_many join via a
+      cross-cube reference, regardless of which dimensions are grouped by:
+      `'cube_carl_dwhprd_gold_campaign_fact.campaign_budget_loc' references cubes that lead to row multiplication.
+      Please rewrite it using sub query.` This is a known, unconditional Cube.js SQL-API guard (see
+      cube-js/cube#11330, cube-js/cube#9523) — it has no way to verify that a COALESCE(share, 1) multiply is safe
+      from double-counting, so it blocks the shape outright rather than risk it. Cube's documented workaround
+      (`subQuery: true` dimensions) doesn't fit either: a subQuery dimension can only pull one aggregated value per
+      "one"-side row from the joined cube, not a per-row multiplier that has to apply before the sum — which is
+      exactly what every rep-allocated measure here needs. Embedding the join in the base query — so
+      sales_rep_revenue_share arrives as a plain column of this cube, and every measure reads it as its own
+      same-cube column instead of a cross-cube reference — sidesteps the guard entirely, because
+      Cube's row-multiplication check only fires on cross-cube references through a declared one_to_many join, not
+      on a cube's own embedded SQL. This is a deliberate, evidence-backed exception to
+      semantic-authoring's `embedded_join_in_query_backed_cube` check (see that check's own allowlist and
+      docstring caveat that a hand-written JOIN is "almost always", not always, a lookup-table mistake) — the
+      alternative literally cannot be served through QuickSight. sales_rep_key/name/team fields, previously
+      on their own cube_carl_dwhprd_gold_sales_rep_fraction_fact cube, are now plain dimensions on this cube instead
+      (that cube is retired — nothing else referenced it).
+
+      RESOLVED, 2026-08-26 — decimal overflow on multi-term measures, found by the same live smoke test: after the
+      row-multiplication fix above, five measures (campaign_net_revenue_loc, campaign_net_net_revenue_loc,
+      agency_commission_loc, agency_incentive_loc, sales_commission_loc) still failed via QuickSight with
+      `NUMERIC_VALUE_OUT_OF_RANGE: Decimal overflow` / `GENERIC_INTERNAL_ERROR: Decimal overflow` — reproducible
+      regardless of which dimensions were grouped by, unlike the row-multiplication error. Root cause: gross_revenue,
+      sales_rep_revenue_share and every *_pct column are all decimal(38,10) in Glue (38 is Trino/Athena's maximum
+      decimal precision). Standard SQL decimal arithmetic grows precision and scale with every multiplication
+      (decimal(p1,s1) * decimal(p2,s2) → decimal(p1+p2, s1+s2), capped at 38 total digits) — each of these five
+      measures chains 3-4 multiplications, so by the second or third term there are only a handful of integer
+      digits left before the cap, and summing across many rows overflows that headroom. The other 17 measures
+      (a single `raw_column * COALESCE(share, 1)` multiplication) don't hit this, which is why they passed. Fix:
+      each affected measure now casts its leading gross_revenue operand to DOUBLE before multiplying — SQL's
+      decimal/double type promotion then carries the rest of that measure's chain as DOUBLE arithmetic,
+      which doesn't compound precision the same way. This trades exact base-10 decimal precision for IEEE 754
+      double precision (~15-17 significant digits) on these five derived measures only; the 17 single-multiplication
+      measures are left as exact decimal arithmetic since they don't need it.
+
+      RESOLVED, 2026-08-26 — unallocated campaigns default to 100% share, not zero: probed against dev data,
+      123,007 of campaign_fact's 1,803,379 rows (6.8%) have no matching sales_rep_fraction_fact row at all —
+      6.26% of total campaign_budget and 6.24% of total gross_revenue sits on these rows. Pulled
+      BTSDWH.CAMPAIGN_FACT_VW's actual view DDL (s3://carl-lumos-us-east-1-dev/data-contracts/ai-reverse-engineering/
+      BI_Monthly_Order_Tracking_Report/views/BTSDWH.CAMPAIGN_FACT_VW.sql) to settle this rather than guess: the
+      view's SALES_REP_REVENUE_SHARE column is `NVL(E.SALES_REP_REVENUE_SHARE, 1)` — E being
+      SALES_REP_FRACTION_FACT, outer-joined via `A.CAMPAIGN_KEY = E.CAMPAIGN_KEY(+)` (Oracle's LEFT OUTER JOIN
+      syntax) — the same LEFT JOIN shape this cube's own sql: now uses directly. So MicroStrategy's source view
+      already defaults an unallocated campaign to a 100% share, not to zero. Every rep-allocated measure below
+      wraps its own sales_rep_revenue_share column in a COALESCE(..., 1) to match — a bare multiply (NULL * measure
+      = NULL, dropped by sum()) would silently undercount these rows by ~6.3%; this was the same question flagged
+      open in sox-triage.md ("Is CAMPAIGN_FACT_VW a view we can land as-is?"), now closed with primary-source
+      evidence rather than a business guess.
+
+      PLAIN SUMS — Campaign Grid Latam Report lives on this same cube, not a second cube over
+      campaign_fact. international_view_campaign_fact includes the *_plain measures (aliased back
+      to the report names). Each one keeps only fact_row_rep_ordinal = 1, so the embedded
+      sales-rep join does not count a campaign_fact row once per rep. They are not multiplied by
+      sales_rep_revenue_share. sox_view_campaign_fact does not include them; its measures stay
+      share-weighted. Probed 2026-10-02 on dev at campaign grain for region 21 and years
+      2019-2026: those plain sums match the share-weighted report within one cent except where a
+      single sales-rep share is not 1 (C0200179 and C0197572 are 2.0; C0001410 and C0001411 are
+      0.5; 156 campaigns store 0.9999).
+
+      KNOWN GAP — currency-converted measures deferred, now with a named source instead of a guess: roughly half
+      of MicroStrategy's ~30 measures on this fact are "Current Rate"/"Hist Rate" variants that further multiply by
+      PLAN_CURR_RATE / PLAN_HIST_RATE off the source view. The same view DDL pull identifies exactly where those
+      come from: `PLAN_HIST_RATE` is `B.EXCHANGE_FACTOR` from `BTSDWH.PLAN_HIST_CURRENCY_RATE_VW`, joined on
+      `(BASE_CURRENCY_KEY, BASE_CURRENCY_YEAR)`; `PLAN_CURR_RATE` is `D.EXCHANGE_FACTOR` from
+      `BTSDWH.PLAN_CURR_CURRENCY_RATE_VW`, joined on `BASE_CURRENCY_KEY` alone (both outer joins, `(+)` on the
+      B/D side, so a campaign with no matching plan-rate row gets a NULL rate rather than dropping the row —
+      consistent with the sales-rep default above, though NULL-vs-zero here still needs the same COALESCE
+      treatment once ingested). Neither view is in the ingested catalog (confirmed against the Glue catalog:
+      `plan_hist_currency_rate_vw`/`plan_curr_currency_rate_vw` — EntityNotFoundException on both) and
+      campaign_fact itself carries no PLAN_* columns. `sap_exchange_rate` (from_currency_key/to_currency_key/
+      valid_from/exchange_rate/exchange_rate_type) is NOT the source — confirmed a different system (SAP/US, same
+      collision risk as product_dim/deal_dim), a different join shape (currency-pair + as-of-date vs.
+      base-currency + plan-year), and a single-snapshot table (all rows dated 2026-01-01) rather than the
+      year-keyed historic/current rate distinction PLAN_HIST_RATE/PLAN_CURR_RATE draw. This is now a concrete,
+      scoped ingestion ask — land `BTSDWH.PLAN_HIST_CURRENCY_RATE_VW` and `BTSDWH.PLAN_CURR_CURRENCY_RATE_VW` (or
+      their EXCHANGE_FACTOR columns pre-joined onto campaign_fact) — rather than an open-ended "find an FX
+      source" question. Until that lands, only the LOC (local-currency, unconverted) measures and plain counts
+      (spots/ratings/impacts) are modelled here. Also deferred for the same reason as product_dim/deal_dim:
+      Product Name/Category and Deal ID/Name, neither of which the ingested product_dim/deal_dim carry for this
+      source system.
+    dimensions:
+      - name: agency_id
+        sql: |-
+          (
+            SELECT hop1.agency_id
+            FROM {{ catalog('dwhprd_gold') }}.agency_dim hop1
+            WHERE {CUBE}.agency_key = hop1.agency_key
+          )
+        type: string
+        title: Agency ID
+        description: Natural identifier for the agency.
+      - name: agency_name
+        sql: |-
+          (
+            SELECT hop1.agency_name
+            FROM {{ catalog('dwhprd_gold') }}.agency_dim hop1
+            WHERE {CUBE}.agency_key = hop1.agency_key
+          )
+        type: string
+        title: Agency Name
+        description: Human-readable value "Agency".
+      - name: business_type_name
+        sql: |-
+          (
+            SELECT hop1.business_type_name
+            FROM {{ catalog('dwhprd_gold') }}.business_type_dim hop1
+            WHERE {CUBE}.business_type_key = hop1.business_type_key
+          )
+        type: string
+        title: Business Type Name
+        description: Human-readable name of the business type.
+      - name: calendar_month_label
+        sql: |-
+          (
+            SELECT hop1.calendar_month_name || ' ' || CAST(hop1.calendar_year AS VARCHAR)
+            FROM {{ catalog('dwhprd_gold') }}.calendar_month_dim hop1
+            WHERE {CUBE}.calendar_month_key = hop1.calendar_month_key
+          )
+        type: string
+        title: Month
+        description: 'Formatted "<Month Name> <Year>" label, reproducing MSTR''s custom column (CustCol_400/CustCol_3). Both operands now explicitly cube-qualified — RESOLVED 2026-08-27:
+          the previous unqualified `calendar_year` reference compiled fine and worked via the REST API, but broke both sox_view_campaign_fact and sox_view_affiliate_fact live against
+          Cube''s SQL API (what QuickSight''s data source speaks) with `AMBIGUOUS_NAME: Column ''calendar_year'' is ambiguous` — Trino/Athena resolves unqualified column references
+          against every physical table in the generated JOIN, not just the cube that declares the dimension, and at least one sibling table joined alongside calendar_month_dim on
+          each of those two views also carries a raw `calendar_year` column (e.g. calendar_year_dim on sox_view_affiliate_fact). Confirmed via live dev CloudWatch logs on both views.
+          Always qualify cross-column references in multi-column derived dimensions with the cube-reference prefix to avoid this class of bug.'
+      - name: cal_qtr_desc
+        sql: |-
+          (
+            SELECT hop1.cal_qtr_desc
+            FROM {{ catalog('dwhprd_gold') }}.calendar_qtr_dim hop1
+            WHERE {CUBE}.calendar_qtr_key = hop1.calendar_qtr_key
+          )
+        type: string
+        title: Calendar Quarter Description
+        description: Human-readable calendar quarter, e.g. Q1 2024.
+      - name: agency_group_name
+        sql: |-
+          (
+            SELECT hop2.agency_group_name
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.agency_group_dim hop2
+              ON hop1.agency_group_key = hop2.agency_group_key
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Agency Group Name
+        description: Human-readable name of the agency group.
+      - name: campaign_commission_pct
+        sql: |-
+          (
+            SELECT TRY_CAST(campaign_commission_pct AS DOUBLE) * 100
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: number
+        title: Campaign Commission %
+        description: 'Campaign-level commission percentage, scaled to a display percentage (MSTR multiplies by 100). Glue type is varchar despite the name (probed live: one row holds
+          the garbage value "ITALY NA"), so wrapped in TRY_CAST rather than CAST — an unqualified CAST throws and fails the whole query on that one bad row, while TRY_CAST yields
+          NULL for it and lets every other row resolve normally.'
+      - name: campaign_delivery_type_name
+        sql: |-
+          (
+            SELECT hop2.campaign_delivery_type_name
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.campaign_delivery_type_dim hop2
+              ON hop1.campaign_delivery_type_key = hop2.campaign_delivery_type_key
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Campaign Delivery Type Name
+        description: Human-readable name of the campaign delivery type.
+      - name: campaign_desc
+        sql: |-
+          (
+            SELECT hop1.campaign_desc
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Campaign Description
+        description: Free-text campaign description.
+      - name: campaign_disc_sur_pct
+        sql: |-
+          (
+            SELECT hop1.campaign_disc_sur_pct
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Campaign Discount/Surcharge %
+        description: Campaign-level discount or surcharge percentage. Glue type is string, not numeric, despite the name — reproduced faithfully rather than cast.
+      - name: campaign_id
+        sql: |-
+          (
+            SELECT hop1.campaign_id
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Campaign ID
+        description: Natural identifier for the campaign.
+      - name: campaign_start_end_date
+        sql: |-
+          (
+            SELECT date_format(campaign_start_date, '%m/%d/%Y') || ' - ' || date_format(campaign_end_date, '%m/%d/%Y')
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Campaign Start and End Date
+        description: 'Formatted start/end date range, reproducing MSTR''s custom column (CustCol_40) exactly — both dates as MM/DD/YYYY, concatenated with '' - ''. Uses date_format
+          (MySQL-style %m/%d/%Y tokens), not to_char: probed live against Athena — to_char(''MM/DD/YYYY'') throws "INVALID_FUNCTION_ARGUMENT: Failed to tokenize string [M] at offset
+          [0]" on this engine, since Trino''s to_char expects a different token syntax than the Oracle/Teradata-style pattern MSTR used.'
+      - name: campaign_status_name
+        sql: |-
+          (
+            SELECT hop2.campaign_status_name
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.campaign_status_dim hop2
+              ON hop1.campaign_status_key = hop2.campaign_status_key
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Campaign Status Name
+        description: Human-readable name of the campaign status.
+      - name: campaign_tax_pct
+        sql: |-
+          (
+            SELECT TRY_CAST(campaign_tax_pct AS DOUBLE) * 100
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: number
+        title: Campaign Tax %
+        description: Campaign-level tax percentage, scaled to a display percentage (MSTR multiplies by 100). Same varchar/ TRY_CAST rationale as campaign_commission_pct — probed
+          live, same bad row affects both columns.
+      - name: client_group_name
+        sql: |-
+          (
+            SELECT hop2.client_group_name
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.client_group_dim hop2
+              ON hop1.client_group_key = hop2.client_group_key
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Client Group Name
+        description: Human-readable name of the client group.
+      - name: campaign_currency_code
+        sql: |-
+          (
+            SELECT hop2.currency_cd
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.currency_dim hop2
+              ON hop1.campaign_currency_key = hop2.currency_key
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Currency Code
+        description: ISO-style currency code — e.g. USD, AUD.
+      - name: campaign_currency_name
+        sql: |-
+          (
+            SELECT hop2.currency_name
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.currency_dim hop2
+              ON hop1.campaign_currency_key = hop2.currency_key
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Currency Name
+        description: Human-readable currency name.
+      - name: holding_company_name
+        sql: |-
+          (
+            SELECT hop2.holding_company_name
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.holding_company_dim hop2
+              ON hop1.holding_company_key = hop2.holding_company_key
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Holding Company Name
+        description: Human-readable name of the holding company.
+      - name: invoice_holding_company_name
+        sql: |-
+          (
+            SELECT hop1.holding_company_name
+            FROM {{ catalog('dwhprd_gold') }}.holding_company_dim hop1
+            WHERE {CUBE}.invoice_holding_company_key = hop1.holding_company_key
+          )
+        type: string
+        title: Invoice Holding Company
+        description: >-
+          Name of the invoice-side holding company. This is not the campaign-side
+          holding company — for that use
+          cube_carl_dwhprd_gold_holding_company_dim.holding_company_name.
+      - name: channel_id
+        sql: |-
+          (
+            SELECT hop1.channel_id
+            FROM {{ catalog('dwhprd_gold') }}.channel_dim hop1
+            WHERE {CUBE}.channel_key = hop1.channel_key
+          )
+        type: string
+        title: Channel ID
+        description: Natural identifier for the channel.
+      - name: display_channel_name
+        sql: |-
+          (
+            SELECT hop1.display_channel_name
+            FROM {{ catalog('dwhprd_gold') }}.channel_dim hop1
+            WHERE {CUBE}.channel_key = hop1.channel_key
+          )
+        type: string
+        title: Channel Name
+        description: Display-formatted channel name, distinct from the raw channel_name column.
+      - name: master_channel
+        sql: |-
+          (
+            SELECT hop1.master_channel
+            FROM {{ catalog('dwhprd_gold') }}.channel_dim hop1
+            WHERE {CUBE}.channel_key = hop1.channel_key
+          )
+        type: string
+        title: Master Channel
+        description: Parent network grouping, e.g. Animal Planet, Discovery Channel, Discovery ID, Discovery Science, Discovery Turbo, TLC.
+      - name: client_id
+        sql: |-
+          (
+            SELECT hop1.client_id
+            FROM {{ catalog('dwhprd_gold') }}.client_dim hop1
+            WHERE {CUBE}.client_key = hop1.client_key
+          )
+        type: string
+        title: Client ID
+        description: Natural identifier for the client.
+      - name: client_name
+        sql: |-
+          (
+            SELECT hop1.client_name
+            FROM {{ catalog('dwhprd_gold') }}.client_dim hop1
+            WHERE {CUBE}.client_key = hop1.client_key
+          )
+        type: string
+        title: Client Name
+        description: Human-readable name of the client.
+      - name: mapped_category
+        sql: |-
+          (
+            SELECT hop1.mapped_category
+            FROM {{ catalog('dwhprd_gold') }}.client_dim hop1
+            WHERE {CUBE}.client_key = hop1.client_key
+          )
+        type: string
+        title: Mapped Category
+        description: Standardized client category mapping.
+      - name: country_name
+        sql: |-
+          (
+            SELECT hop1.country_name
+            FROM {{ catalog('dwhprd_gold') }}.country_dim hop1
+            WHERE {CUBE}.country_key = hop1.country_key
+          )
+        type: string
+        title: Country Name
+        description: Human-readable name of the country.
+      - name: base_currency_code
+        sql: |-
+          (
+            SELECT hop1.currency_cd
+            FROM {{ catalog('dwhprd_gold') }}.currency_dim hop1
+            WHERE {CUBE}.base_currency_key = hop1.currency_key
+          )
+        type: string
+        title: Currency Code
+        description: ISO-style currency code — e.g. USD, AUD.
+      - name: bts_base_currency_code
+        sql: |-
+          (
+            SELECT hop1.currency_code
+            FROM {{ catalog('dwhprd_gold') }}.bts_currency_dim hop1
+            WHERE {CUBE}.base_currency_key = hop1.currency_key
+          )
+        type: string
+        title: Base Currency
+        description: >-
+          Currency code on bts_currency_dim. The column is currency_code.
+          currency_dim.currency_cd is a different list and is not this code.
+      - name: base_currency_name
+        sql: |-
+          (
+            SELECT hop1.currency_name
+            FROM {{ catalog('dwhprd_gold') }}.currency_dim hop1
+            WHERE {CUBE}.base_currency_key = hop1.currency_key
+          )
+        type: string
+        title: Currency Name
+        description: Human-readable currency name.
+      - name: day_date
+        sql: |-
+          (
+            SELECT hop1.day_date
+            FROM {{ catalog('dwhprd_gold') }}.day_dim hop1
+            WHERE {CUBE}.invoice_date_key = hop1.day_key
+          )
+        type: time
+        title: Day Date
+        description: The calendar date this row represents.
+      - name: source_region_name
+        sql: |-
+          (
+            SELECT hop1.source_region_name
+            FROM {{ catalog('dwhprd_gold') }}.source_system_region_dim hop1
+            WHERE {CUBE}.source_system_region_key = hop1.source_system_region_key
+          )
+        type: string
+        title: Source Region Name
+        description: Human-readable name of the source region.
+      - name: campaign_key
+        sql: campaign_key
+        type: number
+        title: Campaign Key
+        description: >-
+          Foreign key to campaign_dim, and the join column to sales_rep_fraction_fact. Part of this cube's
+          composite key (with sales_rep_key) — not unique alone, since a campaign with multiple reps now
+          produces one row per rep (see cube description).
+        primary_key: true
+      - name: sales_rep_key
+        sql: sales_rep_key
+        type: number
+        title: Sales Rep Key
+        description: >-
+          Part of this cube's composite key (with campaign_key). NULL when a campaign has no matching
+          sales_rep_fraction_fact row (see cube description — treated as a 100%-share unallocated row, not
+          dropped).
+        primary_key: true
+      - name: sales_rep_name
+        sql: bts_sales_rep_name
+        type: string
+        title: Sales Rep Name
+        description: >-
+          SALES_REP_NAME from BTSDWH.SALES_REP_DIM. This cube's SQL left-joins
+          bts_sales_rep_dim on the fraction sales_rep_key and exposes the name
+          as bts_sales_rep_name. A campaign with no fraction row has a null key
+          and a null name. The dimension key is unique, so the join does not
+          add rows.
+      - name: sales_rep_team_key
+        sql: sales_rep_team_key
+        type: number
+        title: Sales Rep Team Key
+        description: From the embedded sales_rep_fraction_fact join.
+      - name: sales_rep_team_desc
+        sql: sales_rep_team_desc
+        type: string
+        title: Sales Rep Team
+        description: From the embedded sales_rep_fraction_fact join.
+      - name: sales_rep_revenue_share
+        sql: sales_rep_revenue_share
+        type: number
+        title: Sales Rep Revenue Share (raw)
+        description: >-
+          Raw per-rep revenue-share fraction from the embedded sales_rep_fraction_fact join, NULL for unallocated
+          campaigns. Referenced directly (same-cube, not cross-cube) by every rep-allocated measure below via
+          COALESCE(..., 1) — see cube description. Use sales_rep_revenue_share_avg for the display-ready "Sales
+          Rep Rev Share" value.
+
+      - name: contract_type_key
+        sql: contract_type_key
+        type: number
+        title: Contract Type Key
+        description: Contract type key on campaign_fact. Joins contract_type_dim.
+      - name: adv_market_sector_key
+        sql: adv_market_sector_key
+        type: number
+        title: Adv Market Sector Key
+        description: Advertising market sector key on campaign_fact.
+      - name: invoice_holding_company_key
+        sql: invoice_holding_company_key
+        type: number
+        title: Invoice Holding Company Key
+        description: Invoice-side holding company key on campaign_fact. This is not the campaign holding company.
+      - name: invoice_territory_key
+        sql: invoice_territory_key
+        type: number
+        title: Invoice Territory Key
+        description: Invoice territory key on campaign_fact.
+      - name: base_currency_year
+        sql: base_currency_year
+        type: number
+        title: Base Currency Year
+        description: Plan year used to join the historical exchange factor.
+      - name: sales_holding_company_key
+        sql: sales_holding_company_key
+        type: number
+        title: Sales Holding Company Key
+        description: >-
+          CAMPAIGN_FACT_VW sales holding company key. Region 30 treats fraction key -2 as the
+          campaign holding company, region 20 treats -1 that way, and other regions treat 0 that way.
+          A missing fraction key uses the campaign holding company.
+      - name: plan_curr_exchange_factor
+        sql: plan_curr_exchange_factor
+        type: number
+        title: Plan Current Exchange Factor
+        description: >-
+          exchange_factor from plan_curr_currency_rate, joined on base_currency_key and aliased so it
+          does not collide with the historical factor. The rate table is one row per base currency.
+          Probed carl_dwhprd_gold_dev on 2026-10-28, 128 rows and 128 distinct base_currency_key.
+          All 1,813,543 campaign_fact rows matched, so the join does not add rows.
+      - name: plan_hist_exchange_factor
+        sql: plan_hist_exchange_factor
+        type: number
+        title: Plan Hist Exchange Factor
+        description: >-
+          exchange_factor from plan_hist_currency_rate, joined on base_currency_key and base_currency_year.
+          Aliased so a query does not see two exchange_factor columns.
+          Probed carl_dwhprd_gold_dev on 2026-10-28, 1,257 rows and 1,257 distinct
+          base_currency_key plus base_currency_year pairs. 1,813,508 of 1,813,543 campaign_fact
+          rows matched. The other 35 rows have a currency and year that are not on the rate
+          table, so their historical USD amount is null and drops out of the sum.
+      - name: bts_sales_rep_name
+        sql: |-
+          (
+            SELECT hop1.sales_rep_name
+            FROM {{ catalog('dwhprd_gold') }}.bts_sales_rep_dim hop1
+            WHERE hop1.sales_rep_key = CASE
+              WHEN {CUBE}.source_system_region_key = 30 THEN COALESCE({CUBE}.sales_rep_key, -2)
+              WHEN {CUBE}.source_system_region_key = 20 THEN COALESCE({CUBE}.sales_rep_key, -1)
+              ELSE COALESCE({CUBE}.sales_rep_key, 0)
+            END
+          )
+        type: string
+        title: Sales Rep
+        description: >-
+          SALES_REP_NAME from bts_sales_rep_dim. A campaign with no fraction row uses the region
+          sentinel key, 0 for Latin America, -1 for DNAP, and -2 for Italy.
+      - name: bts_sales_rep_code
+        sql: |-
+          (
+            SELECT hop1.sales_rep_code
+            FROM {{ catalog('dwhprd_gold') }}.bts_sales_rep_dim hop1
+            WHERE hop1.sales_rep_key = CASE
+              WHEN {CUBE}.source_system_region_key = 30 THEN COALESCE({CUBE}.sales_rep_key, -2)
+              WHEN {CUBE}.source_system_region_key = 20 THEN COALESCE({CUBE}.sales_rep_key, -1)
+              ELSE COALESCE({CUBE}.sales_rep_key, 0)
+            END
+          )
+        type: string
+        title: Sales Rep Code
+        description: Sales rep code from bts_sales_rep_dim on the same sentinel key as bts_sales_rep_name.
+      - name: bts_sales_rep_team_name
+        sql: |-
+          (
+            SELECT hop1.sales_rep_team_name
+            FROM {{ catalog('dwhprd_gold') }}.sales_rep_team_dim hop1
+            WHERE hop1.sales_rep_team_key = CASE
+              WHEN {CUBE}.source_system_region_key = 30 THEN COALESCE({CUBE}.sales_rep_team_key, -2)
+              WHEN {CUBE}.source_system_region_key = 20 THEN COALESCE({CUBE}.sales_rep_team_key, -1)
+              ELSE COALESCE({CUBE}.sales_rep_team_key, 0)
+            END
+          )
+        type: string
+        title: Sales Rep Team
+        description: >-
+          SALES_REP_TEAM_NAME from sales_rep_team_dim (BTSDWH.SALES_REP_TEAM_DIM). A campaign with no
+          fraction row uses the region sentinel key, 0 for Latin America, -1 for DNAP, and -2 for Italy,
+          as bts_sales_rep_name does. The team name on sales_rep_fraction_fact (sales_rep_team_desc)
+          differs from it on some rows.
+      - name: bts_deal_type_key
+        sql: |-
+          (
+            SELECT hop1.deal_type_key
+            FROM {{ catalog('dwhprd_gold') }}.bts_deal_dim hop1
+            WHERE {CUBE}.deal_key = hop1.deal_key
+          )
+        type: number
+        title: Deal Type Key
+        description: Deal type key from bts_deal_dim. Count (Deal Type) counts this key.
+
+      - name: bts_campaign_currency_code
+        sql: |-
+          (
+            SELECT hop2.currency_code
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.bts_currency_dim hop2
+              ON hop1.campaign_currency_key = hop2.currency_key
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Campaign Currency
+        description: Campaign currency code from bts_currency_dim. CAMPAIGN_CURRENCY_DIM reads that table.
+      - name: bts_campaign_currency_name
+        sql: |-
+          (
+            SELECT hop2.currency_name
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.bts_currency_dim hop2
+              ON hop1.campaign_currency_key = hop2.currency_key
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Campaign Currency Name
+        description: Campaign currency name from bts_currency_dim.
+      - name: bts_campaign_currency_symbol
+        sql: |-
+          (
+            SELECT hop2.currency_symbol
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.bts_currency_dim hop2
+              ON hop1.campaign_currency_key = hop2.currency_key
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Campaign Currency Symbol
+        description: Campaign currency symbol from bts_currency_dim.
+      - name: bts_invoice_currency_code
+        sql: |-
+          (
+            SELECT hop1.currency_code
+            FROM {{ catalog('dwhprd_gold') }}.bts_currency_dim hop1
+            WHERE {CUBE}.invoice_currency_key = hop1.currency_key
+          )
+        type: string
+        title: Invoice Currency
+        description: Invoice currency code from bts_currency_dim.
+      - name: bts_invoice_currency_name
+        sql: |-
+          (
+            SELECT hop1.currency_name
+            FROM {{ catalog('dwhprd_gold') }}.bts_currency_dim hop1
+            WHERE {CUBE}.invoice_currency_key = hop1.currency_key
+          )
+        type: string
+        title: Invoice Currency Name
+        description: Invoice currency name from bts_currency_dim.
+      - name: bts_invoice_currency_symbol
+        sql: |-
+          (
+            SELECT hop1.currency_symbol
+            FROM {{ catalog('dwhprd_gold') }}.bts_currency_dim hop1
+            WHERE {CUBE}.invoice_currency_key = hop1.currency_key
+          )
+        type: string
+        title: Invoice Currency Symbol
+        description: Invoice currency symbol from bts_currency_dim.
+      - name: fact_row_rep_ordinal
+        sql: fact_row_rep_ordinal
+        type: number
+        title: Fact Row Rep Ordinal
+        description: >-
+          1 on the first sales-rep copy of a campaign_fact row after the embedded
+          sales_rep_fraction_fact join. The Campaign Grid plain-sum measures keep only this row
+          so each fact row is counted once. Not a column to group by.
+      - name: source_system_region_key
+        sql: source_system_region_key
+        type: number
+        title: Source System Region Key
+        description: Foreign key to source_system_region_dim.
+      - name: business_type_key
+        sql: business_type_key
+        type: number
+        title: Business Type Key
+        description: Foreign key to business_type_dim.
+      - name: base_currency_key
+        sql: base_currency_key
+        type: number
+        title: Base Currency Key
+        description: >-
+          Foreign key for the Base Currency role. The International Campaign Grid resolves it through
+          cube_carl_dwhprd_gold_base_currency_dim (BTSDWH currency codes). The existing currency_dim join
+          remains available for the SOX view. See invoice_currency_key for the invoice-currency role.
+      - name: country_key
+        sql: country_key
+        type: number
+        title: Country Key
+        description: Foreign key to country_dim.
+      - name: agency_key
+        sql: agency_key
+        type: number
+        title: Agency Key
+        description: Foreign key to agency_dim.
+      - name: client_key
+        sql: client_key
+        type: number
+        title: Client Key
+        description: Foreign key to client_dim.
+      - name: product_key
+        sql: product_key
+        type: number
+        title: Product Key
+        description: >-
+          Foreign key to product_dim — KNOWN GAP: the ingested product_dim is the US table (prod_id/prod_cat_name
+          only); this campaign's Product Name/Category is not modelled. See cube description.
+      - name: invoice_currency_key
+        sql: invoice_currency_key
+        type: number
+        title: Invoice Currency Key
+        description: >-
+          Foreign key to currency_dim, in the Invoice Currency role — read via invoice_currency_code/name's
+          correlated subqueries rather than a second join, since currency_dim is already joined once on this
+          cube in the Base Currency role.
+      - name: invoice_currency_code
+        sql: >-
+          (SELECT cd.currency_cd FROM {{ catalog('dwhprd_gold') }}.currency_dim cd
+            WHERE cd.currency_key = {CUBE}.invoice_currency_key)
+        type: string
+        title: Invoice Currency Code
+        description: >-
+          currency_dim.currency_cd looked up by invoice_currency_key via a correlated subquery — see
+          invoice_currency_key's description.
+      - name: invoice_currency_name
+        sql: >-
+          (SELECT cd.currency_name FROM {{ catalog('dwhprd_gold') }}.currency_dim cd
+            WHERE cd.currency_key = {CUBE}.invoice_currency_key)
+        type: string
+        title: Invoice Currency Name
+        description: >-
+          currency_dim.currency_name looked up by invoice_currency_key via a correlated subquery — see
+          invoice_currency_key's description.
+      - name: channel_key
+        sql: channel_key
+        type: number
+        title: Channel Key
+        description: Foreign key to channel_dim.
+      - name: calendar_month_key
+        sql: calendar_month_key
+        type: number
+        title: Calendar Month Key
+        description: Foreign key to calendar_month_dim. This fact's row grain.
+      - name: calendar_qtr_key
+        sql: calendar_qtr_key
+        type: number
+        title: Calendar Qtr Key
+        description: Foreign key to calendar_qtr_dim.
+      - name: calendar_year_key
+        sql: calendar_year_key
+        type: number
+        title: Calendar Year Key
+        description: >-
+          Calendar year on the fact row. The Campaign Grid Latam Report filters this to 2019
+          through 2026 in QuickSight. That filter is not a segment.
+      - name: deal_key
+        sql: deal_key
+        type: number
+        title: Deal Key
+        description: >-
+          Foreign key to deal_dim — KNOWN GAP: the ingested deal_dim is confirmed to be the unrelated US
+          ad-sales revision-model deal dimension (keyed on deal_revision_key); this campaign's Deal ID/Name is
+          not modelled. See cube description.
+      - name: invoice_date_key
+        sql: invoice_date_key
+        type: number
+        title: Invoice Date Key
+        description: Foreign key to day_dim, in the Campaign Invoice Date role (joined directly, role-play).
+      - name: campaign_ccp
+        sql: campaign_ccp
+        type: number
+        title: Campaign CPP
+        description: Campaign cost-per-point, carried directly on the fact (not rep-allocated). Template column.
+      - name: campaign_cps
+        sql: campaign_cps
+        type: number
+        title: Campaign CPS
+        description: Campaign cost-per-spot, carried directly on the fact (not rep-allocated). Template column.
+      - name: campaign_cpt
+        sql: campaign_cpt
+        type: number
+        title: Campaign CPT
+        description: Campaign cost-per-thousand, carried directly on the fact (not rep-allocated). Template column.
+      - name: campaign_budget
+        sql: campaign_budget
+        type: number
+        title: Campaign Budget (raw)
+        description: Raw, pre-allocation campaign budget. Use campaign_budget_loc for the rep-allocated measure.
+      - name: campaign_invoice_value
+        sql: campaign_invoice_value
+        type: number
+        title: Campaign Invoice Value (raw)
+        description: >-
+          Raw, pre-allocation campaign invoice value. Use campaign_invoice_value_loc for the rep-allocated
+          measure.
+      - name: gross_revenue
+        sql: gross_revenue
+        type: number
+        title: Gross Revenue (raw)
+        description: Raw, pre-allocation gross revenue. Use gross_revenue_loc for the rep-allocated measure.
+      - name: agency_commission_pct
+        sql: agency_commission_pct
+        type: number
+        title: Agency Commission % (raw)
+        description: Row-level agency commission percentage, used to derive net revenue and commission measures.
+      - name: agency_incentive_pct
+        sql: agency_incentive_pct
+        type: number
+        title: Agency Incentive % (raw)
+        description: Row-level agency incentive percentage, used to derive net-net revenue and incentive measures.
+      - name: rep_commission_pct
+        sql: rep_commission_pct
+        type: number
+        title: Rep Commission % (raw)
+        description: Row-level sales rep commission percentage, used to derive sales commission measures.
+      - name: calendar_year
+        sql: |-
+          (
+            SELECT hop1.calendar_year
+            FROM {{ catalog('dwhprd_gold') }}.calendar_year_dim hop1
+            WHERE {CUBE}.calendar_year_key = hop1.calendar_year_key
+          )
+        type: number
+        title: Calendar Year
+        description: Four-digit calendar year.
+      - name: currency_name
+        sql: |-
+          (
+            SELECT hop1.currency_name
+            FROM {{ catalog('dwhprd_gold') }}.bts_currency_dim hop1
+            WHERE {CUBE}.base_currency_key = hop1.currency_key
+          )
+        type: string
+        title: Base Currency Name
+        description: Currency name for the fact row's base currency.
+      - name: currency_symbol
+        sql: |-
+          (
+            SELECT hop1.currency_symbol
+            FROM {{ catalog('dwhprd_gold') }}.bts_currency_dim hop1
+            WHERE {CUBE}.base_currency_key = hop1.currency_key
+          )
+        type: string
+        title: Base Currency Symbol
+        description: Currency symbol on bts_currency_dim.
+      - name: adv_market_sector_desc
+        sql: |-
+          (
+            SELECT hop1.adv_market_sector_desc
+            FROM {{ catalog('dwhprd_gold') }}.adv_market_sector_dim hop1
+            WHERE {CUBE}.adv_market_sector_key = hop1.adv_market_sector_key
+          )
+        type: string
+        title: Adv Market Sector
+        description: Advertising market sector description.
+      - name: business_type_id
+        sql: |-
+          (
+            SELECT hop1.business_type_id
+            FROM {{ catalog('dwhprd_gold') }}.business_type_dim hop1
+            WHERE {CUBE}.business_type_key = hop1.business_type_key
+          )
+        type: string
+        title: Business Type ID
+        description: Natural identifier for the business type.
+      - name: campaign_end_date
+        sql: |-
+          (
+            SELECT hop1.campaign_end_date
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: time
+        title: Campaign End Date
+        description: >-
+          Campaign end date. An attribute, not a filter — both reports left the
+          campaign/contract end-date prompt unanswered.
+      - name: campaign_start_date
+        sql: |-
+          (
+            SELECT hop1.campaign_start_date
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: time
+        title: Campaign Start Date
+        description: >-
+          Campaign start date. Items & Placements & Targets shows this as its own
+          attribute. Items and Placements only shows it inside campaign_start_end_date.
+          Both reports filter on this column in QuickSight; it is not a cube filter.
+      - name: channel_type_desc
+        sql: |-
+          (
+            SELECT hop1.channel_type_desc
+            FROM {{ catalog('dwhprd_gold') }}.channel_dim hop1
+            WHERE {CUBE}.channel_key = hop1.channel_key
+          )
+        type: string
+        title: Channel Type Desc
+        description: Channel type on channel_dim, for example On Air, On AIr, and Off Air.
+      - name: contract_type_desc
+        sql: |-
+          (
+            SELECT hop1.contract_type_desc
+            FROM {{ catalog('dwhprd_gold') }}.contract_type_dim hop1
+            WHERE {CUBE}.contract_type_key = hop1.contract_type_key
+          )
+        type: string
+        title: Contract Type
+        description: Contract type description shown on the Items & Placements & Targets template.
+      - name: deal_id
+        sql: |-
+          (
+            SELECT hop1.deal_id
+            FROM {{ catalog('dwhprd_gold') }}.bts_deal_dim hop1
+            WHERE {CUBE}.deal_key = hop1.deal_key
+          )
+        type: number
+        title: Deal Id
+        description: Numeric business identifier for the deal. Items Rpt groups by this id.
+      - name: deal_name
+        sql: |-
+          (
+            SELECT hop1.deal_name
+            FROM {{ catalog('dwhprd_gold') }}.bts_deal_dim hop1
+            WHERE {CUBE}.deal_key = hop1.deal_key
+          )
+        type: string
+        title: Deal Name
+        description: Deal name on BTSDWH.DEAL_DIM. Items Rpt shows this as Deal Name.
+      - name: invoice_territory_desc
+        sql: |-
+          (
+            SELECT hop1.invoice_territory_desc
+            FROM {{ catalog('dwhprd_gold') }}.invoice_territory_dim hop1
+            WHERE {CUBE}.invoice_territory_key = hop1.invoice_territory_key
+          )
+        type: string
+        title: Invoice Territory
+        description: Invoice territory description.
+      - name: deal_type_desc
+        sql: |-
+          (
+            SELECT hop1.deal_type_desc
+            FROM {{ catalog('dwhprd_gold') }}.bts_deal_dim hop1
+            WHERE {CUBE}.deal_key = hop1.deal_key
+          )
+        type: string
+        title: Deal Type
+        description: Deal type on BTSDWH.DEAL_DIM. Items Rpt shows this as Deal Type.
+      - name: product_category_1
+        sql: |-
+          (
+            SELECT hop1.product_category_1
+            FROM {{ catalog('dwhprd_gold') }}.bts_product_dim hop1
+            WHERE {CUBE}.product_key = hop1.product_key
+          )
+        type: string
+        title: Product Category 1
+        description: Product category 1. Selected in the Digital Analysis SQL and rolled up before the grid is drawn.
+      - name: deal_type_id
+        sql: |-
+          (
+            SELECT hop2.deal_type_id
+            FROM {{ catalog('dwhprd_gold') }}.bts_deal_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.bts_deal_type_dim hop2
+              ON CAST(hop1.deal_type_key AS BIGINT) = CAST(hop2.deal_type_key AS BIGINT)
+            WHERE {CUBE}.deal_key = hop1.deal_key
+          )
+        type: string
+        title: Deal Type ID
+        description: Short deal type code from BTSDWH.DEAL_TYPE_DIM, such as YD or BRT. Blank on the N/A keys.
+      - name: onair_flag
+        sql: |-
+          (
+            SELECT hop1.onair_flag
+            FROM {{ catalog('dwhprd_gold') }}.business_type_dim hop1
+            WHERE {CUBE}.business_type_key = hop1.business_type_key
+          )
+        type: string
+        title: Onair Flag
+        description: On-air flag on the business type. Non-Linear Report (2026) shows this column.
+      - name: product_category_3
+        sql: |-
+          (
+            SELECT hop1.product_category_3
+            FROM {{ catalog('dwhprd_gold') }}.bts_product_dim hop1
+            WHERE {CUBE}.product_key = hop1.product_key
+          )
+        type: string
+        title: Product Category 3
+        description: Product category 3. Selected in the Digital Analysis SQL and rolled up before the grid is drawn.
+      - name: product_id
+        sql: |-
+          (
+            SELECT hop1.product_id
+            FROM {{ catalog('dwhprd_gold') }}.bts_product_dim hop1
+            WHERE {CUBE}.product_key = hop1.product_key
+          )
+        type: string
+        title: Product ID
+        description: Business identifier for the product.
+      - name: product_name
+        sql: |-
+          (
+            SELECT hop1.product_name
+            FROM {{ catalog('dwhprd_gold') }}.bts_product_dim hop1
+            WHERE {CUBE}.product_key = hop1.product_key
+          )
+        type: string
+        title: Product
+        description: Product name. Digital Analysis shows this as Product.
+      - name: revenue_event_desc
+        sql: |-
+          (
+            SELECT hop1.revenue_event_desc
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Revenue Event
+        description: >-
+          Campaign-level revenue event description. Items & Placements & Targets
+          shows this, not item_revenue_event on bts_items.
+      - name: sales_holding_company_name
+        sql: |-
+          (
+            SELECT hop1.sales_holding_company_name
+            FROM {{ catalog('dwhprd_gold') }}.sales_holding_company_dim hop1
+            WHERE {CUBE}.sales_holding_company_key = hop1.sales_holding_company_key
+          )
+        type: string
+        title: Sales Holding Company
+        description: Sales holding company name.
+      - name: agency_group_key
+        sql: |-
+          (
+            SELECT hop1.agency_group_key
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: number
+        title: Agency Group Key
+        description: Agency group key on campaign_dim, the ID form of Agency Group.
+      - name: invoice_calendar
+        sql: |-
+          (
+            SELECT hop1.invoice_calendar
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Invoice Calendar
+        description: Invoice calendar on campaign_dim. One value per campaign.
+      - name: campaign_booking_channel_ids
+        sql: |-
+          (
+            SELECT hop1.campaign_booking_channel_ids
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Campaign Booking Channel IDs
+        description: Campaign-level list of booking channel IDs on campaign_dim, as one string.
+      - name: campaign_booking_channel_names
+        sql: |-
+          (
+            SELECT hop1.campaign_booking_channel_names
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Campaign Booking Channel Names
+        description: >-
+          Campaign-level list of booking channel names on campaign_dim, as one string. It is not
+          the row's channel, which is display_channel_name.
+      - name: billing_status_desc
+        sql: |-
+          (
+            SELECT hop1.billing_status_desc
+            FROM {{ catalog('dwhprd_gold') }}.billing_status_dim hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+              AND {CUBE}.calendar_month_key = hop1.calendar_month_key
+              AND {CUBE}.source_system_region_key = hop1.source_system_region_key
+          )
+        type: string
+        title: Billing Status
+        description: >-
+          Billing status for this campaign and month in this region. billing_status_dim is unique on
+          those three keys (376,102 rows, probed 2026-10-28), so there is at most one value. NULL when
+          the campaign-month has no billing-status row. MicroStrategy inner-joins this table and drops
+          such rows; every 2025 Discovery Latin America row has one.
+      - name: billing_status_note
+        sql: |-
+          (
+            SELECT hop1.billing_status_note
+            FROM {{ catalog('dwhprd_gold') }}.billing_status_dim hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+              AND {CUBE}.calendar_month_key = hop1.calendar_month_key
+              AND {CUBE}.source_system_region_key = hop1.source_system_region_key
+          )
+        type: string
+        title: Billing Status Note
+        description: Free-text note on the billing status for this campaign, month and region. See billing_status_desc.
+      - name: billing_status_updated_by
+        sql: |-
+          (
+            SELECT hop1.billing_status_updated_by
+            FROM {{ catalog('dwhprd_gold') }}.billing_status_dim hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+              AND {CUBE}.calendar_month_key = hop1.calendar_month_key
+              AND {CUBE}.source_system_region_key = hop1.source_system_region_key
+          )
+        type: string
+        title: Billing Status Updated By
+        description: User who last updated the billing status for this campaign, month and region. See billing_status_desc.
+      - name: billing_status_updated_date
+        sql: |-
+          (
+            SELECT CAST(hop1.billing_status_updated_date AS timestamp(3))
+            FROM {{ catalog('dwhprd_gold') }}.billing_status_dim hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+              AND {CUBE}.calendar_month_key = hop1.calendar_month_key
+              AND {CUBE}.source_system_region_key = hop1.source_system_region_key
+          )
+        type: time
+        title: Billing Status Updated Date
+        description: >-
+          When the billing status for this campaign, month and region was last updated. See
+          billing_status_desc. Cast to timestamp(3) inside the lookup, so a SQL API query never
+          returns timestamp with time zone.
+      - name: bts_base_currency_name
+        sql: |-
+          (
+            SELECT hop1.currency_name
+            FROM {{ catalog('dwhprd_gold') }}.bts_currency_dim hop1
+            WHERE {CUBE}.base_currency_key = hop1.currency_key
+          )
+        type: string
+        title: Base Currency Name
+        description: Base currency name on bts_currency_dim, the same list as bts_base_currency_code.
+      - name: bts_base_currency_symbol
+        sql: |-
+          (
+            SELECT hop1.currency_symbol
+            FROM {{ catalog('dwhprd_gold') }}.bts_currency_dim hop1
+            WHERE {CUBE}.base_currency_key = hop1.currency_key
+          )
+        type: string
+        title: Base Currency Symbol
+        description: Base currency symbol on bts_currency_dim.
+      - name: deal_type_key
+        sql: |-
+          (
+            SELECT hop1.deal_type_key
+            FROM {{ catalog('dwhprd_gold') }}.bts_deal_dim hop1
+            WHERE {CUBE}.deal_key = hop1.deal_key
+          )
+        type: number
+        title: Deal Type Key
+        description: Deal type key on bts_deal_dim, the ID form of Deal Type.
+      - name: contract_basis_key
+        sql: contract_basis_key
+        type: number
+        title: Contract Basis Key
+        description: Foreign key to contract_basis_dim, carried on campaign_fact.
+      - name: contract_basis_desc
+        sql: |-
+          (
+            SELECT hop1.contract_basis_desc
+            FROM {{ catalog('dwhprd_gold') }}.contract_basis_dim hop1
+            WHERE {CUBE}.contract_basis_key = hop1.contract_basis_key
+          )
+        type: string
+        title: Contract Basis
+        description: >-
+          Contract basis on contract_basis_dim, looked up by the fact row's contract_basis_key.
+          MicroStrategy also joins on source_system_region_key. The table has that column, but it is
+          not part of this join: contract_basis_key is unique on its own (14 rows) and matches every
+          2023 Discovery Latin America fact row (probed 2026-10-29), so the one-key lookup returns
+          the same value.
+      - name: customer_ref
+        sql: |-
+          (
+            SELECT hop1.customer_ref
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: string
+        title: Customer Ref
+        description: Customer reference on campaign_dim. One value per campaign.
+      - name: holding_company_key
+        sql: |-
+          (
+            SELECT hop1.holding_company_key
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: number
+        title: Holding Company Key
+        description: >-
+          Holding company key on campaign_dim, the ID form of Holding Company. MicroStrategy filters
+          holding company on this key through the campaign, not on the fact's own holding_company_key.
+      - name: sap_gl_account
+        sql: |-
+          (
+            SELECT hop1.sap_gl_account
+            FROM {{ catalog('dwhprd_gold') }}.business_type_dim hop1
+            WHERE {CUBE}.business_type_key = hop1.business_type_key
+          )
+        type: string
+        title: Sap GL Account
+        description: >-
+          SAP GL account of the business type (BUSINESS_TYPE_DIM.SAP_GL_ACCOUNT), such as DIGITAL,
+          DIGITALREP or DPLUSDLA. The Audit File Clientes Regulares reports filter on it.
+      - name: agency_commission_pct_display
+        sql: CAST({CUBE}.agency_commission_pct AS DOUBLE) * 100
+        type: number
+        title: Agency Commission %
+        description: >-
+          Fact-row agency commission percentage scaled to a display percentage, the MicroStrategy
+          Agency Commission % attribute (AGENCY_COMMISSION_PCT * 100). For the averaged metric use
+          agency_commission_pct_avg.
+      - name: campaign_status_key
+        sql: |-
+          (
+            SELECT hop1.campaign_status_key
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: number
+        title: Campaign Status Key
+        description: Campaign status surrogate key from campaign_dim (CAMPAIGN_DIM.CAMPAIGN_STATUS_KEY), the key behind campaign_status_name.
+      - name: client_group_key
+        sql: |-
+          (
+            SELECT hop1.client_group_key
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: number
+        title: Client Group Key
+        description: Client group surrogate key from campaign_dim (CAMPAIGN_DIM.CLIENT_GROUP_KEY), the key behind client_group_name.
+      - name: campaign_currency_key
+        sql: |-
+          (
+            SELECT hop1.campaign_currency_key
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: number
+        title: Campaign Currency Key
+        description: Campaign currency surrogate key from campaign_dim (CAMPAIGN_DIM.CAMPAIGN_CURRENCY_KEY), the key behind campaign_currency_code and campaign_currency_name.
+      - name: campaign_delivery_type_key
+        sql: |-
+          (
+            SELECT hop1.campaign_delivery_type_key
+            FROM {{ catalog('dwhprd_gold') }}.campaign_dim hop1
+            WHERE {CUBE}.campaign_key = hop1.campaign_key
+          )
+        type: number
+        title: Campaign Delivery Type Key
+        description: Campaign delivery type surrogate key from campaign_dim (CAMPAIGN_DIM.CAMPAIGN_DELIVERY_TYPE_KEY), the key behind campaign_delivery_type_name.
+      - name: consumption_indicator
+        sql: '{CUBE}.consumption_indicator'
+        type: string
+        title: Consumption Indicator
+        description: Consumption indicator carried on campaign_fact (CAMPAIGN_FACT_VW.CONSUMPTION_INDICATOR), X or blank.
+      - name: invoice_to
+        sql: |-
+          (
+            SELECT hop1.invoice_to
+            FROM {{ catalog('dwhprd_gold') }}.bts_deal_dim hop1
+            WHERE {CUBE}.deal_key = hop1.deal_key
+          )
+        type: string
+        title: Invoice To
+        description: Who the deal is invoiced to on BTSDWH.DEAL_DIM, for example Advertiser, Agent or Other.
+      - name: master_deal_name
+        sql: |-
+          (
+            SELECT hop1.master_deal_name
+            FROM {{ catalog('dwhprd_gold') }}.bts_deal_dim hop1
+            WHERE {CUBE}.deal_key = hop1.deal_key
+          )
+        type: string
+        title: Master Deal Name
+        description: Master deal of the deal on BTSDWH.DEAL_DIM, a deal code such as D0016333, or N/A when the deal has no master deal.
+      - name: invoice_level_desc
+        sql: |-
+          (
+            SELECT hop1.invoice_level_desc
+            FROM {{ catalog('dwhprd_gold') }}.bts_deal_dim hop1
+            WHERE {CUBE}.deal_key = hop1.deal_key
+          )
+        type: string
+        title: Invoice Level Description
+        description: Level the deal is invoiced at on BTSDWH.DEAL_DIM, Contract, Deal or Master Deal.
+      - name: invoice_recipient_name
+        sql: |-
+          (
+            SELECT hop1.invoice_recipient_name
+            FROM {{ catalog('dwhprd_gold') }}.bts_deal_dim hop1
+            WHERE {CUBE}.deal_key = hop1.deal_key
+          )
+        type: string
+        title: Invoice Recipient Name
+        description: Name of the party that receives the deal's invoices, on BTSDWH.DEAL_DIM.
+
+    measures:
+      - name: campaign_budget_loc
+        sql: >-
+          {CUBE}.campaign_budget * COALESCE({CUBE}.sales_rep_revenue_share, 1)
+        type: sum
+        title: Campaign Budget LOC
+        description: Campaign budget allocated by sales-rep revenue share (unallocated campaigns default to 100%, matching CAMPAIGN_FACT_VW), summed. Local currency, unconverted.
+      - name: campaign_invoice_value_loc
+        sql: >-
+          {CUBE}.campaign_invoice_value * COALESCE({CUBE}.sales_rep_revenue_share, 1)
+        type: sum
+        title: Campaign Invoice Value LOC
+        description: Campaign invoice value allocated by sales-rep revenue share (unallocated campaigns default to 100%, matching CAMPAIGN_FACT_VW), summed. Local currency, unconverted.
+      - name: gross_revenue_loc
+        sql: >-
+          {CUBE}.gross_revenue * COALESCE({CUBE}.sales_rep_revenue_share, 1)
+        type: sum
+        title: Gross Revenue LOC
+        description: Gross revenue allocated by sales-rep revenue share (unallocated campaigns default to 100%, matching CAMPAIGN_FACT_VW), summed. Local currency, unconverted.
+      - name: campaign_net_revenue_loc
+        sql: >-
+          CAST({CUBE}.gross_revenue AS DOUBLE) * COALESCE({CUBE}.sales_rep_revenue_share, 1) *
+          (1 - {CUBE}.agency_commission_pct)
+        type: sum
+        title: Campaign Net Revenue LOC
+        description: >-
+          Rep-allocated gross revenue less agency commission, summed (unallocated campaigns default to 100%,
+          matching CAMPAIGN_FACT_VW). Local currency, unconverted. Leading operand cast to DOUBLE — see cube
+          description's decimal-overflow note; this measure's 3-term multiplication chain on decimal(38,10)
+          columns otherwise overflows Trino's decimal arithmetic on SUM().
+      - name: campaign_net_net_revenue_loc
+        sql: >-
+          CAST({CUBE}.gross_revenue AS DOUBLE) * COALESCE({CUBE}.sales_rep_revenue_share, 1) *
+          (1 - {CUBE}.agency_commission_pct) * (1 - {CUBE}.agency_incentive_pct)
+        type: sum
+        title: Campaign Net Net Revenue LOC
+        description: >-
+          Rep-allocated gross revenue less agency commission, less agency incentive, summed (unallocated
+          campaigns default to 100%, matching CAMPAIGN_FACT_VW). Local currency, unconverted. Leading operand
+          cast to DOUBLE — see cube description's decimal-overflow note; this measure's 4-term multiplication
+          chain on decimal(38,10) columns otherwise overflows Trino's decimal arithmetic on SUM().
+      - name: agency_commission_loc
+        sql: >-
+          CAST({CUBE}.gross_revenue AS DOUBLE) * COALESCE({CUBE}.sales_rep_revenue_share, 1) *
+          {CUBE}.agency_commission_pct
+        type: sum
+        title: Agency Commission LOC
+        description: >-
+          Rep-allocated agency commission amount, summed (unallocated campaigns default to 100%, matching
+          CAMPAIGN_FACT_VW). Local currency, unconverted. Leading operand cast to DOUBLE — see cube
+          description's decimal-overflow note; this measure's 3-term multiplication chain on decimal(38,10)
+          columns otherwise overflows Trino's decimal arithmetic on SUM().
+      - name: agency_incentive_loc
+        sql: >-
+          CAST({CUBE}.gross_revenue AS DOUBLE) * COALESCE({CUBE}.sales_rep_revenue_share, 1) *
+          (1 - {CUBE}.agency_commission_pct) * {CUBE}.agency_incentive_pct
+        type: sum
+        title: Agency Incentive LOC
+        description: >-
+          Rep-allocated agency incentive amount, summed (unallocated campaigns default to 100%, matching
+          CAMPAIGN_FACT_VW). Local currency, unconverted. Leading operand cast to DOUBLE — see cube
+          description's decimal-overflow note; this measure's 4-term multiplication chain on decimal(38,10)
+          columns otherwise overflows Trino's decimal arithmetic on SUM().
+      - name: sales_commission_loc
+        sql: >-
+          CAST({CUBE}.gross_revenue AS DOUBLE) * COALESCE({CUBE}.sales_rep_revenue_share, 1) *
+          {CUBE}.rep_commission_pct
+        type: sum
+        title: Sales Commission LOC
+        description: >-
+          Rep-allocated sales rep commission amount, summed (unallocated campaigns default to 100%, matching
+          CAMPAIGN_FACT_VW). Local currency, unconverted. Leading operand cast to DOUBLE — see cube
+          description's decimal-overflow note; this measure's 3-term multiplication chain on decimal(38,10)
+          columns otherwise overflows Trino's decimal arithmetic on SUM().
+      - name: campaign_spots_booked
+        sql: >-
+          {CUBE}.campaign_spots_booked * COALESCE({CUBE}.sales_rep_revenue_share, 1)
+        type: sum
+        title: Campaign Spots Booked
+        description: Booked spot count, allocated by sales-rep revenue share (unallocated campaigns default to 100%, matching CAMPAIGN_FACT_VW), summed.
+      - name: campaign_spots_target
+        sql: >-
+          {CUBE}.campaign_spots_target * COALESCE({CUBE}.sales_rep_revenue_share, 1)
+        type: sum
+        title: Campaign Spots Target
+        description: Target spot count, allocated by sales-rep revenue share (unallocated campaigns default to 100%, matching CAMPAIGN_FACT_VW), summed.
+      - name: campaign_spots_price_loc
+        sql: >-
+          {CUBE}.campaign_spots_price * COALESCE({CUBE}.sales_rep_revenue_share, 1)
+        type: sum
+        title: Campaign Spots Price LOC
+        description: Spot price, allocated by sales-rep revenue share (unallocated campaigns default to 100%, matching CAMPAIGN_FACT_VW), summed. Local currency, unconverted.
+      - name: campaign_tax_value_loc
+        sql: >-
+          {CUBE}.campaign_tax_value * COALESCE({CUBE}.sales_rep_revenue_share, 1)
+        type: sum
+        title: Campaign Tax Value LOC
+        description: Campaign tax value, allocated by sales-rep revenue share (unallocated campaigns default to 100%, matching CAMPAIGN_FACT_VW), summed. Local currency, unconverted.
+      - name: campaign_ratings_booked
+        sql: >-
+          {CUBE}.campaign_ratings_booked * COALESCE({CUBE}.sales_rep_revenue_share, 1)
+        type: sum
+        title: Campaign Ratings Booked
+        description: Booked ratings, allocated by sales-rep revenue share (unallocated campaigns default to 100%, matching CAMPAIGN_FACT_VW), summed.
+      - name: campaign_ratings_delivered
+        sql: >-
+          {CUBE}.campaign_ratings_delivered * COALESCE({CUBE}.sales_rep_revenue_share, 1)
+        type: sum
+        title: Campaign Ratings Delivered
+        description: Delivered ratings, allocated by sales-rep revenue share (unallocated campaigns default to 100%, matching CAMPAIGN_FACT_VW), summed.
+      - name: campaign_ratings_sold
+        sql: >-
+          {CUBE}.campaign_ratings_sold * COALESCE({CUBE}.sales_rep_revenue_share, 1)
+        type: sum
+        title: Campaign Ratings Sold
+        description: Sold ratings, allocated by sales-rep revenue share (unallocated campaigns default to 100%, matching CAMPAIGN_FACT_VW), summed.
+      - name: campaign_impacts_booked
+        sql: >-
+          {CUBE}.campaign_impacts_booked * COALESCE({CUBE}.sales_rep_revenue_share, 1)
+        type: sum
+        title: Campaign Impacts Booked
+        description: Booked impacts, allocated by sales-rep revenue share (unallocated campaigns default to 100%, matching CAMPAIGN_FACT_VW), summed.
+      - name: campaign_impacts_delivered
+        sql: >-
+          {CUBE}.campaign_impacts_delivered *
+          COALESCE({CUBE}.sales_rep_revenue_share, 1)
+        type: sum
+        title: Campaign Impacts Delivered
+        description: Delivered impacts, allocated by sales-rep revenue share (unallocated campaigns default to 100%, matching CAMPAIGN_FACT_VW), summed.
+      - name: campaign_impacts_sold
+        sql: >-
+          {CUBE}.campaign_impacts_sold * COALESCE({CUBE}.sales_rep_revenue_share, 1)
+        type: sum
+        title: Campaign Impacts Sold
+        description: Sold impacts, allocated by sales-rep revenue share (unallocated campaigns default to 100%, matching CAMPAIGN_FACT_VW), summed.
+      - name: agency_commission_pct_avg
+        sql: agency_commission_pct
+        type: avg
+        title: Agency Commission % (avg)
+        description: Average row-level agency commission percentage across the query grain. Template column.
+      - name: agency_incentive_pct_avg
+        sql: agency_incentive_pct
+        type: avg
+        title: Agency Incentive % (avg)
+        description: Average row-level agency incentive percentage across the query grain. Template column.
+      - name: rep_commission_pct_avg
+        sql: rep_commission_pct
+        type: avg
+        title: Rep Commission % (avg)
+        description: Average row-level sales rep commission percentage across the query grain. Template column.
+      - name: sales_rep_revenue_share_avg
+        sql: sales_rep_revenue_share
+        type: avg
+        title: Sales Rep Revenue Share (avg)
+        description: Average sales-rep revenue share fraction across the query grain. Template column.
+      - name: campaign_spots_target_plain
+        sql: "CASE WHEN {CUBE}.fact_row_rep_ordinal = 1 THEN {CUBE}.campaign_spots_target ELSE 0 END"
+        type: sum
+        title: Campaign Spots Target
+        description: >-
+          Sum of campaign_spots_target, once per campaign_fact row. Not multiplied by
+          sales_rep_revenue_share. international_view_campaign_fact aliases this to
+          campaign_spots_target. The share-weighted measure is campaign_spots_target.
+      - name: campaign_spots_booked_plain
+        sql: "CASE WHEN {CUBE}.fact_row_rep_ordinal = 1 THEN {CUBE}.campaign_spots_booked ELSE 0 END"
+        type: sum
+        title: Campaign Spots Booked
+        description: >-
+          Sum of campaign_spots_booked, once per campaign_fact row. Not multiplied by
+          sales_rep_revenue_share. international_view_campaign_fact aliases this to
+          campaign_spots_booked. The share-weighted measure is campaign_spots_booked.
+      - name: campaign_spots_price_loc_plain
+        sql: "CASE WHEN {CUBE}.fact_row_rep_ordinal = 1 THEN {CUBE}.campaign_spots_price ELSE 0 END"
+        type: sum
+        title: Campaign Spots Price LOC
+        description: >-
+          Sum of campaign_spots_price in local currency, once per campaign_fact row. Not
+          multiplied by sales_rep_revenue_share. international_view_campaign_fact aliases this
+          to campaign_spots_price_loc. The share-weighted measure is campaign_spots_price_loc.
+      - name: campaign_budget_loc_plain
+        sql: "CASE WHEN {CUBE}.fact_row_rep_ordinal = 1 THEN {CUBE}.campaign_budget ELSE 0 END"
+        type: sum
+        title: Campaign Budget LOC
+        description: >-
+          Sum of campaign_budget in local currency, once per campaign_fact row. Not multiplied
+          by sales_rep_revenue_share. international_view_campaign_fact aliases this to
+          campaign_budget_loc. The share-weighted measure is campaign_budget_loc.
+      - name: agency_commission_loc_plain
+        sql: >-
+          CASE WHEN {CUBE}.fact_row_rep_ordinal = 1
+            THEN CAST({CUBE}.gross_revenue AS DOUBLE) * {CUBE}.agency_commission_pct
+            ELSE 0 END
+        type: sum
+        title: Agency Commission LOC
+        description: >-
+          Sum of gross_revenue * agency_commission_pct, once per campaign_fact row. gross_revenue
+          is cast to DOUBLE before multiplying. Not multiplied by sales_rep_revenue_share.
+          international_view_campaign_fact aliases this to agency_commission_loc. The
+          share-weighted measure is agency_commission_loc.
+      - name: campaign_invoice_value_loc_plain
+        sql: "CASE WHEN {CUBE}.fact_row_rep_ordinal = 1 THEN {CUBE}.campaign_invoice_value ELSE 0 END"
+        type: sum
+        title: Campaign Invoice Value LOC
+        description: >-
+          Sum of campaign_invoice_value in local currency, once per campaign_fact row. Not
+          multiplied by sales_rep_revenue_share. international_view_campaign_fact aliases this
+          to campaign_invoice_value_loc. The share-weighted measure is campaign_invoice_value_loc.
+      - name: campaign_net_revenue_loc_plain
+        sql: >-
+          CASE WHEN {CUBE}.fact_row_rep_ordinal = 1
+            THEN CAST({CUBE}.gross_revenue AS DOUBLE) * (1 - {CUBE}.agency_commission_pct)
+            ELSE 0 END
+        type: sum
+        title: Campaign Net Revenue LOC
+        description: >-
+          Sum of gross_revenue * (1 - agency_commission_pct), once per campaign_fact row. This is
+          not a sum of the stored campaign_net_revenue column. gross_revenue is cast to DOUBLE
+          before multiplying. Not multiplied by sales_rep_revenue_share.
+          international_view_campaign_fact aliases this to campaign_net_revenue_loc. The
+          share-weighted measure is campaign_net_revenue_loc.
+      - name: campaign_tax_value_loc_plain
+        sql: "CASE WHEN {CUBE}.fact_row_rep_ordinal = 1 THEN {CUBE}.campaign_tax_value ELSE 0 END"
+        type: sum
+        title: Campaign Tax Value LOC
+        description: >-
+          Sum of campaign_tax_value in local currency, once per campaign_fact row. Not multiplied
+          by sales_rep_revenue_share. international_view_campaign_fact aliases this to
+          campaign_tax_value_loc. The share-weighted measure is campaign_tax_value_loc.
+      - name: campaign_budget_net_loc
+        sql: "{campaign_budget_loc} - {agency_commission_loc}"
+        type: number
+        title: Campaign Budget Net LOC
+        description: >-
+          Campaign Budget LOC minus Agency Commission LOC, after both sums. The Andres report calculates this in the view.
+      - name: deal_type_count
+        sql: "{bts_deal_type_key}"
+        type: count_distinct
+        title: Count (Deal Type)
+        description: Distinct bts deal type keys. Non-Linear Report (2026) shows this count.
+
+      - name: campaign_budget_current_rate_usd
+        sql: >-
+          CAST({CUBE}.campaign_budget AS DOUBLE) * COALESCE({CUBE}.sales_rep_revenue_share, 1)
+          * CAST({CUBE}.plan_curr_exchange_factor AS DOUBLE)
+        type: sum
+        title: Campaign Budget Current Rate(USD)
+        description: >-
+          Campaign Budget in local currency times the current planned exchange factor. A missing rate drops that row from the sum.
+
+      - name: campaign_budget_hist_rate_usd
+        sql: >-
+          CAST({CUBE}.campaign_budget AS DOUBLE) * COALESCE({CUBE}.sales_rep_revenue_share, 1)
+          * CAST({CUBE}.plan_hist_exchange_factor AS DOUBLE)
+        type: sum
+        title: Campaign Budget Hist Rate(USD)
+        description: >-
+          Campaign Budget in local currency times the historical planned exchange factor. A missing rate drops that row from the sum.
+
+      - name: campaign_invoice_value_current_rate_usd
+        sql: >-
+          CAST({CUBE}.campaign_invoice_value AS DOUBLE) * COALESCE({CUBE}.sales_rep_revenue_share, 1)
+          * CAST({CUBE}.plan_curr_exchange_factor AS DOUBLE)
+        type: sum
+        title: Campaign Invoice Value Current Rate(USD)
+        description: >-
+          Campaign Invoice Value in local currency times the current planned exchange factor. A missing rate drops that row from the sum.
+
+      - name: campaign_invoice_value_hist_rate_usd
+        sql: >-
+          CAST({CUBE}.campaign_invoice_value AS DOUBLE) * COALESCE({CUBE}.sales_rep_revenue_share, 1)
+          * CAST({CUBE}.plan_hist_exchange_factor AS DOUBLE)
+        type: sum
+        title: Campaign Invoice Value Hist Rate(USD)
+        description: >-
+          Campaign Invoice Value in local currency times the historical planned exchange factor. A missing rate drops that row from the sum.
+
+      - name: gross_revenue_current_rate_usd
+        sql: >-
+          CAST({CUBE}.gross_revenue AS DOUBLE) * COALESCE({CUBE}.sales_rep_revenue_share, 1)
+          * CAST({CUBE}.plan_curr_exchange_factor AS DOUBLE)
+        type: sum
+        title: Gross Revenue Current Rate(USD)
+        description: >-
+          Gross Revenue in local currency times the current planned exchange factor. A missing rate drops that row from the sum.
+
+      - name: gross_revenue_hist_rate_usd
+        sql: >-
+          CAST({CUBE}.gross_revenue AS DOUBLE) * COALESCE({CUBE}.sales_rep_revenue_share, 1)
+          * CAST({CUBE}.plan_hist_exchange_factor AS DOUBLE)
+        type: sum
+        title: Gross Revenue Hist Rate(USD)
+        description: >-
+          Gross Revenue in local currency times the historical planned exchange factor. A missing rate drops that row from the sum.
+
+      - name: campaign_net_revenue_current_rate_usd
+        sql: >-
+          CAST({CUBE}.gross_revenue AS DOUBLE) * COALESCE({CUBE}.sales_rep_revenue_share, 1) * (1 - {CUBE}.agency_commission_pct)
+          * CAST({CUBE}.plan_curr_exchange_factor AS DOUBLE)
+        type: sum
+        title: Campaign Net Revenue Current Rate(USD)
+        description: >-
+          Campaign Net Revenue in local currency times the current planned exchange factor. A missing rate drops that row from the sum.
+
+      - name: campaign_net_revenue_hist_rate_usd
+        sql: >-
+          CAST({CUBE}.gross_revenue AS DOUBLE) * COALESCE({CUBE}.sales_rep_revenue_share, 1) * (1 - {CUBE}.agency_commission_pct)
+          * CAST({CUBE}.plan_hist_exchange_factor AS DOUBLE)
+        type: sum
+        title: Campaign Net Revenue Hist Rate(USD)
+        description: >-
+          Campaign Net Revenue in local currency times the historical planned exchange factor. A missing rate drops that row from the sum.
+
+      - name: campaign_net_net_revenue_current_rate_usd
+        sql: >-
+          CAST({CUBE}.gross_revenue AS DOUBLE) * COALESCE({CUBE}.sales_rep_revenue_share, 1) * (1 - {CUBE}.agency_commission_pct) * (1 - {CUBE}.agency_incentive_pct)
+          * CAST({CUBE}.plan_curr_exchange_factor AS DOUBLE)
+        type: sum
+        title: Campaign Net Net Revenue Current Rate(USD)
+        description: >-
+          Campaign Net Net Revenue in local currency times the current planned exchange factor. A missing rate drops that row from the sum.
+
+      - name: campaign_net_net_revenue_hist_rate_usd
+        sql: >-
+          CAST({CUBE}.gross_revenue AS DOUBLE) * COALESCE({CUBE}.sales_rep_revenue_share, 1) * (1 - {CUBE}.agency_commission_pct) * (1 - {CUBE}.agency_incentive_pct)
+          * CAST({CUBE}.plan_hist_exchange_factor AS DOUBLE)
+        type: sum
+        title: Campaign Net Net Revenue Hist Rate(USD)
+        description: >-
+          Campaign Net Net Revenue in local currency times the historical planned exchange factor. A missing rate drops that row from the sum.
+
+      - name: agency_commission_current_rate_usd
+        sql: >-
+          CAST({CUBE}.gross_revenue AS DOUBLE) * COALESCE({CUBE}.sales_rep_revenue_share, 1) * {CUBE}.agency_commission_pct
+          * CAST({CUBE}.plan_curr_exchange_factor AS DOUBLE)
+        type: sum
+        title: Agency Commission Current Rate(USD)
+        description: >-
+          Agency Commission in local currency times the current planned exchange factor. A missing rate drops that row from the sum.
+
+      - name: agency_commission_hist_rate_usd
+        sql: >-
+          CAST({CUBE}.gross_revenue AS DOUBLE) * COALESCE({CUBE}.sales_rep_revenue_share, 1) * {CUBE}.agency_commission_pct
+          * CAST({CUBE}.plan_hist_exchange_factor AS DOUBLE)
+        type: sum
+        title: Agency Commission Hist Rate(USD)
+        description: >-
+          Agency Commission in local currency times the historical planned exchange factor. A missing rate drops that row from the sum.
+
+      - name: agency_incentive_current_rate_usd
+        sql: >-
+          CAST({CUBE}.gross_revenue AS DOUBLE) * COALESCE({CUBE}.sales_rep_revenue_share, 1) * (1 - {CUBE}.agency_commission_pct) * {CUBE}.agency_incentive_pct
+          * CAST({CUBE}.plan_curr_exchange_factor AS DOUBLE)
+        type: sum
+        title: Agency Incentive Current Rate(USD)
+        description: >-
+          Agency Incentive in local currency times the current planned exchange factor. A missing rate drops that row from the sum.
+
+      - name: agency_incentive_hist_rate_usd
+        sql: >-
+          CAST({CUBE}.gross_revenue AS DOUBLE) * COALESCE({CUBE}.sales_rep_revenue_share, 1) * (1 - {CUBE}.agency_commission_pct) * {CUBE}.agency_incentive_pct
+          * CAST({CUBE}.plan_hist_exchange_factor AS DOUBLE)
+        type: sum
+        title: Agency Incentive Hist Rate(USD)
+        description: >-
+          Agency Incentive in local currency times the historical planned exchange factor. A missing rate drops that row from the sum.
+
+      - name: sales_commission_current_rate_usd
+        sql: >-
+          CAST({CUBE}.gross_revenue AS DOUBLE) * COALESCE({CUBE}.sales_rep_revenue_share, 1) * {CUBE}.rep_commission_pct
+          * CAST({CUBE}.plan_curr_exchange_factor AS DOUBLE)
+        type: sum
+        title: Sales Commission Current Rate(USD)
+        description: >-
+          Sales Commission in local currency times the current planned exchange factor. A missing rate drops that row from the sum.
+
+      - name: sales_commission_hist_rate_usd
+        sql: >-
+          CAST({CUBE}.gross_revenue AS DOUBLE) * COALESCE({CUBE}.sales_rep_revenue_share, 1) * {CUBE}.rep_commission_pct
+          * CAST({CUBE}.plan_hist_exchange_factor AS DOUBLE)
+        type: sum
+        title: Sales Commission Hist Rate(USD)
+        description: >-
+          Sales Commission in local currency times the historical planned exchange factor. A missing rate drops that row from the sum.
+
+      - name: campaign_spots_price_current_rate_usd
+        sql: >-
+          CAST({CUBE}.campaign_spots_price AS DOUBLE) * COALESCE({CUBE}.sales_rep_revenue_share, 1)
+          * CAST({CUBE}.plan_curr_exchange_factor AS DOUBLE)
+        type: sum
+        title: Campaign Spots Price Current Rate(USD)
+        description: >-
+          Campaign Spots Price in local currency times the current planned exchange factor. A missing rate drops that row from the sum.
+
+      - name: campaign_spots_price_hist_rate_usd
+        sql: >-
+          CAST({CUBE}.campaign_spots_price AS DOUBLE) * COALESCE({CUBE}.sales_rep_revenue_share, 1)
+          * CAST({CUBE}.plan_hist_exchange_factor AS DOUBLE)
+        type: sum
+        title: Campaign Spots Price Hist Rate(USD)
+        description: >-
+          Campaign Spots Price in local currency times the historical planned exchange factor. A missing rate drops that row from the sum.
+
+      - name: campaign_tax_value_current_rate_usd
+        sql: >-
+          CAST({CUBE}.campaign_tax_value AS DOUBLE) * COALESCE({CUBE}.sales_rep_revenue_share, 1)
+          * CAST({CUBE}.plan_curr_exchange_factor AS DOUBLE)
+        type: sum
+        title: Campaign Tax Value Current Rate(USD)
+        description: >-
+          Campaign Tax Value in local currency times the current planned exchange factor. A missing rate drops that row from the sum.
+
+      - name: campaign_tax_value_hist_rate_usd
+        sql: >-
+          CAST({CUBE}.campaign_tax_value AS DOUBLE) * COALESCE({CUBE}.sales_rep_revenue_share, 1)
+          * CAST({CUBE}.plan_hist_exchange_factor AS DOUBLE)
+        type: sum
+        title: Campaign Tax Value Hist Rate(USD)
+        description: >-
+          Campaign Tax Value in local currency times the historical planned exchange factor. A missing rate drops that row from the sum.
+      - name: revenue_variance
+        sql: "{campaign_budget_loc} - {gross_revenue_loc}"
+        type: number
+        title: Revenue Variance
+        description: >-
+          Campaign Budget LOC minus Gross Revenue LOC, after both are summed at the query grain. Do
+          not sum row-level differences. Positive when budget is above revenue.
+      - name: spot_variance
+        sql: "{campaign_spots_target} - {campaign_spots_booked}"
+        type: number
+        title: Spot Variance
+        description: >-
+          Campaign Spots Target minus Campaign Spots Booked, after both are summed. Confirmed
+          2026-10-29: the Monthly Tracker - Portafolio Cristian Lavao export defines Spot Variance as
+          the Campaign Spots Target metric minus the Campaign Spots Booked metric, calculated in the
+          view after the rollup.
+          The Billing Status Report export did not include the formula.
+
+    pre_aggregations:
+      - name: campaign_grid_report
+        measures:
+          - campaign_spots_target_plain
+          - campaign_spots_booked_plain
+          - campaign_spots_price_loc_plain
+          - campaign_budget_loc_plain
+          - agency_commission_loc_plain
+          - campaign_invoice_value_loc_plain
+          - campaign_net_revenue_loc_plain
+          - campaign_tax_value_loc_plain
+        dimensions:
+          - source_system_region_key
+          - calendar_year_key
+          - campaign_key
+          - agency_key
+          - client_key
+          - channel_key
+          - base_currency_key
+          - calendar_month_key
+          - campaign_id
+          - campaign_start_end_date
+          - holding_company_name
+          - display_channel_name
+          - master_channel
+          - agency_name
+          - client_name
+          - bts_base_currency_code
+          - calendar_month_label
+        refresh_key:
+          every: 1 hour
+        indexes:
+          - name: by_region_and_year
+            columns:
+              - source_system_region_key
+              - calendar_year_key
+    joins:
+      - name: cube_carl_dwhprd_gold_campaign_dim
+        sql: '{CUBE}.campaign_key = {cube_carl_dwhprd_gold_campaign_dim}.campaign_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_source_system_region_dim
+        sql: >-
+          {CUBE}.source_system_region_key =
+          {cube_carl_dwhprd_gold_source_system_region_dim}.source_system_region_key
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_business_type_dim
+        sql: '{CUBE}.business_type_key = {cube_carl_dwhprd_gold_business_type_dim}.business_type_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_country_dim
+        sql: '{CUBE}.country_key = {cube_carl_dwhprd_gold_country_dim}.country_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_currency_dim
+        sql: '{CUBE}.base_currency_key = {cube_carl_dwhprd_gold_currency_dim}.currency_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_base_currency_dim
+        sql: '{CUBE}.base_currency_key = {cube_carl_dwhprd_gold_base_currency_dim}.currency_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_agency_dim
+        sql: '{CUBE}.agency_key = {cube_carl_dwhprd_gold_agency_dim}.agency_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_client_dim
+        sql: '{CUBE}.client_key = {cube_carl_dwhprd_gold_client_dim}.client_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_channel_dim
+        sql: '{CUBE}.channel_key = {cube_carl_dwhprd_gold_channel_dim}.channel_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_calendar_month_dim
+        sql: '{CUBE}.calendar_month_key = {cube_carl_dwhprd_gold_calendar_month_dim}.calendar_month_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_calendar_qtr_dim
+        sql: '{CUBE}.calendar_qtr_key = {cube_carl_dwhprd_gold_calendar_qtr_dim}.calendar_qtr_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_day_dim
+        sql: '{CUBE}.invoice_date_key = {cube_carl_dwhprd_gold_day_dim}.day_key'
+        relationship: many_to_one
+
+      - name: cube_carl_dwhprd_gold_calendar_year_dim
+        sql: '{CUBE}.calendar_year_key = {cube_carl_dwhprd_gold_calendar_year_dim}.calendar_year_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_bts_product_dim
+        sql: '{CUBE}.product_key = {cube_carl_dwhprd_gold_bts_product_dim}.product_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_bts_deal_dim
+        sql: '{CUBE}.deal_key = {cube_carl_dwhprd_gold_bts_deal_dim}.deal_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_contract_type_dim
+        sql: '{CUBE}.contract_type_key = {cube_carl_dwhprd_gold_contract_type_dim}.contract_type_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_invoice_holding_company_dim
+        sql: '{CUBE}.invoice_holding_company_key = {cube_carl_dwhprd_gold_invoice_holding_company_dim}.holding_company_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_sales_holding_company_dim
+        sql: '{CUBE}.sales_holding_company_key = {cube_carl_dwhprd_gold_sales_holding_company_dim}.sales_holding_company_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_adv_market_sector_dim
+        sql: '{CUBE}.adv_market_sector_key = {cube_carl_dwhprd_gold_adv_market_sector_dim}.adv_market_sector_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_invoice_territory_dim
+        sql: '{CUBE}.invoice_territory_key = {cube_carl_dwhprd_gold_invoice_territory_dim}.invoice_territory_key'
+        relationship: many_to_one

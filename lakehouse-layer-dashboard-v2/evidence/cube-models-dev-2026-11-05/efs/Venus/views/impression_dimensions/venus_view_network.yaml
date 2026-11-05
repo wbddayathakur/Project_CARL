@@ -1,0 +1,67 @@
+views:
+  - name: venus_view_network
+    public: true
+    title: Network — Impression Dimensions
+    description: >-
+      Liability by network only. Deal is not on this view.
+      Includes every standard and combo row.
+    meta:
+      view_scope: business
+      business: venus
+      fact_table: impression_dimensions
+    cubes:
+      - join_path: cube_venus_silver_serving_impression_dimensions
+        includes:
+          - record_count
+          - name: network_id
+            title: Network Id
+          - name: division
+            title: Division
+          - name: is_latest_deal_version
+            title: Is Latest Deal Version
+          - name: channel
+            title: Channel
+          - name: guaranteed_impressions
+            title: Guaranteed Impressions
+          - name: guaranteed_actual_impressions
+            title: Guaranteed Actual Impressions
+          - name: guaranteed_preactual_impressions
+            title: Guaranteed Pre-Actual Impressions
+          - name: delivered_impressions
+            title: Delivered Impressions
+          - name: delivered_actual_impressions
+            title: Delivered Actual Impressions
+          - name: delivered_preactual_impressions
+            title: Delivered Pre-Actual Impressions
+          - name: impression_variance
+            title: Impression Variance
+          - name: delivery_status
+            title: Delivery Status
+          - name: dollar_liability
+            title: Dollar Liability
+          - name: dollar_liability_now
+            title: Liability Now
+          - name: adu_units_count
+            title: ADU Units
+          - name: recap_units_count
+            title: Recap Units
+          - name: cash_unit_count
+            title: Cash Units
+          - name: unaired_unit_count
+            title: Unaired Units
+          - name: unaired_adu_count
+            title: Unaired ADU Count
+          - name: unaired_recap_count
+            title: Unaired Recap Count
+          - name: unaired_cash_count
+            title: Unaired Cash Count
+          - name: network_over_deal_count
+            title: Over Delivered Deals
+          - name: network_under_deal_count
+            title: Under Delivered Deals
+          - name: deal_count
+            title: Deal Count
+      - join_path: cube_venus_silver_serving_impression_dimensions.cube_linear_digital_revenue_bronze_ideal_posting_stw_network
+        includes:
+          - network_name
+          - network_label

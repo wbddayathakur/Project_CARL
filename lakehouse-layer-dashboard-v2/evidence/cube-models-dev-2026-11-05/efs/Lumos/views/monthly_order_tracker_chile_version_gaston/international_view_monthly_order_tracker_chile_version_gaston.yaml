@@ -1,0 +1,225 @@
+views:
+  - name: international_view_monthly_order_tracker_chile_version_gaston
+    public: true
+    title: International — Monthly Order Tracker Chile Version Gaston
+    description: >-
+      Monthly Order Tracker Chile Version Gaston for Discovery Latin America. Campaign spots and
+      revenue against target and budget by month, campaign, channel and sales rep, with the deal,
+      customer reference, invoice holding company, contract type, consumption indicator, invoice-to
+      and billing status, and the campaign measures in local currency, current-rate USD and
+      historical-rate USD. Reads cube_carl_dwhprd_gold_campaign_fact. Apply in QuickSight:
+      source_system_region_key = 21, calendar_year_key = 2026, and the report's 54 holding_company_key
+      and 103 master_channel values (listed in the contract's sql.sql). The report has no view
+      filter. The report grid shows Month, Holding Company, Deal Name, Revenue Event, Customer Ref,
+      Invoice Holding Company, Campaign, Business Type, Contract Type, Channel, Agency, Client,
+      Campaign Desc, Product, Campaign Start and End Date, Sales Rep, Campaign Status, Base Currency,
+      Consumption Indicator, Invoice To, Billing Status and Billing Status Note, with Agency
+      Commission %, Campaign Spots Target, Campaign Spots Booked, Campaign Budget LOC, Gross Revenue
+      LOC, Revenue Variance and Gross Revenue Curr Rate(USD). Every other column is a report object
+      outside the grid.
+    meta:
+      view_scope: business
+      business: international
+      fact_table: monthly_order_tracker_chile_version_gaston
+      mstr_report_name: Monthly Order Tracker Chile Version Gaston
+      catalog_key: lumos_carl_dwhprd_gold
+      ai_context: >
+        Use this view for the Monthly Order Tracker Chile Version Gaston. Filter
+        source_system_region_key = 21 and calendar_year_key = 2026, and to match the report also
+        holding_company_key in the report's 54 keys and master_channel in its 103 master channels
+        (both lists are in the contract's sql.sql). The grid grain is calendar_month_key,
+        campaign_id, channel_name, sales_rep_name and product_key. Group by product_key as well as
+        product_name: campaign C0228221 has product keys 2174 and 33965, both named CLARO, and
+        MicroStrategy shows a row for each, so grouping by name alone merges them and Agency
+        Commission % on that row reads 10% instead of two 10% rows. Measures are multiplied by
+        sales_rep_revenue_share, with a missing share treated as 1, the same as CAMPAIGN_FACT_VW.
+        Current-rate and historical-rate USD measures multiply the LOC formula by the planned
+        exchange factor; a row with no rate is left out of those sums. revenue_variance =
+        campaign_budget_loc - gross_revenue_loc, after the totals. agency_commission_pct is the
+        average row-level fraction (0.1 = 10%). The Month label is calendar_month_name padded to nine
+        characters, one space and calendar_year, as in the MicroStrategy export ("January   2026").
+        Filter on calendar_month_key, not on the label. Holding Company is read through the campaign;
+        Invoice Holding Company through the fact's invoice holding company key. Billing Status and
+        Billing Status Note are per campaign, month and region. Product, deal, invoice-to, sales rep
+        and every currency attribute come from the BTS lookups; a campaign with no sales rep reads
+        DLA N/A.
+    cubes:
+      - join_path: cube_carl_dwhprd_gold_campaign_fact
+        includes:
+          - name: source_system_region_key
+            title: Source System Region
+          - name: source_region_name
+            title: Source Region
+          - calendar_year_key
+          - calendar_month_key
+          - name: calendar_month_label
+            title: Month
+          - calendar_qtr_key
+          - name: cal_qtr_desc
+            title: Quarter
+          - holding_company_key
+          - name: holding_company_name
+            title: Holding Company
+          - campaign_key
+          - name: campaign_id
+            title: Campaign
+          - name: campaign_desc
+            title: Campaign Desc
+          - campaign_start_end_date
+          - campaign_status_key
+          - name: campaign_status_name
+            title: Campaign Status
+          - campaign_delivery_type_key
+          - name: campaign_delivery_type_name
+            title: Campaign Delivery Type
+          - campaign_commission_pct
+          - campaign_tax_pct
+          - campaign_disc_sur_pct
+          - campaign_ccp
+          - campaign_cps
+          - campaign_cpt
+          - name: revenue_event_desc
+            title: Revenue Event
+          - name: customer_ref
+            title: Customer Ref
+          - invoice_date_key
+          - name: day_date
+            alias: campaign_invoice_date
+            title: Campaign Invoice Date
+          - business_type_key
+          - name: business_type_name
+            title: Business Type
+          - contract_type_key
+          - name: contract_type_desc
+            title: Contract Type
+          - invoice_holding_company_key
+          - name: invoice_holding_company_name
+            title: Invoice Holding Company
+          - name: consumption_indicator
+            title: Consumption Indicator
+          - name: billing_status_desc
+            title: Billing Status
+          - name: billing_status_note
+            title: Billing Status Note
+          - agency_key
+          - name: agency_name
+            title: Agency
+          - agency_id
+          - agency_group_key
+          - name: agency_group_name
+            title: Agency Group
+          - client_key
+          - name: client_name
+            title: Client
+          - client_id
+          - client_group_key
+          - name: client_group_name
+            title: Client Group
+          - mapped_category
+          - country_key
+          - name: country_name
+            title: Country
+          - product_key
+          - product_name
+          - product_category_1
+          - deal_key
+          - deal_id
+          - deal_name
+          - name: invoice_to
+            title: Invoice To
+          - channel_key
+          - name: display_channel_name
+            alias: channel_name
+            title: Channel
+          - channel_id
+          - master_channel
+          - name: sales_rep_key
+            title: Sales Rep Key
+          - name: bts_sales_rep_name
+            alias: sales_rep_name
+            title: Sales Rep
+          - sales_rep_team_key
+          - name: bts_sales_rep_team_name
+            alias: sales_rep_team_name
+            title: Sales Rep Team
+          - base_currency_key
+          - name: bts_base_currency_code
+            alias: base_currency_code
+            title: Base Currency
+          - name: bts_base_currency_name
+            alias: base_currency_name
+          - name: bts_base_currency_symbol
+            alias: base_currency_symbol
+          - campaign_currency_key
+          - name: bts_campaign_currency_code
+            alias: campaign_currency_code
+          - name: bts_campaign_currency_name
+            alias: campaign_currency_name
+          - name: bts_campaign_currency_symbol
+            alias: campaign_currency_symbol
+          - invoice_currency_key
+          - name: bts_invoice_currency_code
+            alias: invoice_currency_code
+            title: Invoice Currency
+          - name: bts_invoice_currency_name
+            alias: invoice_currency_name
+          - name: bts_invoice_currency_symbol
+            alias: invoice_currency_symbol
+          - campaign_spots_target
+          - campaign_spots_booked
+          - spot_variance
+          - campaign_budget_loc
+          - gross_revenue_loc
+          - revenue_variance
+          - gross_revenue_current_rate_usd
+          - campaign_net_net_revenue_loc
+          - campaign_budget_current_rate_usd
+          - campaign_budget_hist_rate_usd
+          - campaign_invoice_value_loc
+          - campaign_invoice_value_current_rate_usd
+          - campaign_invoice_value_hist_rate_usd
+          - campaign_net_revenue_loc
+          - campaign_net_revenue_current_rate_usd
+          - campaign_net_revenue_hist_rate_usd
+          - campaign_net_net_revenue_current_rate_usd
+          - campaign_net_net_revenue_hist_rate_usd
+          - campaign_spots_price_loc
+          - campaign_spots_price_current_rate_usd
+          - campaign_spots_price_hist_rate_usd
+          - campaign_tax_value_loc
+          - campaign_tax_value_current_rate_usd
+          - campaign_tax_value_hist_rate_usd
+          - gross_revenue_hist_rate_usd
+          - agency_commission_loc
+          - agency_commission_current_rate_usd
+          - agency_commission_hist_rate_usd
+          - agency_incentive_loc
+          - agency_incentive_current_rate_usd
+          - agency_incentive_hist_rate_usd
+          - name: sales_commission_loc
+            alias: rep_commission_loc
+            title: Rep Commission LOC
+          - name: sales_commission_current_rate_usd
+            alias: rep_commission_current_rate_usd
+            title: Rep Commission Current Rate(USD)
+          - name: sales_commission_hist_rate_usd
+            alias: rep_commission_hist_rate_usd
+            title: Rep Commission Hist Rate(USD)
+          - campaign_ratings_booked
+          - campaign_ratings_delivered
+          - campaign_ratings_sold
+          - campaign_impacts_booked
+          - campaign_impacts_delivered
+          - campaign_impacts_sold
+          - name: agency_commission_pct_avg
+            alias: agency_commission_pct
+            title: Agency Commission %
+          - name: agency_incentive_pct_avg
+            alias: agency_incentive_pct
+            title: Agency Incentive %
+          - name: rep_commission_pct_avg
+            alias: rep_commission_pct
+            title: Rep Commission %
+          - name: sales_rep_revenue_share_avg
+            alias: sales_rep_revenue_share
+            title: Sales Rep Revenue Share

@@ -1,0 +1,119 @@
+views:
+  - name: international_view_clab_revenue
+    public: true
+    title: International — CLab Revenue
+    description: >-
+      Business view for CLab Revenue on bts_items_pln_rev. The fact cube is
+      cube_carl_dwhprd_gold_bts_items_pln_rev, shared with Power BI - Revenue
+      Events. This view keeps Campaign Desc, which that report rolls up, and
+      Year, which stays on this grid. It carries this report's filters. Apply
+      in QuickSight:
+      source_system_region_key = 21, holding_company_key in (4, 67, 89),
+      calendar_year_key in (2025, 2026), client_key <> 759, and
+      item_revenue_event = CLab. The template also lists C-Lab; that value is
+      not in bts_items. Do not include CLab - Brand Experiences. Master Channel
+      is an attribute, not a filter. Deal Name is bts_deal_dim.deal_name.
+      Campaign Currency is bts_currency_dim.currency_code. The template
+      metrics are item_planned_revenue_loc and item_plan_rev_usd_curr_pln.
+      The report objects also include item_actual_revenue_loc,
+      item_actual_rev_usd_curr_pln, item_rev_target_grp,
+      item_rev_target_spots, item_plan_vs_actual_variance_loc, and
+      item_plan_vs_actual_variance_usd. Those six stay on this dataset. The
+      two variances are planned minus actual after the sums. The analytical engine rolls up the raw campaign dates,
+      campaign status, contract type, campaign targets, deal id, deal type,
+      item code, item on-air flag, item dates, item current-rate value,
+      invoice calendar, item spot pricing method, and contract basis before
+      display. Those attributes stay on this dataset and off the default
+      visual. Year and Campaign Desc stay on the grid. Item code is the fact
+      column. Item Delivery Description keeps item_delivery_code with
+      item_delivery_desc, and Item Product Description keeps
+      item_product_code with item_prod_desc.
+    meta:
+      view_scope: business
+      business: international
+      fact_table: bts_items_pln_rev
+      mstr_report_name: CLab Revenue
+    cubes:
+      - join_path: cube_carl_dwhprd_gold_bts_items_pln_rev
+        includes:
+          - source_system_region_key
+          - campaign_key
+          - contract_id
+          - contract_item_id
+          - channel_key
+          - calendar_month_key
+          - calendar_year_key
+          - item_code
+          - record_count
+          - item_planned_revenue_loc
+          - item_plan_rev_usd_curr_pln
+          - item_actual_revenue_loc
+          - item_actual_rev_usd_curr_pln
+          - item_rev_target_grp
+          - item_rev_target_spots
+          - item_plan_vs_actual_variance_loc
+          - item_plan_vs_actual_variance_usd
+          - name: calendar_month_label
+            title: Month
+          - name: calendar_year
+            title: Year
+          - name: display_channel_name
+            title: Channel
+          - name: master_channel
+            title: Master Channel
+          - item_description
+          - item_product_code
+          - name: item_prod_desc
+            title: Item Product Description
+          - name: item_value_loc
+            title: Item Value LOC
+          - name: item_value_usd_curr_pln_rate
+            title: Item Value Current Rate USD
+          - name: item_onair_flag
+            title: Item Onair Flag
+          - item_start_date
+          - item_end_date
+          - name: item_spot_pricing_method
+            title: Item Spot Pricing Method
+          - item_channel_names
+          - item_channels
+          - name: item_revenue_event
+            title: Item Revenue Event
+          - item_delivery_code
+          - name: item_delivery_desc
+            title: Item Delivery Description
+          - name: campaign_id
+            title: Campaign
+          - name: campaign_desc
+            title: Campaign Desc
+          - campaign_start_end_date
+          - campaign_start_date
+          - campaign_end_date
+          - campaign_target_value_loc
+          - name: campaign_target_value_usd
+            title: Campaign Target Value Current Rate USD
+          - campaign_target_spots
+          - invoice_calendar
+          - client_key
+          - holding_company_key
+          - name: revenue_event_desc
+            title: Revenue Event
+          - name: agency_name
+            title: Agency
+          - name: client_name
+            title: Client
+          - name: holding_company_name
+            title: Holding Company
+          - name: deal_id
+            title: Deal ID
+          - name: deal_name
+            title: Deal Name
+          - name: deal_type_desc
+            title: Deal Type
+          - name: campaign_status_name
+            title: Campaign Status
+          - contract_type_desc
+          - contract_basis_desc
+          - name: currency_code
+            alias: campaign_currency_code
+            title: Campaign Currency

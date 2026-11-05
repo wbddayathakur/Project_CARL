@@ -1,0 +1,79 @@
+views:
+  - name: international_view_bts_placements
+    public: true
+    title: International — Items and Placements
+    description: >-
+      Business view for international on bts_placements (MSTR Items and Placements,
+      Discovery Latin America). Apply in QuickSight: source_system_region_key = 21
+      AND campaign_start_date >= 2024-05-01 AND contract_basis_key NOT IN
+      (2, 5, 8, -2, -1, 0). Campaign end date was unanswered and is not a filter.
+      The six placement GRP metrics are sums. Item GRP and item value columns are
+      attributes on the item and must not be summed. Contract Placement ID,
+      Source System Region, and the raw Placement Pred Grp attribute stay on
+      this dataset. The MSTR engine rolls those three up before display, so
+      they stay off the default visual.
+    meta:
+      view_scope: business
+      business: international
+      fact_table: bts_placements
+      mstr_report_name: Items and Placements
+    cubes:
+      - join_path: cube_carl_dwhprd_gold_bts_placements
+        includes:
+          - source_system_region_key
+          - campaign_key
+          - contract_id
+          - contract_item_id
+          - placement_code
+          - placement_channel
+          - placement_booking_status_code
+          - name: placement_booking_status_desc
+            title: Placement Booking Status Code Desc
+          - placement_start_date
+          - placement_end_date
+          - placement_length_sec
+          - contract_placement_id
+          - placement_pred_grp_raw
+          - record_count
+          - placement_target_grp
+          - placement_pred_grp
+          - placement_achieved_grp
+          - placement_actual_grp
+          - placement_comb_grp
+          - placement_booked_grp
+          - name: agency_name
+            title: Agency
+          - name: campaign_currency_code
+            title: Campaign Currency
+          - name: campaign_id
+            title: Campaign
+          - campaign_start_date
+          - campaign_start_end_date
+          - name: channel_name
+            title: Placement Channel Name
+          - contract_basis_desc
+          - contract_basis_key
+          - item_achieved_grp
+          - item_actual_grp
+          - item_booked_grp
+          - item_channel_names
+          - item_channels
+          - item_code
+          - item_comb_grp
+          - item_delivery_code
+          - item_delivery_desc
+          - item_demo_code
+          - item_demo_desc
+          - item_end_date
+          - item_pred_grp
+          - item_prod_desc
+          - item_product_code
+          - item_start_date
+          - item_target_grp
+          - item_universe
+          - item_value_loc
+          - item_value_usd_curr_pln_rate
+          - name: master_channel
+            title: Placement Master Channel
+          - name: source_region_name
+            title: Source System Region

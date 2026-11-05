@@ -1,0 +1,503 @@
+cubes:
+  - name: cube_carl_dwhprd_gold_inventory_fact
+    sql_table: "{{ catalog('dwhprd_gold') }}.inventory_fact"
+    data_source: default
+    public: false
+    title: Carl Dwhprd Gold — Inventory Fact
+    description: >-
+      This fact table captures inventory unit-level transactions and availability metrics for broadcast advertising, including
+      booked revenue, available seconds, and spot counts across network programs and dayparts. It tracks the status and characteristics
+      of each inventory unit scheduled for airing.
+    dimensions:
+      - name: act_air_daypart_day_time_name
+        sql: |-
+          (
+            SELECT hop1.act_air_daypart_day_time_name
+            FROM {{ catalog('dwhprd_gold') }}.actual_air_daypart_dim hop1
+            WHERE {CUBE}.actual_air_daypart_key = hop1.actual_air_daypart_key
+          )
+        type: string
+        title: Actual Aired Daytime Daypart
+        description: Human-readable name describing the daypart's day and time characteristics.
+      - name: act_air_total_day_ind_desc
+        sql: |-
+          (
+            SELECT hop1.act_air_total_day_ind_desc
+            FROM {{ catalog('dwhprd_gold') }}.actual_air_daypart_dim hop1
+            WHERE {CUBE}.actual_air_daypart_key = hop1.actual_air_daypart_key
+          )
+        type: string
+        title: Actual Aired Total Day Ind
+        description: Description indicating whether this daypart is a total day or partial day classification.
+      - name: act_air_total_day_ind_key
+        sql: |-
+          (
+            SELECT hop1.act_air_total_day_ind_key
+            FROM {{ catalog('dwhprd_gold') }}.actual_air_daypart_dim hop1
+            WHERE {CUBE}.actual_air_daypart_key = hop1.actual_air_daypart_key
+          )
+        type: number
+        title: Act Air Total Day Ind Key
+        description: Key indicating whether this daypart represents a total day or partial day indicator.
+      - name: inventory_status_desc
+        sql: |-
+          (
+            SELECT hop1.inventory_status_desc
+            FROM {{ catalog('dwhprd_gold') }}.inventory_status_dim hop1
+            WHERE {CUBE}.inventory_status_key = hop1.inventory_status_key
+          )
+        type: string
+        title: Inventory Status
+        description: Human-readable description of the inventory status (e.g., 'N/A', 'Booked', 'Pressure').
+      - name: inventory_type_desc
+        sql: |-
+          (
+            SELECT hop1.inventory_type_desc
+            FROM {{ catalog('dwhprd_gold') }}.inventory_type_dim hop1
+            WHERE {CUBE}.inventory_type_key = hop1.inventory_type_key
+          )
+        type: string
+        title: Inventory Type
+        description: Full descriptive name or label for the inventory type.
+      - name: net_name
+        sql: |-
+          (
+            SELECT hop1.net_name
+            FROM {{ catalog('dwhprd_gold') }}.network_dim hop1
+            WHERE {CUBE}.network_key = hop1.network_key
+          )
+        type: string
+        title: Network
+        description: Official name of the broadcast network.
+      - name: property_desc
+        sql: |-
+          (
+            SELECT hop2.property_desc
+            FROM {{ catalog('dwhprd_gold') }}.program_airing_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.property_dim hop2
+              ON hop1.property_key = hop2.property_key
+            WHERE {CUBE}.program_airing_key = hop1.program_airing_key AND {CUBE}.unit_sched_bday_key = hop1.unit_sched_bday_key
+          )
+        type: string
+        title: Property
+        description: Human-readable name or title of the broadcast property (show, program, or content).
+      - name: property_desc_id
+        sql: |-
+          (
+            SELECT hop2.property_desc || ' (' || CAST(hop2.property_id AS VARCHAR) || ')'
+            FROM {{ catalog('dwhprd_gold') }}.program_airing_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.property_dim hop2
+              ON hop1.property_key = hop2.property_key
+            WHERE {CUBE}.program_airing_key = hop1.program_airing_key AND {CUBE}.unit_sched_bday_key = hop1.unit_sched_bday_key
+          )
+        type: string
+        title: Property (ID)
+        description: Property name with its business ID suffixed in parentheses, e.g. "2015 NBA Playoff Playbacks (281333)" — reproduces MicroStrategy's display format exactly. Confirmed
+          live in MSTR's own generated SQL (`"PROPERTY_DESC" || ' ('|| "PROPERTY_ID"||')' "PROPERTY_DESC"`), which concatenates the same two fields already modeled separately here
+          (property_desc, property_id). Also resolves property_desc alone being ambiguous for ~38% of properties.
+      - name: property_id
+        sql: |-
+          (
+            SELECT hop2.property_id
+            FROM {{ catalog('dwhprd_gold') }}.program_airing_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.property_dim hop2
+              ON hop1.property_key = hop2.property_key
+            WHERE {CUBE}.program_airing_key = hop1.program_airing_key AND {CUBE}.unit_sched_bday_key = hop1.unit_sched_bday_key
+          )
+        type: number
+        title: Property ID
+        description: Business identifier for the property from the source system.
+      - name: master_selling_title_desc
+        sql: |-
+          (
+            SELECT hop1.master_selling_title_desc
+            FROM {{ catalog('dwhprd_gold') }}.selling_title_dim hop1
+            WHERE {CUBE}.selling_title_key = hop1.selling_title_key
+          )
+        type: string
+        title: Master Selling Title
+        description: Description of the master selling title.
+      - name: division
+        sql: |-
+          (
+            SELECT hop2.division
+            FROM {{ catalog('dwhprd_gold') }}.selling_title_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.property_category_dim hop2
+              ON hop1.sell_property_category_key = hop2.property_category_key
+            WHERE {CUBE}.selling_title_key = hop1.selling_title_key
+          )
+        type: string
+        title: Division
+        description: Name of the division to which this property category belongs.
+      - name: division_id
+        sql: |-
+          (
+            SELECT hop2.division_id
+            FROM {{ catalog('dwhprd_gold') }}.selling_title_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.property_category_dim hop2
+              ON hop1.sell_property_category_key = hop2.property_category_key
+            WHERE {CUBE}.selling_title_key = hop1.selling_title_key
+          )
+        type: number
+        title: Division Id
+        description: Identifier linking this property category to its parent division.
+      - name: property_category
+        sql: |-
+          (
+            SELECT hop2.property_category
+            FROM {{ catalog('dwhprd_gold') }}.selling_title_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.property_category_dim hop2
+              ON hop1.sell_property_category_key = hop2.property_category_key
+            WHERE {CUBE}.selling_title_key = hop1.selling_title_key
+          )
+        type: string
+        title: Order Property Category
+        description: Descriptive name or label of the property category.
+      - name: sell_property_category_key
+        sql: |-
+          (
+            SELECT hop1.sell_property_category_key
+            FROM {{ catalog('dwhprd_gold') }}.selling_title_dim hop1
+            WHERE {CUBE}.selling_title_key = hop1.selling_title_key
+          )
+        type: number
+        title: Sell Property Category Key
+        description: Surrogate key referencing the property category dimension.
+      - name: selling_title_desc
+        sql: |-
+          (
+            SELECT hop1.selling_title_desc
+            FROM {{ catalog('dwhprd_gold') }}.selling_title_dim hop1
+            WHERE {CUBE}.selling_title_key = hop1.selling_title_key
+          )
+        type: string
+        title: Selling Title
+        description: Human-readable description or name of the selling title.
+      - name: unit_sched_bday_bcast_qtr_desc
+        sql: |-
+          (
+            SELECT hop1.bcast_qtr_desc
+            FROM {{ catalog('dwhprd_gold') }}.unit_sched_bday_dim hop1
+            WHERE {CUBE}.unit_sched_bday_key = hop1.unit_sched_bday_key
+          )
+        type: string
+        title: Unit Broadcast Quarter
+        description: Descriptive text for the broadcast quarter.
+      - name: broadcast_qtr_key
+        sql: |-
+          (
+            SELECT hop1.broadcast_qtr_key
+            FROM {{ catalog('dwhprd_gold') }}.unit_sched_bday_dim hop1
+            WHERE {CUBE}.unit_sched_bday_key = hop1.unit_sched_bday_key
+          )
+        type: number
+        title: Unit Broadcast Quarter Key
+        description: Surrogate key for the broadcast quarter containing this day.
+      - name: broadcast_week_num
+        sql: |-
+          (
+            SELECT hop1.broadcast_week_num
+            FROM {{ catalog('dwhprd_gold') }}.unit_sched_bday_dim hop1
+            WHERE {CUBE}.unit_sched_bday_key = hop1.unit_sched_bday_key
+          )
+        type: number
+        title: Broadcast Week Num
+        description: Week number within the broadcast year.
+      - name: unit_sched_bday_broadcast_year
+        sql: |-
+          (
+            SELECT hop1.broadcast_year
+            FROM {{ catalog('dwhprd_gold') }}.unit_sched_bday_dim hop1
+            WHERE {CUBE}.unit_sched_bday_key = hop1.unit_sched_bday_key
+          )
+        type: number
+        title: Broadcast Year
+        description: The broadcast year.
+      - name: calendar_qtr_key
+        sql: |-
+          (
+            SELECT hop1.calendar_qtr_key
+            FROM {{ catalog('dwhprd_gold') }}.unit_sched_bday_dim hop1
+            WHERE {CUBE}.unit_sched_bday_key = hop1.unit_sched_bday_key
+          )
+        type: number
+        title: Unit Calendar Quarter Key
+        description: Surrogate key for the calendar quarter containing this day.
+      - name: unit_sched_bday_calendar_year
+        sql: |-
+          (
+            SELECT hop1.calendar_year
+            FROM {{ catalog('dwhprd_gold') }}.unit_sched_bday_dim hop1
+            WHERE {CUBE}.unit_sched_bday_key = hop1.unit_sched_bday_key
+          )
+        type: number
+        title: Calendar Year
+        description: The calendar year (e.g., 2024).
+      - name: day_date
+        sql: |-
+          (
+            SELECT hop1.day_date
+            FROM {{ catalog('dwhprd_gold') }}.unit_sched_bday_dim hop1
+            WHERE {CUBE}.unit_sched_bday_key = hop1.unit_sched_bday_key
+          )
+        type: time
+        title: Unit Broadcast Date
+        description: The actual calendar date for this business day.
+      - name: unit_sched_bcast_qtr_desc
+        sql: |-
+          (
+            SELECT hop3.bcast_qtr_desc
+            FROM {{ catalog('dwhprd_gold') }}.unit_sched_bday_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.unit_sched_bcast_month_dim hop2
+              ON hop1.broadcast_month_key = hop2.unit_sched_bcast_month_key
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.unit_sched_bcast_qtr_dim hop3
+              ON hop2.broadcast_qtr_key = hop3.unit_sched_bcast_qtr_key
+            WHERE {CUBE}.unit_sched_bday_key = hop1.unit_sched_bday_key
+          )
+        type: string
+        title: Bcast Qtr Desc
+        description: Human-readable description of the broadcast quarter (e.g., 'Q1 2024').
+      - name: unit_sched_broadcast_year
+        sql: |-
+          (
+            SELECT hop4.broadcast_year
+            FROM {{ catalog('dwhprd_gold') }}.unit_sched_bday_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.unit_sched_bcast_month_dim hop2
+              ON hop1.broadcast_month_key = hop2.unit_sched_bcast_month_key
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.unit_sched_bcast_qtr_dim hop3
+              ON hop2.broadcast_qtr_key = hop3.unit_sched_bcast_qtr_key
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.unit_sched_bcast_year_dim hop4
+              ON hop3.broadcast_year_key = hop4.unit_sched_bcast_year_key
+            WHERE {CUBE}.unit_sched_bday_key = hop1.unit_sched_bday_key
+          )
+        type: number
+        title: Unit Broadcast Year
+        description: The broadcast year.
+      - name: cal_qtr_desc
+        sql: |-
+          (
+            SELECT hop3.cal_qtr_desc
+            FROM {{ catalog('dwhprd_gold') }}.unit_sched_bday_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.unit_sched_cal_month_dim hop2
+              ON hop1.calendar_month_key = hop2.unit_sched_cal_month_key
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.unit_sched_cal_qtr_dim hop3
+              ON hop2.calendar_qtr_key = hop3.unit_sched_cal_qtr_key
+            WHERE {CUBE}.unit_sched_bday_key = hop1.unit_sched_bday_key
+          )
+        type: string
+        title: Cal Qtr Desc
+        description: A human-readable description of the calendar quarter (e.g., '3rd Qtr 2008').
+      - name: unit_sched_calendar_year
+        sql: |-
+          (
+            SELECT hop2.calendar_year
+            FROM {{ catalog('dwhprd_gold') }}.unit_sched_bday_dim hop1
+            LEFT JOIN {{ catalog('dwhprd_gold') }}.unit_sched_cal_year_dim hop2
+              ON hop1.calendar_year_key = hop2.unit_sched_cal_year_key
+            WHERE {CUBE}.unit_sched_bday_key = hop1.unit_sched_bday_key
+          )
+        type: number
+        title: Unit Calendar Year
+        description: The calendar year.
+      - name: actual_air_daypart_key
+        sql: actual_air_daypart_key
+        type: number
+        title: Actual Aired Daypart Key
+        description: >-
+          Foreign key joining inventory_fact to actual_air_daypart_dim. This column holds the surrogate key only; the readable
+          labels are columns on actual_air_daypart_dim. Filtered on directly downstream, because MSTR emits key literals rather than names.
+      - name: buy_type_key
+        sql: buy_type_key
+        type: number
+        title: Buy Type Key
+        description: >-
+          Foreign key joining inventory_fact to buy_type_dim. This column holds the surrogate key only; the readable labels
+          are columns on buy_type_dim. Filtered on directly downstream, because MSTR emits key literals rather than names.
+      - name: episode_version_key
+        sql: episode_version_key
+        type: number
+        title: Episode Version Key
+        description: >-
+          Foreign key joining inventory_fact to episode_version_dim. This column holds the surrogate key only; the readable
+          labels are columns on episode_version_dim. Filtered on directly downstream, because MSTR emits key literals rather than names.
+      - name: inventory_status_key
+        sql: inventory_status_key
+        type: number
+        title: Inventory Status Key
+        description: >-
+          Foreign key joining inventory_fact to inventory_status_dim. This column holds the surrogate key only; the readable
+          labels are columns on inventory_status_dim. Filtered on directly downstream, because MSTR emits key literals rather than names.
+      - name: inventory_type_key
+        sql: inventory_type_key
+        type: number
+        title: Inventory Type Key
+        description: >-
+          Foreign key joining inventory_fact to inventory_type_dim. This column holds the surrogate key only; the readable
+          labels are columns on inventory_type_dim. Filtered on directly downstream, because MSTR emits key literals rather than names.
+      - name: network_key
+        sql: network_key
+        type: number
+        title: Network Key
+        description: >-
+          Foreign key joining inventory_fact to network_dim. This column holds the surrogate key only; the readable labels
+          are columns on network_dim. Filtered on directly downstream, because MSTR emits key literals rather than names.
+      - name: program_key
+        sql: program_key
+        type: number
+        title: Program Key
+        description: >-
+          Foreign key joining inventory_fact to program_dim. This column holds the surrogate key only; the readable labels
+          are columns on program_dim. Filtered on directly downstream, because MSTR emits key literals rather than names.
+      - name: rateclass_key
+        sql: rateclass_key
+        type: number
+        title: Rateclass Key
+        description: >-
+          Foreign key joining inventory_fact to rateclass_dim. This column holds the surrogate key only; the readable labels
+          are columns on rateclass_dim. Filtered on directly downstream, because MSTR emits key literals rather than names.
+      - name: revenue_area_key
+        sql: revenue_area_key
+        type: number
+        title: Revenue Area Key
+        description: >-
+          Foreign key joining inventory_fact to revenue_area_dim. This column holds the surrogate key only; the readable labels
+          are columns on revenue_area_dim. Filtered on directly downstream, because MSTR emits key literals rather than names.
+      - name: selling_title_key
+        sql: selling_title_key
+        type: number
+        title: Selling Title Key
+        description: >-
+          Foreign key joining inventory_fact to selling_title_dim. This column holds the surrogate key only; the readable
+          labels are columns on selling_title_dim. Filtered on directly downstream, because MSTR emits key literals rather than names.
+      - name: unit_sched_bday_key
+        sql: unit_sched_bday_key
+        type: number
+        title: Unit Broadcast Date Key
+        description: >-
+          A comprehensive business day dimension table that provides calendar and broadcast period attributes for scheduling
+          and analysis. It contains both standard calendar hierarchies (day, week, month, quarter, year) and broadcast-specific
+          hierarchies, along with holiday and competitive pressure indicators.
+      - name: unit_type_group_key
+        sql: unit_type_group_key
+        type: number
+        title: Unit Type Group Key
+        description: >-
+          Foreign key joining inventory_fact to unit_type_group_dim. This column holds the surrogate key only; the readable
+          labels are columns on unit_type_group_dim. Filtered on directly downstream, because MSTR emits key literals rather than names.
+      - name: unit_type_key
+        sql: unit_type_key
+        type: number
+        title: Unit Type Key
+        description: >-
+          Foreign key joining inventory_fact to unit_type_dim. This column holds the surrogate key only; the readable labels
+          are columns on unit_type_dim. Filtered on directly downstream, because MSTR emits key literals rather than names.
+      - name: inventory_unit_log_status_key
+        sql: inventory_unit_log_status_key
+        type: number
+        title: Inventory Unit Log Status Key
+        description: Foreign key reference to the inventory unit log status dimension.
+        primary_key: true
+      - name: program_airing_key
+        sql: program_airing_key
+        type: number
+        title: Program Airing Key
+        description: >-
+          Foreign key joining this fact to program_airing_dim, in company with unit_sched_bday_key — an airing key is only
+          meaningful together with the broadcast day it ran on, and matching on the key alone widens the join from 93.4m rows
+          to 148.4m here. This column holds the surrogate key only; the readable labels are columns on program_airing_dim
+          and the tables it reaches.
+      - name: booked_pressure_ind
+        sql: booked_pressure_ind
+        type: number
+        title: Booked Pressure Indicator
+        description: >-
+          Whether an avail is under booking pressure. Populated 0-3 on exactly the 9,016,373 rows where inventory_status_key
+          = 0 and null on every other row, so it describes avails and nothing else. MSTR's capacities prompt treats 1 and
+          3 as the pressure units, and those two carry 89% of all avails — excluding them cuts the equivalent-:30 total from
+          82.7m to 8.5m. No dimension table names the four values, and key_decode has them as observed-only, so confirm the
+          decode before filtering on it.
+      - name: log_denied_flag
+        sql: log_denied_flag
+        type: string
+        title: Log Denied Flag
+        description: >-
+          Whether the unit was denied at log time. Y on 1,912 rows in the whole fact and N on the rest, and none of the Y
+          rows is an avails row, so this cannot move any measure that selects inventory_status_key = 0 — which is both
+          capacity measures below. Exposed for completeness so the MSTR prompt has a column to point at, not because it
+          changes a number.
+    joins:
+      - name: cube_carl_dwhprd_gold_actual_air_daypart_dim
+        sql: '{CUBE}.actual_air_daypart_key = {cube_carl_dwhprd_gold_actual_air_daypart_dim}.actual_air_daypart_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_buy_type_dim
+        sql: '{CUBE}.buy_type_key = {cube_carl_dwhprd_gold_buy_type_dim}.buy_type_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_episode_version_dim
+        sql: '{CUBE}.episode_version_key = {cube_carl_dwhprd_gold_episode_version_dim}.episode_version_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_inventory_status_dim
+        sql: '{CUBE}.inventory_status_key = {cube_carl_dwhprd_gold_inventory_status_dim}.inventory_status_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_inventory_type_dim
+        sql: '{CUBE}.inventory_type_key = {cube_carl_dwhprd_gold_inventory_type_dim}.inventory_type_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_network_dim
+        sql: '{CUBE}.network_key = {cube_carl_dwhprd_gold_network_dim}.network_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_program_airing_dim
+        sql: >-
+          {CUBE}.program_airing_key = {cube_carl_dwhprd_gold_program_airing_dim}.program_airing_key AND {CUBE}.unit_sched_bday_key
+          = {cube_carl_dwhprd_gold_program_airing_dim}.unit_sched_bday_key
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_program_dim
+        sql: '{CUBE}.program_key = {cube_carl_dwhprd_gold_program_dim}.program_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_rateclass_dim
+        sql: '{CUBE}.rateclass_key = {cube_carl_dwhprd_gold_rateclass_dim}.rateclass_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_revenue_area_dim
+        sql: '{CUBE}.revenue_area_key = {cube_carl_dwhprd_gold_revenue_area_dim}.revenue_area_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_selling_title_dim
+        sql: '{CUBE}.selling_title_key = {cube_carl_dwhprd_gold_selling_title_dim}.selling_title_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_unit_sched_bday_dim
+        sql: '{CUBE}.unit_sched_bday_key = {cube_carl_dwhprd_gold_unit_sched_bday_dim}.unit_sched_bday_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_unit_type_dim
+        sql: '{CUBE}.unit_type_key = {cube_carl_dwhprd_gold_unit_type_dim}.unit_type_key'
+        relationship: many_to_one
+      - name: cube_carl_dwhprd_gold_unit_type_group_dim
+        sql: '{CUBE}.unit_type_group_key = {cube_carl_dwhprd_gold_unit_type_group_dim}.unit_type_group_key'
+        relationship: many_to_one
+    measures:
+      - name: record_count
+        sql: '*'
+        type: count
+        title: Record Count
+        description: Row count for smoke queries.
+        meta:
+          source: generated
+          used_by_report_ids: []
+      - name: available_seconds_eqv30
+        sql: CASE WHEN {CUBE}.inventory_status_key = 0 THEN (CAST({CUBE}.total_avail_seconds AS DOUBLE) / 30.0) ELSE NULL
+          END
+        type: sum
+        title: Available Seconds EQV30
+        description: >-
+          Total available seconds expressed in 30-second equivalent units, for inventory whose status is N/A — neither Booked
+          nor Pressure, so still available to sell.
+      - name: booked_pressure_eqv30_spots
+        sql: >-
+          CASE WHEN (({CUBE}.booked_pressure_ind IN (0, 2) OR NOT {CUBE}.inventory_status_key IN (0)) AND (NOT {CUBE}.booked_pressure_ind
+          IN (1, 3) OR NOT {CUBE}.inventory_status_key IN (0))) THEN {CUBE}.num_of_eqv30_spots ELSE NULL END
+        type: sum
+        title: Booked Pressure EQV30 Spots
+        description: >-
+          Equivalent 30-second spots where the booked pressure indicator is 0 or 2, or the inventory status is Booked or Pressure.
+          The nested condition in the SQL reduces to that disjunction. No dimension decodes booked_pressure_ind — see registry/key_decode/carl_dwhprd_gold.yaml.
+      - name: num_of_eqv30_spots
+        sql: '{CUBE}.num_of_eqv30_spots'
+        type: sum
+        title: Number of EQV30 Spots
+        description: Sum of the number of equivalent 30-second advertising spots.

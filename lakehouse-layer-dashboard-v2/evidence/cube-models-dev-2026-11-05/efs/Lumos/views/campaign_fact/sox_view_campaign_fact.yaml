@@ -1,0 +1,79 @@
+views:
+  - name: sox_view_campaign_fact
+    public: true
+    title: SOX — Campaign Fact
+    description: >-
+      Business view for sox on campaign_fact. KNOWN GAPS
+      (see cube_carl_dwhprd_gold_campaign_fact's description): currency-converted ("Current Rate"/"Hist Rate")
+      measures, Product Name/Category and Deal ID/Name are not modelled — no confirmed source for
+      PLAN_CURR_RATE/PLAN_HIST_RATE, and product_dim/deal_dim are confirmed name collisions with unrelated US
+      ad-sales tables.
+    meta:
+      view_scope: business
+      business: sox
+      fact_table: campaign_fact
+    cubes:
+      - join_path: cube_carl_dwhprd_gold_campaign_fact
+        includes:
+          - campaign_ccp
+          - campaign_cps
+          - campaign_cpt
+          - invoice_currency_code
+          - invoice_currency_name
+          - campaign_budget_loc
+          - campaign_invoice_value_loc
+          - gross_revenue_loc
+          - campaign_net_revenue_loc
+          - campaign_net_net_revenue_loc
+          - agency_commission_loc
+          - agency_incentive_loc
+          - sales_commission_loc
+          - campaign_spots_booked
+          - campaign_spots_target
+          - campaign_spots_price_loc
+          - campaign_tax_value_loc
+          - campaign_ratings_booked
+          - campaign_ratings_delivered
+          - campaign_ratings_sold
+          - campaign_impacts_booked
+          - campaign_impacts_delivered
+          - campaign_impacts_sold
+          - agency_commission_pct_avg
+          - agency_incentive_pct_avg
+          - rep_commission_pct_avg
+          - sales_rep_name
+          - sales_rep_team_desc
+          - sales_rep_revenue_share_avg
+          - agency_group_name
+          - agency_id
+          - agency_name
+          - name: base_currency_code
+            title: Base Currency Code
+          - name: base_currency_name
+            title: Base Currency Name
+          - business_type_name
+          - cal_qtr_desc
+          - calendar_month_label
+          - campaign_commission_pct
+          - name: campaign_currency_code
+            title: Campaign Currency Code
+          - name: campaign_currency_name
+            title: Campaign Currency Name
+          - campaign_delivery_type_name
+          - campaign_desc
+          - campaign_disc_sur_pct
+          - campaign_id
+          - campaign_start_end_date
+          - campaign_status_name
+          - campaign_tax_pct
+          - channel_id
+          - client_group_name
+          - client_id
+          - client_name
+          - country_name
+          - day_date
+          - display_channel_name
+          - holding_company_name
+          - mapped_category
+          - master_channel
+          - source_region_name

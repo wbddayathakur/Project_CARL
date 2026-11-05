@@ -1,0 +1,113 @@
+views:
+  - name: international_view_bts_targets
+    public: true
+    title: International — Items & Placements & Targets
+    description: >-
+      Business view for international on bts_targets (MSTR Items & Placements &
+      Targets, Discovery Latin America). Apply in QuickSight: source_system_region_key
+      = 21 AND holding_company_key = 3 AND campaign_start_date > 2026-06-01. The
+      MSTR view filter Campaign = C0237301 is not in the warehouse SQL; keep it
+      as a QuickSight filter on campaign_id or campaign_key. Target Display
+      Channel Name and Target Master Channel read the same channel_key as
+      Placement Display Channel Name and Placement Master Channel. Booked
+      Value LOC and Booked Value Current Rate USD are SUM(cost * spots). Do
+      not sum item value columns. Contract ID, Contract Item ID, Contract
+      Target ID, Item Channels, Item Description, Placement Channel Name,
+      Placement Target Impact, Placement Booking Status Code Desc, Target
+      Fixed Spot Cost LOC, and Target Spots stay on this dataset as the
+      grouped columns. The engine rolls those attributes up before display,
+      so they stay off the default visual. The sums of Target Fixed Spot Cost
+      LOC and Target Spots use the same report-object names.
+    meta:
+      view_scope: business
+      business: international
+      fact_table: bts_targets
+      mstr_report_name: Items & Placements & Targets Report
+    cubes:
+      - join_path: cube_carl_dwhprd_gold_bts_targets
+        includes:
+          - source_system_region_key
+          - campaign_key
+          - contract_id
+          - contract_item_id
+          - contract_target_id
+          - placement_code
+          - target_daypart_start
+          - target_daypart_end
+          - target_display_channel_name
+          - target_master_channel
+          - record_count
+          - booked_value_loc
+          - booked_value_usd
+          - target_fixed_spot_cost_loc
+          - target_fixed_spot_cost_usd
+          - target_spots
+          - target_pred_impact_pct
+          - target_fixed_spot_cost_loc_raw
+          - target_spots_raw
+          - name: agency_name
+            title: Agency
+          - name: campaign_currency_code
+            title: Campaign Currency
+          - name: campaign_delivery_type_name
+            title: Campaign Delivery Type
+          - campaign_end_date
+          - name: campaign_id
+            title: Campaign
+          - campaign_start_date
+          - name: campaign_status_name
+            title: Campaign Status
+          - name: client_name
+            title: Client
+          - contract_basis_desc
+          - contract_basis_key
+          - contract_type_desc
+          - name: display_channel_name
+            title: Placement Display Channel Name
+          - holding_company_key
+          - name: holding_company_name
+            title: Holding Company
+          - item_channel_names
+          - name: item_channels
+            description: >-
+              Item channel list. Items and Placements shows this. Items &
+              Placements & Targets selects it and the analytical engine rolls
+              it up before display.
+          - item_code
+          - item_delivery_code
+          - item_delivery_desc
+          - item_demo_code
+          - item_demo_desc
+          - name: item_description
+            description: >-
+              Item description. Items & Placements & Targets selects it and the
+              analytical engine rolls it up before display.
+          - item_end_date
+          - item_onair_flag
+          - item_revenue_event
+          - item_spot_pricing_method
+          - item_start_date
+          - item_value_loc
+          - item_value_usd_curr_pln_rate
+          - name: channel_name
+            title: Placement Channel Name
+            description: >-
+              Raw channel name. Use display_channel_name for the formatted
+              version.
+          - name: master_channel
+            title: Placement Master Channel
+          - name: placement_booking_status_code
+            description: >-
+              Placement booking status code. Selected with the description.
+          - name: placement_booking_status_desc
+            title: Placement Booking Status Code Desc
+            description: Placement booking status description shown on both templates.
+          - placement_end_date
+          - placement_fixed_version
+          - placement_length_sec
+          - placement_start_date
+          - name: placement_target_impact
+            description: >-
+              Placement target impact. Items & Placements & Targets selects it
+              and the analytical engine rolls it up before display.
+          - revenue_event_desc

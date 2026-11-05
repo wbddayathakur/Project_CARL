@@ -1,0 +1,86 @@
+views:
+  - name: international_view_campaign_fact
+    public: true
+    title: International — Campaign Grid Latam Report
+    description: >-
+      Campaign Grid Latam Report for Discovery Latin America ad sales. Local-currency campaign booking
+      and revenue by holding company, channel, campaign, campaign dates, agency, client, base
+      currency, month, and master channel. Reads the plain-sum measures on
+      cube_carl_dwhprd_gold_campaign_fact. sox_view_campaign_fact reads the share-weighted
+      measures and its existing currency_dim path on that same cube, so the SOX campaign report
+      is unchanged. Base Currency resolves through the BTS base-currency lookup. Apply in
+      QuickSight: source_system_region_key = 21 AND calendar_year_key IN (2019, 2020, 2021, 2022,
+      2023, 2024, 2025, 2026). Those filters are not on the cube. Product is omitted.
+      campaign_net_revenue_loc is sum(gross_revenue *
+      (1 - agency_commission_pct)), not a sum of the stored campaign_net_revenue column.
+      agency_commission_loc is sum(gross_revenue * agency_commission_pct). Measures are plain sums
+      and are not multiplied by sales_rep_revenue_share.
+    meta:
+      view_scope: business
+      business: international
+      fact_table: campaign_fact
+      mstr_report_name: Campaign Grid Latam Report
+      catalog_key: lumos_carl_dwhprd_gold
+      ai_context: >
+        Use this view for the Campaign Grid Latam Report. Every measure is local currency. Do not
+        ask for current-rate or historical-rate conversions; the planned-rate views are not
+        in this catalog. campaign_net_revenue_loc = sum(gross_revenue * (1 - agency_commission_pct)).
+        Do not sum the stored campaign_net_revenue column. agency_commission_loc =
+        sum(gross_revenue * agency_commission_pct). The consumer applies
+        source_system_region_key = 21 and calendar_year_key in 2019, 2020, 2021, 2022, 2023,
+        2024, 2025, 2026. Those filters are not segments. Product is omitted: product_dim has
+        no reliable product_name for this report, and about 95 percent of the Latin America
+        2019-2026 fact rows do not match product_dim. Measures are plain sums and are not
+        multiplied by sales_rep_revenue_share. The original report weights every sum by that
+        share. At campaign grain for region 21 and years 2019-2026, plain sums match that
+        weighted report within one cent except for four campaigns with one sales-rep row whose
+        share is not 1: C0200179 and C0197572 are 2.0 (the original doubles budget and net
+        revenue); C0001410 and C0001411 are 0.5 (the original halves them). 156 campaigns store
+        share 0.9999, so the original is 0.01 percent lower. Those plain sums are the *_plain
+        members on cube_carl_dwhprd_gold_campaign_fact, aliased to these names. sox_view_campaign_fact
+        uses the share-weighted members, so the SOX campaign report is unchanged.
+    cubes:
+      - join_path: cube_carl_dwhprd_gold_campaign_fact
+        includes:
+          - source_system_region_key
+          - calendar_year_key
+          - name: campaign_spots_target_plain
+            alias: campaign_spots_target
+            title: Campaign Spots Target
+          - name: campaign_spots_booked_plain
+            alias: campaign_spots_booked
+            title: Campaign Spots Booked
+          - name: campaign_spots_price_loc_plain
+            alias: campaign_spots_price_loc
+            title: Campaign Spots Price LOC
+          - name: campaign_budget_loc_plain
+            alias: campaign_budget_loc
+            title: Campaign Budget LOC
+          - name: agency_commission_loc_plain
+            alias: agency_commission_loc
+            title: Agency Commission LOC
+          - name: campaign_invoice_value_loc_plain
+            alias: campaign_invoice_value_loc
+            title: Campaign Invoice Value LOC
+          - name: campaign_net_revenue_loc_plain
+            alias: campaign_net_revenue_loc
+            title: Campaign Net Revenue LOC
+          - name: campaign_tax_value_loc_plain
+            alias: campaign_tax_value_loc
+            title: Campaign Tax Value LOC
+          - name: agency_name
+            title: Agency
+          - name: bts_base_currency_code
+            alias: base_currency_code
+            title: Base Currency
+          - calendar_month_label
+          - name: campaign_id
+            title: Campaign
+          - campaign_start_end_date
+          - name: client_name
+            title: Client
+          - name: display_channel_name
+            title: Channel
+          - name: holding_company_name
+            title: Holding Company
+          - master_channel

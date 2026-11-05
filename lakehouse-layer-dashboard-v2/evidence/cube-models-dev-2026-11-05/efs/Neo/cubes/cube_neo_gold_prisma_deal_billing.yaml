@@ -1,0 +1,122 @@
+cubes:
+  - name: cube_neo_gold_prisma_deal_billing
+    sql_table: "{{ catalog('neo_gold') }}.rpt_deal_daily_metrics"
+    public: false
+    data_source: default
+    title: NEO Prisma Deal Billing Actuals
+    description: 'Deal-level actual impressions and billable revenue for Prisma agency reconciliation and billing exports.
+
+      '
+    dimensions:
+      - name: event_date_et
+        sql: CAST({CUBE}.event_date_et AS TIMESTAMP)
+        type: time
+        title: Event Date
+        description: Date of delivery in Eastern Time
+      - name: deal_id
+        sql: '{CUBE}.deal_id'
+        type: number
+        primary_key: true
+        title: Deal ID
+        description: NEO internal deal identifier (numeric)
+      - name: shared_external_deal_id
+        sql: '{CUBE}.shared_external_deal_id'
+        type: string
+        title: Shared External Deal ID
+        description: Prisma / Mediaocean external deal identifier (e.g. P3MF9Y). Filter on this field when the caller passes an external deal code.
+      - name: demand_entity_item_id
+        sql: CAST({CUBE}.deal_id AS VARCHAR)
+        type: string
+        title: Demand Entity Item ID
+        description: Legacy billing export alias for NEO internal deal_id (string form)
+      - name: deal_name
+        sql: '{CUBE}.deal_name'
+        type: string
+        title: Deal Name
+        description: Placement / Deal name
+      - name: deal_type
+        sql: '{CUBE}.deal_type'
+        type: string
+        title: Deal Type
+        description: Guaranteed or Non-Guaranteed
+      - name: deal_status
+        sql: '{CUBE}.deal_status'
+        type: string
+        title: Deal Status
+        description: Active, Completed, or Pending
+      - name: campaign_id
+        sql: '{CUBE}.campaign_id'
+        type: number
+        title: NEO Campaign ID
+        description: Campaign identifier in NEO
+      - name: campaign_name
+        sql: '{CUBE}.campaign_name'
+        type: string
+        title: Campaign Name
+        description: Campaign name materialized in neo_gold.rpt_deal_daily_metrics
+      - name: advertiser_id
+        sql: '{CUBE}.advertiser_id'
+        type: string
+        title: Advertiser ID
+        description: Advertiser ID in NEO
+      - name: advertiser_name
+        sql: '{CUBE}.advertiser_name'
+        type: string
+        title: Advertiser Name
+        description: Advertiser / Brand Name
+      - name: agency_id
+        sql: '{CUBE}.agency_id'
+        type: number
+        title: Agency ID
+        description: Agency ID in NEO
+      - name: agency_name
+        sql: '{CUBE}.agency_name'
+        type: string
+        title: Agency Name
+        description: Agency managing the deal
+      - name: cpm
+        sql: '{CUBE}.original_cpm'
+        type: number
+        title: Contracted CPM ($)
+        description: Booked / contracted CPM from the deal (matches NEO billing report cpm)
+      - name: pacing_status
+        sql: >
+          CASE
+            WHEN {CUBE}.pacing_pct IS NULL THEN 'UNKNOWN'
+            WHEN {CUBE}.pacing_pct >= 95 AND {CUBE}.pacing_pct <= 105 THEN 'ON_PACE'
+            WHEN {CUBE}.pacing_pct < 95 THEN 'BEHIND'
+            ELSE 'AHEAD'
+          END
+        type: string
+        title: Pacing Status
+        description: ON_PACE, BEHIND, or AHEAD derived from pacing_pct
+    measures:
+      - name: count
+        type: count
+        title: Record Count
+        description: Total number of daily deal delivery records
+      - name: first_party_delivered_impressions
+        sql: '{CUBE}.impressions'
+        type: sum
+        title: 1P Delivered Impressions
+        description: First-party FreeWheel delivered impressions
+      - name: contracted_impressions
+        sql: '{CUBE}.contracted_impressions'
+        type: max
+        title: Contracted Impressions
+        description: Booked impression goal (constant per deal; use max when aggregating over time)
+      - name: billable_impressions
+        sql: LEAST({CUBE}.impressions, {CUBE}.contracted_impressions)
+        type: sum
+        title: Billable Impressions
+        description: Reconciled billable impressions capped at contract
+      - name: billable_revenue
+        sql: '{CUBE}.revenue'
+        type: sum
+        title: Billable Revenue / Cost ($)
+        description: Delivered media spend / billable revenue for Prisma
+      - name: effective_cpm
+        sql: CASE WHEN SUM({CUBE}.impressions) > 0 THEN (SUM({CUBE}.revenue) / SUM({CUBE}.impressions)) * 1000 ELSE 0 END
+        type: number
+        title: Effective CPM ($)
+        description: Calculated eCPM across delivered impressions

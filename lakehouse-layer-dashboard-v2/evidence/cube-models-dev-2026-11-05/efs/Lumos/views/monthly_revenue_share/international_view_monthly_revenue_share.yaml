@@ -1,0 +1,215 @@
+views:
+  - name: international_view_monthly_revenue_share
+    public: true
+    title: "International — Monthly Revenue Share (From Campaign)"
+    description: >-
+      Monthly Revenue Share (From Campaign). Share-weighted campaign amounts for
+      source_system_region_key 21 and calendar_month_key 202004. Apply in
+      QuickSight a view filter that keeps sales_rep_revenue_share other than 1,
+      which MicroStrategy shows as 100.00 percent. That filter is not on the cube.
+      The subtotal is a grid total. Sales Rep comes from bts_sales_rep_dim. The
+      SQL sums gross revenue at the historical rate with SUM DISTINCT;
+      gross_revenue_hist_rate_usd is the ordinary sum of that product. Attributes
+      the engine rolls up stay on this view.
+    meta:
+      view_scope: business
+      business: international
+      fact_table: campaign_fact
+      mstr_report_name: Monthly Revenue Share (From Campaign)
+      catalog_key: lumos_carl_dwhprd_gold
+      ai_context: >
+        Use this view for Monthly Revenue Share (From Campaign). Filter
+        source_system_region_key = 21, calendar_month_key = 202004, and
+        sales_rep_revenue_share not equal to 1. Amount measures multiply by
+        sales_rep_revenue_share. Percent measures are averages of the rate columns.
+    cubes:
+      - join_path: cube_carl_dwhprd_gold_campaign_fact
+        includes:
+          - name: source_system_region_key
+            title: Source System Region Key
+          - name: calendar_month_key
+            title: Month Key
+          - name: sales_rep_revenue_share
+            title: Sales Rep Revenue Share Raw
+          - name: source_region_name
+            alias: source_region
+            title: Source Region
+          - name: source_region_name
+            title: Source System Region
+          - name: holding_company_name
+            title: Holding Company
+          - name: sales_rep_team_desc
+            title: Sales Rep Team
+          - name: bts_sales_rep_name
+            title: Sales Rep
+          - name: calendar_month_label
+            title: Month
+          - name: cal_qtr_desc
+            title: Quarter
+          - name: campaign_id
+            title: Campaign
+          - name: campaign_start_end_date
+            title: Campaign Start and End Date
+          - name: agency_name
+            title: Agency
+          - name: agency_id
+            title: Agency ID
+          - name: client_name
+            title: Client
+          - name: client_id
+            title: Client ID
+          - name: client_group_name
+            title: Client Group
+          - name: agency_group_name
+            title: Agency Group
+          - name: country_name
+            title: Country
+          - name: master_channel
+            title: Master Channel
+          - name: display_channel_name
+            title: Channel
+          - name: channel_id
+            title: Channel ID
+          - name: bts_base_currency_code
+            title: Base Currency
+          - name: campaign_commission_pct
+            title: "Campaign Commission %"
+          - name: campaign_tax_pct
+            title: "Campaign Tax %"
+          - name: campaign_ccp
+            title: Campaign CPP
+          - name: campaign_cps
+            title: Campaign CPS
+          - name: campaign_cpt
+            title: Campaign CPT
+          - name: campaign_delivery_type_name
+            title: Campaign Delivery Type
+          - name: campaign_disc_sur_pct
+            title: "Campaign Discount/Surcharge %"
+          - name: day_date
+            title: Campaign Invoice Date
+          - name: mapped_category
+            title: Mapped Category
+          - name: bts_campaign_currency_code
+            title: Campaign Currency
+          - name: bts_campaign_currency_name
+            title: Campaign Currency Name
+          - name: bts_campaign_currency_symbol
+            title: Campaign Currency Symbol
+          - name: bts_invoice_currency_code
+            title: Invoice Currency
+          - name: bts_invoice_currency_name
+            title: Invoice Currency Name
+          - name: bts_invoice_currency_symbol
+            title: Invoice Currency Symbol
+          - name: sales_rep_revenue_share_avg
+            title: Sales Rep Revenue Share
+          - name: gross_revenue_loc
+            title: Gross Revenue LOC
+          - name: gross_revenue_current_rate_usd
+            title: Gross Revenue Curr Rate(USD)
+          - name: gross_revenue_hist_rate_usd
+            title: Gross Revenue Hist Rate(USD)
+          - name: agency_commission_pct_avg
+            title: "Agency Commission %"
+          - name: agency_commission_loc
+            title: Agency Commission LOC
+          - name: agency_commission_current_rate_usd
+            title: Agency Commission Current Rate(USD)
+          - name: agency_commission_hist_rate_usd
+            title: Agency Commission Hist Rate(USD)
+          - name: agency_incentive_pct_avg
+            title: "Agency Incentive %"
+          - name: agency_incentive_loc
+            title: Agency Incentive LOC
+          - name: agency_incentive_current_rate_usd
+            title: Agency Incentive Current Rate(USD)
+          - name: agency_incentive_hist_rate_usd
+            title: Agency Incentive Hist Rate(USD)
+          - name: campaign_budget_loc
+            title: Campaign Budget LOC
+          - name: campaign_budget_current_rate_usd
+            title: Campaign Budget Current Rate(USD)
+          - name: campaign_budget_hist_rate_usd
+            title: Campaign Budget Hist Rate(USD)
+          - name: campaign_invoice_value_loc
+            title: Campaign Invoice Value LOC
+          - name: campaign_invoice_value_current_rate_usd
+            title: Campaign Invoice Value Current Rate(USD)
+          - name: campaign_invoice_value_hist_rate_usd
+            title: Campaign Invoice Value Hist Rate(USD)
+          - name: campaign_net_revenue_loc
+            title: Campaign Net Revenue LOC
+          - name: campaign_net_revenue_loc
+            alias: net_revenue_loc
+            title: Net Revenue LOC
+          - name: campaign_net_revenue_current_rate_usd
+            title: Campaign Net Revenue Current Rate(USD)
+          - name: campaign_net_revenue_current_rate_usd
+            alias: net_revenue_curr_rate_usd
+            title: Net Revenue Curr Rate (USD)
+          - name: campaign_net_revenue_hist_rate_usd
+            title: Campaign Net Revenue Hist Rate(USD)
+          - name: campaign_net_net_revenue_loc
+            title: Campaign Net Net Revenue LOC
+          - name: campaign_net_net_revenue_current_rate_usd
+            title: Campaign Net Net Revenue Current Rate(USD)
+          - name: campaign_net_net_revenue_current_rate_usd
+            alias: net_net_revenue_curr_rate_usd
+            title: Net Net Revenue Curr Rate (USD)
+          - name: campaign_net_net_revenue_hist_rate_usd
+            title: Campaign Net Net Revenue Hist Rate(USD)
+          - name: campaign_spots_booked
+            title: Campaign Spots Booked
+          - name: campaign_spots_target
+            title: Campaign Spots Target
+          - name: campaign_spots_price_loc
+            title: Campaign Spots Price LOC
+          - name: campaign_spots_price_current_rate_usd
+            title: Campaign Spots Price Current Rate(USD)
+          - name: campaign_spots_price_hist_rate_usd
+            title: Campaign Spots Price Hist Rate(USD)
+          - name: campaign_tax_value_loc
+            title: Campaign Tax Value LOC
+          - name: campaign_tax_value_current_rate_usd
+            title: Campaign Tax Value Current Rate(USD)
+          - name: campaign_tax_value_hist_rate_usd
+            title: Campaign Tax Value Hist Rate(USD)
+          - name: campaign_ratings_booked
+            title: Campaign Ratings Booked
+          - name: campaign_ratings_delivered
+            title: Campaign Ratings Delivered
+          - name: campaign_ratings_sold
+            title: Campaign Ratings Sold
+          - name: campaign_impacts_booked
+            title: Campaign Impacts Booked
+          - name: campaign_impacts_delivered
+            title: Campaign Impacts Delivered
+          - name: campaign_impacts_sold
+            title: Campaign Impacts Sold
+          - name: rep_commission_pct_avg
+            title: "Rep Commission %"
+          - name: sales_commission_loc
+            title: Rep Commission LOC
+          - name: sales_commission_current_rate_usd
+            title: Rep Commission Current Rate(USD)
+          - name: sales_commission_hist_rate_usd
+            title: Rep Commission Hist Rate(USD)
+          - name: currency_name
+            title: Base Currency Name
+          - name: currency_symbol
+            title: Base Currency Symbol
+          - name: business_type_name
+            title: Business Type
+          - name: product_name
+            title: Product
+          - name: product_category_1
+            title: Product Category 1
+          - name: deal_id
+            title: Deal ID
+          - name: deal_name
+            title: Deal Name
+          - name: sales_holding_company_name
+            title: Sales Holding Company
+          - name: invoice_territory_desc
+            title: Invoice Territory
